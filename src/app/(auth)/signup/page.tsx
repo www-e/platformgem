@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState, useFormStatus } from "react";
 import Link from 'next/link';
 import { signup } from "@/lib/actions";
 

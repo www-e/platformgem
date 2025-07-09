@@ -1,10 +1,7 @@
-// src/app/(auth)/login/page.tsx
-
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react";
 import { login } from "@/lib/actions";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,7 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-// A small component to show a loading spinner on the button during submission
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
@@ -27,7 +23,7 @@ function SubmitButton() {
 }
 
 export default function LoginPage() {
-  const [errorMessage, dispatch] = useFormState(login, undefined);
+  const [errorMessage, dispatch] = useActionState(login, undefined);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-brand-cream">
