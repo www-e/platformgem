@@ -1,7 +1,11 @@
+// src/app/(auth)/login/page.tsx
+
 "use client";
 
-import { useActionState, useFormStatus } from "react";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { login } from "@/lib/actions";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -29,7 +33,9 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen bg-brand-cream">
       <Card className="w-full max-w-sm bg-white shadow-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl text-brand-dark-blue">Welcome Back</CardTitle>
+          <CardTitle className="text-2xl text-brand-dark-blue">
+            Welcome Back
+          </CardTitle>
           <CardDescription className="text-brand-mid-blue">
             Enter your credentials to access your courses
           </CardDescription>
@@ -49,7 +55,13 @@ export default function LoginPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" name="password" type="password" required className="bg-brand-cream" />
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="bg-brand-cream"
+              />
             </div>
             {errorMessage && (
               <div className="text-sm font-medium text-red-500">
