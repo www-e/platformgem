@@ -1,26 +1,55 @@
-@import "tailwindcss";
+/* app/globals.css */
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Set the futuristic color palette */
+    --background: 29 50% 97%;   /* #F9F3EF - brand-cream */
+    --foreground: 206 50% 21%;  /* #1B3C53 - brand-dark-blue */
+
+    --card: 29 50% 97%;
+    --card-foreground: 206 50% 21%;
+ 
+    --popover: 29 50% 97%;
+    --popover-foreground: 206 50% 21%;
+ 
+    --primary: 206 28% 39%;     /* #456882 - brand-mid-blue */
+    --primary-foreground: 29 50% 97%;
+ 
+    --secondary: 25 21% 77%;    /* #D2C1B6 - brand-beige */
+    --secondary-foreground: 206 50% 21%;
+ 
+    --muted: 25 21% 87%;        /* A lighter beige for muted backgrounds */
+    --muted-foreground: 206 28% 45%; /* A slightly lighter blue for muted text */
+ 
+    --accent: 25 21% 77%;
+    --accent-foreground: 206 50% 21%;
+ 
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 25 21% 82%;       /* A slightly darker beige for borders */
+    --input: 25 21% 87%;        /* Lighter beige for input backgrounds */
+    --ring: 206 50% 21%;        /* Dark blue for focus rings */
+ 
+    --radius: 0.5rem;
+
+    /* Define the brand colors as standalone variables */
+    --brand-dark-blue: 206 50% 21%;
+    --brand-mid-blue: 206 28% 39%;
+    --brand-beige: 25 21% 77%;
+    --brand-cream: 29 50% 97%;
   }
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
