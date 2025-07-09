@@ -1,15 +1,15 @@
+// src/app/layout.tsx
+
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Noto_Kufi } from "next/font/google"; // Switched to a font with better Arabic support
 import "./globals.css";
+import { SessionProvider } from "next-auth/react";
+import { Navbar } from "@/components/shared/navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+// Using Noto_Kufi for better Arabic rendering
+const font = Noto_Kufi({
+  subsets: ["arabic"],
+  variable: '--font-sans',
 });
 
 export const metadata: Metadata = {
@@ -23,12 +23,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    // 1. We wrap everything in the SessionProvider
+    <SessionProvider>
+      <html lang="ar" dir="rtl">
+        {/* 2. I've updated the font for better Arabic support */}
+        <body className={`${font.variable} font-sans bg-slate-900 antialiased`}>
+          {/* 3. The Navbar is added here so it appears on all pages */}
+          <Navbar />
+          {/* 4. The rest of your app's pages will be rendered here */}
+          <main>{children}</main>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }
