@@ -1,35 +1,28 @@
 // src/lib/actions.ts
-
 "use server";
 
 import { redirect } from 'next/navigation';
 import bcrypt from "bcryptjs";
 import { Grade } from "@prisma/client";
-
 import { signIn } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
 // --- LOGIN ACTION ---
-// This action handles the login form submission.
 export async function login(prevState: string | undefined, formData: FormData) {
   try {
-    // We pass the form data to the `signIn` function from Next-Auth.
-    // The "credentials" string tells it to use the provider we configured.
-    // The redirect is handled automatically by Next-Auth on success.
     await signIn("credentials", formData);
   } catch (error) {
-    // Next-Auth throws a specific error type on authentication failure.
     if ((error as Error).message.includes("CredentialsSignin")) {
-      return "Invalid student ID, phone number, or password.";
+      return "معرف الطالب أو رقم الهاتف أو كلمة المرور غير صحيحة.";
     }
-    // For other unexpected errors
-    return "An unknown error occurred. Please try again.";
+    return "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.";
   }
+  
+  // Only redirect if signIn succeeded (no error thrown)
+  redirect("/profile");
 }
 
-
-// --- SIGN UP ACTION ---
-// This action handles the new student registration form.
+// --- SIGNUP ACTION ---
 export async function signup(prevState: string | undefined, formData: FormData) {
   const name = formData.get("name") as string;
   const phone = formData.get("phone") as string;
@@ -38,13 +31,21 @@ export async function signup(prevState: string | undefined, formData: FormData) 
   const password = formData.get("password") as string;
   const grade = formData.get("grade") as Grade;
 
-  // Basic validation
+  // Enhanced validation
   if (!name || !phone || !studentId || !password || !grade) {
-    return "Please fill in all required fields.";
+    return "يرجى ملء جميع الحقول المطلوبة.";
   }
 
+  if (password.length < 6) {
+    return "كلمة المرور يجب أن تكون 6 أحرف على الأقل.";
+  }
+
+  if (phone.length < 11) {
+    return "رقم الهاتف غير صحيح.";
+  }
+
+  // Check for existing user BEFORE try/catch
   try {
-    // Check if a user already exists with this phone or student ID
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [{ phone }, { studentId }],
@@ -52,14 +53,16 @@ export async function signup(prevState: string | undefined, formData: FormData) 
     });
 
     if (existingUser) {
-      return "A user with this phone number or student ID already exists.";
+      return "يوجد مستخدم بالفعل بهذا الرقم أو معرف الطالب.";
     }
+  } catch (error) {
+    console.error("Database check error:", error);
+    return "خطأ في الاتصال بقاعدة البيانات.";
+  }
 
-    // Hash the password for security before storing it.
-    // 10 is the "salt round" - a standard value for bcrypt.
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create the new user in the database.
+  // Create user in separate try/catch
+  try {
+    const hashedPassword = await bcrypt.hash(password, 12);
     await prisma.user.create({
       data: {
         name,
@@ -70,12 +73,11 @@ export async function signup(prevState: string | undefined, formData: FormData) 
         grade,
       },
     });
-
   } catch (error) {
-    console.error(error);
-    return "Database error: Failed to create user.";
+    console.error("User creation error:", error);
+    return "خطأ في قاعدة البيانات: فشل في إنشاء الحساب.";
   }
 
-  // If signup is successful, redirect the user to the login page.
+  // Only redirect if user creation succeeded
   redirect('/login');
 }
