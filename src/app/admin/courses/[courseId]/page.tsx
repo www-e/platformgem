@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { AddLessonForm } from "./_components/add-lesson-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function CourseDetailPage({ params }: { params: { courseId: string }}) {
   const course = await prisma.course.findUnique({
@@ -20,8 +21,8 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
 
   return (
     <div>
-      <h1 className="text-4xl font-bold mb-2">{course.title}</h1>
-      <p className="text-gray-400 mb-8">Manage lessons for this course.</p>
+      <h1 className="text-3xl font-bold mb-2">{course.title}</h1>
+      <p className="text-muted-foreground mb-8">إدارة الدروس لهذه الدورة.</p>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-1">
@@ -29,23 +30,27 @@ export default async function CourseDetailPage({ params }: { params: { courseId:
         </div>
 
         <div className="lg:col-span-2">
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <h2 className="text-2xl font-bold mb-4">Existing Lessons</h2>
-            <div className="space-y-4">
-              {course.lessons.length === 0 ? (
-                <p className="text-gray-400">No lessons added yet.</p>
-              ) : (
-                course.lessons.map(lesson => (
-                  <div key={lesson.id} className="p-4 rounded-lg bg-slate-800/50">
-                    <h3 className="font-semibold text-white">
-                      {lesson.order}. {lesson.title}
-                    </h3>
-                    <p className="text-xs text-gray-500">Video ID: {lesson.bunnyVideoId}</p>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+          <Card className="bg-card">
+            <CardHeader>
+              <CardTitle>الدروس الحالية ({course.lessons.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {course.lessons.length === 0 ? (
+                  <p className="text-muted-foreground p-8 text-center">لم تتم إضافة أي دروس بعد.</p>
+                ) : (
+                  course.lessons.map(lesson => (
+                    <div key={lesson.id} className="p-4 rounded-lg bg-muted/50 border border-border">
+                      <h3 className="font-semibold text-foreground">
+                        {lesson.order}. {lesson.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground font-mono pt-1">Video ID: {lesson.bunnyVideoId}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

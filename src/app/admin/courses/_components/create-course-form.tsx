@@ -1,35 +1,22 @@
 // src/app/admin/courses/_components/create-course-form.tsx
 "use client";
 
-import { useActionState,useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
-import { createCourse, ActionState } from "@/lib/actions"; // Import ActionState
+import { createCourse, ActionState } from "@/lib/actions";
 import { Grade } from "@prisma/client";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={pending}>
-      {pending ? "Creating Course..." : "Create Course"}
+    <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={pending}>
+      {pending ? "جاري الإنشاء..." : "إنشاء الدورة"}
     </Button>
   );
 }
@@ -40,42 +27,39 @@ export function CreateCourseForm() {
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    // Correctly check for properties on the state object
     if (state?.success) {
-      toast.success("Success!", { description: state.success });
+      toast.success("تم بنجاح!", { description: state.success });
       formRef.current?.reset();
     }
     if (state?.error) {
-      toast.error("Error", { description: state.error });
+      toast.error("خطأ", { description: state.error });
     }
   }, [state]);
 
   return (
-    <Card className="bg-white/5 border-white/10 text-white">
+    <Card className="bg-card">
       <CardHeader>
-        <CardTitle>Create New Course</CardTitle>
-        <CardDescription className="text-gray-400">Fill out the details to add a new course.</CardDescription>
+        <CardTitle>إنشاء دورة جديدة</CardTitle>
+        <CardDescription className="text-muted-foreground pt-1">املأ التفاصيل لإضافة دورة جديدة.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form ref={formRef} action={dispatch} className="space-y-6">
+        <form ref={formRef} action={dispatch} className="space-y-4">
            <div className="space-y-2">
-              <Label htmlFor="title">Course Title</Label>
-              <Input id="title" name="title" placeholder="e.g., Advanced Algebra" required />
+              <Label htmlFor="title">عنوان الدورة</Label>
+              <Input id="title" name="title" placeholder="مثال: الجبر المتقدم" required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Course Description</Label>
-              <Input id="description" name="description" placeholder="A comprehensive course..." required />
+              <Label htmlFor="description">وصف الدورة</Label>
+              <Input id="description" name="description" placeholder="دورة شاملة لـ..." required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="thumbnailUrl">Thumbnail URL</Label>
+              <Label htmlFor="thumbnailUrl">رابط الصورة المصغرة</Label>
               <Input id="thumbnailUrl" name="thumbnailUrl" placeholder="https://path/to/image.jpg" required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="targetGrade">Target Grade</Label>
+              <Label htmlFor="targetGrade">المرحلة الدراسية</Label>
               <Select name="targetGrade" required>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select target grade" />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="اختر المرحلة المستهدفة" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value={Grade.FIRST_YEAR}>الصف الأول الثانوي</SelectItem>
                   <SelectItem value={Grade.SECOND_YEAR}>الصف الثاني الثانوي</SelectItem>
@@ -84,11 +68,9 @@ export function CreateCourseForm() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="bunnyLibraryId">Video Library</Label>
+              <Label htmlFor="bunnyLibraryId">مكتبة الفيديو</Label>
               <Select name="bunnyLibraryId" required>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select video library" />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="اختر مكتبة الفيديو" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G1_SHARH!}>شرح الصف الاول الثانوي</SelectItem>
                   <SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G2_SHARH!}>شرح الصف الثاني</SelectItem>

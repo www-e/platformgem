@@ -1,58 +1,64 @@
+// src/components/course/lecture-sidebar.tsx
+
 import Link from "next/link";
-import { BookCheck, Lock, PlayCircle } from "lucide-react";
+import { CheckCircle2, Lock, PlayCircle } from "lucide-react";
 import { Course, Lesson } from "@prisma/client";
+import { cn } from "@/lib/utils";
 
 interface LectureSidebarProps {
-  course: Course & { lessons: Lesson[] }; // The course with all its lessons
-  currentLessonId?: string; // The ID of the lesson currently being viewed
-  completedLessons: string[]; // An array of completed lesson IDs from the Enrollment model
+  course: Course & { lessons: Lesson[] };
+  currentLessonId?: string;
+  completedLessons: string[];
 }
 
 export function LectureSidebar({ course, currentLessonId, completedLessons }: LectureSidebarProps) {
+  const progress = (completedLessons.length / course.lessons.length) * 100;
+
   return (
-    <aside className="w-full md:w-80 lg:w-96 flex-shrink-0 bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-4">
-      <div className="mb-4">
-        <h2 className="text-xl font-bold text-white mb-1">{course.title}</h2>
-        <p className="text-sm text-gray-400">
-          {completedLessons.length} / {course.lessons.length} lessons completed
+    <aside className="w-full lg:w-80 xl:w-96 flex-shrink-0 bg-card rounded-xl border border-border p-4">
+      <div className="mb-4 p-2">
+        <h2 className="text-xl font-bold text-foreground mb-2">{course.title}</h2>
+        <p className="text-sm text-muted-foreground mb-2">
+          {completedLessons.length} / {course.lessons.length} درسًا مكتملًا
         </p>
-        <div className="w-full bg-slate-700 rounded-full h-2.5 mt-2">
+        <div className="w-full bg-muted rounded-full h-2.5">
            <div 
-             className="bg-blue-500 h-2.5 rounded-full" 
-             style={{ width: `${(completedLessons.length / course.lessons.length) * 100}%` }}
+             className="bg-primary h-2.5 rounded-full transition-all duration-500" 
+             style={{ width: `${progress}%` }}
            ></div>
         </div>
       </div>
       
       <div className="space-y-2">
-        {course.lessons.sort((a,b) => a.order - b.order).map((lesson, index) => {
+        {course.lessons.map((lesson, index) => {
           const isCompleted = completedLessons.includes(lesson.id);
           const isCurrent = lesson.id === currentLessonId;
-          
-          // For now, all lessons are unlocked. We can add locking logic later.
-          const isLocked = false; 
+          const isLocked = false; // Locking logic can be added here later
 
           return (
             <Link 
               key={lesson.id} 
               href={isLocked ? '#' : `/courses/${course.id}?lesson=${lesson.id}`}
-              className={`flex items-center gap-4 p-3 rounded-lg transition-colors w-full text-left
-                ${isLocked ? 'cursor-not-allowed bg-slate-800/50' : ''}
-                ${isCurrent ? 'bg-blue-600/50 border-l-4 border-blue-400' : 'hover:bg-slate-700/50'}
-              `}
+              className={cn(`flex items-center gap-4 p-3 rounded-lg transition-colors w-full text-right`,
+                isLocked && 'cursor-not-allowed bg-muted/50 text-muted-foreground',
+                isCurrent && 'bg-primary/20 border-r-4 border-primary',
+                !isCurrent && !isLocked && 'hover:bg-accent/50'
+              )}
             >
               <div className="flex-shrink-0">
-                {isLocked ? <Lock className="w-5 h-5 text-gray-500" /> :
-                 isCompleted ? <BookCheck className="w-5 h-5 text-green-400" /> :
-                 <PlayCircle className="w-5 h-5 text-gray-400" />
+                {isLocked ? <Lock className="w-5 h-5" /> :
+                 isCompleted ? <CheckCircle2 className="w-5 h-5 text-secondary" /> :
+                 <PlayCircle className="w-5 h-5 text-muted-foreground" />
                 }
               </div>
 
               <div className="flex-grow">
-                <p className={`font-medium ${isCurrent ? 'text-white' : 'text-gray-200'}`}>
+                <p className={cn(
+                  `font-medium`,
+                  isCurrent ? 'text-primary' : 'text-foreground'
+                )}>
                   {lesson.title}
                 </p>
-                <p className="text-xs text-gray-400">Lesson {index + 1}</p>
               </div>
             </Link>
           );

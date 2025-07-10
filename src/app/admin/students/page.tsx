@@ -3,8 +3,8 @@
 import prisma from "@/lib/prisma";
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// A small utility to map enum to readable text
 const gradeMap = {
   FIRST_YEAR: "الصف الأول الثانوي",
   SECOND_YEAR: "الصف الثاني الثانوي",
@@ -23,40 +23,47 @@ export default async function StudentsPage() {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold mb-8">Manage Students</h1>
-      <div className="bg-white/5 border border-white/10 rounded-2xl">
-        <table className="w-full text-left text-white">
-          <thead className="border-b border-white/10">
-            <tr>
-              <th className="p-4">Name</th>
-              <th className="p-4">Student ID</th>
-              <th className="p-4">Phone</th>
-              <th className="p-4">Grade</th>
-              <th className="p-4">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map(student => (
-              <tr key={student.id} className="border-b border-slate-800/50 hover:bg-slate-800/40">
-                <td className="p-4">{student.name}</td>
-                <td className="p-4 font-mono">{student.studentId}</td>
-                <td className="p-4 font-mono">{student.phone}</td>
-                <td className="p-4">{gradeMap[student.grade]}</td>
-                <td className="p-4">
-                  <Button asChild variant="outline" size="sm" className="text-white border-slate-600 hover:bg-slate-700">
-                    <Link href={`/admin/students/${student.id}`}>
-                      View Details
-                    </Link>
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {students.length === 0 && (
-          <p className="p-8 text-center text-gray-400">No students have registered yet.</p>
-        )}
-      </div>
+      <h1 className="text-3xl font-bold mb-8">إدارة الطلاب</h1>
+      <Card className="bg-card">
+        <CardHeader>
+          <CardTitle>قائمة الطلاب المسجلين ({students.length})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="border border-border rounded-lg overflow-x-auto">
+            <table className="w-full text-right">
+              <thead className="bg-muted/50 border-b border-border">
+                <tr>
+                  <th className="p-4 font-semibold">الاسم</th>
+                  <th className="p-4 font-semibold">معرف الطالب</th>
+                  <th className="p-4 font-semibold">رقم الهاتف</th>
+                  <th className="p-4 font-semibold">المرحلة</th>
+                  <th className="p-4 font-semibold text-left">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+                {students.map(student => (
+                  <tr key={student.id} className="border-b border-border last:border-b-0 hover:bg-accent/50 transition-colors">
+                    <td className="p-4">{student.name}</td>
+                    <td className="p-4 font-mono text-muted-foreground">{student.studentId}</td>
+                    <td className="p-4 font-mono text-muted-foreground" dir="ltr">{student.phone}</td>
+                    <td className="p-4">{gradeMap[student.grade]}</td>
+                    <td className="p-4 text-left">
+                      <Button asChild variant="outline" size="sm">
+                        <Link href={`/admin/students/${student.id}`}>
+                          عرض التفاصيل
+                        </Link>
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {students.length === 0 && (
+            <p className="p-8 text-center text-muted-foreground">لم يقم أي طالب بالتسجيل بعد.</p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

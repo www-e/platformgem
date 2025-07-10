@@ -1,187 +1,123 @@
-/* app/globals.css */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Set the futuristic color palette */
-    --background: 29 50% 97%;   /* #F9F3EF - brand-cream */
-    --foreground: 206 50% 21%;  /* #1B3C53 - brand-dark-blue */
+    --background: 222 84% 4%; /* #010816 - Deep Navy */
+    --foreground: 210 40% 98%; /* #f8f9fa - Almost White */
 
-    --card: 29 50% 97%;
-    --card-foreground: 206 50% 21%;
- 
-    --popover: 29 50% 97%;
-    --popover-foreground: 206 50% 21%;
- 
-    --primary: 206 28% 39%;     /* #456882 - brand-mid-blue */
-    --primary-foreground: 29 50% 97%;
- 
-    --secondary: 25 21% 77%;    /* #D2C1B6 - brand-beige */
-    --secondary-foreground: 206 50% 21%;
- 
-    --muted: 25 21% 87%;        /* A lighter beige for muted backgrounds */
-    --muted-foreground: 206 28% 45%; /* A slightly lighter blue for muted text */
- 
-    --accent: 25 21% 77%;
-    --accent-foreground: 206 50% 21%;
- 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --card: 222 84% 6%; /* #020c1c - Slightly Lighter Navy */
+    --card-foreground: 210 40% 98%;
 
-    --border: 25 21% 82%;       /* A slightly darker beige for borders */
-    --input: 25 21% 87%;        /* Lighter beige for input backgrounds */
-    --ring: 206 50% 21%;        /* Dark blue for focus rings */
- 
-    --radius: 0.5rem;
+    --popover: 222 84% 4%;
+    --popover-foreground: 210 40% 98%;
 
-    /* Define the brand colors as standalone variables */
-    --brand-dark-blue: 206 50% 21%;
-    --brand-mid-blue: 206 28% 39%;
-    --brand-beige: 25 21% 77%;
-    --brand-cream: 29 50% 97%;
+    --primary: 217 91% 60%; /* #4f86f7 - Bright Blue */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 160 70% 45%; /* #28b889 - Sea Green */
+    --secondary-foreground: 222 84% 4%;
+
+    --muted: 217 33% 17%; /* #202a3a - Muted Blue/Gray */
+    --muted-foreground: 215 20% 65%; /* #939cb0 - Muted Gray */
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%; /* #992323 */
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.75rem; /* Increased for a more modern look */
+  }
+
+  .dark {
+    /* Keeping dark theme consistent with the root */
+    --background: 222 84% 4%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 84% 6%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 84% 4%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 160 70% 45%;
+    --secondary-foreground: 222 84% 4%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.75rem;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
   }
 }
-/* Add these animations to your existing globals.css */
+
+/* Custom Animations */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
 
 @keyframes float {
-  0%, 100% {
+  0% {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
   }
 }
 
 .animate-float {
-  animation: float 3s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
 }
 
-.animation-delay-2000 {
-  animation-delay: 2s;
+/* Custom Card Hover Effect */
+.card-hover-effect {
+  @apply transition-all duration-300 ease-in-out;
+}
+.card-hover-effect:hover {
+  @apply transform -translate-y-2 shadow-2xl shadow-primary/20;
 }
 
-.animation-delay-4000 {
-  animation-delay: 4s;
+/* Custom Button Hover Effect */
+.btn-hover-effect {
+  @apply transition-all duration-300 ease-in-out;
 }
-
-/* Glassmorphism effects */
-.backdrop-blur-xl {
-  backdrop-filter: blur(20px);
-}
-
-/* RTL Support */
-[dir="rtl"] {
-  direction: rtl;
-}
-
-[dir="ltr"] {
-  direction: ltr;
-}
-
-/* Custom scrollbar for select */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-/* Additional Modern Effects for Enhanced UI */
-.glass-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Smooth transitions for all interactive elements */
-* {
-  transition: all 0.3s ease;
-}
-
-/* Enhanced focus states for accessibility */
-.focus-ring:focus {
-  outline: none;
-  ring-offset-2: 2px;
-  ring-offset-color: transparent;
-  ring: 2px solid rgba(59, 130, 246, 0.5);
-}
-
-/* Gradient text effect for headings */
-.gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Pulse animation for loading states */
-@keyframes pulse-glow {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-/* Enhanced button hover effects */
-.btn-hover-scale:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-}
-
-/* Improved form input focus effects */
-.input-focus:focus {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-/* Card hover animations */
-.card-hover:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
-
-/* Text shimmer effect for special elements */
-@keyframes shimmer {
-  0% {
-    background-position: -200% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
-}
-
-.text-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
+.btn-hover-effect:hover {
+  @apply transform scale-105 shadow-lg;
 }

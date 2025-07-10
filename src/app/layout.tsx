@@ -1,20 +1,20 @@
 // src/app/layout.tsx
-
 import type { Metadata } from "next";
-import { Noto_Kufi_Arabic } from 'next/font/google'
+import { Inter } from 'next/font/google'; // Changed font
 import { SessionProvider } from "next-auth/react";
 import { Navbar } from "@/components/shared/navbar";
 import { Toaster } from "@/components/ui/sonner";
+import "./globals.css"; // Ensure globals is imported
 
-// Using Noto_Kufi for better Arabic rendering
-const font = Noto_Kufi_Arabic({
-  subsets: ["arabic"],
+// Using Inter for a clean, modern UI
+const font = Inter({
+  subsets: ["latin"], // Latin subset is sufficient for Inter
   variable: '--font-sans',
 });
 
 export const metadata: Metadata = {
-  title: "منصة التعلم المتقدمة",
-  description: "منصة تعليمية حديثة ومتطورة",
+  title: "EduPlatform | Modern Learning", // Updated title
+  description: "A modern, advanced educational platform.", // Updated description
 };
 
 export default function RootLayout({
@@ -23,16 +23,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // 1. We wrap everything in the SessionProvider
+    // SessionProvider should be the outermost provider
     <SessionProvider>
       <html lang="ar" dir="rtl">
-        {/* 2. I've updated the font for better Arabic support */}
-        <body className={`${font.variable} font-sans bg-slate-900 antialiased`}>
-          {/* 3. The Navbar is added here so it appears on all pages */}
+        <body className={`${font.variable} font-sans bg-background antialiased`}>
           <Navbar />
-          {/* 4. The rest of your app's pages will be rendered here */}
           <main>{children}</main>
-          <Toaster richColors /> {/* ADD THIS LINE */}
+          {/* Toaster for notifications, using richColors for better feedback */}
+          <Toaster richColors position="bottom-right" />
         </body>
       </html>
     </SessionProvider>

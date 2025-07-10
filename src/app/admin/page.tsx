@@ -5,8 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, BookOpen } from "lucide-react";
 
 async function getStats() {
-  const userCount = await prisma.user.count({ where: { isAdmin: false } });
-  const courseCount = await prisma.course.count();
+  const [userCount, courseCount] = await prisma.$transaction([
+    prisma.user.count({ where: { isAdmin: false } }),
+    prisma.course.count(),
+  ]);
   return { userCount, courseCount };
 }
 
@@ -15,28 +17,28 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold mb-8">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8">لوحة التحكم الرئيسية</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         
-        <Card className="bg-white/5 border-white/10 text-white">
+        <Card className="bg-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300">Total Students</CardTitle>
-            <Users className="h-5 w-5 text-purple-400" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">إجمالي الطلاب</CardTitle>
+            <Users className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{userCount}</div>
-            <p className="text-xs text-gray-400">Registered students on the platform</p>
+            <div className="text-3xl font-bold text-foreground">{userCount}</div>
+            <p className="text-xs text-muted-foreground">طالب مسجل في المنصة</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-white/5 border-white/10 text-white">
+        <Card className="bg-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300">Total Courses</CardTitle>
-            <BookOpen className="h-5 w-5 text-green-400" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">إجمالي الدورات</CardTitle>
+            <BookOpen className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{courseCount}</div>
-            <p className="text-xs text-gray-400">Courses available for enrollment</p>
+            <div className="text-3xl font-bold text-foreground">{courseCount}</div>
+            <p className="text-xs text-muted-foreground">دورة متاحة للتسجيل</p>
           </CardContent>
         </Card>
         
