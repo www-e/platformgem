@@ -1,13 +1,13 @@
 // src/app/layout.tsx
 
 import type { Metadata } from "next";
-import { Noto_Kufi } from "next/font/google"; // Switched to a font with better Arabic support
-import "./globals.css";
+import { Noto_Kufi_Arabic } from 'next/font/google'
 import { SessionProvider } from "next-auth/react";
 import { Navbar } from "@/components/shared/navbar";
+import { Toaster } from "@/components/ui/sonner";
 
 // Using Noto_Kufi for better Arabic rendering
-const font = Noto_Kufi({
+const font = Noto_Kufi_Arabic({
   subsets: ["arabic"],
   variable: '--font-sans',
 });
@@ -32,6 +32,7 @@ export default function RootLayout({
           <Navbar />
           {/* 4. The rest of your app's pages will be rendered here */}
           <main>{children}</main>
+          <Toaster richColors /> {/* ADD THIS LINE */}
         </body>
       </html>
     </SessionProvider>

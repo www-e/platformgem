@@ -4,7 +4,7 @@
 import { redirect } from 'next/navigation';
 import bcrypt from "bcryptjs";
 import { Grade } from "@prisma/client";
-import { signIn } from "@/lib/auth";
+import { auth, signIn } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
 // --- LOGIN ACTION ---
@@ -91,6 +91,7 @@ export async function createCourse(prevState: string | undefined, formData: Form
   const description = formData.get("description") as string;
   const thumbnailUrl = formData.get("thumbnailUrl") as string;
   const targetGrade = formData.get("targetGrade") as Grade;
+  const bunnyLibraryId = formData.get("bunnyLibraryId") as string;
 
   if (!title || !description || !thumbnailUrl || !targetGrade) {
     return "All fields are required.";
@@ -103,6 +104,7 @@ export async function createCourse(prevState: string | undefined, formData: Form
         description,
         thumbnailUrl,
         targetGrade,
+        bunnyLibraryId,
       },
     });
 
@@ -121,15 +123,15 @@ export async function createCourse(prevState: string | undefined, formData: Form
 // --- CREATE LESSON ACTION ---
 export async function createLesson(
   courseId: string, 
-  prevState: string | undefined, 
+  prevState: { error?: string }, // The previous state is now an object
   formData: FormData
-) {
+): Promise<{ error?: string }> { // This function PROMISES to return an object with an error string
   const title = formData.get("title") as string;
   const order = parseInt(formData.get("order") as string, 10);
   const bunnyVideoId = formData.get("bunnyVideoId") as string;
 
   if (!title || isNaN(order) || !bunnyVideoId) {
-    return "All fields are required and order must be a number.";
+    return { error:"All fields are required and order must be a number."};
   }
 
   try {
@@ -143,11 +145,11 @@ export async function createLesson(
     });
 
     revalidatePath(`/admin/courses/${courseId}`);
-    return undefined; // Clear error message on success
+    return { success: "Lesson added successfully!" }; // Clear error message on success
     
   } catch (error) {
     console.error(error);
-    return "Database Error: Failed to create lesson.";
+    return { error: "Database Error: Failed to create lesson."};
   }
 }
 // --- ADD EXAM RESULT ACTION ---
@@ -188,10 +190,111 @@ export async function addExamResult(
     });
 
     revalidatePath(`/admin/students/${userId}`);
-    return undefined; // Success
+    return { success: "Exam result added successfully!" }; // Success
     
   } catch (error) {
     console.error(error);
     return "Database Error: Failed to add exam result.";
+  }
+}
+// --- ENROLL IN COURSE ACTION ---
+export async function enrollInCourse(courseId: string) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { error: "You must be logged in to enroll." };
+  }
+
+  try {
+    // Check if enrollment already exists to prevent duplicates
+    const existingEnrollment = await prisma.enrollment.findUnique({
+      where: {
+        userId_courseId: {
+          userId: session.user.id,
+          courseId,
+        },
+      },
+    });
+
+    if (existingEnrollment) {
+      return { message: "You are already enrolled in this course." };
+    }
+
+    // Create the new enrollment record
+    await prisma.enrollment.create({
+      data: {
+        userId: session.user.id,
+        courseId,
+        // progressPercent and completedLessonIds will use their default values
+      },
+    });
+
+    // Revalidate the dashboard path so the UI updates to show "View Course"
+    revalidatePath("/dashboard");
+    return { message: "Successfully enrolled!" };
+
+  } catch (error) {
+    console.error("Enrollment Error:", error);
+    return { error: "Database error: Could not complete enrollment." };
+  }
+}
+// --- TOGGLE LESSON COMPLETION ---
+export async function toggleLessonComplete(
+  courseId: string,
+  lessonId: string
+) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { error: "Not authenticated" };
+  }
+  const userId = session.user.id;
+
+  try {
+    const enrollment = await prisma.enrollment.findUnique({
+      where: {
+        userId_courseId: {
+          userId,
+          courseId,
+        },
+      },
+      select: {
+        completedLessonIds: true,
+      },
+    });
+
+    if (!enrollment) {
+      return { error: "Enrollment not found." };
+    }
+
+    const completedIds = new Set(enrollment.completedLessonIds);
+
+    // Toggle the lesson's completion status
+    if (completedIds.has(lessonId)) {
+      completedIds.delete(lessonId);
+    } else {
+      completedIds.add(lessonId);
+    }
+    
+    // Convert the Set back to an array to store in the database
+    const updatedCompletedIds = Array.from(completedIds);
+
+    await prisma.enrollment.update({
+      where: {
+        userId_courseId: {
+          userId,
+          courseId,
+        },
+      },
+      data: {
+        completedLessonIds: updatedCompletedIds,
+      },
+    });
+
+    // Revalidate the course player page to instantly update the sidebar UI
+    revalidatePath(`/courses/${courseId}`);
+    return { success: "Progress updated!" };
+
+  } catch (error) {
+    console.error(error);
+    return { error: "Database error: could not update progress." };
   }
 }

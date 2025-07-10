@@ -43,6 +43,7 @@ model Course {
   description String
   thumbnailUrl String
   targetGrade Grade
+  bunnyLibraryId String
 
   lessons     Lesson[]
   enrollments Enrollment[]

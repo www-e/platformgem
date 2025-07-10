@@ -1,7 +1,8 @@
 // src/app/admin/courses/[courseId]/_components/add-lesson-form.tsx
 
 "use client";
-
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { createLesson } from "@/lib/actions";
@@ -20,24 +21,44 @@ function SubmitButton() {
 
 export function AddLessonForm({ courseId }: { courseId: string }) {
   const createLessonWithCourseId = createLesson.bind(null, courseId);
-  const [message, dispatch] = useActionState(createLessonWithCourseId, undefined);
+  const [state, dispatch] = useActionState(createLessonWithCourseId, { error: undefined });
+  // ... after the useActionState line ...
+
+  useEffect(() => {
+    if (state.error) {
+      toast.error("Error", {
+        description: state.error,
+      });
+    } else if (!state.error && Object.keys(state).length === 0) {
+      // A successful action returns an empty object {}
+      toast.success("Success!", {
+        description: "Lesson added successfully.",
+      });
+      // You can also reset the form here
+      const form = document.querySelector('form');
+      form?.reset();
+    }
+  }, [state]);
 
   return (
     <form action={dispatch} className="space-y-4 p-6 bg-white/5 border border-white/10 rounded-2xl">
       <h2 className="text-2xl font-bold">Add New Lesson</h2>
+
       <div className="space-y-2">
         <Label htmlFor="title">Lesson Title</Label>
         <Input name="title" id="title" placeholder="e.g., Introduction to Calculus" required />
       </div>
+
       <div className="space-y-2">
         <Label htmlFor="order">Lesson Order</Label>
         <Input name="order" id="order" type="number" placeholder="1" required />
       </div>
+
       <div className="space-y-2">
         <Label htmlFor="bunnyVideoId">Bunny.net Video ID</Label>
         <Input name="bunnyVideoId" id="bunnyVideoId" placeholder="abc-123-xyz" required />
       </div>
-      {message && <p className="text-sm text-red-400">{message}</p>}
+
       <SubmitButton />
     </form>
   );

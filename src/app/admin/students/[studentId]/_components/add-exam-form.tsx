@@ -1,7 +1,8 @@
 // src/app/admin/students/[studentId]/_components/add-exam-form.tsx
 
 "use client";
-
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { addExamResult } from "@/lib/actions";
@@ -22,7 +23,15 @@ function SubmitButton() {
 export function AddExamResultForm({ userId }: { userId: string }) {
   const addExamResultWithUserId = addExamResult.bind(null, userId);
   const [message, dispatch] = useActionState(addExamResultWithUserId, undefined);
-
+  useEffect(() => {
+    if (message?.error) {
+      toast.error("Error", { description: message.error });
+    }
+    if (message?.success) {
+      toast.success("Success!", { description: message.success });
+      (document.getElementById('add-lesson-form') as HTMLFormElement)?.reset();
+    }
+  }, [message]);
   return (
     <Card className="bg-white/5 border-white/10 text-white">
       <CardHeader><CardTitle>Add New Exam Result</CardTitle></CardHeader>
@@ -40,7 +49,6 @@ export function AddExamResultForm({ userId }: { userId: string }) {
             <Label htmlFor="score">Score</Label>
             <Input name="score" id="score" type="number" step="0.5" placeholder="88.5" required />
           </div>
-          {message && <p className="text-sm text-red-400">{message}</p>}
           <SubmitButton />
         </form>
       </CardContent>
