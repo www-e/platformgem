@@ -1,10 +1,9 @@
 // src/app/admin/students/[studentId]/_components/add-exam-form.tsx
-
 "use client";
-import { useEffect } from "react";
-import { toast } from "sonner";
-import { useActionState } from "react";
+
+import { useActionState ,useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
+import { toast } from "sonner";
 import { addExamResult } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,21 +21,24 @@ function SubmitButton() {
 
 export function AddExamResultForm({ userId }: { userId: string }) {
   const addExamResultWithUserId = addExamResult.bind(null, userId);
-  const [message, dispatch] = useActionState(addExamResultWithUserId, undefined);
+  const [state, dispatch] = useActionState(addExamResultWithUserId, { error: undefined, success: undefined });
+  const formRef = useRef<HTMLFormElement>(null);
+
   useEffect(() => {
-    if (message?.error) {
-      toast.error("Error", { description: message.error });
+    if (state.error) {
+      toast.error("Error", { description: state.error });
     }
-    if (message?.success) {
-      toast.success("Success!", { description: message.success });
-      (document.getElementById('add-lesson-form') as HTMLFormElement)?.reset();
+    if (state.success) {
+      toast.success("Success!", { description: state.success });
+      formRef.current?.reset();
     }
-  }, [message]);
+  }, [state]);
+
   return (
     <Card className="bg-white/5 border-white/10 text-white">
       <CardHeader><CardTitle>Add New Exam Result</CardTitle></CardHeader>
       <CardContent>
-        <form action={dispatch} className="space-y-4">
+        <form ref={formRef} action={dispatch} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="title">Exam Title</Label>
             <Input name="title" id="title" placeholder="e.g., Final Physics Exam" required />
