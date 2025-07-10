@@ -1,10 +1,17 @@
 // src/middleware.ts
-import { auth } from "@/lib/auth"
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-export default auth((req) => {
-  const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
+export async function middleware(request: NextRequest) {
+  const { nextUrl } = request;
+  
+  // Get the JWT token directly (Edge Runtime compatible)
+  const token = await getToken({ 
+    req: request, 
+    secret: process.env.NEXTAUTH_SECRET 
+  });
+  
+  const isLoggedIn = !!token;
 
   const isApiRoute = nextUrl.pathname.startsWith('/api');
   const isAuthRoute = nextUrl.pathname.startsWith('/login') || nextUrl.pathname.startsWith('/signup');
@@ -22,7 +29,7 @@ export default auth((req) => {
   }
   
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: [
