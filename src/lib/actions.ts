@@ -11,14 +11,14 @@ export interface ActionState {
   success?: string;
 }
 // --- LOGIN ACTION ---
-export async function login(prevState: string | undefined, formData: FormData) {
-  try {
+export async function login(prevState: ActionState, formData: FormData): Promise<ActionState> {  try {
     await signIn("credentials", formData);
+    return { success: "Login successful. Redirecting..." };
   } catch (error) {
     if ((error as Error).message.includes("CredentialsSignin")) {
-      return "معرف الطالب أو رقم الهاتف أو كلمة المرور غير صحيحة.";
+      return { error:"معرف الطالب أو رقم الهاتف أو كلمة المرور غير صحيحة."};
     }
-    return "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.";
+    return { error:"حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."};
   }
   
   // Only redirect if signIn succeeded (no error thrown)
@@ -26,7 +26,7 @@ export async function login(prevState: string | undefined, formData: FormData) {
 }
 
 // --- SIGNUP ACTION ---
-export async function signup(prevState: string | undefined, formData: FormData) {
+export async function signup(prevState: ActionState, formData: FormData): Promise<ActionState> {
   const name = formData.get("name") as string;
   const phone = formData.get("phone") as string;
   const parentPhone = formData.get("parentPhone") as string;
@@ -34,17 +34,16 @@ export async function signup(prevState: string | undefined, formData: FormData) 
   const password = formData.get("password") as string;
   const grade = formData.get("grade") as Grade;
 
-  // Enhanced validation
   if (!name || !phone || !studentId || !password || !grade) {
-    return "يرجى ملء جميع الحقول المطلوبة.";
+    return { error: "يرجى ملء جميع الحقول المطلوبة." };
   }
 
   if (password.length < 6) {
-    return "كلمة المرور يجب أن تكون 6 أحرف على الأقل.";
+    return { error:"كلمة المرور يجب أن تكون 6 أحرف على الأقل."};
   }
 
   if (phone.length < 11) {
-    return "رقم الهاتف غير صحيح.";
+    return { error:"رقم الهاتف غير صحيح."};
   }
 
   // Check for existing user BEFORE try/catch
@@ -56,11 +55,11 @@ export async function signup(prevState: string | undefined, formData: FormData) 
     });
 
     if (existingUser) {
-      return "يوجد مستخدم بالفعل بهذا الرقم أو معرف الطالب.";
+      return { error:"يوجد مستخدم بالفعل بهذا الرقم أو معرف الطالب."};
     }
   } catch (error) {
     console.error("Database check error:", error);
-    return "خطأ في الاتصال بقاعدة البيانات.";
+    return { error:"خطأ في الاتصال بقاعدة البيانات."};
   }
 
   // Create user in separate try/catch
@@ -78,7 +77,7 @@ export async function signup(prevState: string | undefined, formData: FormData) 
     });
   } catch (error) {
     console.error("User creation error:", error);
-    return "خطأ في قاعدة البيانات: فشل في إنشاء الحساب.";
+    return { error:"خطأ في قاعدة البيانات: فشل في إنشاء الحساب."};
   }
 
   // Only redirect if user creation succeeded
