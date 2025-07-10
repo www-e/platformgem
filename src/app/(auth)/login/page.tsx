@@ -1,18 +1,13 @@
 // src/app/(auth)/login/page.tsx
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { login } from "@/lib/actions";
 import Link from "next/link";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, LogIn, Sparkles } from "lucide-react";
@@ -28,12 +23,12 @@ function SubmitButton() {
       disabled={pending}
     >
       {pending ? (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
           جاري تسجيل الدخول...
         </div>
       ) : (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <LogIn className="w-5 h-5" />
           تسجيل الدخول
         </div>
@@ -43,21 +38,19 @@ function SubmitButton() {
 }
 
 export default function LoginPage() {
-  const [errorMessage, dispatch] = useActionState(login, undefined);
+  // The login action now only returns a state on error.
+  const [errorState, dispatch] = useActionState(login, undefined);
   const [showPassword, setShowPassword] = useState(false);
+  
+  useEffect(() => {
+    if (errorState?.error) {
+        toast.error("Login Failed", { description: errorState.error });
+    }
+  }, [errorState]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
-      </div>
-
-      {/* Client-Only Floating Particles */}
       <FloatingParticles count={20} />
-
       <Card className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl relative z-10">
         <CardHeader className="text-center pb-8">
           <div className="flex justify-center mb-4">
@@ -65,20 +58,13 @@ export default function LoginPage() {
               <Sparkles className="w-8 h-8 text-white" />
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold text-white mb-2">
-            مرحباً بعودتك
-          </CardTitle>
-          <CardDescription className="text-gray-300 text-lg">
-            ادخل بياناتك للوصول إلى دوراتك التعليمية
-          </CardDescription>
+          <CardTitle className="text-3xl font-bold text-white mb-2">مرحباً بعودتك</CardTitle>
+          <CardDescription className="text-gray-300 text-lg">ادخل بياناتك للوصول إلى دوراتك التعليمية</CardDescription>
         </CardHeader>
-
-        <CardContent className="space-y-6">
+        <CardContent>
           <form action={dispatch} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="login" className="text-white font-medium">
-                معرف الطالب أو رقم الهاتف
-              </Label>
+              <Label htmlFor="login" className="text-white font-medium">معرف الطالب أو رقم الهاتف</Label>
               <Input
                 id="login"
                 name="login"
@@ -89,11 +75,8 @@ export default function LoginPage() {
                 dir="ltr"
               />
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white font-medium">
-                كلمة المرور
-              </Label>
+              <Label htmlFor="password" className="text-white font-medium">كلمة المرور</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -112,23 +95,12 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
-
-            {errorMessage && (
-              <div className="bg-red-500/20 border border-red-500/30 text-red-200 px-4 py-3 rounded-xl backdrop-blur-sm">
-                {errorMessage}
-              </div>
-            )}
-
             <SubmitButton />
           </form>
-
           <div className="text-center pt-4">
             <p className="text-gray-300">
               ليس لديك حساب؟{" "}
-              <Link
-                href="/signup"
-                className="text-blue-400 hover:text-blue-300 font-semibold transition-colors hover:underline"
-              >
+              <Link href="/signup" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors hover:underline">
                 إنشاء حساب جديد
               </Link>
             </p>
