@@ -4,67 +4,57 @@
 
 @layer base {
   :root {
-    --background: 222 84% 4%; /* #010816 - Deep Navy */
-    --foreground: 210 40% 98%; /* #f8f9fa - Almost White */
+    --background: 248 35% 7%;  /* #090816 - Deep Space Navy */
+    --foreground: 250 20% 95%; /* #eef0fa - Starlight White */
 
-    --card: 222 84% 6%; /* #020c1c - Slightly Lighter Navy */
-    --card-foreground: 210 40% 98%;
+    --card: 248 35% 11%;      /* #110f29 - Darker Nebula */
+    --card-foreground: 250 20% 95%;
 
-    --popover: 222 84% 4%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 248 35% 7%;
+    --popover-foreground: 250 20% 95%;
 
-    --primary: 217 91% 60%; /* #4f86f7 - Bright Blue */
-    --primary-foreground: 210 40% 98%;
+    --primary: 258 85% 70%;   /* #8b68f7 - Galactic Purple */
+    --primary-foreground: 250 20% 95%;
 
-    --secondary: 160 70% 45%; /* #28b889 - Sea Green */
-    --secondary-foreground: 222 84% 4%;
+    --secondary: 25 95% 60%;  /* #f7903f - Solar Orange */
+    --secondary-foreground: 248 35% 7%;
 
-    --muted: 217 33% 17%; /* #202a3a - Muted Blue/Gray */
-    --muted-foreground: 215 20% 65%; /* #939cb0 - Muted Gray */
+    --muted: 248 35% 15%;      /* #1a173d - Muted Space */
+    --muted-foreground: 250 15% 60%; /* #918fad - Asteroid Gray */
 
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 248 35% 15%;
+    --accent-foreground: 250 20% 95%;
 
-    --destructive: 0 63% 31%; /* #992323 */
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 359 81% 59%; /* #f14c4c */
+    --destructive-foreground: 250 20% 95%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 217 91% 60%;
+    --border: 248 35% 20%;      /* #221f51 */
+    --input: 248 35% 18%;       /* #1d1a48 */
+    --ring: 258 85% 70%;
 
-    --radius: 0.75rem; /* Increased for a more modern look */
+    --radius: 0.75rem;
   }
 
   .dark {
-    /* Keeping dark theme consistent with the root */
-    --background: 222 84% 4%;
-    --foreground: 210 40% 98%;
-
-    --card: 222 84% 6%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222 84% 4%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 217 91% 60%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 160 70% 45%;
-    --secondary-foreground: 222 84% 4%;
-
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 217 91% 60%;
-
+    --background: 248 35% 7%;
+    --foreground: 250 20% 95%;
+    --card: 248 35% 11%;
+    --card-foreground: 250 20% 95%;
+    --popover: 248 35% 7%;
+    --popover-foreground: 250 20% 95%;
+    --primary: 258 85% 70%;
+    --primary-foreground: 250 20% 95%;
+    --secondary: 25 95% 60%;
+    --secondary-foreground: 248 35% 7%;
+    --muted: 248 35% 15%;
+    --muted-foreground: 250 15% 60%;
+    --accent: 248 35% 15%;
+    --accent-foreground: 250 20% 95%;
+    --destructive: 359 81% 59%;
+    --destructive-foreground: 250 20% 95%;
+    --border: 248 35% 20%;
+    --input: 248 35% 18%;
+    --ring: 258 85% 70%;
     --radius: 0.75rem;
   }
 }

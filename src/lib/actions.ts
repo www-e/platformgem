@@ -139,24 +139,71 @@ export async function enrollInCourse(courseId: string): Promise<ActionState> {
   }
 }
 // --- TOGGLE LESSON COMPLETION --- (Updated to use ActionState)
-export async function toggleLessonComplete(courseId: string, lessonId: string): Promise<ActionState> {
+// This defines the shape of the data our action will now return
+export interface ToggleLessonCompleteResult {
+  error?: string;
+  success?: string;
+  nextLessonId?: string | null; // Will be null if it's the last lesson
+}
+
+export async function toggleLessonComplete(
+  courseId: string,
+  lessonId: string
+): Promise<ToggleLessonCompleteResult> {
   const session = await auth();
-  if (!session?.user?.id) return { error: "Not authenticated" };
+  if (!session?.user?.id) {
+    return { error: "Not authenticated" };
+  }
 
   try {
-    const enrollment = await prisma.enrollment.findUnique({ where: { userId_courseId: { userId: session.user.id, courseId } }, select: { completedLessonIds: true } });
-    if (!enrollment) return { error: "Enrollment not found." };
+    const courseWithLessons = await prisma.course.findUnique({
+      where: { id: courseId },
+      include: { lessons: { orderBy: { order: 'asc' } } },
+    });
+    
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId: session.user.id, courseId } },
+      select: { completedLessonIds: true },
+    });
+
+    if (!enrollment || !courseWithLessons) {
+      return { error: "Enrollment not found." };
+    }
 
     const completedIds = new Set(enrollment.completedLessonIds);
+    let nextLessonId: string | null = null;
+
     if (completedIds.has(lessonId)) {
       completedIds.delete(lessonId);
+      // If we un-complete a lesson, there's no "next" lesson to go to.
     } else {
       completedIds.add(lessonId);
+      
+      // --- This is the new "auto-advance" logic ---
+      const currentLessonIndex = courseWithLessons.lessons.findIndex(l => l.id === lessonId);
+      const isLastLesson = currentLessonIndex === courseWithLessons.lessons.length - 1;
+
+      if (!isLastLesson) {
+        nextLessonId = courseWithLessons.lessons[currentLessonIndex + 1].id;
+      }
+      // If it IS the last lesson, nextLessonId remains null.
     }
+
     const updatedCompletedIds = Array.from(completedIds);
-    await prisma.enrollment.update({ where: { userId_courseId: { userId: session.user.id, courseId } }, data: { completedLessonIds: updatedCompletedIds } });
+    
+    // We use `update` here to also update the `updatedAt` field for our profile page logic
+    await prisma.enrollment.update({
+      where: { userId_courseId: { userId: session.user.id, courseId } },
+      data: { completedLessonIds: updatedCompletedIds },
+    });
+
     revalidatePath(`/courses/${courseId}`);
-    return { success: "Progress updated!" };
+    
+    return { 
+      success: "Progress updated!",
+      nextLessonId: nextLessonId
+    };
+
   } catch (error) {
     console.error(error);
     return { error: "Database error: could not update progress." };
