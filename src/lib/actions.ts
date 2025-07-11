@@ -16,16 +16,11 @@ export interface ActionState {
 export async function login(prevState: ActionState | undefined, formData: FormData): Promise<ActionState> {
   try {
     await signIn("credentials", formData);
-    // This redirect will be triggered by NextAuth's successful sign-in
-    // but we can return a success state if needed for the UI.
     return { success: "Login successful!" };
   } catch (error) {
-    // The error thrown by signIn on failure is of a specific type
     if ((error as Error).message.includes("CredentialsSignin")) {
       return { error: "معرف الطالب أو رقم الهاتف أو كلمة المرور غير صحيحة." };
     }
-    // For other unexpected errors, it's better to re-throw them.
-    // In a production app, you'd want to log this properly.
     throw error;
   }
 }
