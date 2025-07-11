@@ -216,3 +216,40 @@ export async function toggleLessonComplete(
     return { error: "Database error: could not update progress." };
   }
 }
+export async function updateCourse(courseId: string, prevState: ActionState, formData: FormData): Promise<ActionState> {
+  const title = formData.get("title") as string;
+  const description = formData.get("description") as string;
+  const thumbnailUrl = formData.get("thumbnailUrl") as string;
+  const targetGrade = formData.get("targetGrade") as Grade;
+  const bunnyLibraryId = formData.get("bunnyLibraryId") as string;
+
+  if (!title || !description || !thumbnailUrl || !targetGrade || !bunnyLibraryId) {
+    return { error: "All fields are required." };
+  }
+
+  try {
+    await prisma.course.update({
+      where: { id: courseId },
+      data: { title, description, thumbnailUrl, targetGrade, bunnyLibraryId }
+    });
+    revalidatePath("/admin/courses");
+    return { success: "Course updated successfully!" };
+  } catch (error) {
+    console.error(error);
+    return { error: "Database Error: Failed to update course." };
+  }
+}
+
+export async function deleteCourse(courseId: string): Promise<ActionState> {
+  try {
+    // Prisma's onDelete: Cascade on the schema will handle deleting associated lessons
+    await prisma.course.delete({
+      where: { id: courseId },
+    });
+    revalidatePath("/admin/courses");
+    return { success: "Course deleted successfully." };
+  } catch (error) {
+    console.error(error);
+    return { error: "Database Error: Failed to delete course." };
+  }
+}

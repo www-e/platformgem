@@ -12,8 +12,9 @@ const gradeMap = {
 };
 
 export default async function StudentDetailPage({ params }: { params: { studentId: string }}) {
+  const { studentId } = params;
   const student = await prisma.user.findUnique({
-    where: { id: params.studentId },
+    where: { id: studentId },
   });
 
   if (!student) {
