@@ -11,19 +11,6 @@ export interface ActionState {
   error?: string;
   success?: string;
 }
-// --- CORRECTED LOGIN ACTION ---
-// The prevState parameter is added back to match the useActionState hook's expectation.
-export async function login(prevState: ActionState | undefined, formData: FormData): Promise<ActionState> {
-  try {
-    await signIn("credentials", formData);
-    return { success: "Login successful!" };
-  } catch (error) {
-    if ((error as Error).message.includes("CredentialsSignin")) {
-      return { error: "معرف الطالب أو رقم الهاتف أو كلمة المرور غير صحيحة." };
-    }
-    throw error;
-  }
-}
 
 // --- SIGNUP ACTION ---
 export async function signup(prevState: ActionState | undefined, formData: FormData): Promise<ActionState> {
@@ -37,20 +24,40 @@ export async function signup(prevState: ActionState | undefined, formData: FormD
   if (!name || !phone || !studentId || !password || !grade) {
     return { error: "يرجى ملء جميع الحقول المطلوبة." };
   }
-  if (password.length < 6) return { error: "كلمة المرور يجب أن تكون 6 أحرف على الأقل." };
-  if (phone.length < 11) return { error: "رقم الهاتف غير صحيح." };
+  if (password.length < 6) {
+    return { error: "كلمة المرور يجب أن تكون 6 أحرف على الأقل." };
+  }
+  if (phone.length < 11) {
+    return { error: "رقم الهاتف غير صحيح." };
+  }
   
   try {
     const existingUser = await prisma.user.findFirst({ where: { OR: [{ phone }, { studentId }] } });
-    if (existingUser) return { error: "يوجد مستخدم بالفعل بهذا الرقم أو معرف الطالب." };
+    if (existingUser) {
+      return { error: "يوجد مستخدم بالفعل بهذا الرقم أو معرف الطالب." };
+    }
     const hashedPassword = await bcrypt.hash(password, 12);
     await prisma.user.create({ data: { name, phone, parentPhone, studentId, password: hashedPassword, grade } });
+
+    const loginFormData = new FormData();
+    loginFormData.append("login", studentId);
+    loginFormData.append("password", password);
+
+    await signIn("credentials", loginFormData);
+
   } catch (error) {
-    console.error(error);
-    return { error: "خطأ في قاعدة البيانات." };
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
+    console.error("An actual error occurred:", error);
+    if ((error as Error).message.includes("CredentialsSignin")) {
+      return { error: "فشل تسجيل الدخول التلقائي. يرجى محاولة تسجيل الدخول يدويًا." };
+    }
+    return { error: "حدث خطأ في قاعدة البيانات أثناء إنشاء الحساب." };
   }
   
-  redirect('/login');
+  redirect('/profile');
 }
 // --- CREATE COURSE ACTION ---
 export async function createCourse(prevState: ActionState, formData: FormData): Promise<ActionState> {
