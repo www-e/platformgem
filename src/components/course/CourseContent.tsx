@@ -1,20 +1,24 @@
 // src/components/course/CourseContent.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BunnyVideoPlayer } from "@/components/video/BunnyVideoPlayer";
+import { CertificateGenerator } from "@/components/certificates/CertificateGenerator";
+import { useViewingHistory } from "@/hooks/useViewingHistory";
+import { useProgressTracking } from "@/hooks/useProgressTracking";
 import { 
   Play, 
   Clock, 
   CheckCircle, 
-  Lock,
   BookOpen,
   FileText,
   Download,
-  Eye
+  Eye,
+  PlayCircle,
+  Award
 } from "lucide-react";
 
 interface Lesson {
@@ -31,6 +35,7 @@ interface Course {
   description: string;
   price: number | null;
   currency: string;
+  bunnyLibraryId: string;
   _count: {
     lessons: number;
     enrollments: number;
@@ -45,6 +50,12 @@ interface CourseContentProps {
 export function CourseContent({ course, lessons }: CourseContentProps) {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(
     lessons.length > 0 ? lessons[0] : null
+  );
+  const [lessonProgress, setLessonProgress] = useState<Record<string, number>>({});
+  const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
+
+  const { viewingHistory, batchUpdateViewingHistory } = useViewingHistory(
+    selectedLesson?.id || ''
   );
 
   const formatDuration = (seconds: number | null) => {
@@ -63,6 +74,49 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
     return total + (lesson.duration || 0);
   }, 0);
 
+  // Calculate overall progress
+  const completedCount = completedLessons.size;
+  const overallProgress = lessons.length > 0 ? (completedCount / lessons.length) * 100 : 0;
+  const totalWatchedTime = Object.values(lessonProgress).reduce((sum, time) => sum + time, 0);
+
+  // Track progress milestones
+  useProgressTracking({
+    courseId: course.id,
+    completionRate: overallProgress,
+    completedLessons: completedCount,
+    totalLessons: lessons.length,
+    isEnrolled: true // Assuming user is enrolled if they can see content
+  });
+
+  // Handle lesson completion
+  const handleLessonComplete = () => {
+    if (selectedLesson) {
+      setCompletedLessons(prev => new Set([...prev, selectedLesson.id]));
+    }
+  };
+
+  // Handle progress updates
+  const handleProgressUpdate = (progress: {
+    watchedDuration: number;
+    totalDuration: number;
+    lastPosition: number;
+    completed: boolean;
+  }) => {
+    if (selectedLesson) {
+      setLessonProgress(prev => ({
+        ...prev,
+        [selectedLesson.id]: progress.watchedDuration
+      }));
+
+      if (progress.completed) {
+        setCompletedLessons(prev => new Set([...prev, selectedLesson.id]));
+      }
+
+      // Update viewing history via API
+      batchUpdateViewingHistory(progress);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Course Progress (placeholder) */}
@@ -77,13 +131,13 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
           <div className="space-y-3">
             <div className="flex justify-between text-sm">
               <span>التقدم الإجمالي</span>
-              <span>0 من {lessons.length} دروس</span>
+              <span>{completedCount} من {lessons.length} دروس</span>
             </div>
             <div className="w-full bg-muted rounded-full h-2">
-              <div className="bg-primary h-2 rounded-full" style={{ width: '0%' }}></div>
+              <div className="bg-primary h-2 rounded-full" style={{ width: `${overallProgress}%` }}></div>
             </div>
             <div className="flex justify-between text-sm text-muted-foreground">
-              <span>وقت المشاهدة: 0 دقيقة</span>
+              <span>وقت المشاهدة: {Math.floor(totalWatchedTime / 60)} دقيقة</span>
               <span>المدة الإجمالية: {Math.floor(totalDuration / 60)} دقيقة</span>
             </div>
           </div>
@@ -92,9 +146,10 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
 
       {/* Course Content Tabs */}
       <Tabs defaultValue="lessons" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="lessons">الدروس</TabsTrigger>
           <TabsTrigger value="materials">المواد</TabsTrigger>
+          <TabsTrigger value="certificate">الشهادة</TabsTrigger>
           <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
         </TabsList>
 
@@ -112,7 +167,7 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="space-y-1">
-                    {lessons.map((lesson, index) => (
+                    {lessons.map((lesson) => (
                       <button
                         key={lesson.id}
                         onClick={() => setSelectedLesson(lesson)}
@@ -122,8 +177,16 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
                       >
                         <div className="flex items-center gap-3">
                           <div className="flex-shrink-0">
-                            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                              <span className="text-sm font-medium">{lesson.order}</span>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              completedLessons.has(lesson.id) 
+                                ? 'bg-green-100 text-green-600' 
+                                : 'bg-primary/10'
+                            }`}>
+                              {completedLessons.has(lesson.id) ? (
+                                <CheckCircle className="w-4 h-4" />
+                              ) : (
+                                <span className="text-sm font-medium">{lesson.order}</span>
+                              )}
                             </div>
                           </div>
                           
@@ -134,11 +197,23 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
                               <span className="text-xs text-muted-foreground">
                                 {formatDuration(lesson.duration)}
                               </span>
+                              {lessonProgress[lesson.id] && (
+                                <>
+                                  <span className="text-xs text-muted-foreground">•</span>
+                                  <span className="text-xs text-green-600">
+                                    {Math.floor(lessonProgress[lesson.id] / 60)} دقيقة
+                                  </span>
+                                </>
+                              )}
                             </div>
                           </div>
                           
                           <div className="flex-shrink-0">
-                            <Play className="w-4 h-4 text-muted-foreground" />
+                            {selectedLesson?.id === lesson.id ? (
+                              <PlayCircle className="w-4 h-4 text-primary" />
+                            ) : (
+                              <Play className="w-4 h-4 text-muted-foreground" />
+                            )}
                           </div>
                         </div>
                       </button>
@@ -161,33 +236,43 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
                       الدرس {selectedLesson.order} • {formatDuration(selectedLesson.duration)}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    {/* Video Player Placeholder */}
-                    <div className="aspect-video bg-black rounded-lg flex items-center justify-center mb-4">
-                      <div className="text-center text-white">
-                        <Play className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                        <p className="text-lg font-medium">مشغل الفيديو</p>
-                        <p className="text-sm opacity-75">Bunny Video ID: {selectedLesson.bunnyVideoId}</p>
-                      </div>
-                    </div>
+                  <CardContent className="p-0">
+                    {/* Bunny Video Player */}
+                    <BunnyVideoPlayer
+                      lessonId={selectedLesson.id}
+                      bunnyVideoId={selectedLesson.bunnyVideoId}
+                      bunnyLibraryId={course.bunnyLibraryId}
+                      title={selectedLesson.title}
+                      onProgressUpdate={handleProgressUpdate}
+                      onLessonComplete={handleLessonComplete}
+                      initialPosition={viewingHistory?.lastPosition || 0}
+                    />
 
                     {/* Lesson Controls */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline">
-                          <CheckCircle className="w-4 h-4" />
-                          تم الإكمال
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          <Download className="w-4 h-4" />
-                          تحميل المواد
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground">
-                          سرعة التشغيل: 1x
-                        </span>
+                    <div className="p-4 border-t">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            size="sm" 
+                            variant={completedLessons.has(selectedLesson.id) ? "default" : "outline"}
+                            disabled={completedLessons.has(selectedLesson.id)}
+                          >
+                            <CheckCircle className="w-4 h-4" />
+                            {completedLessons.has(selectedLesson.id) ? 'مكتمل' : 'تم الإكمال'}
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            <Download className="w-4 h-4" />
+                            تحميل المواد
+                          </Button>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          {viewingHistory && (
+                            <span>
+                              التقدم: {Math.round((viewingHistory.lastPosition / (viewingHistory.totalDuration || 1)) * 100)}%
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -229,6 +314,15 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Certificate Tab */}
+        <TabsContent value="certificate" className="space-y-4">
+          <CertificateGenerator
+            courseId={course.id}
+            courseName={course.title}
+            completionRate={overallProgress}
+          />
         </TabsContent>
 
         {/* Overview Tab */}

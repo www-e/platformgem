@@ -98,14 +98,20 @@
     - Add automatic enrollment after successful payment
     - _Requirements: 4.2, 4.5_
 
-- [ ] 6. Advanced Analytics and Progress Tracking
-  - [ ] 6.1 Implement viewing time tracking system
+- [x] 6. Advanced Analytics and Progress Tracking
+  - [x] 6.1 Implement viewing time tracking system
+
+
+
     - Create ViewingHistory model and API endpoints
     - Build video player component with progress tracking
     - Add resume functionality for partially watched lessons
     - _Requirements: 3.2, 7.2, 7.4_
 
-  - [ ] 6.2 Create analytics dashboard components
+
+  - [x] 6.2 Create analytics dashboard components
+
+
     - Build ProfessorAnalytics component showing student engagement
     - Implement StudentProgress component with completion tracking
     - Add AdminAnalytics component with platform-wide statistics
@@ -113,6 +119,8 @@
 
 - [ ] 7. Role-Based Dashboard System
   - [ ] 7.1 Create admin dashboard with full platform management
+
+
     - Build AdminDashboard component with category, user, and course management
     - Implement RevenueAnalytics component for payment tracking
     - Add PlatformOverview component with system statistics

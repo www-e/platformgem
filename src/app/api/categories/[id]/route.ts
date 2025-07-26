@@ -140,7 +140,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         error: {
           code: 'VALIDATION_ERROR',
           message: 'بيانات غير صحيحة',
-          details: validationResult.error.errors
+          details: validationResult.error.issues
         },
         timestamp: new Date().toISOString()
       }, { status: 400 });

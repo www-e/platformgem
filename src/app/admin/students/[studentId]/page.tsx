@@ -5,12 +5,6 @@ import { redirect } from "next/navigation";
 import { AddExamResultForm } from "./_components/add-exam-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const gradeMap = {
-  FIRST_YEAR: "الصف الأول الثانوي",
-  SECOND_YEAR: "الصف الثاني الثانوي",
-  THIRD_YEAR: "الصف الثالث الثانوي",
-};
-
 export default async function StudentDetailPage({ params }: { params: { studentId: string }}) {
   const { studentId } = params;
   const student = await prisma.user.findUnique({
@@ -26,7 +20,7 @@ export default async function StudentDetailPage({ params }: { params: { studentI
   return (
     <div>
       <h1 className="text-3xl font-bold mb-2">{student.name}</h1>
-      <p className="text-muted-foreground mb-8">معرف الطالب: {student.studentId} | المرحلة: {gradeMap[student.grade]}</p>
+      <p className="text-muted-foreground mb-8">معرف الطالب: {student.studentId || 'غير محدد'} | الدور: {student.role === 'STUDENT' ? 'طالب' : student.role}</p>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-1">

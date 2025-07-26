@@ -88,7 +88,7 @@ export async function checkCourseAccess(courseId: string): Promise<CourseAccessR
     }
 
     // Free course access - anyone can access free courses
-    if (!course.price || course.price <= 0) {
+    if (!course.price || Number(course.price) <= 0) {
       // Check if user is enrolled (for progress tracking)
       const enrollment = await prisma.enrollment.findUnique({
         where: {
@@ -314,7 +314,7 @@ export async function canEnrollInCourse(courseId: string): Promise<{
     }
 
     // For paid courses, check if payment is required
-    if (course.price && course.price > 0) {
+    if (course.price && Number(course.price) > 0) {
       return { canEnroll: false, reason: 'payment_required' };
     }
 

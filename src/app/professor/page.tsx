@@ -15,8 +15,12 @@ export default async function ProfessorDashboard() {
     redirect('/login');
   }
 
-  // Fetch professor's courses and statistics
-  const [courses, stats] = await Promise.all([
+  // Fetch professor's data, courses and statistics
+  const [professor, courses, stats] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { name: true }
+    }),
     prisma.course.findMany({
       where: { professorId: session.user.id },
       include: {
@@ -68,7 +72,7 @@ export default async function ProfessorDashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">لوحة تحكم الأستاذ</h1>
-          <p className="text-muted-foreground">مرحباً {session.user.name}، إدارة دوراتك التعليمية</p>
+          <p className="text-muted-foreground">مرحباً {professor?.name || 'الأستاذ'}، إدارة دوراتك التعليمية</p>
         </div>
         <Button asChild>
           <Link href="/professor/courses/new">

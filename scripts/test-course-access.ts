@@ -75,7 +75,7 @@ async function testCourseAccess() {
 
     // Test 1: Check if course is free or paid
     console.log("Test 1: Course Type Check");
-    const isFree = !testCourse.price || testCourse.price <= 0;
+    const isFree = !testCourse.price || Number(testCourse.price) <= 0;
     console.log(`Course is: ${isFree ? "FREE" : "PAID"}`);
     if (!isFree) {
       console.log(`Price: ${testCourse.price} ${testCourse.currency}`);
@@ -157,7 +157,7 @@ async function testCourseAccess() {
 
     // Test 5: Payment-to-Enrollment Flow (simulation)
     console.log("\nTest 5: Payment-to-Enrollment Flow Simulation");
-    const paidCourse = courses.find((c) => c.price && c.price > 0);
+    const paidCourse = courses.find((c) => c.price && Number(c.price) > 0);
     if (paidCourse && student) {
       console.log(`Testing payment flow for course: "${paidCourse.title}"`);
 

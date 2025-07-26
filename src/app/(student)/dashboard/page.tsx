@@ -9,21 +9,20 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { EnrollButton } from "./_components/enroll-button";
 import { Button } from "@/components/ui/button";
 
-const gradeMap = {
-  FIRST_YEAR: "الصف الأول الثانوي",
-  SECOND_YEAR: "الصف الثاني الثانوي",
-  THIRD_YEAR: "الصف الثالث الثانوي",
-};
-
 export default async function DashboardPage() {
   const session = await auth();
-  if (!session?.user?.grade || !session.user.id) {
+  if (!session?.user || session.user.role !== 'STUDENT' || !session.user.id) {
     redirect("/login");
   }
 
   const [courses, userEnrollments] = await prisma.$transaction([
     prisma.course.findMany({
-      where: { targetGrade: session.user.grade },
+      where: { isPublished: true },
+      include: {
+        category: {
+          select: { name: true }
+        }
+      },
       orderBy: { createdAt: 'desc' },
     }),
     prisma.enrollment.findMany({
@@ -40,7 +39,7 @@ export default async function DashboardPage() {
         <header className="mb-10">
           <h1 className="text-4xl font-extrabold text-foreground mb-2">لوحة التحكم</h1>
           <p className="text-xl text-muted-foreground">
-            الدورات المتاحة لمرحلة: <span className="text-primary font-semibold">{gradeMap[session.user.grade]}</span>
+            الدورات المتاحة: <span className="text-primary font-semibold">جميع الفئات</span>
           </p>
         </header>
 
@@ -66,6 +65,9 @@ export default async function DashboardPage() {
                     <CardDescription className="text-muted-foreground line-clamp-2 h-10">
                       {course.description}
                     </CardDescription>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      الفئة: {course.category.name}
+                    </p>
                   </CardHeader>
                   <CardContent className="flex-grow" />
                   <CardFooter>

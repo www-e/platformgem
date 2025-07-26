@@ -173,6 +173,7 @@ export async function signup(
 ): Promise<ActionState> {
   return signupStudent(prevState, formData);
 }
+
 // --- CREATE COURSE ACTION ---
 export async function createCourse(
   prevState: ActionState,
@@ -235,6 +236,7 @@ export async function createCourse(
     return { error: "خطأ في قاعدة البيانات: فشل في إنشاء الدورة." };
   }
 }
+
 // --- CREATE LESSON ACTION ---
 export async function createLesson(
   courseId: string,
@@ -260,6 +262,7 @@ export async function createLesson(
     return { error: "Database Error: Failed to create lesson." };
   }
 }
+
 // --- ADD EXAM RESULT ACTION ---
 export async function addExamResult(
   userId: string,
@@ -298,6 +301,7 @@ export async function addExamResult(
     return { error: "Database Error: Failed to add exam result." };
   }
 }
+
 // --- ENROLL IN COURSE ACTION ---
 export async function enrollInCourse(courseId: string): Promise<ActionState> {
   const session = await auth();
@@ -322,12 +326,12 @@ export async function enrollInCourse(courseId: string): Promise<ActionState> {
     return { error: "Database error: Could not complete enrollment." };
   }
 }
-// --- TOGGLE LESSON COMPLETION --- (Updated to use ActionState)
-// This defines the shape of the data our action will now return
+
+// --- TOGGLE LESSON COMPLETION ---
 export interface ToggleLessonCompleteResult {
   error?: string;
   success?: string;
-  nextLessonId?: string | null; // Will be null if it's the last lesson
+  nextLessonId?: string | null;
 }
 
 export async function toggleLessonComplete(
@@ -359,11 +363,9 @@ export async function toggleLessonComplete(
 
     if (completedIds.has(lessonId)) {
       completedIds.delete(lessonId);
-      // If we un-complete a lesson, there's no "next" lesson to go to.
     } else {
       completedIds.add(lessonId);
 
-      // --- This is the new "auto-advance" logic ---
       const currentLessonIndex = courseWithLessons.lessons.findIndex(
         (l) => l.id === lessonId
       );
@@ -373,12 +375,10 @@ export async function toggleLessonComplete(
       if (!isLastLesson) {
         nextLessonId = courseWithLessons.lessons[currentLessonIndex + 1].id;
       }
-      // If it IS the last lesson, nextLessonId remains null.
     }
 
     const updatedCompletedIds = Array.from(completedIds);
 
-    // We use `update` here to also update the `updatedAt` field for our profile page logic
     await prisma.enrollment.update({
       where: { userId_courseId: { userId: session.user.id, courseId } },
       data: { completedLessonIds: updatedCompletedIds },
@@ -395,6 +395,7 @@ export async function toggleLessonComplete(
     return { error: "Database error: could not update progress." };
   }
 }
+
 export async function updateCourse(
   courseId: string,
   prevState: ActionState,
@@ -464,7 +465,6 @@ export async function updateCourse(
 
 export async function deleteCourse(courseId: string): Promise<ActionState> {
   try {
-    // Prisma's onDelete: Cascade on the schema will handle deleting associated lessons
     await prisma.course.delete({
       where: { id: courseId },
     });
@@ -475,15 +475,14 @@ export async function deleteCourse(courseId: string): Promise<ActionState> {
     return { error: "Database Error: Failed to delete course." };
   }
 }
-// --- CATEGORY MANAGEMENT ACTIONS ---
 
+// --- CATEGORY MANAGEMENT ACTIONS ---
 export async function createCategory(
   prevState: ActionState | undefined,
   formData: FormData
 ): Promise<ActionState> {
   const session = await auth();
 
-  // Only admins can create categories
   if (!session?.user || session.user.role !== "ADMIN") {
     return { error: "غير مصرح لك بإنشاء الفئات." };
   }
@@ -497,7 +496,6 @@ export async function createCategory(
     return { error: "الاسم والوصف والرابط المختصر مطلوبة." };
   }
 
-  // Validate slug format
   if (!/^[a-z0-9-]+$/.test(slug)) {
     return {
       error:
@@ -506,7 +504,6 @@ export async function createCategory(
   }
 
   try {
-    // Check for duplicate name or slug
     const existingCategory = await prisma.category.findFirst({
       where: {
         OR: [{ name }, { slug }],
@@ -561,7 +558,6 @@ export async function updateCategory(
     return { error: "الاسم والوصف والرابط المختصر مطلوبة." };
   }
 
-  // Validate slug format
   if (!/^[a-z0-9-]+$/.test(slug)) {
     return {
       error:
@@ -570,7 +566,6 @@ export async function updateCategory(
   }
 
   try {
-    // Check if category exists
     const existingCategory = await prisma.category.findUnique({
       where: { id: categoryId },
     });
@@ -579,7 +574,6 @@ export async function updateCategory(
       return { error: "الفئة غير موجودة." };
     }
 
-    // Check for duplicate name or slug (excluding current category)
     const duplicateCategory = await prisma.category.findFirst({
       where: {
         AND: [
@@ -627,7 +621,6 @@ export async function deleteCategory(categoryId: string): Promise<ActionState> {
   }
 
   try {
-    // Check if category exists and has courses
     const category = await prisma.category.findUnique({
       where: { id: categoryId },
       include: {
@@ -657,12 +650,4 @@ export async function deleteCategory(categoryId: string): Promise<ActionState> {
     console.error("Category deletion error:", error);
     return { error: "حدث خطأ في قاعدة البيانات أثناء حذف الفئة." };
   }
-}
-
-// Legacy signup function for backward compatibility
-export async function signup(
-  prevState: ActionState | undefined,
-  formData: FormData
-): Promise<ActionState> {
-  return signupStudent(prevState, formData);
 }

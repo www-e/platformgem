@@ -193,7 +193,7 @@ async function createTestData() {
         id: 'test-payment-1',
         userId: student.id,
         courseId: paidCourse.id,
-        amount: paidCourse.price,
+        amount: paidCourse.price ? Number(paidCourse.price) : 0,
         currency: paidCourse.currency,
         status: 'PENDING',
         paymobOrderId: 'test-order-123',

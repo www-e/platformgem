@@ -7,12 +7,6 @@ import PaginationControls from '@/components/admin/PaginationControls';
 import CourseActions from '@/components/admin/CourseActions';
 import CreateCourseDialog from "@/components/admin/CreateCourseDialog";
 
-const gradeMap = {
-  FIRST_YEAR: "الصف الأول الثانوي",
-  SECOND_YEAR: "الصف الثاني الثانوي",
-  THIRD_YEAR: "الصف الثالث الثانوي",
-};
-
 const ITEMS_PER_PAGE = 8;
 
 export default async function CoursesPage({
@@ -27,7 +21,7 @@ export default async function CoursesPage({
     ...(query && {
       title: {
         contains: query,
-        mode: 'insensitive',
+        mode: 'insensitive' as const,
       },
     }),
   };
@@ -35,6 +29,14 @@ export default async function CoursesPage({
   const [courses, totalCount] = await prisma.$transaction([
     prisma.course.findMany({
       where: whereClause,
+      include: {
+        category: {
+          select: { name: true }
+        },
+        professor: {
+          select: { name: true }
+        }
+      },
       orderBy: { createdAt: 'desc' },
       take: ITEMS_PER_PAGE,
       skip: (page - 1) * ITEMS_PER_PAGE,
@@ -71,7 +73,7 @@ export default async function CoursesPage({
                 <div key={course.id} className="flex items-center justify-between p-4 rounded-lg bg-muted/50 border border-border">
                   <div>
                     <h3 className="font-semibold text-lg text-foreground">{course.title}</h3>
-                    <p className="text-sm text-muted-foreground">{gradeMap[course.targetGrade]}</p>
+                    <p className="text-sm text-muted-foreground">الفئة: {course.category.name} | الأستاذ: {course.professor.name}</p>
                   </div>
                   <CourseActions course={course} />
                 </div>

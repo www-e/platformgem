@@ -179,7 +179,7 @@ export async function POST(request: NextRequest) {
         ApiErrors.VALIDATION_ERROR.code,
         ApiErrors.VALIDATION_ERROR.message,
         ApiErrors.VALIDATION_ERROR.status,
-        validationResult.error.errors
+        validationResult.error.issues
       );
     }
 

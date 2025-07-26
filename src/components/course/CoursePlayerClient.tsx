@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { VideoPlayer } from "@/components/course/video-player";
+import { BunnyVideoPlayer } from "@/components/video/BunnyVideoPlayer";
 import { CompletionButton } from "@/app/courses/[courseId]/_components/completion-button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Lesson } from "@prisma/client";
@@ -47,7 +47,18 @@ export default function CoursePlayerClient({
     <div className="flex flex-col gap-6">
       <Card className="bg-card">
         <CardHeader className="p-0">
-          <VideoPlayer url={secureVideoUrl} onProgress={handleVideoProgress} />
+          <BunnyVideoPlayer
+            lessonId={currentLesson.id}
+            bunnyVideoId={currentLesson.bunnyVideoId}
+            bunnyLibraryId={bunnyLibraryId}
+            title={currentLesson.title}
+            onProgressUpdate={(progress) => {
+              if (progress.watchedDuration / progress.totalDuration > 0.95 && !canMarkComplete) {
+                setCanMarkComplete(true);
+              }
+            }}
+            onLessonComplete={() => setCanMarkComplete(true)}
+          />
         </CardHeader>
         <CardContent className="p-4 md:p-6">
           {/* Mobile Navigation */}

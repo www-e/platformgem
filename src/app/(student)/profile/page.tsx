@@ -7,7 +7,8 @@ import EnrolledCourses from "@/components/profile/EnrolledCourses";
 import ExamHistory from "@/components/profile/ExamHistory";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileActions from "@/components/profile/ProfileActions";
-import QuickAccessCard from "@/components/profile/QuickAccessCard"; // Import the new component
+import QuickAccessCard from "@/components/profile/QuickAccessCard";
+import MyCertificates from "@/components/profile/MyCertificates";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -52,7 +53,7 @@ export default async function ProfilePage() {
       <div className="max-w-7xl mx-auto">
         <ProfileHeader 
           name={student.name}
-          grade={student.grade}
+          role={student.role}
           enrollmentCount={student.enrollments.length}
         />
 
@@ -66,6 +67,7 @@ export default async function ProfilePage() {
           </div>
 
           <div className="space-y-8">
+            <MyCertificates />
             <ExamHistory examHistory={student.examHistory} />
             <ProfileActions />
           </div>

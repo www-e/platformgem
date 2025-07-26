@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         ApiErrors.VALIDATION_ERROR.code,
         ApiErrors.VALIDATION_ERROR.message,
         ApiErrors.VALIDATION_ERROR.status,
-        validationResult.error.errors
+        validationResult.error.issues
       );
     }
 
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if course is paid
-    if (!course.price || course.price <= 0) {
+    if (!course.price || Number(course.price) <= 0) {
       return createErrorResponse(
         'FREE_COURSE',
         'هذه الدورة مجانية ولا تحتاج لدفع',
@@ -165,7 +165,11 @@ export async function POST(request: NextRequest) {
     });
 
     // Prepare PayMob order data
-    const billingData = payMobService.createBillingData(user);
+    const billingData = payMobService.createBillingData({
+      name: user.name,
+      email: user.email || undefined,
+      phone: user.phone
+    });
     const orderData = {
       amount_cents: amountCents,
       currency: course.currency,

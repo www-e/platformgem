@@ -88,7 +88,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
   };
 
   const formatPrice = () => {
-    if (!course.price || course.price === 0) {
+    if (!course.price || Number(course.price) === 0) {
       return 'مجاني';
     }
     

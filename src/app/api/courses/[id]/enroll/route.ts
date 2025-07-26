@@ -75,7 +75,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     // Check if course is paid and requires payment
-    if (course.price && course.price > 0) {
+    if (course.price && Number(course.price) > 0) {
       // For paid courses, check if there's a completed payment
       const completedPayment = await prisma.payment.findFirst({
         where: {
@@ -187,7 +187,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
 
     // Prevent unenrollment from paid courses (business rule)
-    if (enrollment.course.price && enrollment.course.price > 0) {
+    if (enrollment.course.price && Number(enrollment.course.price) > 0) {
       return createErrorResponse(
         'PAID_COURSE_UNENROLL',
         'لا يمكن إلغاء التسجيل من الدورات المدفوعة. تواصل مع الدعم الفني.',

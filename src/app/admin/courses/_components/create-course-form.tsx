@@ -1,11 +1,9 @@
 // src/app/admin/courses/_components/create-course-form.tsx
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
-import { createCourse } from "@/lib/actions";
-import { Grade } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,20 +23,87 @@ interface CreateCourseFormProps {
   onFormSuccess: () => void;
 }
 
-export function CreateCourseForm({ onFormSuccess }: CreateCourseFormProps) {
-  const [state, dispatch] = useActionState(createCourse, { error: undefined, success: undefined });
-  const formRef = useRef<HTMLFormElement>(null);
+interface Category {
+  id: string;
+  name: string;
+}
 
+interface Professor {
+  id: string;
+  name: string;
+}
+
+export function CreateCourseForm({ onFormSuccess }: CreateCourseFormProps) {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [professors, setProfessors] = useState<Professor[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch categories and professors
   useEffect(() => {
-    if (state?.success) {
-      toast.success("تم بنجاح!", { description: state.success });
-      formRef.current?.reset();
-      onFormSuccess(); // Call the function to close the dialog
+    async function fetchData() {
+      try {
+        const [categoriesRes, professorsRes] = await Promise.all([
+          fetch('/api/categories'),
+          fetch('/api/users?role=PROFESSOR')
+        ]);
+
+        if (categoriesRes.ok) {
+          const categoriesData = await categoriesRes.json();
+          setCategories(categoriesData);
+        }
+
+        if (professorsRes.ok) {
+          const professorsData = await professorsRes.json();
+          setProfessors(professorsData);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     }
-    if (state?.error) {
-      toast.error("خطأ", { description: state.error });
+
+    fetchData();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const courseData = {
+        title: formData.get('title') as string,
+        description: formData.get('description') as string,
+        thumbnailUrl: formData.get('thumbnailUrl') as string,
+        categoryId: formData.get('categoryId') as string,
+        professorId: formData.get('professorId') as string,
+        bunnyLibraryId: formData.get('bunnyLibraryId') as string,
+        price: formData.get('price') ? Number(formData.get('price')) : 0,
+        currency: 'EGP'
+      };
+
+      const response = await fetch('/api/courses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(courseData),
+      });
+
+      if (response.ok) {
+        toast.success("تم إنشاء الدورة بنجاح!");
+        formRef.current?.reset();
+        onFormSuccess();
+      } else {
+        const error = await response.json();
+        toast.error("فشل في إنشاء الدورة", { description: error.message });
+      }
+    } catch (error) {
+      toast.error("حدث خطأ أثناء إنشاء الدورة");
+    } finally {
+      setLoading(false);
     }
-  }, [state, onFormSuccess]);
+  };
 
   return (
     <>
@@ -48,26 +113,83 @@ export function CreateCourseForm({ onFormSuccess }: CreateCourseFormProps) {
           املأ التفاصيل لإضافة دورة جديدة. ستظهر في قائمة الدورات فورًا.
         </DialogDescription>
       </DialogHeader>
-      <form ref={formRef} action={dispatch} className="space-y-4 pt-4">
-        <div className="space-y-2"><Label htmlFor="title">عنوان الدورة</Label><Input id="title" name="title" placeholder="مثال: الجبر المتقدم" required /></div>
-        <div className="space-y-2"><Label htmlFor="description">وصف الدورة</Label><Input id="description" name="description" placeholder="دورة شاملة لـ..." required /></div>
-        <div className="space-y-2"><Label htmlFor="thumbnailUrl">رابط الصورة المصغرة</Label><Input id="thumbnailUrl" name="thumbnailUrl" placeholder="https://path/to/image.jpg" required /></div>
-        <div className="space-y-2"><Label htmlFor="targetGrade">المرحلة الدراسية</Label>
-          <Select name="targetGrade" required><SelectTrigger><SelectValue placeholder="اختر المرحلة المستهدفة" /></SelectTrigger>
-            <SelectContent><SelectItem value={Grade.FIRST_YEAR}>الصف الأول الثانوي</SelectItem><SelectItem value={Grade.SECOND_YEAR}>الصف الثاني الثانوي</SelectItem><SelectItem value={Grade.THIRD_YEAR}>الصف الثالث الثانوي</SelectItem></SelectContent>
-          </Select>
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 pt-4">
+        <div className="space-y-2">
+          <Label htmlFor="title">عنوان الدورة</Label>
+          <Input id="title" name="title" placeholder="مثال: تطوير تطبيقات الويب" required />
         </div>
-        <div className="space-y-2"><Label htmlFor="bunnyLibraryId">مكتبة الفيديو</Label>
-          <Select name="bunnyLibraryId" required><SelectTrigger><SelectValue placeholder="اختر مكتبة الفيديو" /></SelectTrigger>
+        
+        <div className="space-y-2">
+          <Label htmlFor="description">وصف الدورة</Label>
+          <Input id="description" name="description" placeholder="دورة شاملة لـ..." required />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="thumbnailUrl">رابط الصورة المصغرة</Label>
+          <Input id="thumbnailUrl" name="thumbnailUrl" placeholder="https://path/to/image.jpg" required />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="categoryId">الفئة</Label>
+          <Select name="categoryId" required>
+            <SelectTrigger>
+              <SelectValue placeholder="اختر الفئة" />
+            </SelectTrigger>
             <SelectContent>
-              <SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G1_SHARH!}>شرح الصف الاول الثانوي</SelectItem><SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G2_SHARH!}>شرح الصف الثاني</SelectItem><SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G3_SHARH!}>شرح الصف الثالث</SelectItem>
-              <SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G1_MORA!}>مراجعه الصف الاول</SelectItem><SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G2_MORA!}>مراجعه الصف الثاني</SelectItem><SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G3_MORA!}>مراجعه الصف الثالث</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="professorId">الأستاذ</Label>
+          <Select name="professorId" required>
+            <SelectTrigger>
+              <SelectValue placeholder="اختر الأستاذ" />
+            </SelectTrigger>
+            <SelectContent>
+              {professors.map((professor) => (
+                <SelectItem key={professor.id} value={professor.id}>
+                  {professor.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="price">السعر (اتركه فارغاً للدورات المجانية)</Label>
+          <Input 
+            id="price" 
+            name="price" 
+            type="number" 
+            min="0" 
+            step="0.01" 
+            placeholder="0 للدورات المجانية" 
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="bunnyLibraryId">معرف مكتبة الفيديو</Label>
+          <Input 
+            id="bunnyLibraryId" 
+            name="bunnyLibraryId" 
+            placeholder="معرف مكتبة Bunny CDN" 
+            required 
+          />
+        </div>
+        
         <DialogFooter className="pt-4">
-            <DialogClose asChild><Button type="button" variant="outline">إلغاء</Button></DialogClose>
-            <SubmitButton />
+          <DialogClose asChild>
+            <Button type="button" variant="outline">إلغاء</Button>
+          </DialogClose>
+          <Button type="submit" disabled={loading}>
+            {loading ? "جاري الإنشاء..." : "إنشاء الدورة"}
+          </Button>
         </DialogFooter>
       </form>
     </>

@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import {
   Dialog,
@@ -19,54 +20,48 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Trash, Edit, ExternalLink } from "lucide-react";
-import { useState, useActionState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Course, Grade } from "@prisma/client";
-import { ActionState, deleteCourse, updateCourse } from "@/lib/actions";
+import { Course } from "@prisma/client";
+import { deleteCourse } from "@/lib/actions";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 // Type for the course data we need
-type CourseData = Pick<Course, 'id' | 'title' | 'description' | 'thumbnailUrl' | 'targetGrade' | 'bunnyLibraryId'>;
+type CourseData = Pick<Course, 'id' | 'title' | 'description' | 'thumbnailUrl' | 'bunnyLibraryId' | 'categoryId' | 'professorId'>;
 
-// Reusable Edit Form component
+// Simplified Edit Form component (basic info only)
 function EditCourseForm({ course, onFormSuccess }: { course: CourseData, onFormSuccess: () => void }) {
   const formRef = useRef<HTMLFormElement>(null);
-  const updateCourseWithId = updateCourse.bind(null, course.id);
-  const [state, dispatch] = useActionState(updateCourse, { error: undefined, success: undefined });
 
-  useEffect(() => {
-    if (state.success) {
-      toast.success("تم التحديث بنجاح!", { description: state.success });
-      onFormSuccess(); // Close the dialog on success
-    }
-    if (state.error) {
-      toast.error("فشل التحديث", { description: state.error });
-    }
-  }, [state, onFormSuccess]);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // For now, just show a message that editing should be done through the course management page
+    toast.info("يرجى استخدام صفحة إدارة الدورة لتعديل التفاصيل");
+    onFormSuccess();
+  };
 
   return (
-    <form ref={formRef} action={dispatch} className="space-y-4 mt-4">
-      {/* All form fields are pre-filled with the course data */}
-      <div className="space-y-2"><Label htmlFor="title">عنوان الدورة</Label><Input id="title" name="title" defaultValue={course.title} required /></div>
-      <div className="space-y-2"><Label htmlFor="description">وصف الدورة</Label><Input id="description" name="description" defaultValue={course.description} required /></div>
-      <div className="space-y-2"><Label htmlFor="thumbnailUrl">رابط الصورة المصغرة</Label><Input id="thumbnailUrl" name="thumbnailUrl" defaultValue={course.thumbnailUrl} required /></div>
-      <div className="space-y-2"><Label htmlFor="targetGrade">المرحلة الدراسية</Label>
-        <Select name="targetGrade" required defaultValue={course.targetGrade}><SelectTrigger><SelectValue /></SelectTrigger>
-          <SelectContent><SelectItem value={Grade.FIRST_YEAR}>الصف الأول الثانوي</SelectItem><SelectItem value={Grade.SECOND_YEAR}>الصف الثاني الثانوي</SelectItem><SelectItem value={Grade.THIRD_YEAR}>الصف الثالث الثانوي</SelectItem></SelectContent>
-        </Select>
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 mt-4">
+      <div className="space-y-2">
+        <Label htmlFor="title">عنوان الدورة</Label>
+        <Input id="title" name="title" defaultValue={course.title} disabled />
       </div>
-      <div className="space-y-2"><Label htmlFor="bunnyLibraryId">مكتبة الفيديو</Label>
-        <Select name="bunnyLibraryId" required defaultValue={course.bunnyLibraryId}><SelectTrigger><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G1_SHARH!}>شرح الصف الاول</SelectItem><SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G2_SHARH!}>شرح الصف الثاني</SelectItem><SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G3_SHARH!}>شرح الصف الثالث</SelectItem>
-            <SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G1_MORA!}>مراجعه الصف الاول</SelectItem><SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G2_MORA!}>مراجعه الصف الثاني</SelectItem><SelectItem value={process.env.NEXT_PUBLIC_BUNNY_LIB_G3_MORA!}>مراجعه الصف الثالث</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="space-y-2">
+        <Label htmlFor="description">وصف الدورة</Label>
+        <Input id="description" name="description" defaultValue={course.description} disabled />
       </div>
-      <DialogFooter><Button type="submit">حفظ التغييرات</Button></DialogFooter>
+      <div className="text-sm text-muted-foreground">
+        لتعديل تفاصيل الدورة، يرجى استخدام صفحة إدارة الدورة.
+      </div>
+      <DialogFooter>
+        <Button type="button" variant="outline" onClick={onFormSuccess}>إغلاق</Button>
+        <Button type="button" asChild>
+          <Link href={`/admin/courses/${course.id}`}>إدارة الدورة</Link>
+        </Button>
+      </DialogFooter>
     </form>
   );
 }
@@ -95,16 +90,33 @@ export default function CourseActions({ course }: { course: CourseData }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
-          <DropdownMenuItem asChild><Link href={`/admin/courses/${course.id}`}><ExternalLink className="mr-2 h-4 w-4" />إدارة الدروس</Link></DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}><Edit className="mr-2 h-4 w-4" />تعديل</DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href={`/admin/courses/${course.id}`}>
+              <ExternalLink className="mr-2 h-4 w-4" />
+              إدارة الدروس
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
+            <Edit className="mr-2 h-4 w-4" />
+            عرض التفاصيل
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-destructive focus:text-destructive"><Trash className="mr-2 h-4 w-4" />حذف</DropdownMenuItem>
+          <DropdownMenuItem 
+            onClick={() => setIsDeleteDialogOpen(true)} 
+            className="text-destructive focus:text-destructive"
+          >
+            <Trash className="mr-2 h-4 w-4" />
+            حذف
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent><DialogHeader><DialogTitle>تعديل بيانات الدورة</DialogTitle></DialogHeader>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>تفاصيل الدورة</DialogTitle>
+          </DialogHeader>
           <EditCourseForm course={course} onFormSuccess={() => setIsEditDialogOpen(false)} />
         </DialogContent>
       </Dialog>

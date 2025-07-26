@@ -188,7 +188,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         ApiErrors.VALIDATION_ERROR.code,
         ApiErrors.VALIDATION_ERROR.message,
         ApiErrors.VALIDATION_ERROR.status,
-        validationResult.error.errors
+        validationResult.error.issues
       );
     }
 
