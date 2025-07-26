@@ -4,22 +4,22 @@ import NextAuth from "next-auth"
 import { JWT } from "next-auth/jwt"
 import Credentials from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
-import { User as PrismaUser, Grade } from "@prisma/client"
+import { User as PrismaUser, UserRole } from "@prisma/client"
 
 import prisma from "@/lib/prisma"
 
 // Extend the JWT and User types to include our custom fields
 declare module "next-auth/jwt" {
   interface JWT {
-    isAdmin?: boolean;
-    grade?: Grade;
+    role?: UserRole;
+    isActive?: boolean;
   }
 }
 
 declare module "next-auth" {
   interface User {
-    isAdmin?: boolean;
-    grade?: Grade;
+    role?: UserRole;
+    isActive?: boolean;
   }
 }
 
@@ -36,15 +36,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const { login, password } = credentials
         if (!login || !password) return null;
 
+        // Support login with phone, email, or studentId
         const user = await prisma.user.findFirst({
-          where: { OR: [{ studentId: login as string }, { phone: login as string }] },
+          where: { 
+            OR: [
+              { phone: login as string },
+              { email: login as string },
+              { studentId: login as string }
+            ],
+            isActive: true // Only allow active users to login
+          },
         })
 
         if (!user || !user.password) return null;
 
         const passwordsMatch = await bcrypt.compare(password as string, user.password)
         
-        if (passwordsMatch) return user;
+        if (passwordsMatch) {
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            role: user.role,
+            isActive: user.isActive,
+          };
+        }
         
         return null
       },
@@ -57,16 +74,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.isAdmin = user.isAdmin; 
-        token.grade = user.grade;
+        token.role = user.role;
+        token.isActive = user.isActive;
       }
       return token
     },
     session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.isAdmin = token.isAdmin ?? false;
-        session.user.grade = token.grade as Grade;
+        session.user.role = token.role as UserRole;
+        session.user.isActive = token.isActive ?? true;
+        
+        // Backward compatibility helpers
+        session.user.isAdmin = token.role === 'ADMIN';
+        session.user.isProfessor = token.role === 'PROFESSOR';
+        session.user.isStudent = token.role === 'STUDENT';
       }
       return session
     },

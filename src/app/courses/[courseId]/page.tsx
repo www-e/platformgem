@@ -1,119 +1,241 @@
 // src/app/courses/[courseId]/page.tsx
-import { auth } from "@/lib/auth";
+import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
-import { redirect } from "next/navigation";
-import { LectureSidebar } from "@/components/course/lecture-sidebar";
-import { AlertTriangle, BookOpen, CheckCircle2, PlayCircle } from "lucide-react";
-import CoursePlayerClient from "@/components/course/CoursePlayerClient";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { CourseAccessGuard } from "@/components/course/CourseAccessGuard";
+import { CourseContent } from "@/components/course/CourseContent";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { 
+  BookOpen, 
+  Clock, 
+  Users, 
+  Star,
+  Calendar,
+  User,
+  Tag
+} from "lucide-react";
 
-export default async function CoursePlayerPage({
-  params,
-  searchParams,
-}: {
-  params: { courseId: string; };
-  searchParams: { lesson?: string; };
-}) {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
+interface CoursePageProps {
+  params: { courseId: string };
+}
 
+export default async function CoursePage({ params }: CoursePageProps) {
   const { courseId } = params;
-  const lessonIdFromQuery = searchParams.lesson;
 
-  const enrollment = await prisma.enrollment.findUnique({
-    where: { userId_courseId: { userId: session.user.id, courseId: courseId } },
+  // Fetch course data with all necessary information
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
     include: {
-      course: {
-        include: { lessons: { orderBy: { order: "asc" } } }
+      category: {
+        select: {
+          id: true,
+          name: true,
+          slug: true
+        }
+      },
+      professor: {
+        select: {
+          id: true,
+          name: true,
+          bio: true,
+          expertise: true
+        }
+      },
+      lessons: {
+        orderBy: { order: 'asc' },
+        select: {
+          id: true,
+          title: true,
+          order: true,
+          duration: true,
+          bunnyVideoId: true
+        }
+      },
+      _count: {
+        select: {
+          enrollments: true,
+          lessons: true
+        }
       }
     }
   });
 
-  if (!enrollment) {
-    return (
-        <div className="flex flex-col items-center justify-center min-h-screen text-foreground text-center p-4">
-            <AlertTriangle className="w-16 h-16 text-destructive mb-4" />
-            <h1 className="text-3xl font-bold">Enrollment Not Found</h1>
-            <p className="text-lg text-muted-foreground mt-2">You are not enrolled in this course.</p>
-        </div>
-    );
+  if (!course) {
+    notFound();
   }
 
-  const { course } = enrollment;
-  const currentLesson = lessonIdFromQuery
-    ? course.lessons.find((l) => l.id === lessonIdFromQuery)
-    : course.lessons[0];
+  // Format course data for components
+  const formattedCourse = {
+    ...course,
+    price: course.price ? Number(course.price) : null,
+    _count: course._count
+  };
 
-  if (!currentLesson) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-foreground text-center p-4">
-        <AlertTriangle className="w-16 h-16 text-destructive mb-4" />
-        <h1 className="text-3xl font-bold">Lesson Not Found</h1>
-        <p className="text-lg text-muted-foreground mt-2">The requested lesson could not be found.</p>
-      </div>
-    );
-  }
+  // Calculate total duration (mock calculation)
+  const totalDuration = course.lessons.reduce((total, lesson) => {
+    return total + (lesson.duration || 0);
+  }, 0);
 
-  const currentLessonIndex = course.lessons.findIndex(l => l.id === currentLesson.id);
-  const prevLesson = currentLessonIndex > 0 ? course.lessons[currentLessonIndex - 1] : null;
-  const nextLesson = currentLessonIndex < course.lessons.length - 1 ? course.lessons[currentLessonIndex + 1] : null;
-  const isCompleted = enrollment.completedLessonIds.includes(currentLesson.id);
+  const formatDuration = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    
+    if (hours > 0) {
+      return `${hours} ساعة ${minutes} دقيقة`;
+    }
+    return `${minutes} دقيقة`;
+  };
+
+  const formatPrice = () => {
+    if (!course.price || course.price === 0) {
+      return 'مجاني';
+    }
+    
+    return new Intl.NumberFormat('ar-EG', {
+      style: 'currency',
+      currency: course.currency || 'EGP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(Number(course.price));
+  };
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] bg-background p-4 lg:p-8">
-      <div className="flex flex-col lg:flex-row gap-8 max-w-screen-2xl mx-auto">
-        
-        <div className="flex-grow">
-          <CoursePlayerClient
-            courseId={course.id}
-            bunnyLibraryId={course.bunnyLibraryId}
-            currentLesson={currentLesson}
-            isCompleted={isCompleted}
-            prevLesson={prevLesson}
-            nextLesson={nextLesson}
-          />
+    <div className="container mx-auto p-6 max-w-6xl">
+      {/* Course Header */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        {/* Course Info */}
+        <div className="lg:col-span-2 space-y-6">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Badge variant="outline">
+                <Tag className="w-3 h-3 mr-1" />
+                {course.category.name}
+              </Badge>
+              <Badge variant={course.isPublished ? "default" : "secondary"}>
+                {course.isPublished ? "منشور" : "مسودة"}
+              </Badge>
+            </div>
+            
+            <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
+            
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              {course.description}
+            </p>
+          </div>
+
+          {/* Professor Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="w-5 h-5" />
+                المدرس
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <h3 className="font-semibold text-lg">{course.professor.name}</h3>
+                {course.professor.bio && (
+                  <p className="text-muted-foreground">{course.professor.bio}</p>
+                )}
+                {course.professor.expertise && course.professor.expertise.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {course.professor.expertise.map((skill, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Desktop Sidebar */}
-        <div className="hidden lg:block w-full lg:w-80 xl:w-96 flex-shrink-0">
-          <LectureSidebar
-            course={course}
-            currentLessonId={currentLesson.id}
-            completedLessons={enrollment.completedLessonIds}
-          />
-        </div>
-        
-        {/* Mobile Accordion */}
-        <div className="block lg:hidden">
-            <Accordion type="single" collapsible className="bg-card rounded-lg">
-                <AccordionItem value="lessons" className="border-b-0">
-                    <AccordionTrigger className="text-lg p-4 hover:no-underline">
-                        <div className="flex items-center gap-2">
-                            <BookOpen className="w-5 h-5"/>
-                            قائمة الدروس
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="p-2">
-                        {course.lessons.map(lesson => {
-                             const isLessonCompleted = enrollment.completedLessonIds.includes(lesson.id);
-                             const isCurrent = lesson.id === currentLesson.id;
-                             return (
-                                <Link key={lesson.id} href={`/courses/${course.id}?lesson=${lesson.id}`} className={cn(`flex items-center gap-4 p-3 rounded-lg w-full text-right`, isCurrent && 'bg-primary/20')}>
-                                    <div className="flex-shrink-0">
-                                        {isLessonCompleted ? <CheckCircle2 className="w-5 h-5 text-secondary" /> : <PlayCircle className="w-5 h-5 text-muted-foreground" />}
-                                    </div>
-                                    <p className={cn(`font-medium`, isCurrent ? 'text-primary' : 'text-foreground')}>{lesson.title}</p>
-                                </Link>
-                             )
-                        })}
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
-        </div>
+        {/* Course Stats */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>معلومات الدورة</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">السعر</span>
+                <span className="font-semibold text-lg">{formatPrice()}</span>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground flex items-center gap-1">
+                  <BookOpen className="w-4 h-4" />
+                  الدروس
+                </span>
+                <span className="font-semibold">{course._count.lessons}</span>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  المدة
+                </span>
+                <span className="font-semibold">{formatDuration(totalDuration)}</span>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground flex items-center gap-1">
+                  <Users className="w-4 h-4" />
+                  الطلاب
+                </span>
+                <span className="font-semibold">{course._count.enrollments}</span>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground flex items-center gap-1">
+                  <Calendar className="w-4 h-4" />
+                  تاريخ الإنشاء
+                </span>
+                <span className="font-semibold text-sm">
+                  {new Date(course.createdAt).toLocaleDateString('ar-EG')}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
 
+          {/* Course Rating (placeholder) */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Star className="w-5 h-5" />
+                التقييم
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center">
+                <div className="text-3xl font-bold mb-2">4.8</div>
+                <div className="flex justify-center gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  بناءً على {course._count.enrollments} تقييم
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+      {/* Course Content with Access Control */}
+      <CourseAccessGuard 
+        courseId={courseId} 
+        course={formattedCourse}
+        showAccessInfo={true}
+      >
+        <CourseContent 
+          course={formattedCourse}
+          lessons={course.lessons}
+        />
+      </CourseAccessGuard>
     </div>
   );
 }

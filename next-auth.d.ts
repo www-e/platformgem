@@ -1,12 +1,17 @@
 import NextAuth from "next-auth";
+import { UserRole } from "@prisma/client";
 
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      grade: "FIRST_YEAR" | "SECOND_YEAR" | "THIRD_YEAR";
+      role: UserRole;
+      isActive: boolean;
+      
+      // Convenience properties for role checking
       isAdmin: boolean;
-      // add any other custom fields here
+      isProfessor: boolean;
+      isStudent: boolean;
     };
   }
 }

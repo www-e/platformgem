@@ -4,7 +4,7 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
-import { signup } from "@/lib/actions";
+import { signupStudent } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -38,7 +38,7 @@ function SubmitButton() {
 }
 
 export default function SignupPage() {
-  const [errorMessage, dispatch] = useActionState(signup, undefined);
+  const [errorMessage, dispatch] = useActionState(signupStudent, undefined);
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -59,40 +59,33 @@ export default function SignupPage() {
 
           <CardContent>
             <form action={dispatch} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">الاسم الكامل</Label>
                   <Input id="name" name="name" placeholder="أحمد محمد" required className="h-11 bg-input/80 border-border/60" />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="studentId">معرف الطالب</Label>
-                  <Input id="studentId" name="studentId" placeholder="123456" required className="h-11 bg-input/80 border-border/60" dir="ltr" />
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="phone">رقم هاتفك</Label>
-                  <Input id="phone" name="phone" type="tel" placeholder="01012345678" required className="h-11 bg-input/80 border-border/60" dir="ltr" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">رقم هاتفك</Label>
+                    <Input id="phone" name="phone" type="tel" placeholder="01012345678" required className="h-11 bg-input/80 border-border/60" dir="ltr" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">البريد الإلكتروني (اختياري)</Label>
+                    <Input id="email" name="email" type="email" placeholder="ahmed@example.com" className="h-11 bg-input/80 border-border/60" dir="ltr" />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="parentPhone">رقم هاتف ولي الأمر</Label>
-                  <Input id="parentPhone" name="parentPhone" type="tel" placeholder="01123456789" required className="h-11 bg-input/80 border-border/60" dir="ltr" />
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="grade">الصف الدراسي</Label>
-                <Select name="grade" required>
-                  <SelectTrigger className="w-full h-11 bg-input/80 border-border/60">
-                    <SelectValue placeholder="اختر صفك الدراسي" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover border-border">
-                    <SelectItem value="FIRST_YEAR">الصف الأول الثانوي</SelectItem>
-                    <SelectItem value="SECOND_YEAR">الصف الثاني الثانوي</SelectItem>
-                    <SelectItem value="THIRD_YEAR">الصف الثالث الثانوي</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="studentId">معرف الطالب (اختياري)</Label>
+                    <Input id="studentId" name="studentId" placeholder="123456" className="h-11 bg-input/80 border-border/60" dir="ltr" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="parentPhone">رقم هاتف ولي الأمر (اختياري)</Label>
+                    <Input id="parentPhone" name="parentPhone" type="tel" placeholder="01123456789" className="h-11 bg-input/80 border-border/60" dir="ltr" />
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-2">

@@ -9,46 +9,111 @@ datasource db {
   url       = env("DATABASE_URL")
 }
 
-enum Grade {
-  FIRST_YEAR
-  SECOND_YEAR
-  THIRD_YEAR
+// -- ENUMS --
+
+enum UserRole {
+  ADMIN
+  PROFESSOR
+  STUDENT
 }
 
-// -- CORE MODELS (Reduced from 8 to 4) --
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// -- CORE MODELS --
 
 model User {
-  id          String @id @default(cuid())
-  studentId   String @unique
-  phone       String @unique
+  id          String   @id @default(cuid())
+  email       String?  @unique
+  phone       String   @unique
   name        String
   password    String
-  parentPhone String
-  grade       Grade
-  isAdmin     Boolean @default(false)
-
-  // REPLACES the Exam and ExamResult tables.
-  // We store a list of exam objects directly on the user.
-  // Example: [{"examTitle": "Algebra Midterm", "date": "2025-10-15", "score": 88.5}]
+  role        UserRole @default(STUDENT)
+  isActive    Boolean  @default(true)
+  
+  // Professor-specific fields
+  bio         String?
+  expertise   String[] // Array of expertise areas
+  
+  // Student-specific fields (optional for backwards compatibility)
+  parentPhone String?
+  studentId   String?  @unique
+  
+  // Legacy field for data migration (will be removed after migration)
   examHistory Json?
 
-  enrollments Enrollment[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  enrollments     Enrollment[]
+  ownedCourses    Course[]         @relation("ProfessorCourses")
+  payments        Payment[]
+  viewingHistory  ViewingHistory[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  description String
+  iconUrl     String?
+  slug        String  @unique
+  isActive    Boolean @default(true)
+  
+  courses     Course[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Course {
-  id          String @id @default(cuid())
-  title       String
-  description String
-  thumbnailUrl String
-  targetGrade Grade
-  bunnyLibraryId String
+  id              String   @id @default(cuid())
+  title           String
+  description     String
+  thumbnailUrl    String
+  price           Decimal? // null for free courses
+  currency        String   @default("EGP")
+  isPublished     Boolean  @default(false)
+  bunnyLibraryId  String
+  
+  categoryId      String
+  category        Category @relation(fields: [categoryId], references: [id])
+  
+  professorId     String
+  professor       User     @relation("ProfessorCourses", fields: [professorId], references: [id])
+  
+  lessons         Lesson[]
+  enrollments     Enrollment[]
+  payments        Payment[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([categoryId])
+  @@index([professorId])
+  @@index([isPublished])
+}
 
-  lessons     Lesson[]
-  enrollments Enrollment[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+model Lesson {
+  id           String @id @default(cuid())
+  title        String
+  order        Int
+  bunnyVideoId String
+  duration     Int?   // Duration in seconds
+  
+  // REPLACES the Material table.
+  // We store a list of material objects directly on the lesson.
+  // Example: [{"title": "Chapter 1 Notes", "url": "..."}]
+  materials Json?
+  
+  courseId        String
+  course          Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  viewingHistory  ViewingHistory[]
+  
+  @@index([courseId])
 }
 
 model Enrollment {
@@ -58,29 +123,64 @@ model Enrollment {
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   
-  // REPLACES the LessonProgress table. This is a huge optimization.
-  // We store an array of IDs of the lessons the user has completed.
+  // Enhanced progress tracking
   completedLessonIds String[]
-
-  progressPercent Int      @default(0) // We'll calculate this based on the array above
+  progressPercent    Int      @default(0)
+  totalWatchTime     Int      @default(0) // Total watch time in seconds
+  lastAccessedAt     DateTime?
+  
   enrolledAt      DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
 }
 
-model Lesson {
-  id           String @id @default(cuid())
-  title        String
-  order        Int
-  bunnyVideoId String
-
-  // REPLACES the Material table.
-  // We store a list of material objects directly on the lesson.
-  // Example: [{"title": "Chapter 1 Notes", "url": "..."}]
-  materials Json?
+model Payment {
+  id              String        @id @default(cuid())
+  amount          Decimal
+  currency        String        @default("EGP")
+  status          PaymentStatus @default(PENDING)
+  paymentMethod   String?
   
-  courseId String
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  // PayMob specific fields
+  paymobOrderId   String?       @unique
+  paymobTxnId     String?
+  paymobResponse  Json?         // Store full PayMob response
   
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  
+  courseId        String
+  course          Course        @relation(fields: [courseId], references: [id])
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@index([userId])
   @@index([courseId])
+  @@index([status])
+}
+
+model ViewingHistory {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  lessonId        String
+  lesson          Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  
+  watchedDuration Int      @default(0) // in seconds
+  totalDuration   Int      @default(0) // in seconds
+  lastPosition    Int      @default(0) // in seconds for resume functionality
+  completed       Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+  @@index([completed])
 }
