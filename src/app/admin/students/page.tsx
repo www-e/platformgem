@@ -1,4 +1,5 @@
 // src/app/admin/students/page.tsx
+
 import prisma from "@/lib/prisma";
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
@@ -16,11 +17,13 @@ const gradeMap = {
 
 const ITEMS_PER_PAGE = 10;
 
+// The function signature is the key part of the fix.
 export default async function StudentsPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  // We access the searchParams properties here, inside the function body.
   const page = typeof searchParams.page === 'string' ? Number(searchParams.page) : 1;
   const query = typeof searchParams.q === 'string' ? searchParams.q : undefined;
   const grade = typeof searchParams.grade === 'string' ? searchParams.grade as Grade : undefined;

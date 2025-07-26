@@ -46,17 +46,18 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   });
 
   if (status === 'loading') {
-    return <div className="flex items-center justify-center min-h-screen bg-background">Loading...</div>;
+    return <div className="flex items-center justify-center min-h-screen bg-background text-foreground">Loading...</div>;
   }
 
+  // This check is now secondary to the middleware, but a good safeguard
   if (!session?.user?.isAdmin) {
-    redirect("/"); // This is a safeguard
+    redirect("/"); 
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex">
+    <div className="min-h-screen bg-background text-foreground md:grid md:grid-cols-[250px_1fr]">
       {/* Desktop Sidebar */}
-      <aside className="w-64 bg-card p-6 border-l border-border hidden md:flex flex-col">
+      <aside className="h-full bg-card p-6 border-l border-border hidden md:flex flex-col">
         <div className="flex items-center gap-2 mb-10">
           <GraduationCap className="h-8 w-8 text-primary" />
           <h2 className="text-xl font-bold text-foreground">Admin Panel</h2>
@@ -65,9 +66,9 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex flex-col flex-grow">
+      <div className="flex flex-col">
         {/* Mobile Header */}
-        <header className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card">
+        <header className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card sticky top-0 z-40">
           <Link href="/admin" className="flex items-center gap-2">
             <GraduationCap className="h-6 w-6 text-primary" />
             <span className="font-bold">Admin</span>

@@ -13,7 +13,7 @@ const gradeMap = {
   THIRD_YEAR: "الصف الثالث الثانوي",
 };
 
-const ITEMS_PER_PAGE = 8; // We can show more items now that the form is gone
+const ITEMS_PER_PAGE = 8;
 
 export default async function CoursesPage({
   searchParams,
@@ -25,7 +25,10 @@ export default async function CoursesPage({
 
   const whereClause = {
     ...(query && {
-      title: { contains: query, mode: 'insensitive' },
+      title: {
+        contains: query,
+        mode: 'insensitive',
+      },
     }),
   };
 
