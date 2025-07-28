@@ -19,6 +19,9 @@
     "test:professor-interface": "tsx scripts/test-professor-interface.ts",
     "test:paymob-integration": "tsx scripts/test-paymob-integration.ts",
     "test:payment-ui": "tsx scripts/test-payment-ui.ts",
+    "test:professor-dashboard": "tsx scripts/test-professor-dashboard.ts",
+    "test:auth-redirects": "tsx scripts/test-auth-redirects.ts",
+    "test:student-dashboard": "tsx scripts/test-student-dashboard.ts",
     "db:reset": "prisma migrate reset --force",
     "db:push": "prisma db push"
   },

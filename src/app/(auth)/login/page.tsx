@@ -42,10 +42,12 @@ export default function LoginPage() {
     event.preventDefault();
     setIsLoading(true);
     const formData = new FormData(event.currentTarget);
+    
+    // Let NextAuth handle role-based redirects through the redirect callback
     await signIn("credentials", {
       login: formData.get("login"),
       password: formData.get("password"),
-      callbackUrl: "/profile",
+      // Remove hardcoded callbackUrl to let auth redirect callback handle it
     });
   };
 

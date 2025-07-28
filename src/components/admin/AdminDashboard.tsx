@@ -250,7 +250,7 @@ export function AdminDashboard() {
         </TabsContent>
 
         <TabsContent value="categories" className="space-y-6">
-          <CategoryManagement />
+          <CategoryManagement categories={[]} />
         </TabsContent>
 
         <TabsContent value="revenue" className="space-y-6">

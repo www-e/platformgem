@@ -9,7 +9,7 @@ interface RouteParams {
 // GET /api/courses/[id]/access - Check course access
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id: courseId } = params;
+    const { id: courseId } = await params;
 
     const accessResult = await checkCourseAccess(courseId);
 

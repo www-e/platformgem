@@ -50,6 +50,8 @@ model User {
   ownedCourses    Course[]         @relation("ProfessorCourses")
   payments        Payment[]
   viewingHistory  ViewingHistory[]
+  certificates    Certificate[]
+  progressMilestones ProgressMilestone[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -88,6 +90,8 @@ model Course {
   lessons         Lesson[]
   enrollments     Enrollment[]
   payments        Payment[]
+  certificates    Certificate[]
+  progressMilestones ProgressMilestone[]
   
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -183,4 +187,72 @@ model ViewingHistory {
   @@index([userId])
   @@index([lessonId])
   @@index([completed])
+}
+
+// -- CERTIFICATE SYSTEM MODELS --
+
+enum CertificateStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum MilestoneType {
+  COURSE_START
+  LESSON_COMPLETE
+  COURSE_COMPLETE
+  QUIZ_PASS
+  ASSIGNMENT_SUBMIT
+}
+
+model Certificate {
+  id              String            @id @default(cuid())
+  certificateCode String            @unique
+  userId          String
+  courseId        String
+  status          CertificateStatus @default(ACTIVE)
+  issuedAt        DateTime          @default(now())
+  validUntil      DateTime?
+  isRevoked       Boolean           @default(false)
+  revokedAt       DateTime?
+  revokedReason   String?
+  
+  // Certificate metadata
+  studentName     String
+  courseName      String
+  professorName   String
+  completionDate  DateTime
+  grade           String?
+  
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course          Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([certificateCode])
+  @@index([status])
+}
+
+model ProgressMilestone {
+  id            String        @id @default(cuid())
+  userId        String
+  courseId      String
+  milestoneType MilestoneType
+  metadata      Json?         // Additional milestone-specific data
+  achievedAt    DateTime      @default(now())
+  
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course        Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  @@unique([userId, courseId, milestoneType])
+  @@index([userId])
+  @@index([courseId])
+  @@index([milestoneType])
 }

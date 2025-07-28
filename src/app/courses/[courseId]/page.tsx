@@ -21,7 +21,7 @@ interface CoursePageProps {
 }
 
 export default async function CoursePage({ params }: CoursePageProps) {
-  const { courseId } = params;
+  const { courseId } = await params;
 
   // Fetch course data with all necessary information
   const course = await prisma.course.findUnique({

@@ -92,6 +92,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session
     },
+    async redirect({ url, baseUrl, token }) {
+      // If user is signing in, redirect based on their role
+      if (token?.role) {
+        const { getRoleBasedRedirectUrl } = await import('./auth-redirects');
+        const roleBasedUrl = getRoleBasedRedirectUrl(token.role as UserRole);
+        return `${baseUrl}${roleBasedUrl}`;
+      }
+      
+      // Default behavior for other cases
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
   },
   pages: {
     signIn: '/login',

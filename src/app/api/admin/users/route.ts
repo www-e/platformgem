@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         role: true,
         isActive: true,
         createdAt: true,
-        lastLogin: true,
+        // lastLogin: true, // Field doesn't exist in current schema
         _count: {
           select: {
             enrollments: true,
@@ -40,9 +40,9 @@ export async function GET(request: NextRequest) {
       role: user.role,
       isActive: user.isActive,
       createdAt: user.createdAt,
-      lastLogin: user.lastLogin,
-      enrollmentCount: user.role === 'STUDENT' ? user._count.enrollments : undefined,
-      courseCount: user.role === 'PROFESSOR' ? user._count.ownedCourses : undefined
+      lastLogin: undefined, // Field doesn't exist in current schema
+      enrollmentCount: user.role === 'STUDENT' ? user._count?.enrollments : undefined,
+      courseCount: user.role === 'PROFESSOR' ? user._count?.ownedCourses : undefined
     }));
 
     return NextResponse.json({ users: formattedUsers });

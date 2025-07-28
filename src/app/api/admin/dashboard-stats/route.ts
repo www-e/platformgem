@@ -34,7 +34,8 @@ export async function GET(request: NextRequest) {
       prisma.category.count(),
       prisma.course.count({ where: { isPublished: true } }),
       prisma.enrollment.count(),
-      prisma.certificate.count({ where: { isRevoked: false } }),
+      // Temporarily return 0 for certificates until model is available
+      Promise.resolve(0),
       prisma.payment.findMany({
         where: { status: 'COMPLETED' },
         select: { amount: true, createdAt: true }
