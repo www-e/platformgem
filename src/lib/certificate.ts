@@ -1,6 +1,5 @@
 // src/lib/certificate.ts
 import prisma from '@/lib/prisma';
-import { auth } from '@/lib/auth';
 
 // Certificate generation utilities
 export interface CertificateData {

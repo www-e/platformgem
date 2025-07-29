@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
-import { UserRole } from "@prisma/client";
 import { auth, signIn } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 // import { isRedirectError } from "next/dist/client/components/redirect-error";
@@ -70,11 +69,11 @@ export async function signupStudent(
     });
 
     // Auto-login after successful registration
-    const loginFormData = new FormData();
-    loginFormData.append("login", phone); // Use phone as primary login
-    loginFormData.append("password", password);
-
-    await signIn("credentials", loginFormData);
+    await signIn("credentials", {
+      login: phone,
+      password: password,
+      redirect: false // Handle redirect manually
+    });
   } catch (error) {
     // Handle redirect errors by re-throwing them
     if (
@@ -96,7 +95,8 @@ export async function signupStudent(
     return { error: "حدث خطأ في قاعدة البيانات أثناء إنشاء الحساب." };
   }
 
-  redirect("/profile");
+  // Redirect to student dashboard (since signup is for students)
+  redirect("/dashboard");
 }
 
 // --- PROFESSOR SIGNUP ACTION (Admin only) ---

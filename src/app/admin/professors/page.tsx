@@ -3,7 +3,6 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { CreateProfessorDialog } from "@/components/admin/CreateProfessorDialog";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, BookOpen, Clock } from "lucide-react";

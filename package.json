@@ -22,6 +22,8 @@
     "test:professor-dashboard": "tsx scripts/test-professor-dashboard.ts",
     "test:auth-redirects": "tsx scripts/test-auth-redirects.ts",
     "test:student-dashboard": "tsx scripts/test-student-dashboard.ts",
+    "test:auth-flow": "tsx scripts/test-auth-flow.ts",
+    "test:role-redirects": "tsx scripts/test-role-redirects.ts",
     "db:reset": "prisma migrate reset --force",
     "db:push": "prisma db push"
   },

@@ -17,7 +17,7 @@ const courseCreateSchema = z.object({
 });
 
 // GET /api/courses - List courses with filtering and pagination
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     

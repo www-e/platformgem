@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Eye, EyeOff, UserPlus, GraduationCap } from "lucide-react";
 import { useState } from "react";
 import { AuroraBackground } from "@/components/ui/aurora-background"; // Import new background

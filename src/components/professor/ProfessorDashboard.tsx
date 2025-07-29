@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { 
   BookOpen, 
   Users, 
@@ -142,7 +141,7 @@ export function ProfessorDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalCourses}</div>
             <p className="text-xs text-muted-foreground">
-              {stats.publishedCourses} منشورة • {stats.draftCourses} مسودة
+              {stats.publishedCourses} منشورة / {stats.draftCourses} مسودة
             </p>
             <div className="flex items-center gap-1 mt-1">
               {stats.monthlyGrowth.courses > 0 && (
@@ -338,103 +337,6 @@ export function ProfessorDashboard() {
 
         <TabsContent value="engagement" className="space-y-6">
           <StudentEngagement />
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-}
-            {/* Recent Enrollments */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  التسجيلات الحديثة
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {stats.recentEnrollments.length > 0 ? (
-                    stats.recentEnrollments.slice(0, 5).map((enrollment) => (
-                      <div key={enrollment.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Users className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <p className="font-medium">{enrollment.studentName}</p>
-                            <p className="text-sm text-muted-foreground">{enrollment.courseName}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <Badge variant="outline">
-                            {enrollment.progress}% مكتمل
-                          </Badge>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {new Date(enrollment.enrolledAt).toLocaleDateString('ar-SA')}
-                          </p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8">
-                      <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                      <p className="text-muted-foreground">لا توجد تسجيلات حديثة</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>إجراءات سريعة</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <Button asChild className="w-full justify-start">
-                    <Link href="/professor/courses/new">
-                      <Plus className="h-4 w-4 mr-2" />
-                      إنشاء دورة جديدة
-                    </Link>
-                  </Button>
-                  
-                  <Button variant="outline" asChild className="w-full justify-start">
-                    <Link href="/professor/courses">
-                      <BookOpen className="h-4 w-4 mr-2" />
-                      إدارة الدورات الحالية
-                    </Link>
-                  </Button>
-                  
-                  <Button variant="outline" asChild className="w-full justify-start">
-                    <Link href="/professor/analytics">
-                      <BarChart3 className="h-4 w-4 mr-2" />
-                      عرض التحليلات المفصلة
-                    </Link>
-                  </Button>
-                  
-                  <Button variant="outline" asChild className="w-full justify-start">
-                    <Link href="/professor/students">
-                      <Users className="h-4 w-4 mr-2" />
-                      إدارة الطلاب
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="students" className="space-y-6">
-          <StudentEnrollmentStats />
-        </TabsContent>
-
-        <TabsContent value="earnings" className="space-y-6">
-          <EarningsReport />
-        </TabsContent>
-
-        <TabsContent value="analytics" className="space-y-6">
-          <CourseAnalytics />
         </TabsContent>
       </Tabs>
     </div>

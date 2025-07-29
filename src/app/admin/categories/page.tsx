@@ -4,9 +4,7 @@ import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { CategoryDialog } from "@/components/admin/CategoryDialog";
 import { CategoryManagement } from "@/components/admin/CategoryManagement";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { FolderOpen, BookOpen, Users, TrendingUp } from "lucide-react";
 
 export default async function CategoriesPage() {

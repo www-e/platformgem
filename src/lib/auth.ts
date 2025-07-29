@@ -1,10 +1,9 @@
 // src/lib/auth.ts
 
 import NextAuth from "next-auth"
-import { JWT } from "next-auth/jwt"
 import Credentials from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
-import { User as PrismaUser, UserRole } from "@prisma/client"
+import { UserRole } from "@prisma/client"
 
 import prisma from "@/lib/prisma"
 
@@ -92,17 +91,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session
     },
-    async redirect({ url, baseUrl, token }) {
-      // If user is signing in, redirect based on their role
-      if (token?.role) {
-        const { getRoleBasedRedirectUrl } = await import('./auth-redirects');
-        const roleBasedUrl = getRoleBasedRedirectUrl(token.role as UserRole);
-        return `${baseUrl}${roleBasedUrl}`;
+    async redirect({ url, baseUrl }) {
+      console.log('🔄 Auth redirect called:', { url, baseUrl });
+      
+      // For sign-in redirects, we'll handle role-based redirects in the login page
+      // This callback is mainly for other redirect scenarios
+      
+      // Default behavior for relative URLs
+      if (url.startsWith("/")) {
+        console.log('🔄 Relative URL redirect:', `${baseUrl}${url}`);
+        return `${baseUrl}${url}`;
+      }
+      if (new URL(url).origin === baseUrl) {
+        console.log('🔄 Same origin redirect:', url);
+        return url;
       }
       
-      // Default behavior for other cases
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      if (new URL(url).origin === baseUrl) return url;
+      console.log('🔄 Default redirect to base:', baseUrl);
       return baseUrl;
     },
   },

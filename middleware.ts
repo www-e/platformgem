@@ -13,10 +13,13 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/static') ||
     pathname.startsWith('/api/') ||
     pathname.includes('/favicon.ico') ||
-    pathname === '/'
+    pathname === '/' ||
+    pathname.startsWith('/debug-auth') // Allow debug page
   ) {
     return NextResponse.next();
   }
+
+  console.log('🛡️ Middleware processing:', pathname);
   
   // Get the user token
   const token = await getToken({ 
@@ -31,22 +34,30 @@ export async function middleware(request: NextRequest) {
   const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup');
   const isAdminRoute = pathname.startsWith('/admin');
   const isProfessorRoute = pathname.startsWith('/professor');
-  const isStudentRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/courses') || pathname.startsWith('/profile');
-  const isPublicRoute = pathname.startsWith('/courses') && !pathname.includes('/enroll');
+  const isStudentRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/profile');
+  
+  // Public routes that don't require authentication
+  const isPublicRoute = pathname.startsWith('/courses') || 
+                       pathname.startsWith('/certificates/verify') ||
+                       pathname === '/';
   
   // Logic 1: Handle users trying to access auth pages (login/signup)
   if (isAuthRoute) {
+    console.log('🔐 Auth route accessed:', { pathname, isLoggedIn, userRole });
     if (isLoggedIn) {
       // Redirect authenticated users to their appropriate dashboard
       const dashboardUrl = getRoleBasedRedirectUrl(userRole);
+      console.log('↩️ Redirecting authenticated user from auth page:', dashboardUrl);
       return NextResponse.redirect(new URL(dashboardUrl, request.url));
     }
     // Allow unauthenticated users to access auth pages
+    console.log('✅ Allowing unauthenticated user to access auth page');
     return NextResponse.next();
   }
 
-  // Logic 2: Handle public routes (course browsing)
+  // Logic 2: Handle public routes (accessible to everyone)
   if (isPublicRoute) {
+    console.log('🌐 Public route accessed:', pathname);
     return NextResponse.next();
   }
 
@@ -55,6 +66,7 @@ export async function middleware(request: NextRequest) {
     // Redirect to login with callback URL
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('callbackUrl', pathname);
+    console.log('🚫 Redirecting unauthenticated user to login:', loginUrl.toString());
     return NextResponse.redirect(loginUrl);
   }
 

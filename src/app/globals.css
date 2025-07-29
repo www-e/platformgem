@@ -4,57 +4,59 @@
 
 @layer base {
   :root {
-    --background: 248 35% 7%;  /* #090816 - Deep Space Navy */
-    --foreground: 250 20% 95%; /* #eef0fa - Starlight White */
+    /* Light Theme :root */
+    --background: 145 55% 98%; /* #f4fcf7 - Soft Greenish White */
+    --foreground: 145 21% 18%; /* #232d23 - Deep Leaf */
 
-    --card: 248 35% 11%;      /* #110f29 - Darker Nebula */
-    --card-foreground: 250 20% 95%;
+    --card: 145 33% 96%; /* #eaf7ee - Subtle Green Card */
+    --card-foreground: 145 21% 18%;
 
-    --popover: 248 35% 7%;
-    --popover-foreground: 250 20% 95%;
+    --popover: 145 55% 98%;
+    --popover-foreground: 145 21% 18%;
 
-    --primary: 258 85% 70%;   /* #8b68f7 - Galactic Purple */
-    --primary-foreground: 250 20% 95%;
+    --primary: 157 72% 40%; /* #16ba62 - Vibrant Green Primary */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 25 95% 60%;  /* #f7903f - Solar Orange */
-    --secondary-foreground: 248 35% 7%;
+    --secondary: 91 36% 62%; /* #b7d95c - Soft Lime Green */
+    --secondary-foreground: 145 21% 18%;
 
-    --muted: 248 35% 15%;      /* #1a173d - Muted Space */
-    --muted-foreground: 250 15% 60%; /* #918fad - Asteroid Gray */
+    --muted: 145 15% 92%; /* #ecf6ef - Muted Green */
+    --muted-foreground: 146 10% 50%; /* #728973 */
 
-    --accent: 248 35% 15%;
-    --accent-foreground: 250 20% 95%;
+    --accent: 157 72% 29%; /* #118c44 - Darker Accent Green */
+    --accent-foreground: 145 55% 98%;
 
     --destructive: 359 81% 59%; /* #f14c4c */
-    --destructive-foreground: 250 20% 95%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 248 35% 20%;      /* #221f51 */
-    --input: 248 35% 18%;       /* #1d1a48 */
-    --ring: 258 85% 70%;
+    --border: 145 21% 88%; /* #d8ecd8 - Light Green Border */
+    --input: 145 33% 96%; /* #eaf7ee - Card */
+    --ring: 157 72% 40%;
 
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 248 35% 7%;
-    --foreground: 250 20% 95%;
-    --card: 248 35% 11%;
-    --card-foreground: 250 20% 95%;
-    --popover: 248 35% 7%;
-    --popover-foreground: 250 20% 95%;
-    --primary: 258 85% 70%;
-    --primary-foreground: 250 20% 95%;
-    --secondary: 25 95% 60%;
-    --secondary-foreground: 248 35% 7%;
-    --muted: 248 35% 15%;
-    --muted-foreground: 250 15% 60%;
-    --accent: 248 35% 15%;
-    --accent-foreground: 250 20% 95%;
+    /* Dark Theme (.dark) */
+    --background: 145 21% 18%;
+    --foreground: 145 55% 98%;
+    --card: 145 21% 24%;
+    --card-foreground: 145 55% 98%;
+    --popover: 145 21% 18%;
+    --popover-foreground: 145 55% 98%;
+    --primary: 157 72% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 91 36% 62%;
+    --secondary-foreground: 145 21% 18%;
+    --muted: 145 21% 24%;
+    --muted-foreground: 146 10% 70%;
+    --accent: 157 72% 29%;
+    --accent-foreground: 145 55% 98%;
     --destructive: 359 81% 59%;
-    --destructive-foreground: 250 20% 95%;
-    --border: 248 35% 20%;
-    --input: 248 35% 18%;
-    --ring: 258 85% 70%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 145 21% 28%;
+    --input: 145 21% 24%;
+    --ring: 157 72% 40%;
     --radius: 0.75rem;
   }
 }
@@ -68,7 +70,12 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold tracking-tight;
   }
 }

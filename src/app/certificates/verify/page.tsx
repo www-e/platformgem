@@ -51,7 +51,7 @@ export default function CertificateVerificationPage() {
         setError(data.error || 'شهادة غير صالحة');
         setIsValid(false);
       }
-    } catch (err) {
+    } catch {
       setError('خطأ في التحقق من الشهادة');
       setIsValid(false);
     } finally {

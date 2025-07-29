@@ -41,14 +41,45 @@ export default function LoginPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
-    const formData = new FormData(event.currentTarget);
     
-    // Let NextAuth handle role-based redirects through the redirect callback
-    await signIn("credentials", {
-      login: formData.get("login"),
-      password: formData.get("password"),
-      // Remove hardcoded callbackUrl to let auth redirect callback handle it
-    });
+    try {
+      const formData = new FormData(event.currentTarget);
+      
+      // Use signIn with redirect: false to handle the redirect manually
+      const result = await signIn("credentials", {
+        login: formData.get("login"),
+        password: formData.get("password"),
+        redirect: false
+      });
+
+      if (result?.error) {
+        console.error('Login error:', result.error);
+        setIsLoading(false);
+        return;
+      }
+
+      // If login successful, get user session and redirect based on role
+      console.log('Login successful, getting user session...');
+      
+      // Get the updated session to determine role-based redirect
+      const session = await fetch('/api/auth/session').then(res => res.json());
+      console.log('User session after login:', session);
+      
+      if (session?.user?.role) {
+        // Import the redirect utility
+        const { getRoleBasedRedirectUrl } = await import('@/lib/auth-redirects');
+        const redirectUrl = getRoleBasedRedirectUrl(session.user.role);
+        console.log('Redirecting to role-based URL:', redirectUrl);
+        window.location.href = redirectUrl;
+      } else {
+        // Fallback to dashboard
+        console.log('No role found, redirecting to dashboard');
+        window.location.href = '/dashboard';
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setIsLoading(false);
+    }
   };
 
   return (
