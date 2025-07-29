@@ -401,8 +401,8 @@ export function PaymentHistory() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {stats.monthlySpending.map((month) => (
-                    <div key={month.month} className="flex items-center justify-between p-3 border rounded-lg">
+                  {stats.monthlySpending.map((month, index) => (
+                    <div key={`${month.month}-${index}`} className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
                         <p className="font-medium">{month.month}</p>
                         <p className="text-sm text-muted-foreground">
@@ -436,8 +436,8 @@ export function PaymentHistory() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {stats.paymentMethods.map((method) => (
-                    <div key={method.method} className="flex items-center justify-between p-3 border rounded-lg">
+                  {stats.paymentMethods.map((method, index) => (
+                    <div key={`${method.method}-${index}`} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex items-center gap-3">
                         {getPaymentMethodIcon(method.method)}
                         <div>

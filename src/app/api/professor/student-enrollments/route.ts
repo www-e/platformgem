@@ -34,7 +34,7 @@ export async function GET(_request: NextRequest) {
         viewingHistory: true
       },
       orderBy: {
-        createdAt: 'desc'
+        enrolledAt: 'desc'
       }
     });
 

@@ -3,7 +3,8 @@ import crypto from 'crypto';
 
 export interface PayMobConfig {
   apiKey: string;
-  integrationId: string;
+  integrationIdOnlineCard: string;
+  integrationIdMobileWallet: string;
   iframeId: string;
   hmacSecret: string;
   baseUrl: string;
@@ -175,13 +176,14 @@ class PayMobService {
   constructor() {
     this.config = {
       apiKey: process.env.PAYMOB_API_KEY || '',
-      integrationId: process.env.PAYMOB_INTEGRATION_ID || '',
+      integrationIdOnlineCard: process.env.PAYMOB_INTEGRATION_ID_ONLINE_CARD || '',
+      integrationIdMobileWallet: process.env.PAYMOB_INTEGRATION_ID_MOBILE_WALLET || '',
       iframeId: process.env.PAYMOB_IFRAME_ID || '',
       hmacSecret: process.env.PAYMOB_HMAC_SECRET || '',
       baseUrl: process.env.PAYMOB_BASE_URL || 'https://accept.paymob.com/api'
     };
 
-    if (!this.config.apiKey || !this.config.integrationId || !this.config.hmacSecret) {
+    if (!this.config.apiKey || !this.config.integrationIdOnlineCard || !this.config.hmacSecret) {
       throw new Error('PayMob configuration is incomplete. Please check environment variables.');
     }
   }
@@ -264,7 +266,7 @@ class PayMobService {
           order_id: orderId,
           billing_data: billingData,
           currency: 'EGP',
-          integration_id: parseInt(this.config.integrationId),
+          integration_id: parseInt(this.config.integrationIdOnlineCard),
           lock_order_when_paid: true
         })
       });

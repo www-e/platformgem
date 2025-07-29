@@ -14,7 +14,7 @@ const categorySchema = z.object({
 });
 
 // GET /api/categories - List all categories
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const includeInactive = searchParams.get('includeInactive') === 'true';
@@ -30,9 +30,7 @@ export async function GET(_request: NextRequest) {
     });
 
     return NextResponse.json({
-      success: true,
-      data: categories,
-      timestamp: new Date().toISOString()
+      categories: categories
     });
 
   } catch (error) {

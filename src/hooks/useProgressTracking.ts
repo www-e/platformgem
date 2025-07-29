@@ -48,7 +48,7 @@ export function useProgressTracking({
   // Track enrollment milestone
   useEffect(() => {
     if (isEnrolled) {
-      recordMilestone('ENROLLMENT', {
+      recordMilestone('COURSE_START', {
         enrollmentDate: new Date().toISOString()
       });
     }
@@ -57,7 +57,7 @@ export function useProgressTracking({
   // Track first lesson milestone
   useEffect(() => {
     if (completedLessons === 1) {
-      recordMilestone('FIRST_LESSON', {
+      recordMilestone('LESSON_COMPLETE', {
         firstLessonDate: new Date().toISOString()
       });
     }
