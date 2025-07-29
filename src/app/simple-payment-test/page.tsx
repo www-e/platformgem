@@ -1,11 +1,11 @@
 // src/app/simple-payment-test/page.tsx
 // Simple payment test page to debug issues
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function SimplePaymentTestPage() {
   const [result, setResult] = useState<any>(null);
@@ -14,36 +14,35 @@ export default function SimplePaymentTestPage() {
   const testDebugPayment = async () => {
     setLoading(true);
     setResult(null);
-    
+
     try {
-      console.log('🔍 Testing debug payment endpoint...');
-      
-      const response = await fetch('/api/debug-payment', {
-        method: 'POST',
+      console.log("🔍 Testing debug payment endpoint...");
+
+      const response = await fetch("/api/debug-payment", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          test: 'debug-payment',
-          courseId: 'test-course'
+          test: "debug-payment",
+          courseId: "test-course",
         }),
       });
 
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
+      console.log("Response status:", response.status);
+      console.log("Response headers:", response.headers);
 
       const data = await response.json();
-      console.log('Response data:', data);
-      
+      console.log("Response data:", data);
+
       setResult({
         status: response.status,
-        data: data
+        data: data,
       });
-
     } catch (error) {
-      console.error('Test failed:', error);
+      console.error("Test failed:", error);
       setResult({
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     } finally {
       setLoading(false);
@@ -53,68 +52,70 @@ export default function SimplePaymentTestPage() {
   const testActualPayment = async () => {
     setLoading(true);
     setResult(null);
-    
+
     try {
-      console.log('🔍 Testing actual payment initiation...');
-      
+      console.log("🔍 Testing actual payment initiation...");
+
       // First get a course
-      const coursesResponse = await fetch('/api/courses?limit=1');
+      const coursesResponse = await fetch("/api/courses?limit=1");
       const coursesData = await coursesResponse.json();
-      
+
       if (coursesData.courses.length === 0) {
-        throw new Error('No courses found');
+        throw new Error("No courses found");
       }
 
       const course = coursesData.courses[0];
-      console.log('Using course:', course.title);
+      console.log("Using course:", course.title);
 
       // Try payment initiation
-      const paymentResponse = await fetch('/api/payments/initiate', {
-        method: 'POST',
+      const paymentResponse = await fetch("/api/payments/initiate", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          courseId: course.id
+          courseId: course.id,
         }),
       });
 
-      console.log('Payment response status:', paymentResponse.status);
-      console.log('Payment response headers:', paymentResponse.headers);
+      console.log("Payment response status:", paymentResponse.status);
+      console.log("Payment response headers:", paymentResponse.headers);
 
       // Check if response is JSON or HTML
-      const contentType = paymentResponse.headers.get('content-type');
-      console.log('Content-Type:', contentType);
+      const contentType = paymentResponse.headers.get("content-type");
+      console.log("Content-Type:", contentType);
 
-      if (contentType && contentType.includes('application/json')) {
+      if (contentType && contentType.includes("application/json")) {
         const paymentData = await paymentResponse.json();
-        console.log('Payment response data:', paymentData);
-        
+        console.log("Payment response data:", paymentData);
+
         setResult({
           status: paymentResponse.status,
           data: paymentData,
           course: {
             id: course.id,
             title: course.title,
-            price: course.price
-          }
+            price: course.price,
+          },
         });
       } else {
         // Response is HTML (error page)
         const htmlText = await paymentResponse.text();
-        console.log('HTML response (first 500 chars):', htmlText.substring(0, 500));
-        
+        console.log(
+          "HTML response (first 500 chars):",
+          htmlText.substring(0, 500)
+        );
+
         setResult({
           status: paymentResponse.status,
-          error: 'Server returned HTML instead of JSON',
-          htmlPreview: htmlText.substring(0, 500)
+          error: "Server returned HTML instead of JSON",
+          htmlPreview: htmlText.substring(0, 500),
         });
       }
-
     } catch (error) {
-      console.error('Payment test failed:', error);
+      console.error("Payment test failed:", error);
       setResult({
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     } finally {
       setLoading(false);

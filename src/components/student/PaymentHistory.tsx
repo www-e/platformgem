@@ -18,8 +18,10 @@ import {
   Clock,
   Receipt,
   TrendingUp,
-  BarChart3
+  BarChart3,
+  Eye
 } from 'lucide-react';
+import PaymentDetailsModal from '@/components/payment/PaymentDetailsModal';
 import {
   Select,
   SelectContent,
@@ -72,6 +74,8 @@ export function PaymentHistory() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dateFilter, setDateFilter] = useState<string>('all');
+  const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchPaymentHistory();
@@ -160,11 +164,18 @@ export function PaymentHistory() {
         return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />معلق</Badge>;
       case 'failed':
         return <Badge className="bg-red-100 text-red-800"><XCircle className="h-3 w-3 mr-1" />فاشل</Badge>;
+      case 'cancelled':
+        return <Badge className="bg-gray-100 text-gray-800"><XCircle className="h-3 w-3 mr-1" />ملغي</Badge>;
       case 'refunded':
         return <Badge className="bg-gray-100 text-gray-800"><Receipt className="h-3 w-3 mr-1" />مسترد</Badge>;
       default:
         return <Badge variant="outline">غير محدد</Badge>;
     }
+  };
+
+  const handleViewDetails = (paymentId: string) => {
+    setSelectedPaymentId(paymentId);
+    setIsDetailsModalOpen(true);
   };
 
   const getPaymentMethodIcon = (method: string) => {
@@ -301,6 +312,7 @@ export function PaymentHistory() {
                     <SelectItem value="completed">مكتمل</SelectItem>
                     <SelectItem value="pending">معلق</SelectItem>
                     <SelectItem value="failed">فاشل</SelectItem>
+                    <SelectItem value="cancelled">ملغي</SelectItem>
                     <SelectItem value="refunded">مسترد</SelectItem>
                   </SelectContent>
                 </Select>
@@ -373,6 +385,16 @@ export function PaymentHistory() {
                           سبب الاسترداد: {transaction.refundReason}
                         </p>
                       )}
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewDetails(transaction.id)}
+                        className="mt-2"
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        التفاصيل
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -469,6 +491,16 @@ export function PaymentHistory() {
           )}
         </div>
       </div>
+
+      {/* Payment Details Modal */}
+      <PaymentDetailsModal
+        paymentId={selectedPaymentId}
+        isOpen={isDetailsModalOpen}
+        onClose={() => {
+          setIsDetailsModalOpen(false);
+          setSelectedPaymentId(null);
+        }}
+      />
     </div>
   );
 }

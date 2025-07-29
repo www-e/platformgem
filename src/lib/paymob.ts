@@ -8,6 +8,8 @@ export interface PayMobConfig {
   iframeId: string;
   hmacSecret: string;
   baseUrl: string;
+  webhookUrl: string;
+  returnUrl: string;
 }
 
 export interface PayMobOrderRequest {
@@ -180,7 +182,9 @@ class PayMobService {
       integrationIdMobileWallet: process.env.PAYMOB_INTEGRATION_ID_MOBILE_WALLET || '',
       iframeId: process.env.PAYMOB_IFRAME_ID || '',
       hmacSecret: process.env.PAYMOB_HMAC_SECRET || '',
-      baseUrl: process.env.PAYMOB_BASE_URL || 'https://accept.paymob.com/api'
+      baseUrl: process.env.PAYMOB_BASE_URL || 'https://accept.paymob.com/api',
+      webhookUrl: process.env.PAYMOB_WEBHOOK_URL || '',
+      returnUrl: process.env.PAYMOB_RETURN_URL || ''
     };
 
     if (!this.config.apiKey || !this.config.integrationIdOnlineCard || !this.config.hmacSecret) {
@@ -286,7 +290,7 @@ class PayMobService {
   /**
    * Complete payment flow: authenticate -> create order -> get payment key
    */
-  async initiatePayment(orderData: PayMobOrderRequest): Promise<{
+  async initiatePayment(orderData: PayMobOrderRequest, courseId?: string): Promise<{
     paymentKey: string;
     orderId: number;
     iframeUrl: string;
@@ -306,8 +310,14 @@ class PayMobService {
         orderData.billing_data
       );
 
-      // Step 4: Generate iframe URL
-      const iframeUrl = `https://accept.paymob.com/api/acceptance/iframes/${this.config.iframeId}?payment_token=${paymentKey}`;
+      // Step 4: Generate iframe URL with return URL
+      let iframeUrl = `https://accept.paymob.com/api/acceptance/iframes/${this.config.iframeId}?payment_token=${paymentKey}`;
+      
+      // Add return URL if configured and course ID provided
+      if (this.config.returnUrl && courseId) {
+        const returnUrl = this.config.returnUrl.replace('{courseId}', courseId);
+        iframeUrl += `&return_url=${encodeURIComponent(returnUrl)}`;
+      }
 
       return {
         paymentKey,
@@ -321,7 +331,7 @@ class PayMobService {
   }
 
   /**
-   * Verify webhook signature
+   * Verify webhook signature with enhanced security
    */
   verifyWebhookSignature(data: any): boolean {
     try {
@@ -348,6 +358,12 @@ class PayMobService {
         success,
         hmac
       } = data;
+
+      // Validate required fields
+      if (!hmac || typeof hmac !== 'string') {
+        console.error('HMAC verification failed: Missing or invalid HMAC');
+        return false;
+      }
 
       // Create the string to hash according to PayMob documentation
       const concatenatedString = [
@@ -379,11 +395,68 @@ class PayMobService {
         .update(concatenatedString)
         .digest('hex');
 
-      return calculatedHmac === hmac;
+      // Use constant-time comparison to prevent timing attacks
+      return this.constantTimeCompare(calculatedHmac, hmac);
     } catch (error) {
       console.error('HMAC verification error:', error);
       return false;
     }
+  }
+
+  /**
+   * Constant-time string comparison to prevent timing attacks
+   */
+  private constantTimeCompare(a: string, b: string): boolean {
+    if (a.length !== b.length) {
+      return false;
+    }
+
+    let result = 0;
+    for (let i = 0; i < a.length; i++) {
+      result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    }
+
+    return result === 0;
+  }
+
+  /**
+   * Validate webhook payload structure
+   */
+  validateWebhookPayload(data: any): boolean {
+    const requiredFields = [
+      'id',
+      'amount_cents',
+      'success',
+      'pending',
+      'currency',
+      'integration_id',
+      'order',
+      'created_at',
+      'hmac'
+    ];
+
+    for (const field of requiredFields) {
+      if (!(field in data)) {
+        console.error(`Webhook validation failed: Missing required field '${field}'`);
+        return false;
+      }
+    }
+
+    // Validate order object
+    if (!data.order || typeof data.order !== 'object') {
+      console.error('Webhook validation failed: Invalid order object');
+      return false;
+    }
+
+    const requiredOrderFields = ['id', 'merchant_order_id', 'amount_cents'];
+    for (const field of requiredOrderFields) {
+      if (!(field in data.order)) {
+        console.error(`Webhook validation failed: Missing order field '${field}'`);
+        return false;
+      }
+    }
+
+    return true;
   }
 
   /**

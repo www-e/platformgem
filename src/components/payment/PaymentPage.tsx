@@ -38,6 +38,8 @@ export default function PaymentPage({ course, user }: PaymentPageProps) {
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [pendingPaymentId, setPendingPaymentId] = useState<string | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const handlePayment = async () => {
     if (!course.price) {
@@ -76,6 +78,12 @@ export default function PaymentPage({ course, user }: PaymentPageProps) {
         window.location.href = result.data.iframeUrl;
       } else {
         console.error('Payment initiation failed:', result);
+        
+        // Check if it's a pending payment error
+        if (result.error?.code === 'PENDING_PAYMENT' && result.error?.details?.paymentId) {
+          setPendingPaymentId(result.error.details.paymentId);
+        }
+        
         throw new Error(result.error?.message || result.error || 'فشل في إنشاء رابط الدفع');
       }
 
@@ -91,6 +99,36 @@ export default function PaymentPage({ course, user }: PaymentPageProps) {
 
   const handleBackToCourse = () => {
     router.push(`/courses/${course.id}`);
+  };
+
+  const handleCancelPendingPayment = async () => {
+    if (!pendingPaymentId) return;
+
+    setIsCancelling(true);
+    try {
+      const response = await fetch(`/api/payments/${pendingPaymentId}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success('تم إلغاء عملية الدفع السابقة بنجاح');
+        setPaymentError(null);
+        setPendingPaymentId(null);
+        // Allow user to try payment again
+      } else {
+        throw new Error(result.error?.message || 'فشل في إلغاء عملية الدفع');
+      }
+    } catch (error) {
+      console.error('Failed to cancel payment:', error);
+      toast.error('فشل في إلغاء عملية الدفع: ' + (error instanceof Error ? error.message : 'خطأ غير معروف'));
+    } finally {
+      setIsCancelling(false);
+    }
   };
 
   return (
@@ -249,9 +287,31 @@ export default function PaymentPage({ course, user }: PaymentPageProps) {
               {/* Payment Error */}
               {paymentError && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <div className="flex items-center gap-2 text-red-800">
-                    <AlertCircle className="w-4 h-4" />
-                    <span className="text-sm">{paymentError}</span>
+                  <div className="flex items-start gap-2 text-red-800">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <span className="text-sm">{paymentError}</span>
+                      {pendingPaymentId && (
+                        <div className="mt-2">
+                          <Button
+                            onClick={handleCancelPendingPayment}
+                            disabled={isCancelling}
+                            variant="outline"
+                            size="sm"
+                            className="text-red-700 border-red-300 hover:bg-red-100"
+                          >
+                            {isCancelling ? (
+                              <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                جاري الإلغاء...
+                              </>
+                            ) : (
+                              'إلغاء عملية الدفع السابقة'
+                            )}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}

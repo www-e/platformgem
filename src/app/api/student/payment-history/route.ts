@@ -31,18 +31,21 @@ export async function GET(_request: NextRequest) {
     });
 
     // Transform payments data
-    const transactions = payments.map(payment => ({
+    const transactions = payments.map((payment: any) => ({
       id: payment.id,
       courseName: payment.course.title,
       amount: Number(payment.amount),
       currency: payment.currency,
       status: payment.status.toLowerCase(),
       paymentMethod: payment.paymentMethod || 'credit_card',
-      transactionId: payment.paymobTxnId || payment.id,
+      transactionId: payment.paymobTransactionId ? Number(payment.paymobTransactionId) : payment.id,
       createdAt: payment.createdAt,
       updatedAt: payment.updatedAt,
+      completedAt: payment.completedAt,
       paymobOrderId: payment.paymobOrderId,
-      refundReason: payment.status === 'REFUNDED' ? 'طلب من العميل' : undefined
+      paymobTransactionId: payment.paymobTransactionId ? Number(payment.paymobTransactionId) : null,
+      failureReason: payment.failureReason,
+      refundReason: payment.status === 'REFUNDED' ? payment.failureReason || 'طلب من العميل' : undefined
     }));
 
     return NextResponse.json({ transactions });

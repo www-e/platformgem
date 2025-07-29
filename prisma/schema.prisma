@@ -21,6 +21,7 @@ enum PaymentStatus {
   PENDING
   COMPLETED
   FAILED
+  CANCELLED
   REFUNDED
 }
 
@@ -142,29 +143,57 @@ model Enrollment {
 }
 
 model Payment {
-  id              String        @id @default(cuid())
-  amount          Decimal
-  currency        String        @default("EGP")
-  status          PaymentStatus @default(PENDING)
-  paymentMethod   String?
+  id                    String        @id @default(cuid())
+  amount                Decimal
+  currency              String        @default("EGP")
+  status                PaymentStatus @default(PENDING)
+  paymentMethod         String?
   
   // PayMob specific fields
-  paymobOrderId   String?       @unique
-  paymobTxnId     String?
-  paymobResponse  Json?         // Store full PayMob response
+  paymobOrderId         String?       @unique
+  paymobTransactionId   BigInt?       // PayMob transaction ID from webhook
+  paymobResponse        Json?         // Store full PayMob response
   
-  userId          String
-  user            User          @relation(fields: [userId], references: [id])
+  // Payment completion tracking
+  completedAt           DateTime?     // When payment was completed
+  failureReason         String?       // Reason for payment failure
   
-  courseId        String
-  course          Course        @relation(fields: [courseId], references: [id])
+  userId                String
+  user                  User          @relation(fields: [userId], references: [id])
   
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  courseId              String
+  course                Course        @relation(fields: [courseId], references: [id])
+  
+  // Relations
+  webhooks              PaymentWebhook[]
+  
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
   
   @@index([userId])
   @@index([courseId])
   @@index([status])
+  @@index([paymobOrderId])
+  @@index([paymobTransactionId])
+}
+
+model PaymentWebhook {
+  id                    String    @id @default(cuid())
+  paymentId             String
+  paymobTransactionId   BigInt
+  webhookPayload        Json      // Full webhook payload from PayMob
+  processedAt           DateTime? // When webhook was successfully processed
+  processingAttempts    Int       @default(0)
+  lastError             String?   // Last error message if processing failed
+  
+  payment               Payment   @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@index([paymentId])
+  @@index([paymobTransactionId])
+  @@index([processedAt])
 }
 
 model ViewingHistory {

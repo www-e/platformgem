@@ -88,4 +88,4 @@ rl.question('How many top files with most lines of code do you want to list? Ent
 });
 
 
-//to run the script run (node countLines.cjs)
+//to run the script run (node KNOWHOWMANYFILES.cjs)

@@ -111,15 +111,40 @@ export async function POST(request: NextRequest) {
         userId: session.user.id,
         courseId,
         status: 'PENDING'
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     });
 
     if (existingPayment) {
-      return createErrorResponse(
-        'PENDING_PAYMENT',
-        'لديك عملية دفع معلقة لهذه الدورة بالفعل',
-        409
-      );
+      // Check if the payment is old (more than 30 minutes) - consider it abandoned
+      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+      
+      if (existingPayment.createdAt < thirtyMinutesAgo) {
+        // Cancel the old payment and allow new one
+        await prisma.payment.update({
+          where: { id: existingPayment.id },
+          data: {
+            status: 'CANCELLED',
+            failureReason: 'Payment abandoned - exceeded time limit'
+          }
+        });
+        
+        console.log('Cancelled abandoned payment:', existingPayment.id);
+      } else {
+        // Payment is recent, return error with option to cancel
+        return createErrorResponse(
+          'PENDING_PAYMENT',
+          'لديك عملية دفع معلقة لهذه الدورة بالفعل',
+          409,
+          {
+            paymentId: existingPayment.id,
+            createdAt: existingPayment.createdAt,
+            canCancel: true
+          }
+        );
+      }
     }
 
     // Prevent professors from buying their own courses
@@ -186,7 +211,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Initiate payment with PayMob
-    const paymentResult = await payMobService.initiatePayment(orderData);
+    const paymentResult = await payMobService.initiatePayment(orderData, courseId);
 
     // Update payment record with PayMob order ID
     await prisma.payment.update({
