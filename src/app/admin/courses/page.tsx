@@ -26,7 +26,7 @@ export default async function CoursesPage({
     }),
   };
 
-  const [courses, totalCount] = await prisma.$transaction([
+  const [coursesRaw, totalCount] = await prisma.$transaction([
     prisma.course.findMany({
       where: whereClause,
       include: {
@@ -43,6 +43,12 @@ export default async function CoursesPage({
     }),
     prisma.course.count({ where: whereClause }),
   ]);
+
+  // Convert Decimal to number for client serialization
+  const courses = coursesRaw.map(course => ({
+    ...course,
+    price: course.price ? Number(course.price) : null
+  }));
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
   

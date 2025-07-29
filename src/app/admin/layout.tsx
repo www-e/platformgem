@@ -3,7 +3,7 @@
 
 import { redirect, usePathname } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Book, Users, GraduationCap, Menu } from "lucide-react";
+import { LayoutDashboard, Book, Users, GraduationCap, Menu, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SessionProvider, useSession } from "next-auth/react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -16,6 +16,7 @@ function AdminNavLinks() {
     { href: "/admin", label: "لوحة التحكم", icon: LayoutDashboard },
     { href: "/admin/courses", label: "الدورات", icon: Book },
     { href: "/admin/students", label: "الطلاب", icon: Users },
+    { href: "/admin/payments", label: "المدفوعات", icon: CreditCard },
   ];
 
   return (
