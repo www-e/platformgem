@@ -31,6 +31,8 @@
     "test:payment-flow": "tsx scripts/test-payment-flow.ts",
     "test:paymob-config": "tsx scripts/test-paymob-config.ts",
     "test:payment-fixes": "tsx scripts/test-payment-fixes.ts",
+    "test:payment-system": "tsx scripts/run-payment-tests.ts",
+    "test:payment-complete": "tsx scripts/test-complete-payment-system.ts",
     "db:reset": "prisma migrate reset --force",
     "db:push": "prisma db push"
   },
@@ -77,6 +79,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.21",
+    "dotenv": "^17.2.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
     "postcss": "^8.5.6",
