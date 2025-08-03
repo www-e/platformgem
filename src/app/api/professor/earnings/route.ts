@@ -15,7 +15,7 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(_request.url);
     searchParams.get('period');
     const professorId = session.user.id;
 

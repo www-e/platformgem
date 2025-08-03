@@ -190,7 +190,6 @@ export async function generateCertificate(
         userId,
         courseId,
         certificateCode,
-        finalScore: enrollment.progressPercent,
         validUntil,
         metadata: {
           courseName: course.title,
@@ -208,7 +207,7 @@ export async function generateCertificate(
       data: {
         userId,
         courseId,
-        milestoneType: 'CERTIFICATE',
+        milestoneType: 'COURSE_COMPLETE',
         metadata: {
           certificateCode,
           completionRate: enrollment.progressPercent
@@ -223,7 +222,6 @@ export async function generateCertificate(
       courseName: course.title,
       professorName: course.professor.name,
       completionDate: certificate.completionDate,
-      finalScore: certificate.finalScore || undefined,
       validUntil: certificate.validUntil || undefined,
       courseCategory: course.category.name,
       courseDuration,

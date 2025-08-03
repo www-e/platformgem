@@ -15,7 +15,7 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(_request.url);
     const courseFilter = searchParams.get('course') || 'all';
     const period = searchParams.get('period') || 'month';
     const professorId = session.user.id;
@@ -29,10 +29,14 @@ export async function GET(_request: NextRequest) {
       include: {
         enrollments: {
           include: {
-            user: true,
-            viewingHistory: {
+            user: {
               include: {
-                lesson: true
+                // Correctly include viewingHistory nested under user
+                viewingHistory: {
+                  include: {
+                    lesson: true
+                  }
+                }
               }
             }
           }

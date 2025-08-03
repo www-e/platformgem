@@ -6,7 +6,14 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { createCategory, updateCategory } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,7 +46,11 @@ interface CategoryDialogProps {
   onSuccess?: () => void;
 }
 
-export function CategoryDialog({ category, trigger, onSuccess }: CategoryDialogProps) {
+export function CategoryDialog({
+  category,
+  trigger,
+  onSuccess,
+}: CategoryDialogProps) {
   const isEdit = !!category;
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState(category?.name || "");
@@ -47,12 +58,12 @@ export function CategoryDialog({ category, trigger, onSuccess }: CategoryDialogP
   const [autoGenerateSlug, setAutoGenerateSlug] = useState(!isEdit);
 
   // Create bound action for edit mode
-  const boundUpdateAction = category 
+  const boundUpdateAction = category
     ? updateCategory.bind(null, category.id)
     : null;
 
   const [state, dispatch] = useActionState(
-    isEdit ? boundUpdateAction! : createCategory, 
+    (prevState: any, formData: FormData) => createCourse(prevState, formData),
     undefined
   );
 
@@ -61,13 +72,13 @@ export function CategoryDialog({ category, trigger, onSuccess }: CategoryDialogP
     if (autoGenerateSlug && name) {
       const generatedSlug = name
         .toLowerCase()
-        .replace(/[أإآ]/g, 'ا')
-        .replace(/[ة]/g, 'ه')
-        .replace(/[ى]/g, 'ي')
-        .replace(/[^\u0600-\u06FF\w\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '')
+        .replace(/[أإآ]/g, "ا")
+        .replace(/[ة]/g, "ه")
+        .replace(/[ى]/g, "ي")
+        .replace(/[^\u0600-\u06FF\w\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "")
         .substring(0, 50);
       setSlug(generatedSlug);
     }
@@ -88,7 +99,10 @@ export function CategoryDialog({ category, trigger, onSuccess }: CategoryDialogP
   }, [state?.success, isOpen, isEdit, onSuccess]);
 
   const defaultTrigger = (
-    <Button variant={isEdit ? "outline" : "default"} size={isEdit ? "sm" : "default"}>
+    <Button
+      variant={isEdit ? "outline" : "default"}
+      size={isEdit ? "sm" : "default"}
+    >
       {isEdit ? <Edit className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
       {isEdit ? "تعديل" : "إضافة فئة جديدة"}
     </Button>
@@ -96,45 +110,42 @@ export function CategoryDialog({ category, trigger, onSuccess }: CategoryDialogP
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        {trigger || defaultTrigger}
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
             {isEdit ? "تعديل الفئة" : "إنشاء فئة جديدة"}
           </DialogTitle>
           <DialogDescription>
-            {isEdit 
+            {isEdit
               ? "قم بتعديل بيانات الفئة أدناه."
-              : "أدخل بيانات الفئة الجديدة. ستتمكن من تنظيم الدورات تحت هذه الفئة."
-            }
+              : "أدخل بيانات الفئة الجديدة. ستتمكن من تنظيم الدورات تحت هذه الفئة."}
           </DialogDescription>
         </DialogHeader>
 
         <form action={dispatch} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="category-name">اسم الفئة</Label>
-            <Input 
-              id="category-name" 
-              name="name" 
+            <Input
+              id="category-name"
+              name="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="التربية البدنية واللياقة" 
-              required 
-              className="h-11" 
+              placeholder="التربية البدنية واللياقة"
+              required
+              className="h-11"
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="category-description">وصف الفئة</Label>
-            <Textarea 
-              id="category-description" 
-              name="description" 
+            <Textarea
+              id="category-description"
+              name="description"
               defaultValue={category?.description || ""}
-              placeholder="دورات التربية البدنية واللياقة البدنية للمبتدئين والمتقدمين" 
+              placeholder="دورات التربية البدنية واللياقة البدنية للمبتدئين والمتقدمين"
               required
-              className="min-h-[80px]" 
+              className="min-h-[80px]"
             />
           </div>
 
@@ -148,24 +159,27 @@ export function CategoryDialog({ category, trigger, onSuccess }: CategoryDialogP
                     checked={autoGenerateSlug}
                     onCheckedChange={setAutoGenerateSlug}
                   />
-                  <Label htmlFor="auto-slug" className="text-sm text-muted-foreground">
+                  <Label
+                    htmlFor="auto-slug"
+                    className="text-sm text-muted-foreground"
+                  >
                     توليد تلقائي
                   </Label>
                 </div>
               )}
             </div>
             <div className="relative">
-              <Input 
-                id="category-slug" 
-                name="slug" 
+              <Input
+                id="category-slug"
+                name="slug"
                 value={slug}
                 onChange={(e) => {
                   setSlug(e.target.value);
                   setAutoGenerateSlug(false);
                 }}
-                placeholder="pt-fitness" 
-                required 
-                className="h-11 pl-10" 
+                placeholder="pt-fitness"
+                required
+                className="h-11 pl-10"
                 dir="ltr"
                 disabled={autoGenerateSlug && !isEdit}
               />
@@ -179,12 +193,12 @@ export function CategoryDialog({ category, trigger, onSuccess }: CategoryDialogP
           <div className="space-y-2">
             <Label htmlFor="category-icon">رابط الأيقونة (اختياري)</Label>
             <div className="relative">
-              <Input 
-                id="category-icon" 
-                name="iconUrl" 
+              <Input
+                id="category-icon"
+                name="iconUrl"
                 defaultValue={category?.iconUrl || ""}
-                placeholder="https://example.com/icon.png" 
-                className="h-11 pl-10" 
+                placeholder="https://example.com/icon.png"
+                className="h-11 pl-10"
                 dir="ltr"
                 type="url"
               />

@@ -1,68 +1,79 @@
 // src/app/api/professor/dashboard-stats/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 
 export async function GET(_request: NextRequest) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.user.role !== 'PROFESSOR') {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    if (session.user.role !== "PROFESSOR") {
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     const professorId = session.user.id;
 
-    // Get professor's courses
     const courses = await prisma.course.findMany({
       where: { professorId },
       include: {
         enrollments: {
           include: {
-            user: true,
-            viewingHistory: true
-          }
+            user: {
+              include: {
+                // Correctly include viewingHistory nested under user
+                viewingHistory: true, 
+              },
+            },
+          },
         },
         payments: {
-          where: { status: 'COMPLETED' }
+          where: { status: "COMPLETED" },
         },
         lessons: true,
         _count: {
           select: {
             enrollments: true,
-            lessons: true
-          }
-        }
-      }
+            lessons: true,
+          },
+        },
+      },
     });
 
     // Calculate statistics
     const totalCourses = courses.length;
-    const publishedCourses = courses.filter(course => course.isPublished).length;
+    const publishedCourses = courses.filter(
+      (course) => course.isPublished
+    ).length;
     const draftCourses = totalCourses - publishedCourses;
 
     // Get all enrollments for professor's courses
-    const allEnrollments = courses.flatMap(course => course.enrollments);
-    const totalStudents = new Set(allEnrollments.map(e => e.userId)).size;
+    const allEnrollments = courses.flatMap((course) => course.enrollments);
+    const totalStudents = new Set(allEnrollments.map((e) => e.userId)).size;
 
     // Calculate total earnings
     const totalEarnings = courses.reduce((sum, course) => {
-      return sum + course.payments.reduce((courseSum, payment) => {
-        return courseSum + Number(payment.amount);
-      }, 0);
+      return (
+        sum +
+        course.payments.reduce((courseSum, payment) => {
+          return courseSum + Number(payment.amount);
+        }, 0)
+      );
     }, 0);
 
     // Calculate monthly earnings (current month)
     const currentMonth = new Date();
     currentMonth.setDate(1);
     const monthlyEarnings = courses.reduce((sum, course) => {
-      return sum + course.payments
-        .filter(payment => new Date(payment.createdAt) >= currentMonth)
-        .reduce((monthSum, payment) => monthSum + Number(payment.amount), 0);
+      return (
+        sum +
+        course.payments
+          .filter((payment) => new Date(payment.createdAt) >= currentMonth)
+          .reduce((monthSum, payment) => monthSum + Number(payment.amount), 0)
+      );
     }, 0);
 
     // Calculate average rating (mock for now)
@@ -74,49 +85,66 @@ export async function GET(_request: NextRequest) {
     }, 0);
 
     // Calculate completion rate
-    const completedEnrollments = allEnrollments.filter(enrollment => {
-      const course = courses.find(c => c.id === enrollment.courseId);
+    const completedEnrollments = allEnrollments.filter((enrollment: any) => {
+      const course = courses.find((c) => c.id === enrollment.courseId);
       if (!course) return false;
-      
+
       const totalLessons = course.lessons.length;
-      const completedLessons = enrollment.viewingHistory.filter(vh => vh.completed).length;
-      
+      const completedLessons = enrollment.viewingHistory.filter(
+        (vh) => vh.completed
+      ).length;
+
       return totalLessons > 0 && completedLessons === totalLessons;
     }).length;
 
-    const completionRate = allEnrollments.length > 0 ? (completedEnrollments / allEnrollments.length) * 100 : 0;
+    const completionRate =
+      allEnrollments.length > 0
+        ? (completedEnrollments / allEnrollments.length) * 100
+        : 0;
 
     // Get recent enrollments
     const recentEnrollments = allEnrollments
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
       .slice(0, 10)
-      .map(enrollment => {
-        const course = courses.find(c => c.id === enrollment.courseId);
+      .map((enrollment) => {
+        const course = courses.find((c) => c.id === enrollment.courseId);
         const totalLessons = course?.lessons.length || 0;
-        const completedLessons = enrollment.viewingHistory.filter(vh => vh.completed).length;
-        const progress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+        const completedLessons = enrollment.viewingHistory.filter(
+          (vh) => vh.completed
+        ).length;
+        const progress =
+          totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
         return {
           id: enrollment.id,
           studentName: enrollment.user.name,
-          courseName: course?.title || 'Unknown Course',
+          courseName: course?.title || "Unknown Course",
           enrolledAt: enrollment.createdAt,
-          progress: Math.round(progress)
+          progress: Math.round(progress),
         };
       });
 
     // Get top courses by earnings
     const topCourses = courses
-      .map(course => {
-        const earnings = course.payments.reduce((sum, payment) => sum + Number(payment.amount), 0);
+      .map((course) => {
+        const earnings = course.payments.reduce(
+          (sum, payment) => sum + Number(payment.amount),
+          0
+        );
         const students = course.enrollments.length;
-        const completedStudents = course.enrollments.filter(enrollment => {
+        const completedStudents = course.enrollments.filter((enrollment: any) => {
           const totalLessons = course.lessons.length;
-          const completedLessons = enrollment.viewingHistory.filter(vh => vh.completed).length;
+          const completedLessons = enrollment.viewingHistory.filter(
+            (vh) => vh.completed
+          ).length;
           return totalLessons > 0 && completedLessons === totalLessons;
         }).length;
-        
-        const completionRate = students > 0 ? (completedStudents / students) * 100 : 0;
+
+        const completionRate =
+          students > 0 ? (completedStudents / students) * 100 : 0;
 
         return {
           id: course.id,
@@ -124,7 +152,7 @@ export async function GET(_request: NextRequest) {
           students,
           earnings,
           rating: 4.5, // Mock rating
-          completionRate: Math.round(completionRate)
+          completionRate: Math.round(completionRate),
         };
       })
       .sort((a, b) => b.earnings - a.earnings)
@@ -139,29 +167,35 @@ export async function GET(_request: NextRequest) {
       const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
       const monthEarnings = courses.reduce((sum, course) => {
-        return sum + course.payments
-          .filter(payment => {
-            const paymentDate = new Date(payment.createdAt);
-            return paymentDate >= monthStart && paymentDate <= monthEnd;
-          })
-          .reduce((monthSum, payment) => monthSum + Number(payment.amount), 0);
+        return (
+          sum +
+          course.payments
+            .filter((payment) => {
+              const paymentDate = new Date(payment.createdAt);
+              return paymentDate >= monthStart && paymentDate <= monthEnd;
+            })
+            .reduce((monthSum, payment) => monthSum + Number(payment.amount), 0)
+        );
       }, 0);
 
-      const monthEnrollments = allEnrollments.filter(enrollment => {
+      const monthEnrollments = allEnrollments.filter((enrollment) => {
         const enrollmentDate = new Date(enrollment.createdAt);
         return enrollmentDate >= monthStart && enrollmentDate <= monthEnd;
       }).length;
 
-      const monthCourses = courses.filter(course => {
+      const monthCourses = courses.filter((course) => {
         const courseDate = new Date(course.createdAt);
         return courseDate >= monthStart && courseDate <= monthEnd;
       }).length;
 
       monthlyStats.push({
-        month: date.toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' }),
+        month: date.toLocaleDateString("ar-SA", {
+          month: "long",
+          year: "numeric",
+        }),
         earnings: monthEarnings,
         students: monthEnrollments,
-        courses: monthCourses
+        courses: monthCourses,
       });
     }
 
@@ -177,15 +211,14 @@ export async function GET(_request: NextRequest) {
       completionRate,
       recentEnrollments,
       topCourses,
-      monthlyStats
+      monthlyStats,
     };
 
     return NextResponse.json(dashboardStats);
-
   } catch (error) {
-    console.error('Dashboard stats error:', error);
+    console.error("Dashboard stats error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch dashboard statistics' },
+      { error: "Failed to fetch dashboard statistics" },
       { status: 500 }
     );
   }

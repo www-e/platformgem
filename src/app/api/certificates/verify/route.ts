@@ -4,7 +4,7 @@ import { verifyCertificate } from '@/lib/certificate';
 
 export async function GET(_request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(_request.url);
     const certificateCode = searchParams.get('code');
 
     if (!certificateCode) {

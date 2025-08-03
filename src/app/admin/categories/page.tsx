@@ -22,6 +22,10 @@ export default async function CategoriesPage() {
         },
         courses: {
           include: {
+            // Add the missing professor relation
+            professor: {
+              select: { id: true, name: true }
+            },
             _count: {
               select: { enrollments: true }
             }
@@ -43,6 +47,8 @@ export default async function CategoriesPage() {
   // Calculate category statistics
   const categoryStats = categories.map(category => ({
     ...category,
+    createdAt: category.createdAt.toISOString(), // Convert Date to string
+    updatedAt: category.updatedAt.toISOString(), // Convert Date to string
     totalEnrollments: category.courses.reduce((sum, course) => sum + course._count.enrollments, 0)
   }));
 

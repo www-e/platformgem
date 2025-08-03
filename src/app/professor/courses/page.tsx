@@ -53,6 +53,12 @@ export default async function ProfessorCoursesPage() {
       })
     ])
   ]);
+  const serializedCourses = courses.map(course => ({
+    ...course,
+    price: course.price ? Number(course.price) : null, // Also handle Decimal conversion here
+    createdAt: course.createdAt.toISOString(),
+    updatedAt: course.updatedAt.toISOString(),
+  }));
 
   const [totalCourses, publishedCourses, totalEnrollments] = stats;
 
@@ -159,7 +165,7 @@ export default async function ProfessorCoursesPage() {
               </div>
             </div>
           ) : (
-            <ProfessorCourseManagement courses={courses} />
+            <ProfessorCourseManagement courses={serializedCourses} />
           )}
         </CardContent>
       </Card>

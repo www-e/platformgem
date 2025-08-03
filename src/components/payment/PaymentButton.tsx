@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button";
 import { PaymentModal } from "./PaymentModal";
 import { Course } from "@/lib/api/courses";
 import { useAuth } from "@/hooks/useAuth";
-import { 
-  CreditCard, 
-  Lock, 
-  CheckCircle, 
+import {
+  CreditCard,
+  Lock,
+  CheckCircle,
   UserCheck,
-  ShoppingCart
+  ShoppingCart,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -25,29 +25,31 @@ interface PaymentButtonProps {
   onPaymentSuccess?: () => void;
 }
 
-export function PaymentButton({ 
-  course, 
-  variant = "default", 
-  size = "default", 
+export function PaymentButton({
+  course,
+  variant = "default",
+  size = "default",
   className = "",
   showPrice = true,
-  onPaymentSuccess
+  onPaymentSuccess,
 }: PaymentButtonProps) {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  const { isAuthenticated, isStudent, isAdmin } = useAuth();
+  const { isAuthenticated, session } = useAuth();
+  const isStudent = session?.user?.isStudent;
+  const isAdmin = session?.user?.isAdmin;
   const router = useRouter();
 
   // Format price for display
   const formatPrice = () => {
     if (!course.price || course.price === 0) {
-      return 'مجاني';
+      return "مجاني";
     }
-    
-    return new Intl.NumberFormat('ar-EG', {
-      style: 'currency',
-      currency: course.currency || 'EGP',
+
+    return new Intl.NumberFormat("ar-EG", {
+      style: "currency",
+      currency: course.currency || "EGP",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     }).format(Number(course.price));
   };
 
@@ -55,20 +57,20 @@ export function PaymentButton({
   const handleClick = () => {
     // Check authentication
     if (!isAuthenticated) {
-      toast.error('يجب تسجيل الدخول أولاً');
-      router.push('/login');
+      toast.error("يجب تسجيل الدخول أولاً");
+      router.push("/login");
       return;
     }
 
     // Check user role
     if (!isStudent && !isAdmin) {
-      toast.error('غير مصرح لك بشراء الدورات');
+      toast.error("غير مصرح لك بشراء الدورات");
       return;
     }
 
     // Check if already enrolled
     if (course.isEnrolled) {
-      toast.info('أنت مسجل في هذه الدورة بالفعل');
+      toast.info("أنت مسجل في هذه الدورة بالفعل");
       router.push(`/courses/${course.id}`);
       return;
     }
@@ -76,7 +78,7 @@ export function PaymentButton({
     // Check if course is free
     if (!course.price || course.price === 0) {
       // Handle free enrollment (would need to implement this)
-      toast.info('هذه الدورة مجانية - سيتم تنفيذ التسجيل المباشر');
+      toast.info("هذه الدورة مجانية - سيتم تنفيذ التسجيل المباشر");
       return;
     }
 
@@ -86,9 +88,9 @@ export function PaymentButton({
 
   // Handle payment success
   const handlePaymentSuccess = (paymentId: string) => {
-    toast.success('تم الدفع بنجاح! تم تسجيلك في الدورة.');
+    toast.success("تم الدفع بنجاح! تم تسجيلك في الدورة.");
     onPaymentSuccess?.();
-    
+
     // Redirect to course page
     setTimeout(() => {
       router.push(`/courses/${course.id}`);
@@ -100,23 +102,23 @@ export function PaymentButton({
     if (course.isEnrolled) {
       return {
         icon: <CheckCircle className="w-4 h-4" />,
-        text: 'مسجل بالفعل',
-        disabled: false
+        text: "مسجل بالفعل",
+        disabled: false,
       };
     }
 
     if (!course.price || course.price === 0) {
       return {
         icon: <UserCheck className="w-4 h-4" />,
-        text: 'التسجيل مجاناً',
-        disabled: false
+        text: "التسجيل مجاناً",
+        disabled: false,
       };
     }
 
     return {
       icon: <CreditCard className="w-4 h-4" />,
-      text: showPrice ? `اشتري بـ ${formatPrice()}` : 'اشتري الآن',
-      disabled: false
+      text: showPrice ? `اشتري بـ ${formatPrice()}` : "اشتري الآن",
+      disabled: false,
     };
   };
 
@@ -154,9 +156,12 @@ export function PaymentButton({
 }
 
 // Simplified version for quick use
-export function BuyNowButton({ course, onPaymentSuccess }: { 
-  course: Course; 
-  onPaymentSuccess?: () => void; 
+export function BuyNowButton({
+  course,
+  onPaymentSuccess,
+}: {
+  course: Course;
+  onPaymentSuccess?: () => void;
 }) {
   return (
     <PaymentButton
@@ -171,9 +176,12 @@ export function BuyNowButton({ course, onPaymentSuccess }: {
 }
 
 // Compact version for course cards
-export function CompactPaymentButton({ course, onPaymentSuccess }: { 
-  course: Course; 
-  onPaymentSuccess?: () => void; 
+export function CompactPaymentButton({
+  course,
+  onPaymentSuccess,
+}: {
+  course: Course;
+  onPaymentSuccess?: () => void;
 }) {
   return (
     <PaymentButton

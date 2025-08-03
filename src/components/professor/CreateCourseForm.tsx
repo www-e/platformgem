@@ -1,17 +1,23 @@
 // src/components/professor/CreateCourseForm.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
-import { createCourse } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CategorySelector } from "@/components/admin/CategorySelector";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner"; 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { BookOpen, Image, DollarSign, Video } from "lucide-react";
 
@@ -36,14 +42,24 @@ function SubmitButton() {
 
 export function CreateCourseForm() {
   const router = useRouter();
-  const [state, dispatch] = useActionState(createCourse, undefined);
+  const [state, dispatch] = useActionState(
+    (prevState: any, formData: FormData) => actionToUse(prevState, formData),
+    undefined
+  );
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isPaid, setIsPaid] = useState(false);
 
   // Redirect on success
+// Redirect on success
+useEffect(() => {
   if (state?.success) {
+    toast.success("تم إنشاء الدورة بنجاح!");
     router.push('/professor/courses');
   }
+  if (state?.error) {
+    toast.error("فشل إنشاء الدورة", { description: state.error });
+  }
+}, [state, router]);[]
 
   return (
     <form action={dispatch} className="space-y-6">
@@ -51,12 +67,12 @@ export function CreateCourseForm() {
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="course-title">عنوان الدورة</Label>
-          <Input 
-            id="course-title" 
-            name="title" 
-            placeholder="مثال: أساسيات التربية البدنية للمبتدئين" 
-            required 
-            className="h-12 text-lg" 
+          <Input
+            id="course-title"
+            name="title"
+            placeholder="مثال: أساسيات التربية البدنية للمبتدئين"
+            required
+            className="h-12 text-lg"
           />
           <p className="text-sm text-muted-foreground">
             اختر عنواناً واضحاً وجذاباً يصف محتوى دورتك
@@ -65,12 +81,12 @@ export function CreateCourseForm() {
 
         <div className="space-y-2">
           <Label htmlFor="course-description">وصف الدورة</Label>
-          <Textarea 
-            id="course-description" 
-            name="description" 
-            placeholder="اكتب وصفاً شاملاً عن محتوى الدورة، الأهداف التعليمية، والمهارات التي سيكتسبها الطلاب..." 
+          <Textarea
+            id="course-description"
+            name="description"
+            placeholder="اكتب وصفاً شاملاً عن محتوى الدورة، الأهداف التعليمية، والمهارات التي سيكتسبها الطلاب..."
             required
-            className="min-h-[120px]" 
+            className="min-h-[120px]"
           />
           <p className="text-sm text-muted-foreground">
             وصف مفصل يساعد الطلاب على فهم ما ستقدمه الدورة
@@ -97,13 +113,13 @@ export function CreateCourseForm() {
         <div className="space-y-2">
           <Label htmlFor="course-thumbnail">رابط الصورة المصغرة</Label>
           <div className="relative">
-            <Input 
-              id="course-thumbnail" 
-              name="thumbnailUrl" 
+            <Input
+              id="course-thumbnail"
+              name="thumbnailUrl"
               type="url"
-              placeholder="https://example.com/image.jpg" 
-              required 
-              className="h-12 pl-12" 
+              placeholder="https://example.com/image.jpg"
+              required
+              className="h-12 pl-12"
               dir="ltr"
             />
             <Image className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -128,12 +144,12 @@ export function CreateCourseForm() {
         <CardContent>
           <div className="space-y-2">
             <Label htmlFor="bunny-library">معرف مكتبة Bunny</Label>
-            <Input 
-              id="bunny-library" 
-              name="bunnyLibraryId" 
-              placeholder="مثال: 12345" 
-              required 
-              className="h-12" 
+            <Input
+              id="bunny-library"
+              name="bunnyLibraryId"
+              placeholder="مثال: 12345"
+              required
+              className="h-12"
               dir="ltr"
             />
             <p className="text-sm text-muted-foreground">
@@ -156,11 +172,7 @@ export function CreateCourseForm() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center space-x-2 space-x-reverse">
-            <Switch
-              id="is-paid"
-              checked={isPaid}
-              onCheckedChange={setIsPaid}
-            />
+            <Switch id="is-paid" checked={isPaid} onCheckedChange={setIsPaid} />
             <Label htmlFor="is-paid">دورة مدفوعة</Label>
           </div>
 
@@ -169,14 +181,14 @@ export function CreateCourseForm() {
               <div className="space-y-2">
                 <Label htmlFor="course-price">سعر الدورة</Label>
                 <div className="relative">
-                  <Input 
-                    id="course-price" 
-                    name="price" 
+                  <Input
+                    id="course-price"
+                    name="price"
                     type="number"
                     min="0"
                     step="0.01"
-                    placeholder="100.00" 
-                    className="h-12 pr-12" 
+                    placeholder="100.00"
+                    className="h-12 pr-12"
                     dir="ltr"
                   />
                   <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground">
@@ -187,12 +199,12 @@ export function CreateCourseForm() {
 
               <div className="space-y-2">
                 <Label htmlFor="course-currency">العملة</Label>
-                <Input 
-                  id="course-currency" 
-                  name="currency" 
+                <Input
+                  id="course-currency"
+                  name="currency"
                   value="EGP"
                   readOnly
-                  className="h-12 bg-muted" 
+                  className="h-12 bg-muted"
                   dir="ltr"
                 />
               </div>

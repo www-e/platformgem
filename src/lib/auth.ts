@@ -73,23 +73,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+        token.phone = user.phone; // Add phone
         token.role = user.role;
         token.isActive = user.isActive;
       }
-      return token
+      return token;
     },
     session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.phone = token.phone as string | null | undefined; // Add phone
         session.user.role = token.role as UserRole;
-        session.user.isActive = token.isActive ?? true;
-        
-        // Backward compatibility helpers
+        session.user.isActive = token.isActive as boolean;
+    
+        // Convenience properties
         session.user.isAdmin = token.role === 'ADMIN';
         session.user.isProfessor = token.role === 'PROFESSOR';
         session.user.isStudent = token.role === 'STUDENT';
       }
-      return session
+      return session;
+    },
     },
     async redirect({ url, baseUrl }) {
       console.log('🔄 Auth redirect called:', { url, baseUrl });

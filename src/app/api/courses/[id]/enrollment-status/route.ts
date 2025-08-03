@@ -52,7 +52,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       select: {
         status: true
       },
-      orderBy: { enrolledAt: 'desc' }
+      orderBy: { createdAt: 'desc' }
     });
 
     let paymentStatus: 'none' | 'pending' | 'completed' | 'failed' = 'none';

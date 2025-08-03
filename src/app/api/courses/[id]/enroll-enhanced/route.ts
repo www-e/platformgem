@@ -114,7 +114,7 @@ export async function POST(
         { 
           error: 'بيانات غير صحيحة',
           code: 'VALIDATION_ERROR',
-          details: error.errors
+          details: error.issues
         },
         { status: 400 }
       );

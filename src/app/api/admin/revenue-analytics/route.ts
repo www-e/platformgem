@@ -14,7 +14,7 @@ export async function GET(_request: NextRequest) {
       );
     }
 
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(_request.url);
     const period = searchParams.get('period') || 'month';
 
     // Calculate date ranges
