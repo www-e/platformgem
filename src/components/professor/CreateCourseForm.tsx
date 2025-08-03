@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CategorySelector } from "@/components/admin/CategorySelector";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
+import { createCourse } from "@/lib/actions"; 
 import {
   Card,
   CardContent,
@@ -42,10 +43,7 @@ function SubmitButton() {
 
 export function CreateCourseForm() {
   const router = useRouter();
-  const [state, dispatch] = useActionState(
-    (prevState: any, formData: FormData) => actionToUse(prevState, formData),
-    undefined
-  );
+  const [state, dispatch] = useActionState(createCourse, undefined);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isPaid, setIsPaid] = useState(false);
 

@@ -67,7 +67,8 @@ export async function GET(request: NextRequest) {
 
     const totalPages = Math.ceil(totalCount / limit);
 
-    return createSuccessResponse(transformedPayments, {
+    return createSuccessResponse({
+      payments: transformedPayments,
       pagination: {
         currentPage: page,
         totalPages,

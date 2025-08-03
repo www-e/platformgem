@@ -5,9 +5,10 @@ import { redirect } from "next/navigation";
 import { AddLessonForm } from "./_components/add-lesson-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default async function CourseDetailPage({ params }: { params: { courseId: string }}) {
+export default async function CourseDetailPage({ params }: { params: Promise<{ courseId: string }> }) {
+  const { courseId } = await params;
   const course = await prisma.course.findUnique({
-    where: { id: params.courseId },
+    where: { id: courseId },
     include: {
       lessons: {
         orderBy: { order: 'asc' },

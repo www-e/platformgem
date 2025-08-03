@@ -1,7 +1,7 @@
 // src/components/auth/RoleGuard.tsx
 import { ReactNode } from 'react';
 import { UserRole } from '@prisma/client';
-import { useRoleGuard } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 
 interface RoleGuardProps {
   allowedRoles: UserRole[];
@@ -19,7 +19,8 @@ export function RoleGuard({
   fallback = null,
   showLoading = false 
 }: RoleGuardProps) {
-  const { hasAccess, isLoading } = useRoleGuard(allowedRoles);
+  const { user, isLoading } = useAuth();
+  const hasAccess = user && allowedRoles.includes(user.role as UserRole);
 
   if (isLoading && showLoading) {
     return (

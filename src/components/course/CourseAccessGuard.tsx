@@ -29,14 +29,24 @@ interface Course {
   description: string;
   price: number | null;
   currency: string;
-  thumbnailUrl?: string;
+  thumbnailUrl: string;
+  isPublished: boolean;
+  bunnyLibraryId: string;
+  categoryId: string;
+  professorId: string;
+  createdAt: string;
+  updatedAt: string;
   category: {
     id: string;
     name: string;
+    slug: string;
+    description?: string;
   };
   professor: {
     id: string;
     name: string;
+    bio: string | null;
+    expertise?: string[];
   };
   _count: {
     lessons: number;
@@ -62,7 +72,7 @@ export function CourseAccessGuard({
   const [accessResult, setAccessResult] = useState<CourseAccessResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
-  const router = useRouter();
+  // const router = useRouter(); // Unused for now
 
   // Check course access on mount
   useEffect(() => {
@@ -320,7 +330,7 @@ export function withCourseAccess<P extends object>(
   const { courseIdProp = 'courseId', fallback, showAccessInfo = true } = options;
 
   return function ProtectedComponent(props: P) {
-    const courseId = props[courseIdProp] as string;
+    const courseId = (props as any)[courseIdProp] as string;
 
     if (!courseId) {
       return (

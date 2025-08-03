@@ -49,7 +49,17 @@ export default async function CategoriesPage() {
     ...category,
     createdAt: category.createdAt.toISOString(), // Convert Date to string
     updatedAt: category.updatedAt.toISOString(), // Convert Date to string
-    totalEnrollments: category.courses.reduce((sum, course) => sum + course._count.enrollments, 0)
+    totalEnrollments: category.courses.reduce((sum, course) => sum + course._count.enrollments, 0),
+    courses: category.courses.map(course => ({
+      id: course.id,
+      title: course.title,
+      description: course.description,
+      thumbnailUrl: course.thumbnailUrl,
+      price: course.price ? Number(course.price) : null, // Convert Decimal to number
+      currency: course.currency,
+      professor: course.professor,
+      _count: course._count
+    }))
   }));
 
   return (

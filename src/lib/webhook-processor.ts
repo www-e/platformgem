@@ -1,6 +1,6 @@
 // src/lib/webhook-processor.ts
-import prisma from '@/lib/prisma';
-import crypto from 'crypto';
+import prisma from "@/lib/prisma";
+import crypto from "crypto";
 
 export interface WebhookPayload {
   type: string;
@@ -21,36 +21,39 @@ export interface WebhookPayload {
   };
 }
 
-export async function processWebhookPayload(payload: any, signature: string): Promise<void> {
+export async function processWebhookPayload(
+  payload: any,
+  signature: string
+): Promise<void> {
   // Verify signature
   const hmacSecret = process.env.PAYMOB_HMAC_SECRET;
   if (!hmacSecret) {
-    throw new Error('PAYMOB_HMAC_SECRET not configured');
+    throw new Error("PAYMOB_HMAC_SECRET not configured");
   }
 
   const expectedSignature = crypto
-    .createHmac('sha512', hmacSecret)
+    .createHmac("sha512", hmacSecret)
     .update(JSON.stringify(payload))
-    .digest('hex');
+    .digest("hex");
 
   if (signature !== expectedSignature) {
-    throw new Error('Invalid webhook signature');
+    throw new Error("Invalid webhook signature");
   }
 
   // Validate payload structure
   if (!payload.type || !payload.obj) {
-    throw new Error('Invalid webhook payload structure');
+    throw new Error("Invalid webhook payload structure");
   }
 
-  if (payload.type !== 'TRANSACTION') {
+  if (payload.type !== "TRANSACTION") {
     // Ignore non-transaction webhooks
     return;
   }
 
   const transaction = payload.obj;
-  
+
   if (!transaction.id || !transaction.order?.merchant_order_id) {
-    throw new Error('Missing required transaction data');
+    throw new Error("Missing required transaction data");
   }
 
   const paymentId = transaction.order.merchant_order_id;
@@ -60,8 +63,8 @@ export async function processWebhookPayload(payload: any, signature: string): Pr
     where: { id: paymentId },
     include: {
       user: true,
-      course: true
-    }
+      course: true,
+    },
   });
 
   if (!payment) {
@@ -73,37 +76,37 @@ export async function processWebhookPayload(payload: any, signature: string): Pr
   let failureReason: string | null = null;
 
   if (transaction.success && !transaction.pending && !transaction.refunded) {
-    newStatus = 'COMPLETED';
+    newStatus = "COMPLETED";
   } else if (transaction.pending) {
-    newStatus = 'PROCESSING';
+    newStatus = "PROCESSING";
   } else if (transaction.refunded) {
-    newStatus = 'REFUNDED';
+    newStatus = "REFUNDED";
   } else {
-    newStatus = 'FAILED';
-    failureReason = 'Payment failed at PayMob';
+    newStatus = "FAILED";
+    failureReason = "Payment failed at PayMob";
   }
 
   // Update payment
   const updatedPayment = await prisma.payment.update({
     where: { id: paymentId },
     data: {
-      status: newStatus,
+      status: newStatus as any,
       paymobTransactionId: transaction.id,
-      paymentMethod: transaction.source_data?.type?.toUpperCase() || 'CARD',
+      paymentMethod: transaction.source_data?.type?.toUpperCase() || "CARD",
       failureReason,
-      updatedAt: new Date()
-    }
+      updatedAt: new Date(),
+    },
   });
 
   // Handle enrollment creation for completed payments
-  if (newStatus === 'COMPLETED' && payment.status !== 'COMPLETED') {
+  if (newStatus === "COMPLETED" && payment.status !== "COMPLETED") {
     try {
       // Check if enrollment already exists
       const existingEnrollment = await prisma.enrollment.findFirst({
         where: {
           userId: payment.userId,
-          courseId: payment.courseId
-        }
+          courseId: payment.courseId,
+        },
       });
 
       if (!existingEnrollment) {
@@ -111,27 +114,21 @@ export async function processWebhookPayload(payload: any, signature: string): Pr
           data: {
             userId: payment.userId,
             courseId: payment.courseId,
-            paymentId: payment.id,
-            status: 'ACTIVE',
-            enrolledAt: new Date()
-          }
+          },
         });
 
-        // Update course enrollment count
-        await prisma.course.update({
-          where: { id: payment.courseId },
-          data: {
-            enrollmentCount: {
-              increment: 1
-            }
-          }
-        });
+        // Course enrollment count is calculated via _count.enrollments
       }
     } catch (enrollmentError) {
-      console.error('Failed to create enrollment during webhook processing:', enrollmentError);
+      console.error(
+        "Failed to create enrollment during webhook processing:",
+        enrollmentError
+      );
       // Don't throw error as payment was processed successfully
     }
   }
 
-  console.log(`Webhook processed successfully for payment ${paymentId}: ${payment.status} -> ${newStatus}`);
+  console.log(
+    `Webhook processed successfully for payment ${paymentId}: ${payment.status} -> ${newStatus}`
+  );
 }

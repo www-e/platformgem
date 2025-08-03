@@ -191,14 +191,10 @@ export async function generateCertificate(
         courseId,
         certificateCode,
         validUntil,
-        metadata: {
-          courseName: course.title,
-          studentName: user.name,
-          professorName: course.professor.name,
-          categoryName: course.category.name,
-          totalLessons: course.lessons.length,
-          courseDuration
-        }
+        studentName: user.name,
+        courseName: course.title,
+        professorName: course.professor.name,
+        completionDate: new Date()
       }
     });
 
@@ -207,7 +203,7 @@ export async function generateCertificate(
       data: {
         userId,
         courseId,
-        milestoneType: 'COURSE_COMPLETE',
+        milestoneType: 'COURSE_COMPLETE' as any,
         metadata: {
           certificateCode,
           completionRate: enrollment.progressPercent
@@ -305,7 +301,6 @@ export async function verifyCertificate(certificateCode: string): Promise<{
       courseName: certificate.course.title,
       professorName: certificate.course.professor.name,
       completionDate: certificate.completionDate,
-      finalScore: certificate.finalScore || undefined,
       validUntil: certificate.validUntil || undefined,
       courseCategory: certificate.course.category.name,
       courseDuration,
@@ -372,7 +367,7 @@ export async function getUserCertificates(userId: string): Promise<CertificateDa
         courseName: certificate.course.title,
         professorName: certificate.course.professor.name,
         completionDate: certificate.completionDate,
-        finalScore: certificate.finalScore || undefined,
+        grade: certificate.grade || undefined,
         validUntil: certificate.validUntil || undefined,
         courseCategory: certificate.course.category.name,
         courseDuration,
@@ -392,7 +387,7 @@ export async function getUserCertificates(userId: string): Promise<CertificateDa
 export async function recordProgressMilestone(
   userId: string,
   courseId: string,
-  milestoneType: string,
+  milestoneType: any,
   metadata?: any
 ): Promise<boolean> {
   try {

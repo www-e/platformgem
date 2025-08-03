@@ -25,13 +25,16 @@ export async function GET(_request: NextRequest) {
         }
       },
       include: {
-        user: true,
+        user: {
+          include: {
+            viewingHistory: true
+          }
+        },
         course: {
           include: {
             lessons: true
           }
-        },
-        viewingHistory: true
+        }
       },
       orderBy: {
         enrolledAt: 'desc'
@@ -41,11 +44,11 @@ export async function GET(_request: NextRequest) {
     // Transform enrollments data
     const enrollmentData = enrollments.map(enrollment => {
       const totalLessons = enrollment.course.lessons.length;
-      const completedLessons = enrollment.viewingHistory.filter(vh => vh.completed).length;
+      const completedLessons = enrollment.user.viewingHistory.filter((vh: any) => vh.completed).length;
       const progress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
       
       // Calculate total time spent
-      const timeSpent = enrollment.viewingHistory.reduce((total, vh) => {
+      const timeSpent = enrollment.user.viewingHistory.reduce((total: number, vh: any) => {
         return total + (vh.watchedDuration / 60); // Convert to minutes
       }, 0);
 
@@ -58,16 +61,16 @@ export async function GET(_request: NextRequest) {
       }
 
       // Get last activity
-      const lastActivity = enrollment.viewingHistory.length > 0 
-        ? new Date(Math.max(...enrollment.viewingHistory.map(vh => new Date(vh.updatedAt).getTime())))
-        : enrollment.createdAt;
+      const lastActivity = enrollment.user.viewingHistory.length > 0 
+        ? new Date(Math.max(...enrollment.user.viewingHistory.map((vh: any) => new Date(vh.updatedAt).getTime())))
+        : enrollment.enrolledAt;
 
       return {
         id: enrollment.id,
         studentName: enrollment.user.name,
         studentEmail: enrollment.user.email || '',
         courseName: enrollment.course.title,
-        enrolledAt: enrollment.createdAt,
+        enrolledAt: enrollment.enrolledAt,
         progress: Math.round(progress),
         lastActivity,
         completionStatus,

@@ -176,7 +176,7 @@ export async function signup(
 
 // --- CREATE COURSE ACTION ---
 export async function createCourse(
-  prevState: ActionState,
+  prevState: ActionState | undefined,
   formData: FormData
 ): Promise<ActionState> {
   const session = await auth();

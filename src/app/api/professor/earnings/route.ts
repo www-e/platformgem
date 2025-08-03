@@ -161,8 +161,8 @@ export async function GET(_request: NextRequest) {
       }).length;
 
       // Calculate growth compared to previous month
-      const prevMonthEarnings = i < 5 ? monthlyBreakdown[monthlyBreakdown.length - 1]?.earnings || 0 : 0;
-      const growth = prevMonthEarnings > 0 ? ((monthEarnings - prevMonthEarnings) / prevMonthEarnings) * 100 : 0;
+      const prevMonthEarnings: number = i < 5 ? monthlyBreakdown[monthlyBreakdown.length - 1]?.earnings || 0 : 0;
+      const growth: number = prevMonthEarnings > 0 ? ((monthEarnings - prevMonthEarnings) / prevMonthEarnings) * 100 : 0;
 
       monthlyBreakdown.push({
         month: date.toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' }),

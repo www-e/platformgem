@@ -68,7 +68,7 @@ export async function GET(_request: NextRequest) {
     // Calculate active students (those with activity in the period)
     const activeStudents = new Set(
       allEnrollments.filter(enrollment =>
-        enrollment.viewingHistory.some(vh => new Date(vh.updatedAt) >= periodStart)
+        enrollment.user.viewingHistory.some((vh: any) => new Date(vh.updatedAt) >= periodStart)
       ).map(e => e.userId)
     ).size;
 
@@ -76,9 +76,9 @@ export async function GET(_request: NextRequest) {
 
     // Calculate average watch time per student
     const totalWatchTime = allEnrollments.reduce((total, enrollment) => {
-      return total + enrollment.viewingHistory
-        .filter(vh => new Date(vh.updatedAt) >= periodStart)
-        .reduce((enrollmentTotal, vh) => enrollmentTotal + (vh.watchedDuration / 60), 0);
+      return total + enrollment.user.viewingHistory
+        .filter((vh: any) => new Date(vh.updatedAt) >= periodStart)
+        .reduce((enrollmentTotal: number, vh: any) => enrollmentTotal + (vh.watchedDuration / 60), 0);
     }, 0);
 
     const averageWatchTime = totalActiveStudents > 0 ? totalWatchTime / totalActiveStudents : 0;
@@ -89,7 +89,7 @@ export async function GET(_request: NextRequest) {
       if (!course) return false;
       
       const totalLessons = course.lessons.length;
-      const completedLessons = enrollment.viewingHistory.filter(vh => vh.completed).length;
+      const completedLessons = enrollment.user.viewingHistory.filter((vh: any) => vh.completed).length;
       
       return totalLessons > 0 && completedLessons === totalLessons;
     }).length;
@@ -107,11 +107,11 @@ export async function GET(_request: NextRequest) {
     const studentActivities = allEnrollments
       .flatMap(enrollment => {
         const course = courses.find(c => c.id === enrollment.courseId);
-        return enrollment.viewingHistory
-          .filter(vh => new Date(vh.updatedAt) >= periodStart)
-          .map(vh => {
+        return enrollment.user.viewingHistory
+          .filter((vh: any) => new Date(vh.updatedAt) >= periodStart)
+          .map((vh: any) => {
             const totalLessons = course?.lessons.length || 0;
-            const completedLessons = enrollment.viewingHistory.filter(vhc => vhc.completed).length;
+            const completedLessons = enrollment.user.viewingHistory.filter((vhc: any) => vhc.completed).length;
             const progress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
             return {
@@ -132,20 +132,20 @@ export async function GET(_request: NextRequest) {
     const courseEngagement = courses.map(course => {
       const courseEnrollments = course.enrollments;
       const activeCourseStudents = courseEnrollments.filter(enrollment =>
-        enrollment.viewingHistory.some(vh => new Date(vh.updatedAt) >= periodStart)
+        enrollment.user.viewingHistory.some((vh: any) => new Date(vh.updatedAt) >= periodStart)
       ).length;
 
       const courseWatchTime = courseEnrollments.reduce((total, enrollment) => {
-        return total + enrollment.viewingHistory
-          .filter(vh => new Date(vh.updatedAt) >= periodStart)
-          .reduce((enrollmentTotal, vh) => enrollmentTotal + (vh.watchedDuration / 60), 0);
+        return total + enrollment.user.viewingHistory
+          .filter((vh: any) => new Date(vh.updatedAt) >= periodStart)
+          .reduce((enrollmentTotal: number, vh: any) => enrollmentTotal + (vh.watchedDuration / 60), 0);
       }, 0);
 
       const averageCourseWatchTime = activeCourseStudents > 0 ? courseWatchTime / activeCourseStudents : 0;
 
       const courseCompletions = courseEnrollments.filter(enrollment => {
         const totalLessons = course.lessons.length;
-        const completedLessons = enrollment.viewingHistory.filter(vh => vh.completed).length;
+        const completedLessons = enrollment.user.viewingHistory.filter((vh: any) => vh.completed).length;
         return totalLessons > 0 && completedLessons === totalLessons;
       }).length;
 
@@ -153,7 +153,7 @@ export async function GET(_request: NextRequest) {
 
       const averageCourseProgress = courseEnrollments.reduce((sum, enrollment) => {
         const totalLessons = course.lessons.length;
-        const completedLessons = enrollment.viewingHistory.filter(vh => vh.completed).length;
+        const completedLessons = enrollment.user.viewingHistory.filter((vh: any) => vh.completed).length;
         return sum + (totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0);
       }, 0) / Math.max(1, courseEnrollments.length);
 
@@ -185,7 +185,7 @@ export async function GET(_request: NextRequest) {
 
       const weekActiveStudents = new Set(
         allEnrollments.filter(enrollment =>
-          enrollment.viewingHistory.some(vh => {
+          enrollment.user.viewingHistory.some((vh: any) => {
             const vhDate = new Date(vh.updatedAt);
             return vhDate >= weekStart && vhDate < weekEnd;
           })
@@ -193,17 +193,17 @@ export async function GET(_request: NextRequest) {
       ).size;
 
       const weekWatchTime = allEnrollments.reduce((total, enrollment) => {
-        return total + enrollment.viewingHistory
-          .filter(vh => {
+        return total + enrollment.user.viewingHistory
+          .filter((vh: any) => {
             const vhDate = new Date(vh.updatedAt);
             return vhDate >= weekStart && vhDate < weekEnd;
           })
-          .reduce((enrollmentTotal, vh) => enrollmentTotal + (vh.watchedDuration / 60), 0);
+          .reduce((enrollmentTotal: number, vh: any) => enrollmentTotal + (vh.watchedDuration / 60), 0);
       }, 0);
 
       const weekCompletedLessons = allEnrollments.reduce((total, enrollment) => {
-        return total + enrollment.viewingHistory
-          .filter(vh => {
+        return total + enrollment.user.viewingHistory
+          .filter((vh: any) => {
             const vhDate = new Date(vh.updatedAt);
             return vh.completed && vhDate >= weekStart && vhDate < weekEnd;
           }).length;
@@ -248,11 +248,11 @@ export async function GET(_request: NextRequest) {
       
       const course = courses.find(c => c.id === enrollment.courseId);
       const totalLessons = course?.lessons.length || 0;
-      const completedLessons = enrollment.viewingHistory.filter(vh => vh.completed).length;
+      const completedLessons = enrollment.user.viewingHistory.filter((vh: any) => vh.completed).length;
       const courseProgress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
       
       student.totalProgress += courseProgress;
-      student.totalWatchTime += enrollment.viewingHistory.reduce((total, vh) => {
+      student.totalWatchTime += enrollment.user.viewingHistory.reduce((total: number, vh: any) => {
         return total + (vh.watchedDuration / 60);
       }, 0);
       
@@ -261,13 +261,13 @@ export async function GET(_request: NextRequest) {
       }
       
       // Update last activity
-      enrollment.viewingHistory.forEach(vh => {
+      enrollment.user.viewingHistory.forEach((vh: any) => {
         if (new Date(vh.updatedAt) > student.lastActivity) {
           student.lastActivity = new Date(vh.updatedAt);
         }
       });
       
-      student.activities += enrollment.viewingHistory.length;
+      student.activities += enrollment.user.viewingHistory.length;
     });
 
     const topEngagedStudents = Array.from(studentEngagementMap.values())

@@ -86,7 +86,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.id as string;
         session.user.name = token.name;
         session.user.email = token.email;
-        session.user.phone = token.phone as string | null | undefined; // Add phone
+        session.user.phone = token.phone as string | null;
         session.user.role = token.role as UserRole;
         session.user.isActive = token.isActive as boolean;
     
@@ -97,8 +97,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session;
     },
-    },
-    async redirect({ url, baseUrl }) {
+    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
       console.log('🔄 Auth redirect called:', { url, baseUrl });
       
       // For sign-in redirects, we'll handle role-based redirects in the login page
@@ -116,9 +115,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       
       console.log('🔄 Default redirect to base:', baseUrl);
       return baseUrl;
-    },
+    }
   },
   pages: {
-    signIn: '/login',
-  },
-})
+    signIn: '/login'
+  }
+});

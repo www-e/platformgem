@@ -150,7 +150,7 @@ export class EnrollmentService {
       }
 
       // Check if course is free
-      const isFree = !course.price || course.price <= 0;
+      const isFree = !course.price || Number(course.price) <= 0;
       
       if (isFree) {
         return {
@@ -178,8 +178,7 @@ export class EnrollmentService {
         accessType: 'free',
         message: 'حدث خطأ في التحقق من الوصول',
         canEnroll: false,
-        requiresPayment: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        requiresPayment: false
       };
     }
   }
@@ -211,7 +210,7 @@ export class EnrollmentService {
         };
       }
 
-      if (course.price && course.price > 0) {
+      if (course.price && Number(course.price) > 0) {
         return {
           success: false,
           message: 'هذه الدورة مدفوعة وتتطلب دفع',

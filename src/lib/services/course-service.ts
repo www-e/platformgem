@@ -1,62 +1,64 @@
 // src/lib/services/course-service.ts
 // Centralized service for course-related operations
 
-import { UserRole } from '@prisma/client';
-import prisma from '@/lib/prisma';
-import { 
-  CourseWithMetadata, 
-  FeaturedCourse, 
+import { UserRole } from "@prisma/client";
+import prisma from "@/lib/prisma";
+import {
+  CourseWithMetadata,
+  FeaturedCourse,
   EnrolledCourse,
   CourseFilters,
-  CourseCatalogResponse
-} from '@/types/course';
-import { 
+  CourseCatalogResponse,
+} from "@/types/course";
+import {
   calculateCourseDuration,
   calculateCourseProgress,
   getCourseStatus,
   buildCourseWhereClause,
   getCourseSortOrder,
-  calculatePagination
-} from '@/lib/course-utils';
+  calculatePagination,
+} from "@/lib/course-utils";
 
 export class CourseService {
   /**
    * Get featured courses for landing page
    */
-  static async getFeaturedCourses(limit: number = 3): Promise<FeaturedCourse[]> {
+  static async getFeaturedCourses(
+    limit: number = 3
+  ): Promise<FeaturedCourse[]> {
     const courses = await prisma.course.findMany({
       where: {
-        isPublished: true
+        isPublished: true,
       },
       include: {
         category: {
           select: {
-            name: true
-          }
+            name: true,
+          },
         },
         professor: {
           select: {
-            name: true
-          }
+            name: true,
+          },
         },
         lessons: {
           select: {
-            duration: true
-          }
+            duration: true,
+          },
         },
         _count: {
           select: {
-            enrollments: true
-          }
-        }
+            enrollments: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
+        createdAt: "desc",
       },
-      take: limit
+      take: limit,
     });
 
-    return courses.map(course => ({
+    return courses.map((course) => ({
       id: course.id,
       title: course.title,
       description: course.description,
@@ -64,14 +66,14 @@ export class CourseService {
       price: course.price ? Number(course.price) : null,
       currency: course.currency,
       professor: {
-        name: course.professor.name
+        name: course.professor.name,
       },
       category: {
-        name: course.category.name
+        name: course.category.name,
       },
       enrollmentCount: course._count.enrollments,
       totalDuration: calculateCourseDuration(course.lessons),
-      lessonCount: course.lessons.length
+      lessonCount: course.lessons.length,
     }));
   }
 
@@ -82,26 +84,26 @@ export class CourseService {
     filters: CourseFilters,
     page: number = 1,
     limit: number = 12,
-    sort: string = 'newest',
+    sort: string = "newest",
     userId?: string,
     userRole?: UserRole
   ): Promise<CourseCatalogResponse> {
     // Get user's enrolled courses if student
     let enrolledCourseIds: string[] = [];
-    if (userId && userRole === 'STUDENT') {
+    if (userId && userRole === "STUDENT") {
       const enrollments = await prisma.enrollment.findMany({
         where: { userId },
-        select: { courseId: true }
+        select: { courseId: true },
       });
-      enrolledCourseIds = enrollments.map(e => e.courseId);
+      enrolledCourseIds = enrollments.map((e) => e.courseId);
     }
 
     // Build where clause
     const whereClause = buildCourseWhereClause(filters, enrolledCourseIds);
-    
+
     // Get total count
     const totalCount = await prisma.course.count({
-      where: whereClause
+      where: whereClause,
     });
 
     // Calculate pagination
@@ -116,48 +118,49 @@ export class CourseService {
             id: true,
             name: true,
             slug: true,
-            description: true
-          }
+            description: true,
+          },
         },
         professor: {
           select: {
             id: true,
             name: true,
             expertise: true,
-            bio: true
-          }
+            bio: true,
+          },
         },
         lessons: {
           select: {
             id: true,
             title: true,
             order: true,
-            duration: true
+            duration: true,
+            bunnyVideoId: true,
           },
           orderBy: {
-            order: 'asc'
-          }
+            order: "asc",
+          },
         },
         _count: {
           select: {
-            enrollments: true
-          }
-        }
+            enrollments: true,
+          },
+        },
       },
       orderBy: getCourseSortOrder(sort),
       skip: pagination.skip,
-      take: pagination.take
+      take: pagination.take,
     });
 
     // Transform courses with metadata
-    const coursesWithMetadata: CourseWithMetadata[] = courses.map(course => {
+    const coursesWithMetadata: CourseWithMetadata[] = courses.map((course) => {
       const totalDuration = calculateCourseDuration(course.lessons);
       const isEnrolled = enrolledCourseIds.includes(course.id);
-      
+
       // Mock additional metadata (would come from actual analytics)
       const averageRating = 4.0 + Math.random() * 1.0;
       const reviewCount = Math.floor(Math.random() * 50) + 5;
-      
+
       return {
         id: course.id,
         title: course.title,
@@ -170,7 +173,10 @@ export class CourseService {
         createdAt: course.createdAt,
         updatedAt: course.updatedAt,
         category: course.category,
-        professor: course.professor,
+        professor: {
+          ...course.professor,
+          bio: course.professor.bio || undefined,
+        },
         lessons: course.lessons,
         enrollmentCount: course._count.enrollments,
         totalDuration,
@@ -178,8 +184,8 @@ export class CourseService {
         averageRating: Math.round(averageRating * 10) / 10,
         reviewCount,
         isEnrolled,
-        canEdit: userId === course.professor.id || userRole === 'ADMIN',
-        canManage: userRole === 'ADMIN'
+        canEdit: userId === course.professor.id || userRole === "ADMIN",
+        canManage: userRole === "ADMIN",
       };
     });
 
@@ -189,7 +195,7 @@ export class CourseService {
       totalPages: pagination.totalPages,
       currentPage: page,
       hasNextPage: pagination.hasNextPage,
-      hasPreviousPage: pagination.hasPreviousPage
+      hasPreviousPage: pagination.hasPreviousPage,
     };
   }
 
@@ -204,67 +210,83 @@ export class CourseService {
           include: {
             category: {
               select: {
-                name: true
-              }
+                name: true,
+              },
             },
             professor: {
               select: {
-                name: true
-              }
+                name: true,
+              },
             },
             lessons: {
               select: {
                 id: true,
                 title: true,
                 order: true,
-                duration: true
+                duration: true,
               },
-              orderBy: { order: 'asc' }
-            }
-          }
+              orderBy: { order: "asc" },
+            },
+          },
         },
         user: {
           include: {
-            viewingHistory: true
-          }
-        }
+            viewingHistory: true,
+          },
+        },
       },
-      orderBy: { enrolledAt: 'desc' }
+      orderBy: { enrolledAt: "desc" },
     });
 
-    return enrollments.map(enrollment => {
+    return enrollments.map((enrollment) => {
       const course = enrollment.course;
       const totalLessons = course.lessons.length;
-      
+
       // Get viewing history for this course
-      const courseViewingHistory = enrollment.user.viewingHistory.filter(vh => 
-        course.lessons.some(lesson => lesson.id === vh.lessonId)
+      const courseViewingHistory = enrollment.user.viewingHistory.filter((vh) =>
+        course.lessons.some((lesson) => lesson.id === vh.lessonId)
       );
-      
-      const completedLessons = courseViewingHistory.filter(vh => vh.completed).length;
+
+      const completedLessons = courseViewingHistory.filter(
+        (vh) => vh.completed
+      ).length;
       const progress = calculateCourseProgress(totalLessons, completedLessons);
-      
+
       // Calculate durations
       const totalDuration = calculateCourseDuration(course.lessons);
       const watchedDuration = Math.round(
-        courseViewingHistory.reduce((sum, vh) => sum + (vh.watchedDuration / 60), 0)
+        courseViewingHistory.reduce(
+          (sum, vh) => sum + vh.watchedDuration / 60,
+          0
+        )
       );
-      
+
       // Determine status and next lesson
       const status = getCourseStatus(progress);
       let nextLesson = null;
-      
-      if (status !== 'completed') {
+
+      if (status !== "completed") {
         const completedLessonIds = new Set(
-          courseViewingHistory.filter(vh => vh.completed).map(vh => vh.lessonId)
+          courseViewingHistory
+            .filter((vh) => vh.completed)
+            .map((vh) => vh.lessonId)
         );
-        nextLesson = course.lessons.find(lesson => !completedLessonIds.has(lesson.id));
+        nextLesson = course.lessons.find(
+          (lesson) => !completedLessonIds.has(lesson.id)
+        );
       }
-      
+
       // Get last accessed time
-      const lastAccessedAt = courseViewingHistory.length > 0 
-        ? new Date(Math.max(...courseViewingHistory.map(vh => new Date(vh.updatedAt).getTime())))
-        : null;
+      const lastAccessedAt =
+        courseViewingHistory.length > 0
+          ? new Date(
+              Math.max(
+                ...courseViewingHistory.map((vh) =>
+                  new Date(vh.updatedAt).getTime()
+                )
+              )
+            )
+          : null;
 
       return {
         id: course.id,
@@ -272,10 +294,10 @@ export class CourseService {
         description: course.description,
         thumbnailUrl: course.thumbnailUrl,
         category: {
-          name: course.category.name
+          name: course.category.name,
         },
         professor: {
-          name: course.professor.name
+          name: course.professor.name,
         },
         enrolledAt: enrollment.enrolledAt,
         progress,
@@ -284,13 +306,15 @@ export class CourseService {
         totalDuration,
         watchedDuration,
         lastAccessedAt,
-        nextLesson: nextLesson ? {
-          id: nextLesson.id,
-          title: nextLesson.title,
-          order: nextLesson.order
-        } : null,
-        certificateEarned: status === 'completed',
-        status
+        nextLesson: nextLesson
+          ? {
+              id: nextLesson.id,
+              title: nextLesson.title,
+              order: nextLesson.order,
+            }
+          : null,
+        certificateEarned: status === "completed",
+        status,
       };
     });
   }
@@ -311,34 +335,35 @@ export class CourseService {
             id: true,
             name: true,
             slug: true,
-            description: true
-          }
+            description: true,
+          },
         },
         professor: {
           select: {
             id: true,
             name: true,
             expertise: true,
-            bio: true
-          }
+            bio: true,
+          },
         },
         lessons: {
           select: {
             id: true,
             title: true,
             order: true,
-            duration: true
+            duration: true,
+            bunnyVideoId: true,
           },
           orderBy: {
-            order: 'asc'
-          }
+            order: "asc",
+          },
         },
         _count: {
           select: {
-            enrollments: true
-          }
-        }
-      }
+            enrollments: true,
+          },
+        },
+      },
     });
 
     if (!course) return null;
@@ -348,13 +373,13 @@ export class CourseService {
     let progress = 0;
     let lastAccessedAt: Date | null = null;
 
-    if (userId && userRole === 'STUDENT') {
+    if (userId && userRole === "STUDENT") {
       const enrollment = await prisma.enrollment.findUnique({
         where: {
           userId_courseId: {
             userId,
-            courseId
-          }
+            courseId,
+          },
         },
         include: {
           user: {
@@ -362,23 +387,32 @@ export class CourseService {
               viewingHistory: {
                 where: {
                   lesson: {
-                    courseId
-                  }
-                }
-              }
-            }
-          }
-        }
+                    courseId,
+                  },
+                },
+              },
+            },
+          },
+        },
       });
 
       if (enrollment) {
         isEnrolled = true;
-        const completedLessons = enrollment.user.viewingHistory.filter(vh => vh.completed).length;
-        progress = calculateCourseProgress(course.lessons.length, completedLessons);
-        
+        const completedLessons = enrollment.user.viewingHistory.filter(
+          (vh) => vh.completed
+        ).length;
+        progress = calculateCourseProgress(
+          course.lessons.length,
+          completedLessons
+        );
+
         if (enrollment.user.viewingHistory.length > 0) {
           lastAccessedAt = new Date(
-            Math.max(...enrollment.user.viewingHistory.map(vh => new Date(vh.updatedAt).getTime()))
+            Math.max(
+              ...enrollment.user.viewingHistory.map((vh) =>
+                new Date(vh.updatedAt).getTime()
+              )
+            )
           );
         }
       }
@@ -400,7 +434,10 @@ export class CourseService {
       createdAt: course.createdAt,
       updatedAt: course.updatedAt,
       category: course.category,
-      professor: course.professor,
+      professor: {
+        ...course.professor,
+        bio: course.professor.bio || undefined,
+      },
       lessons: course.lessons,
       enrollmentCount: course._count.enrollments,
       totalDuration,
@@ -409,9 +446,9 @@ export class CourseService {
       reviewCount,
       isEnrolled,
       progress,
-      lastAccessedAt,
-      canEdit: userId === course.professor.id || userRole === 'ADMIN',
-      canManage: userRole === 'ADMIN'
+      lastAccessedAt: lastAccessedAt || undefined,
+      canEdit: userId === course.professor.id || userRole === "ADMIN",
+      canManage: userRole === "ADMIN",
     };
   }
 }

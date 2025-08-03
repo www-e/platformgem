@@ -81,17 +81,17 @@ export async function GET(_request: NextRequest) {
 
     // Calculate total views (sum of all viewing history)
     const totalViews = allEnrollments.reduce((sum, enrollment) => {
-      return sum + enrollment.viewingHistory.length;
+      return sum + enrollment.user.viewingHistory.length;
     }, 0);
 
     // Calculate completion rate
-    const completedEnrollments = allEnrollments.filter((enrollment: any) => {
+    const completedEnrollments = allEnrollments.filter((enrollment) => {
       const course = courses.find((c) => c.id === enrollment.courseId);
       if (!course) return false;
 
       const totalLessons = course.lessons.length;
-      const completedLessons = enrollment.viewingHistory.filter(
-        (vh) => vh.completed
+      const completedLessons = enrollment.user.viewingHistory.filter(
+        (vh: any) => vh.completed
       ).length;
 
       return totalLessons > 0 && completedLessons === totalLessons;
@@ -106,14 +106,14 @@ export async function GET(_request: NextRequest) {
     const recentEnrollments = allEnrollments
       .sort(
         (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          new Date(b.enrolledAt).getTime() - new Date(a.enrolledAt).getTime()
       )
       .slice(0, 10)
       .map((enrollment) => {
         const course = courses.find((c) => c.id === enrollment.courseId);
         const totalLessons = course?.lessons.length || 0;
-        const completedLessons = enrollment.viewingHistory.filter(
-          (vh) => vh.completed
+        const completedLessons = enrollment.user.viewingHistory.filter(
+          (vh: any) => vh.completed
         ).length;
         const progress =
           totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
@@ -122,7 +122,7 @@ export async function GET(_request: NextRequest) {
           id: enrollment.id,
           studentName: enrollment.user.name,
           courseName: course?.title || "Unknown Course",
-          enrolledAt: enrollment.createdAt,
+          enrolledAt: enrollment.enrolledAt,
           progress: Math.round(progress),
         };
       });
@@ -135,10 +135,10 @@ export async function GET(_request: NextRequest) {
           0
         );
         const students = course.enrollments.length;
-        const completedStudents = course.enrollments.filter((enrollment: any) => {
+        const completedStudents = course.enrollments.filter((enrollment) => {
           const totalLessons = course.lessons.length;
-          const completedLessons = enrollment.viewingHistory.filter(
-            (vh) => vh.completed
+          const completedLessons = enrollment.user.viewingHistory.filter(
+            (vh: any) => vh.completed
           ).length;
           return totalLessons > 0 && completedLessons === totalLessons;
         }).length;
@@ -179,7 +179,7 @@ export async function GET(_request: NextRequest) {
       }, 0);
 
       const monthEnrollments = allEnrollments.filter((enrollment) => {
-        const enrollmentDate = new Date(enrollment.createdAt);
+        const enrollmentDate = new Date(enrollment.enrolledAt);
         return enrollmentDate >= monthStart && enrollmentDate <= monthEnd;
       }).length;
 
