@@ -1,19 +1,9 @@
 // src/components/student/payment-history/PaymentFilters.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { 
-  Download,
-  Search,
-  Filter
-} from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Download, Filter } from 'lucide-react';
+import { SearchFilter } from '@/components/shared/SearchFilter';
+import { SelectFilter } from '@/components/shared/SelectFilter';
+import { ActionButton } from '@/components/shared/ActionButton';
 
 interface PaymentFiltersProps {
   searchTerm: string;
@@ -34,6 +24,22 @@ export function PaymentFilters({
   setDateFilter,
   onExport
 }: PaymentFiltersProps) {
+  const statusOptions = [
+    { value: 'all', label: 'جميع الحالات' },
+    { value: 'completed', label: 'مكتمل' },
+    { value: 'pending', label: 'معلق' },
+    { value: 'failed', label: 'فاشل' },
+    { value: 'cancelled', label: 'ملغي' },
+    { value: 'refunded', label: 'مسترد' }
+  ];
+
+  const dateOptions = [
+    { value: 'all', label: 'جميع الفترات' },
+    { value: 'week', label: 'آخر أسبوع' },
+    { value: 'month', label: 'آخر شهر' },
+    { value: 'quarter', label: 'آخر 3 أشهر' }
+  ];
+
   return (
     <Card>
       <CardHeader>
@@ -44,48 +50,33 @@ export function PaymentFilters({
       </CardHeader>
       <CardContent>
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="البحث بالدورة أو رقم المعاملة..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
+          <SearchFilter
+            value={searchTerm}
+            onChange={setSearchTerm}
+            placeholder="البحث بالدورة أو رقم المعاملة..."
+            className="flex-1"
+          />
           
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full md:w-48">
-              <SelectValue placeholder="تصفية بالحالة" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">جميع الحالات</SelectItem>
-              <SelectItem value="completed">مكتمل</SelectItem>
-              <SelectItem value="pending">معلق</SelectItem>
-              <SelectItem value="failed">فاشل</SelectItem>
-              <SelectItem value="cancelled">ملغي</SelectItem>
-              <SelectItem value="refunded">مسترد</SelectItem>
-            </SelectContent>
-          </Select>
+          <SelectFilter
+            value={statusFilter}
+            onChange={setStatusFilter}
+            options={statusOptions}
+            placeholder="تصفية بالحالة"
+          />
 
-          <Select value={dateFilter} onValueChange={setDateFilter}>
-            <SelectTrigger className="w-full md:w-48">
-              <SelectValue placeholder="تصفية بالتاريخ" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">جميع الفترات</SelectItem>
-              <SelectItem value="week">آخر أسبوع</SelectItem>
-              <SelectItem value="month">آخر شهر</SelectItem>
-              <SelectItem value="quarter">آخر 3 أشهر</SelectItem>
-            </SelectContent>
-          </Select>
+          <SelectFilter
+            value={dateFilter}
+            onChange={setDateFilter}
+            options={dateOptions}
+            placeholder="تصفية بالتاريخ"
+          />
 
-          <Button onClick={onExport} variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            تصدير
-          </Button>
+          <ActionButton
+            text="تصدير"
+            onClick={onExport}
+            variant="outline"
+            icon={Download}
+          />
         </div>
       </CardContent>
     </Card>

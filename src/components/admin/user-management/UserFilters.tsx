@@ -1,14 +1,8 @@
 // src/components/admin/user-management/UserFilters.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Filter, Search } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Filter } from "lucide-react";
+import { SearchFilter } from "@/components/shared/SearchFilter";
+import { SelectFilter } from "@/components/shared/SelectFilter";
 
 interface UserFiltersProps {
   searchTerm: string;
@@ -27,6 +21,19 @@ export function UserFilters({
   statusFilter,
   setStatusFilter
 }: UserFiltersProps) {
+  const roleOptions = [
+    { value: 'all', label: 'جميع الأدوار' },
+    { value: 'STUDENT', label: 'طلاب' },
+    { value: 'PROFESSOR', label: 'مدرسين' },
+    { value: 'ADMIN', label: 'مديرين' }
+  ];
+
+  const statusOptions = [
+    { value: 'all', label: 'جميع الحالات' },
+    { value: 'active', label: 'نشط' },
+    { value: 'inactive', label: 'غير نشط' }
+  ];
+
   return (
     <Card>
       <CardHeader>
@@ -37,40 +44,26 @@ export function UserFilters({
       </CardHeader>
       <CardContent>
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="البحث بالاسم أو البريد الإلكتروني..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
+          <SearchFilter
+            value={searchTerm}
+            onChange={setSearchTerm}
+            placeholder="البحث بالاسم أو البريد الإلكتروني..."
+            className="flex-1"
+          />
 
-          <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className="w-full md:w-48">
-              <SelectValue placeholder="تصفية بالدور" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">جميع الأدوار</SelectItem>
-              <SelectItem value="STUDENT">طلاب</SelectItem>
-              <SelectItem value="PROFESSOR">مدرسين</SelectItem>
-              <SelectItem value="ADMIN">مديرين</SelectItem>
-            </SelectContent>
-          </Select>
+          <SelectFilter
+            value={roleFilter}
+            onChange={setRoleFilter}
+            options={roleOptions}
+            placeholder="تصفية بالدور"
+          />
 
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full md:w-48">
-              <SelectValue placeholder="تصفية بالحالة" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">جميع الحالات</SelectItem>
-              <SelectItem value="active">نشط</SelectItem>
-              <SelectItem value="inactive">غير نشط</SelectItem>
-            </SelectContent>
-          </Select>
+          <SelectFilter
+            value={statusFilter}
+            onChange={setStatusFilter}
+            options={statusOptions}
+            placeholder="تصفية بالحالة"
+          />
         </div>
       </CardContent>
     </Card>

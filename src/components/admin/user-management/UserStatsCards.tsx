@@ -1,6 +1,6 @@
 // src/components/admin/user-management/UserStatsCards.tsx
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, User, GraduationCap, Calendar } from "lucide-react";
+import { StatsCards } from "@/components/shared/StatsCards";
 import type { UserStats } from "@/hooks/useUserManagement";
 
 interface UserStatsCardsProps {
@@ -8,65 +8,36 @@ interface UserStatsCardsProps {
 }
 
 export function UserStatsCards({ stats }: UserStatsCardsProps) {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            إجمالي المستخدمين
-          </CardTitle>
-          <Users className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.totalUsers}</div>
-          <p className="text-xs text-muted-foreground">
-            {stats.activeUsers} نشط
-          </p>
-        </CardContent>
-      </Card>
+  const statsData = [
+    {
+      id: 'total-users',
+      title: 'إجمالي المستخدمين',
+      value: stats.totalUsers,
+      subtitle: `${stats.activeUsers} نشط`,
+      icon: Users
+    },
+    {
+      id: 'students',
+      title: 'الطلاب',
+      value: stats.totalStudents,
+      subtitle: `${((stats.totalStudents / stats.totalUsers) * 100).toFixed(1)}% من المجموع`,
+      icon: User
+    },
+    {
+      id: 'professors',
+      title: 'المدرسين',
+      value: stats.totalProfessors,
+      subtitle: `${((stats.totalProfessors / stats.totalUsers) * 100).toFixed(1)}% من المجموع`,
+      icon: GraduationCap
+    },
+    {
+      id: 'new-users',
+      title: 'مستخدمين جدد',
+      value: stats.newUsersThisMonth,
+      subtitle: 'هذا الشهر',
+      icon: Calendar
+    }
+  ];
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">الطلاب</CardTitle>
-          <User className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.totalStudents}</div>
-          <p className="text-xs text-muted-foreground">
-            {((stats.totalStudents / stats.totalUsers) * 100).toFixed(1)}%
-            من المجموع
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">المدرسين</CardTitle>
-          <GraduationCap className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.totalProfessors}</div>
-          <p className="text-xs text-muted-foreground">
-            {((stats.totalProfessors / stats.totalUsers) * 100).toFixed(1)}%
-            من المجموع
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            مستخدمين جدد
-          </CardTitle>
-          <Calendar className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">
-            {stats.newUsersThisMonth}
-          </div>
-          <p className="text-xs text-muted-foreground">هذا الشهر</p>
-        </CardContent>
-      </Card>
-    </div>
-  );
+  return <StatsCards stats={statsData} />;
 }
