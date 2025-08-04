@@ -21,7 +21,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { userId } = params;
+    const resolvedParams = await params;
+    const { userId } = resolvedParams;
     const body = await request.json();
     const { isActive } = body;
 
@@ -84,7 +85,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { userId } = params;
+    const resolvedParams = await params;
+    const { userId } = resolvedParams;
 
     const user = await prisma.user.findUnique({
       where: { id: userId }

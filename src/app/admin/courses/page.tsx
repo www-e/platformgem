@@ -5,17 +5,20 @@ import prisma from "@/lib/prisma";
 import SearchInput from '@/components/admin/SearchInput';
 import PaginationControls from '@/components/admin/PaginationControls';
 import CourseActions from '@/components/admin/CourseActions';
-import CreateCourseDialog from "@/components/admin/CreateCourseDialog";
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import Link from 'next/link';
 
 const ITEMS_PER_PAGE = 8;
 
 export default async function CoursesPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const page = typeof searchParams.page === 'string' ? Number(searchParams.page) : 1;
-  const query = typeof searchParams.q === 'string' ? searchParams.q : undefined;
+  const resolvedSearchParams = await searchParams;
+  const page = typeof resolvedSearchParams.page === 'string' ? Number(resolvedSearchParams.page) : 1;
+  const query = typeof resolvedSearchParams.q === 'string' ? resolvedSearchParams.q : undefined;
 
   const whereClause = {
     ...(query && {
@@ -61,7 +64,12 @@ export default async function CoursesPage({
         </div>
         <div className="flex items-center gap-2">
             <SearchInput />
-            <CreateCourseDialog />
+            <Button asChild>
+              <Link href="/admin/courses/new">
+                <Plus className="w-4 h-4 mr-2" />
+                إضافة دورة
+              </Link>
+            </Button>
         </div>
       </div>
 

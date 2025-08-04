@@ -1,14 +1,14 @@
 // src/components/admin/UserManagement.tsx
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Users, 
-  Search, 
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Users,
+  Search,
   Filter,
   UserPlus,
   MoreHorizontal,
@@ -16,27 +16,27 @@ import {
   Calendar,
   Shield,
   GraduationCap,
-  User
-} from 'lucide-react';
+  User,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 interface UserData {
   id: string;
   name: string;
   email: string;
-  role: 'ADMIN' | 'PROFESSOR' | 'STUDENT';
+  role: "ADMIN" | "PROFESSOR" | "STUDENT";
   isActive: boolean;
   createdAt: Date;
   lastLogin?: Date;
@@ -57,9 +57,9 @@ export function UserManagement() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [stats, setStats] = useState<UserStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   useEffect(() => {
     fetchUsers();
@@ -68,11 +68,11 @@ export function UserManagement() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('/api/admin/users');
+      const response = await fetch("/api/admin/users");
       const data = await response.json();
       setUsers(data.users);
     } catch (error) {
-      console.error('Failed to fetch users:', error);
+      console.error("Failed to fetch users:", error);
     } finally {
       setIsLoading(false);
     }
@@ -80,50 +80,84 @@ export function UserManagement() {
 
   const fetchUserStats = async () => {
     try {
-      const response = await fetch('/api/admin/user-stats');
+      const response = await fetch("/api/admin/user-stats");
       const data = await response.json();
       setStats(data);
     } catch (error) {
-      console.error('Failed to fetch user stats:', error);
+      console.error("Failed to fetch user stats:", error);
     }
   };
 
-  const handleUserAction = async (userId: string, action: 'activate' | 'deactivate' | 'delete') => {
+  const handleUserAction = async (
+    userId: string,
+    action: "activate" | "deactivate" | "delete"
+  ) => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ action }),
-      });
+      let response;
+
+      if (action === "delete") {
+        if (
+          !confirm(
+            "هل أنت متأكد من حذف هذا المستخدم؟ هذا الإجراء لا يمكن التراجع عنه."
+          )
+        ) {
+          return;
+        }
+        response = await fetch(`/api/admin/users/${userId}`, {
+          method: "DELETE",
+        });
+      } else {
+        response = await fetch(`/api/admin/users/${userId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            isActive: action === "activate",
+          }),
+        });
+      }
+
+      const result = await response.json();
 
       if (response.ok) {
         fetchUsers(); // Refresh the list
+        const actionText =
+          action === "delete"
+            ? "حذف"
+            : action === "activate"
+            ? "تفعيل"
+            : "إلغاء تفعيل";
+        alert(`تم ${actionText} المستخدم بنجاح`);
+      } else {
+        alert(result.error?.message || "حدث خطأ في العملية");
       }
     } catch (error) {
-      console.error('Failed to perform user action:', error);
+      console.error("Failed to perform user action:", error);
+      alert("حدث خطأ في العملية");
     }
   };
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = roleFilter === 'all' || user.role === roleFilter;
-    const matchesStatus = statusFilter === 'all' || 
-                         (statusFilter === 'active' && user.isActive) ||
-                         (statusFilter === 'inactive' && !user.isActive);
-    
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole = roleFilter === "all" || user.role === roleFilter;
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "active" && user.isActive) ||
+      (statusFilter === "inactive" && !user.isActive);
+
     return matchesSearch && matchesRole && matchesStatus;
   });
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case 'ADMIN':
+      case "ADMIN":
         return <Shield className="h-4 w-4" />;
-      case 'PROFESSOR':
+      case "PROFESSOR":
         return <GraduationCap className="h-4 w-4" />;
-      case 'STUDENT':
+      case "STUDENT":
         return <User className="h-4 w-4" />;
       default:
         return <User className="h-4 w-4" />;
@@ -132,14 +166,14 @@ export function UserManagement() {
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'ADMIN':
-        return 'bg-red-100 text-red-800';
-      case 'PROFESSOR':
-        return 'bg-blue-100 text-blue-800';
-      case 'STUDENT':
-        return 'bg-green-100 text-green-800';
+      case "ADMIN":
+        return "bg-red-100 text-red-800";
+      case "PROFESSOR":
+        return "bg-blue-100 text-blue-800";
+      case "STUDENT":
+        return "bg-green-100 text-green-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -183,7 +217,9 @@ export function UserManagement() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">إجمالي المستخدمين</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                إجمالي المستخدمين
+              </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -202,7 +238,8 @@ export function UserManagement() {
             <CardContent>
               <div className="text-2xl font-bold">{stats.totalStudents}</div>
               <p className="text-xs text-muted-foreground">
-                {((stats.totalStudents / stats.totalUsers) * 100).toFixed(1)}% من المجموع
+                {((stats.totalStudents / stats.totalUsers) * 100).toFixed(1)}%
+                من المجموع
               </p>
             </CardContent>
           </Card>
@@ -215,21 +252,24 @@ export function UserManagement() {
             <CardContent>
               <div className="text-2xl font-bold">{stats.totalProfessors}</div>
               <p className="text-xs text-muted-foreground">
-                {((stats.totalProfessors / stats.totalUsers) * 100).toFixed(1)}% من المجموع
+                {((stats.totalProfessors / stats.totalUsers) * 100).toFixed(1)}%
+                من المجموع
               </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">مستخدمين جدد</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                مستخدمين جدد
+              </CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.newUsersThisMonth}</div>
-              <p className="text-xs text-muted-foreground">
-                هذا الشهر
-              </p>
+              <div className="text-2xl font-bold">
+                {stats.newUsersThisMonth}
+              </div>
+              <p className="text-xs text-muted-foreground">هذا الشهر</p>
             </CardContent>
           </Card>
         </div>
@@ -256,7 +296,7 @@ export function UserManagement() {
                 />
               </div>
             </div>
-            
+
             <Select value={roleFilter} onValueChange={setRoleFilter}>
               <SelectTrigger className="w-full md:w-48">
                 <SelectValue placeholder="تصفية بالدور" />
@@ -291,25 +331,28 @@ export function UserManagement() {
         <CardContent>
           <div className="space-y-4">
             {filteredUsers.map((user) => (
-              <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+              <div
+                key={user.id}
+                className="flex items-center justify-between p-4 border rounded-lg"
+              >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                     {getRoleIcon(user.role)}
                   </div>
-                  
+
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold">{user.name}</h3>
                       <Badge className={getRoleBadgeColor(user.role)}>
-                        {user.role === 'ADMIN' && 'مدير'}
-                        {user.role === 'PROFESSOR' && 'مدرس'}
-                        {user.role === 'STUDENT' && 'طالب'}
+                        {user.role === "ADMIN" && "مدير"}
+                        {user.role === "PROFESSOR" && "مدرس"}
+                        {user.role === "STUDENT" && "طالب"}
                       </Badge>
-                      <Badge variant={user.isActive ? 'default' : 'secondary'}>
-                        {user.isActive ? 'نشط' : 'غير نشط'}
+                      <Badge variant={user.isActive ? "default" : "secondary"}>
+                        {user.isActive ? "نشط" : "غير نشط"}
                       </Badge>
                     </div>
-                    
+
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Mail className="h-3 w-3" />
@@ -317,26 +360,30 @@ export function UserManagement() {
                       </div>
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        انضم في {new Date(user.createdAt).toLocaleDateString('ar-SA')}
+                        انضم في{" "}
+                        {new Date(user.createdAt).toLocaleDateString("ar-SA")}
                       </div>
                       {user.lastLogin && (
                         <div className="flex items-center gap-1">
-                          آخر دخول: {new Date(user.lastLogin).toLocaleDateString('ar-SA')}
+                          آخر دخول:{" "}
+                          {new Date(user.lastLogin).toLocaleDateString("ar-SA")}
                         </div>
                       )}
                     </div>
-                    
-                    {user.role === 'STUDENT' && user.enrollmentCount !== undefined && (
-                      <div className="text-sm text-muted-foreground mt-1">
-                        مسجل في {user.enrollmentCount} دورة
-                      </div>
-                    )}
-                    
-                    {user.role === 'PROFESSOR' && user.courseCount !== undefined && (
-                      <div className="text-sm text-muted-foreground mt-1">
-                        يدرس {user.courseCount} دورة
-                      </div>
-                    )}
+
+                    {user.role === "STUDENT" &&
+                      user.enrollmentCount !== undefined && (
+                        <div className="text-sm text-muted-foreground mt-1">
+                          مسجل في {user.enrollmentCount} دورة
+                        </div>
+                      )}
+
+                    {user.role === "PROFESSOR" &&
+                      user.courseCount !== undefined && (
+                        <div className="text-sm text-muted-foreground mt-1">
+                          يدرس {user.courseCount} دورة
+                        </div>
+                      )}
                   </div>
                 </div>
 
@@ -347,20 +394,31 @@ export function UserManagement() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        window.open(`/admin/students/${user.id}`, "_blank")
+                      }
+                    >
                       عرض التفاصيل
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => alert("ميزة تعديل المعلومات قيد التطوير")}
+                    >
                       تعديل المعلومات
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={() => handleUserAction(user.id, user.isActive ? 'deactivate' : 'activate')}
+                      onClick={() =>
+                        handleUserAction(
+                          user.id,
+                          user.isActive ? "deactivate" : "activate"
+                        )
+                      }
                     >
-                      {user.isActive ? 'إلغاء التفعيل' : 'تفعيل الحساب'}
+                      {user.isActive ? "إلغاء التفعيل" : "تفعيل الحساب"}
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       className="text-red-600"
-                      onClick={() => handleUserAction(user.id, 'delete')}
+                      onClick={() => handleUserAction(user.id, "delete")}
                     >
                       حذف الحساب
                     </DropdownMenuItem>
@@ -368,11 +426,13 @@ export function UserManagement() {
                 </DropdownMenu>
               </div>
             ))}
-            
+
             {filteredUsers.length === 0 && (
               <div className="text-center py-8">
                 <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">لا توجد نتائج مطابقة للبحث</p>
+                <p className="text-muted-foreground">
+                  لا توجد نتائج مطابقة للبحث
+                </p>
               </div>
             )}
           </div>

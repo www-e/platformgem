@@ -27,27 +27,66 @@ export async function PATCH(
       );
     }
 
-    const { paymentId } = params;
+    const resolvedParams = await params;
+    const { paymentId } = resolvedParams;
     const body = await request.json();
-    const { status, reason } = body;
+    const { action, status, reason } = body;
 
-    // Validate status
-    const validStatuses = ['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'CANCELLED'];
-    if (!status || !validStatuses.includes(status.toUpperCase())) {
+    let updateData: any = { updatedAt: new Date() };
+
+    if (action === 'manual_complete') {
+      updateData.status = 'COMPLETED';
+      updateData.completedAt = new Date();
+      
+      // Create enrollment if payment is completed
+      const payment = await prisma.payment.findUnique({
+        where: { id: paymentId },
+        include: { user: true, course: true }
+      });
+
+      if (payment) {
+        // Check if enrollment already exists
+        const existingEnrollment = await prisma.enrollment.findUnique({
+          where: {
+            userId_courseId: {
+              userId: payment.userId,
+              courseId: payment.courseId
+            }
+          }
+        });
+
+        if (!existingEnrollment) {
+          await prisma.enrollment.create({
+            data: {
+              userId: payment.userId,
+              courseId: payment.courseId,
+              enrolledAt: new Date()
+            }
+          });
+        }
+      }
+    } else if (action === 'update_status') {
+      const validStatuses = ['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'CANCELLED'];
+      if (!status || !validStatuses.includes(status.toUpperCase())) {
+        return createErrorResponse(
+          'INVALID_STATUS',
+          'Invalid or missing payment status provided.',
+          400
+        );
+      }
+      updateData.status = status.toUpperCase();
+      updateData.failureReason = status.toUpperCase() === 'FAILED' ? reason : null;
+    } else {
       return createErrorResponse(
-        'INVALID_STATUS',
-        'Invalid or missing payment status provided.',
+        'INVALID_ACTION',
+        'Invalid action provided.',
         400
       );
     }
 
     const updatedPayment = await prisma.payment.update({
       where: { id: paymentId },
-      data: {
-        status: status.toUpperCase(),
-        failureReason: status.toUpperCase() === 'FAILED' ? reason : null,
-        updatedAt: new Date()
-      }
+      data: updateData
     });
 
     // We can add logic here later to handle enrollments if a payment
