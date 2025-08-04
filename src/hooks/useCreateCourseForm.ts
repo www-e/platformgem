@@ -1,0 +1,169 @@
+// src/hooks/useCreateCourseForm.ts
+"use client";
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+
+interface Category {
+  id: string;
+  name: string;
+}
+
+interface Professor {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface CourseFormData {
+  title: string;
+  description: string;
+  categoryId: string;
+  professorId: string;
+  price: string;
+  currency: string;
+  thumbnailUrl: string;
+  bunnyLibraryId: string;
+  isPublished: boolean;
+}
+
+export function useCreateCourseForm() {
+  const router = useRouter();
+  const [formData, setFormData] = useState<CourseFormData>({
+    title: '',
+    description: '',
+    categoryId: '',
+    professorId: '',
+    price: '',
+    currency: 'EGP',
+    thumbnailUrl: '',
+    bunnyLibraryId: '',
+    isPublished: false
+  });
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [professors, setProfessors] = useState<Professor[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+
+  useEffect(() => {
+    fetchCategories();
+    fetchProfessors();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/categories');
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+      toast.error('فشل في تحميل التصنيفات');
+    }
+  };
+
+  const fetchProfessors = async () => {
+    try {
+      const response = await fetch('/api/users?role=PROFESSOR');
+      const data = await response.json();
+      setProfessors(data.users || []);
+    } catch (error) {
+      console.error('Failed to fetch professors:', error);
+      toast.error('فشل في تحميل قائمة المدرسين');
+    }
+  };
+
+  const handleInputChange = (field: keyof CourseFormData, value: string | boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleThumbnailUpload = (files: any[]) => {
+    if (files.length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        thumbnailUrl: files[0].url
+      }));
+      toast.success('تم رفع صورة الدورة بنجاح');
+    }
+  };
+
+  const validateStep = (step: number): boolean => {
+    switch (step) {
+      case 1:
+        return !!(formData.title && formData.description && formData.categoryId);
+      case 2:
+        return !!(formData.professorId && formData.bunnyLibraryId);
+      case 3:
+        return !!(formData.thumbnailUrl);
+      default:
+        return true;
+    }
+  };
+
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => Math.min(4, prev + 1));
+    } else {
+      toast.error('يرجى إكمال جميع الحقول المطلوبة');
+    }
+  };
+
+  const handlePrevious = () => {
+    setCurrentStep(prev => Math.max(1, prev - 1));
+  };
+
+  const handleSubmit = async () => {
+    if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
+      toast.error('يرجى إكمال جميع الحقول المطلوبة');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/admin/courses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          price: formData.price ? parseFloat(formData.price) : null
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success('تم إنشاء الدورة بنجاح');
+        router.push(`/admin/courses/${result.course.id}`);
+      } else {
+        toast.error(result.error || 'فشل في إنشاء الدورة');
+      }
+    } catch (error) {
+      console.error('Course creation error:', error);
+      toast.error('حدث خطأ في إنشاء الدورة');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    formData,
+    categories,
+    professors,
+    isLoading,
+    currentStep,
+    handleInputChange,
+    handleThumbnailUpload,
+    validateStep,
+    handleNext,
+    handlePrevious,
+    handleSubmit
+  };
+}
+
+export type { CourseFormData, Category, Professor };
