@@ -1,3 +1,5 @@
+Directory tree and file line counts for: src
+
 📁 src/
     📁 app/
         📁 (auth)/
@@ -15,328 +17,382 @@
                 5- 📄 page.tsx   (78 lines, 2.54 KB)
         📁 admin/
             📁 categories/
-                6- 📄 page.tsx   (147 lines, 5.48 KB)
+                6- 📄 page.tsx   (157 lines, 5.85 KB)
             📁 courses/
+                📁 new/
+                    7- 📄 page.tsx   (38 lines, 1.19 KB)
                 📁 [courseId]/
                     📁 _components/
-                        7- 📄 add-lesson-form.tsx   (61 lines, 2.37 KB)
-                    8- 📄 page.tsx   (58 lines, 2.05 KB)
+                        8- 📄 add-lesson-form.tsx   (61 lines, 2.37 KB)
+                    9- 📄 page.tsx   (59 lines, 2.09 KB)
                 📁 _components/
-                    9- 📄 create-course-form.tsx   (197 lines, 6.69 KB)
-                10- 📄 page.tsx   (102 lines, 3.56 KB)
+                    10- 📄 create-course-form.tsx   (197 lines, 6.69 KB)
+                11- 📄 page.tsx   (110 lines, 3.87 KB)
+            📁 logs/
+                12- 📄 page.tsx   (6 lines, 0.16 KB)
             📁 payments/
-                11- 📄 page.tsx   (23 lines, 0.76 KB)
+                13- 📄 page.tsx   (23 lines, 0.76 KB)
             📁 professors/
-                12- 📄 page.tsx   (149 lines, 6.05 KB)
+                14- 📄 page.tsx   (149 lines, 6.05 KB)
             📁 students/
                 📁 [studentId]/
                     📁 _components/
-                        13- 📄 add-exam-form.tsx   (59 lines, 2.27 KB)
-                    14- 📄 page.tsx   (102 lines, 2.64 KB)
-                15- 📄 page.tsx   (74 lines, 3.73 KB)
-            16- 📄 layout.tsx   (104 lines, 3.78 KB)
-            17- 📄 page.tsx   (6 lines, 0.17 KB)
+                        15- 📄 add-exam-form.tsx   (59 lines, 2.27 KB)
+                    16- 📄 page.tsx   (102 lines, 2.64 KB)
+                17- 📄 page.tsx   (74 lines, 3.73 KB)
+            18- 📄 layout.tsx   (105 lines, 3.87 KB)
+            19- 📄 page.tsx   (6 lines, 0.17 KB)
         📁 api/
             📁 admin/
                 📁 course-stats/
-                    18- 📄 route.ts   (60 lines, 1.70 KB)
+                    20- 📄 route.ts   (60 lines, 1.70 KB)
                 📁 courses/
                     📁 [courseId]/
-                        19- 📄 route.ts   (62 lines, 1.52 KB)
-                    20- 📄 route.ts   (69 lines, 1.79 KB)
+                        21- 📄 route.ts   (62 lines, 1.52 KB)
+                    22- 📄 route.ts   (69 lines, 1.79 KB)
                 📁 dashboard-stats/
-                    21- 📄 route.ts   (95 lines, 2.81 KB)
+                    23- 📄 route.ts   (95 lines, 2.81 KB)
                 📁 export-revenue-report/
-                    22- 📄 route.ts   (90 lines, 2.40 KB)
+                    24- 📄 route.ts   (90 lines, 2.40 KB)
+                📁 logs/
+                    📁 stats/
+                        25- 📄 route.ts   (63 lines, 2.22 KB)
+                    26- 📄 route.ts   (357 lines, 10.40 KB)
                 📁 payments/
                     📁 export/
-                        23- 📄 route.ts   (152 lines, 4.16 KB)
+                        27- 📄 route.ts   (152 lines, 4.16 KB)
                     📁 stats/
-                        24- 📄 route.ts   (132 lines, 3.64 KB)
+                        28- 📄 route.ts   (132 lines, 3.64 KB)
                     📁 [paymentId]/
-                        25- 📄 route.ts   (81 lines, 2.42 KB)
-                    26- 📄 route.ts   (185 lines, 4.93 KB)
+                        29- 📄 route.ts   (120 lines, 3.61 KB)
+                    30- 📄 route.ts   (185 lines, 4.93 KB)
                 📁 revenue-analytics/
-                    27- 📄 route.ts   (175 lines, 5.49 KB)
+                    31- 📄 route.ts   (175 lines, 5.49 KB)
                 📁 user-stats/
-                    28- 📄 route.ts   (60 lines, 1.51 KB)
+                    32- 📄 route.ts   (60 lines, 1.51 KB)
                 📁 users/
                     📁 [userId]/
-                        29- 📄 route.ts   (160 lines, 3.99 KB)
-                    30- 📄 route.ts   (57 lines, 1.58 KB)
+                        33- 📄 route.ts   (162 lines, 4.09 KB)
+                    34- 📄 route.ts   (57 lines, 1.58 KB)
                 📁 webhooks/
                     📁 [webhookId]/
                         📁 retry/
-                            31- 📄 route.ts   (109 lines, 3.23 KB)
+                            35- 📄 route.ts   (109 lines, 3.23 KB)
             📁 auth/
                 📁 [...nextauth]/
-                    32- 📄 route.ts   (5 lines, 0.12 KB)
+                    36- 📄 route.ts   (5 lines, 0.12 KB)
             📁 categories/
                 📁 [id]/
-                    33- 📄 route.ts   (301 lines, 8.70 KB)
-                34- 📄 route.ts   (153 lines, 4.64 KB)
+                    37- 📄 route.ts   (301 lines, 8.70 KB)
+                38- 📄 route.ts   (153 lines, 4.64 KB)
             📁 certificates/
                 📁 generate/
-                    35- 📄 route.ts   (102 lines, 2.71 KB)
+                    39- 📄 route.ts   (102 lines, 2.71 KB)
                 📁 my-certificates/
-                    36- 📄 route.ts   (30 lines, 0.76 KB)
+                    40- 📄 route.ts   (30 lines, 0.76 KB)
                 📁 verify/
-                    37- 📄 route.ts   (41 lines, 1.05 KB)
+                    41- 📄 route.ts   (41 lines, 1.05 KB)
             📁 courses/
                 📁 featured/
-                    38- 📄 route.ts   (32 lines, 0.87 KB)
+                    42- 📄 route.ts   (32 lines, 0.87 KB)
                 📁 [id]/
                     📁 access/
-                        39- 📄 route.ts   (25 lines, 0.69 KB)
+                        43- 📄 route.ts   (25 lines, 0.69 KB)
                     📁 analytics/
-                        40- 📄 route.ts   (187 lines, 5.75 KB)
+                        44- 📄 route.ts   (187 lines, 5.75 KB)
                     📁 enroll/
-                        41- 📄 route.ts   (221 lines, 5.81 KB)
+                        45- 📄 route.ts   (221 lines, 5.81 KB)
                     📁 enroll-enhanced/
-                        42- 📄 route.ts   (166 lines, 4.36 KB)
+                        46- 📄 route.ts   (166 lines, 4.36 KB)
                     📁 enroll-free/
-                        43- 📄 route.ts   (36 lines, 1.00 KB)
+                        47- 📄 route.ts   (36 lines, 1.00 KB)
                     📁 enrollment-status/
-                        44- 📄 route.ts   (82 lines, 2.02 KB)
-                    45- 📄 route.ts   (352 lines, 10.14 KB)
-                46- 📄 route.ts   (56 lines, 1.73 KB)
+                        48- 📄 route.ts   (82 lines, 2.02 KB)
+                    49- 📄 route.ts   (352 lines, 10.14 KB)
+                50- 📄 route.ts   (56 lines, 1.73 KB)
             📁 debug-payment/
-                47- 📄 route.ts   (72 lines, 2.50 KB)
+                51- 📄 route.ts   (72 lines, 2.50 KB)
             📁 lessons/
                 📁 [id]/
+                    📁 analytics/
+                        52- 📄 route.ts   (159 lines, 4.98 KB)
+                    📁 materials/
+                        53- 📄 route.ts   (85 lines, 2.26 KB)
                     📁 viewing-history/
-                        48- 📄 route.ts   (256 lines, 7.39 KB)
+                        54- 📄 route.ts   (256 lines, 7.39 KB)
             📁 media/
             📁 payments/
                 📁 initiate/
-                    49- 📄 route.ts   (264 lines, 7.55 KB)
+                    55- 📄 route.ts   (264 lines, 7.55 KB)
                 📁 webhook/
-                    50- 📄 route.ts   (274 lines, 9.15 KB)
+                    56- 📄 route.ts   (274 lines, 9.15 KB)
                 📁 [paymentId]/
-                    51- 📄 route.ts   (165 lines, 5.69 KB)
+                    57- 📄 route.ts   (165 lines, 5.69 KB)
             📁 professor/
                 📁 dashboard-stats/
-                    52- 📄 route.ts   (226 lines, 6.99 KB)
+                    58- 📄 route.ts   (226 lines, 7.02 KB)
                 📁 earnings/
-                    53- 📄 route.ts   (239 lines, 8.07 KB)
+                    59- 📄 route.ts   (239 lines, 8.08 KB)
                 📁 enrollment-stats/
-                    54- 📄 route.ts   (199 lines, 6.07 KB)
+                    60- 📄 route.ts   (199 lines, 6.16 KB)
                 📁 student-engagement/
-                    55- 📄 route.ts   (335 lines, 12.55 KB)
+                    61- 📄 route.ts   (335 lines, 12.78 KB)
                 📁 student-enrollments/
-                    56- 📄 route.ts   (88 lines, 2.77 KB)
+                    62- 📄 route.ts   (91 lines, 2.87 KB)
             📁 progress/
                 📁 milestone/
-                    57- 📄 route.ts   (49 lines, 1.24 KB)
+                    63- 📄 route.ts   (49 lines, 1.24 KB)
             📁 student/
                 📁 dashboard-stats/
-                    58- 📄 route.ts   (159 lines, 4.93 KB)
+                    64- 📄 route.ts   (159 lines, 4.93 KB)
                 📁 enrolled-courses/
-                    59- 📄 route.ts   (32 lines, 0.94 KB)
+                    65- 📄 route.ts   (32 lines, 0.94 KB)
                 📁 payment-history/
-                    60- 📄 route.ts   (60 lines, 1.94 KB)
+                    66- 📄 route.ts   (60 lines, 1.94 KB)
                 📁 payment-stats/
-                    61- 📄 route.ts   (127 lines, 3.84 KB)
+                    67- 📄 route.ts   (127 lines, 3.84 KB)
                 📁 payments/
-                    62- 📄 route.ts   (89 lines, 2.33 KB)
+                    68- 📄 route.ts   (90 lines, 2.34 KB)
                 📁 recommended-courses/
-                    63- 📄 route.ts   (145 lines, 4.82 KB)
+                    69- 📄 route.ts   (145 lines, 4.82 KB)
             📁 test-env/
-                64- 📄 route.ts   (30 lines, 0.93 KB)
+                70- 📄 route.ts   (30 lines, 0.93 KB)
             📁 test-payment/
-                65- 📄 route.ts   (35 lines, 1.18 KB)
+                71- 📄 route.ts   (35 lines, 1.18 KB)
+            📁 upload/
+                72- 📄 route.ts   (140 lines, 4.25 KB)
+            📁 videos/
+                📁 [videoId]/
+                    📁 secure-url/
+                        73- 📄 route.ts   (131 lines, 3.49 KB)
         📁 certificates/
             📁 verify/
-                66- 📄 page.tsx   (265 lines, 9.85 KB)
+                74- 📄 page.tsx   (265 lines, 9.85 KB)
         📁 courses/
             📁 [courseId]/
                 📁 payment/
                     📁 result/
-                        67- 📄 page.tsx   (175 lines, 4.51 KB)
+                        75- 📄 page.tsx   (175 lines, 4.51 KB)
                     📁 success/
-                        68- 📄 page.tsx   (88 lines, 2.21 KB)
-                    69- 📄 page.tsx   (95 lines, 2.45 KB)
+                        76- 📄 page.tsx   (88 lines, 2.21 KB)
+                    77- 📄 page.tsx   (95 lines, 2.45 KB)
                 📁 _components/
-                    70- 📄 completion-button.tsx   (84 lines, 2.58 KB)
-                71- 📄 page.tsx   (240 lines, 7.77 KB)
-            72- 📄 page.tsx   (126 lines, 4.65 KB)
+                    78- 📄 completion-button.tsx   (84 lines, 2.58 KB)
+                79- 📄 page.tsx   (240 lines, 7.77 KB)
+            80- 📄 page.tsx   (126 lines, 4.65 KB)
         📁 debug-auth/
-            73- 📄 page.tsx   (126 lines, 4.86 KB)
+            81- 📄 page.tsx   (126 lines, 4.86 KB)
         📁 professor/
             📁 analytics/
-                74- 📄 page.tsx   (304 lines, 11.47 KB)
+                82- 📄 page.tsx   (304 lines, 11.47 KB)
             📁 courses/
                 📁 new/
-                    75- 📄 page.tsx   (79 lines, 3.33 KB)
-                76- 📄 page.tsx   (174 lines, 6.31 KB)
-            77- 📄 page.tsx   (14 lines, 0.41 KB)
+                    83- 📄 page.tsx   (79 lines, 3.33 KB)
+                84- 📄 page.tsx   (174 lines, 6.31 KB)
+            85- 📄 page.tsx   (14 lines, 0.41 KB)
         📁 simple-payment-test/
-            78- 📄 page.tsx   (161 lines, 4.74 KB)
+            86- 📄 page.tsx   (161 lines, 4.74 KB)
         📁 test-payment/
-            79- 📄 page.tsx   (108 lines, 3.02 KB)
-        80- 📄 favicon.ico   (31 lines, 25.32 KB)
-        81- 📄 globals.css   (121 lines, 2.63 KB)
-        82- 📄 layout.tsx   (40 lines, 1.17 KB)
-        83- 📄 page.tsx   (91 lines, 3.51 KB)
+            87- 📄 page.tsx   (108 lines, 3.02 KB)
+        88- 📄 favicon.ico   (31 lines, 25.32 KB)
+        89- 📄 globals.css   (121 lines, 2.63 KB)
+        90- 📄 layout.tsx   (40 lines, 1.17 KB)
+        91- 📄 page.tsx   (91 lines, 3.51 KB)
     📁 components/
         📁 admin/
-            84- 📄 AdminDashboard.tsx   (262 lines, 9.42 KB)
-            85- 📄 AdminPaymentManagement.tsx   (535 lines, 19.81 KB)
-            86- 📄 AdminStudentDetail.tsx   (528 lines, 20.26 KB)
-            87- 📄 CategoryDialog.tsx   (240 lines, 8.07 KB)
-            88- 📄 CategoryManagement.tsx   (292 lines, 10.59 KB)
-            89- 📄 CategorySelector.tsx   (139 lines, 4.20 KB)
-            90- 📄 CourseActions.tsx   (137 lines, 5.44 KB)
-            91- 📄 CourseManagement.tsx   (428 lines, 16.13 KB)
-            92- 📄 CreateCourseDialog.tsx   (26 lines, 0.90 KB)
-            93- 📄 CreateProfessorDialog.tsx   (161 lines, 5.59 KB)
-            94- 📄 GradeFilter.tsx   (36 lines, 1.48 KB)
-            95- 📄 PaginationControls.tsx   (50 lines, 1.49 KB)
-            96- 📄 PlatformOverview.tsx   (278 lines, 11.20 KB)
-            97- 📄 RevenueAnalytics.tsx   (398 lines, 14.21 KB)
-            98- 📄 SearchInput.tsx   (43 lines, 1.34 KB)
-            99- 📄 UserChart.tsx   (55 lines, 1.83 KB)
-            100- 📄 UserManagement.tsx   (383 lines, 14.00 KB)
+            92- 📄 AdminDashboard.tsx   (262 lines, 9.42 KB)
+            93- 📄 AdminPaymentManagement.tsx   (535 lines, 19.81 KB)
+            94- 📄 AdminStudentDetail.tsx   (528 lines, 20.26 KB)
+            95- 📄 CategoryDialog.tsx   (240 lines, 8.07 KB)
+            96- 📄 CategoryManagement.tsx   (292 lines, 10.59 KB)
+            97- 📄 CategorySelector.tsx   (139 lines, 4.20 KB)
+            98- 📄 CourseActions.tsx   (137 lines, 5.44 KB)
+            99- 📄 CourseManagement.tsx   (428 lines, 16.13 KB)
+            100- 📄 CreateCourseDialog.tsx   (26 lines, 0.90 KB)
+            101- 📄 CreateCourseForm.tsx   (458 lines, 15.88 KB)
+            102- 📄 CreateProfessorDialog.tsx   (161 lines, 5.59 KB)
+            103- 📄 GradeFilter.tsx   (36 lines, 1.48 KB)
+            104- 📄 PaginationControls.tsx   (50 lines, 1.49 KB)
+            105- 📄 PlatformOverview.tsx   (278 lines, 11.20 KB)
+            106- 📄 RevenueAnalytics.tsx   (398 lines, 14.21 KB)
+            107- 📄 SearchInput.tsx   (43 lines, 1.34 KB)
+            108- 📄 SystemLogs.tsx   (493 lines, 18.09 KB)
+            109- 📄 UserChart.tsx   (55 lines, 1.83 KB)
+            110- 📄 UserManagement.tsx   (444 lines, 15.49 KB)
         📁 analytics/
-            101- 📄 AdminAnalytics.tsx   (550 lines, 21.50 KB)
-            102- 📄 ProfessorAnalytics.tsx   (528 lines, 20.76 KB)
-            103- 📄 StudentProgress.tsx   (364 lines, 13.81 KB)
+            111- 📄 AdminAnalytics.tsx   (550 lines, 21.50 KB)
+            112- 📄 ProfessorAnalytics.tsx   (528 lines, 20.76 KB)
+            113- 📄 StudentProgress.tsx   (364 lines, 13.81 KB)
+            114- 📄 VideoAnalytics.tsx   (339 lines, 11.15 KB)
         📁 auth/
-            104- 📄 RoleGuard.tsx   (91 lines, 2.34 KB)
+            115- 📄 RoleGuard.tsx   (92 lines, 2.39 KB)
         📁 certificates/
-            105- 📄 CertificateCard.tsx   (183 lines, 5.89 KB)
-            106- 📄 CertificateGenerator.tsx   (239 lines, 8.06 KB)
+            116- 📄 CertificateCard.tsx   (183 lines, 5.89 KB)
+            117- 📄 CertificateGenerator.tsx   (239 lines, 8.06 KB)
         📁 course/
-            107- 📄 CourseAccessGuard.tsx   (347 lines, 10.54 KB)
-            108- 📄 CourseCard.tsx   (362 lines, 12.42 KB)
-            109- 📄 CourseCatalog.tsx   (429 lines, 14.71 KB)
-            110- 📄 CourseContent.tsx   (390 lines, 15.73 KB)
-            111- 📄 CoursePlayerClient.tsx   (110 lines, 4.09 KB)
-            112- 📄 lecture-sidebar.tsx   (69 lines, 2.64 KB)
-            113- 📄 LessonMaterials.tsx   (71 lines, 2.64 KB)
+            118- 📄 CourseAccessGuard.tsx   (357 lines, 10.81 KB)
+            119- 📄 CourseCard.tsx   (362 lines, 12.42 KB)
+            120- 📄 CourseCatalog.tsx   (429 lines, 14.71 KB)
+            121- 📄 CourseContent.tsx   (390 lines, 15.73 KB)
+            122- 📄 CoursePlayerClient.tsx   (131 lines, 4.78 KB)
+            123- 📄 lecture-sidebar.tsx   (69 lines, 2.64 KB)
+            124- 📄 LessonMaterials.tsx   (71 lines, 2.64 KB)
+            125- 📄 MaterialManager.tsx   (310 lines, 10.13 KB)
         📁 landing/
-            114- 📄 FAQSection.tsx   (49 lines, 2.54 KB)
-            115- 📄 FeaturedCoursesSection.tsx   (277 lines, 11.03 KB)
-            116- 📄 FeaturesSection.tsx   (38 lines, 2.22 KB)
-            117- 📄 FinalCTASection.tsx   (21 lines, 1.03 KB)
-            118- 📄 HeroSection.tsx   (33 lines, 1.74 KB)
-            119- 📄 HowItWorksSection.tsx   (39 lines, 2.10 KB)
-            120- 📄 InstructorSection.tsx   (38 lines, 2.01 KB)
-            121- 📄 PlatformPreviewSection.tsx   (55 lines, 3.24 KB)
-            122- 📄 TestimonialsSection.tsx   (36 lines, 1.75 KB)
+            126- 📄 FAQSection.tsx   (49 lines, 2.54 KB)
+            127- 📄 FeaturedCoursesSection.tsx   (277 lines, 11.03 KB)
+            128- 📄 FeaturesSection.tsx   (38 lines, 2.22 KB)
+            129- 📄 FinalCTASection.tsx   (21 lines, 1.03 KB)
+            130- 📄 HeroSection.tsx   (33 lines, 1.74 KB)
+            131- 📄 HowItWorksSection.tsx   (39 lines, 2.10 KB)
+            132- 📄 InstructorSection.tsx   (38 lines, 2.01 KB)
+            133- 📄 PlatformPreviewSection.tsx   (55 lines, 3.24 KB)
+            134- 📄 TestimonialsSection.tsx   (36 lines, 1.75 KB)
         📁 payment/
-            123- 📄 PaymentButton.tsx   (196 lines, 4.84 KB)
-            124- 📄 PaymentDetailsModal.tsx   (332 lines, 12.19 KB)
-            125- 📄 PaymentHistory.tsx   (241 lines, 8.20 KB)
-            126- 📄 PaymentModal.tsx   (317 lines, 11.94 KB)
-            127- 📄 PaymentPage.tsx   (371 lines, 13.95 KB)
-            128- 📄 PaymentResultPage.tsx   (386 lines, 13.56 KB)
-            129- 📄 PaymentStatus.tsx   (293 lines, 9.60 KB)
-            130- 📄 PaymentSuccessPage.tsx   (315 lines, 11.69 KB)
+            135- 📄 PaymentButton.tsx   (196 lines, 4.84 KB)
+            136- 📄 PaymentDetailsModal.tsx   (332 lines, 12.19 KB)
+            137- 📄 PaymentHistory.tsx   (241 lines, 8.20 KB)
+            138- 📄 PaymentModal.tsx   (317 lines, 11.94 KB)
+            139- 📄 PaymentPage.tsx   (371 lines, 13.95 KB)
+            140- 📄 PaymentResultPage.tsx   (386 lines, 13.56 KB)
+            141- 📄 PaymentStatus.tsx   (293 lines, 9.60 KB)
+            142- 📄 PaymentSuccessPage.tsx   (315 lines, 11.69 KB)
         📁 professor/
-            131- 📄 CourseAnalytics.tsx   (465 lines, 17.90 KB)
-            132- 📄 CreateCourseForm.tsx   (247 lines, 8.58 KB)
-            133- 📄 EarningsReport.tsx   (447 lines, 16.43 KB)
-            134- 📄 ProfessorCourseManagement.tsx   (326 lines, 12.73 KB)
-            135- 📄 ProfessorDashboard.tsx   (344 lines, 12.34 KB)
-            136- 📄 ProfessorOverview.tsx   (298 lines, 11.79 KB)
-            137- 📄 StudentEngagement.tsx   (490 lines, 19.26 KB)
-            138- 📄 StudentEnrollmentStats.tsx   (404 lines, 15.64 KB)
+            143- 📄 CourseAnalytics.tsx   (465 lines, 17.90 KB)
+            144- 📄 CreateCourseForm.tsx   (245 lines, 8.56 KB)
+            145- 📄 EarningsReport.tsx   (447 lines, 16.43 KB)
+            146- 📄 LessonEditor.tsx   (187 lines, 6.77 KB)
+            147- 📄 ProfessorCourseManagement.tsx   (326 lines, 12.73 KB)
+            148- 📄 ProfessorDashboard.tsx   (344 lines, 12.34 KB)
+            149- 📄 ProfessorOverview.tsx   (298 lines, 11.79 KB)
+            150- 📄 StudentEngagement.tsx   (490 lines, 19.26 KB)
+            151- 📄 StudentEnrollmentStats.tsx   (404 lines, 15.64 KB)
         📁 profile/
-            139- 📄 EnrolledCourses.tsx   (66 lines, 2.97 KB)
-            140- 📄 ExamHistory.tsx   (43 lines, 1.70 KB)
-            141- 📄 MyCertificates.tsx   (179 lines, 6.10 KB)
-            142- 📄 ProfileActions.tsx   (18 lines, 0.52 KB)
-            143- 📄 ProfileHeader.tsx   (59 lines, 2.46 KB)
-            144- 📄 QuickAccessCard.tsx   (75 lines, 2.67 KB)
+            152- 📄 EnrolledCourses.tsx   (66 lines, 2.97 KB)
+            153- 📄 ExamHistory.tsx   (43 lines, 1.70 KB)
+            154- 📄 MyCertificates.tsx   (179 lines, 6.10 KB)
+            155- 📄 ProfileActions.tsx   (18 lines, 0.52 KB)
+            156- 📄 ProfileHeader.tsx   (59 lines, 2.46 KB)
+            157- 📄 QuickAccessCard.tsx   (75 lines, 2.67 KB)
         📁 seo/
-            145- 📄 StructuredData.tsx   (152 lines, 4.74 KB)
+            158- 📄 StructuredData.tsx   (152 lines, 4.74 KB)
         📁 shared/
-            146- 📄 footer.tsx   (38 lines, 2.81 KB)
-            147- 📄 navbar.tsx   (118 lines, 4.87 KB)
+            159- 📄 footer.tsx   (38 lines, 2.81 KB)
+            160- 📄 navbar.tsx   (118 lines, 4.87 KB)
         📁 student/
-            148- 📄 EnrolledCourses.tsx   (314 lines, 11.42 KB)
-            149- 📄 PaymentHistory.tsx   (506 lines, 19.57 KB)
-            150- 📄 RecommendedCourses.tsx   (481 lines, 17.52 KB)
-            151- 📄 StudentCertificates.tsx   (23 lines, 0.62 KB)
-            152- 📄 StudentDashboard.tsx   (373 lines, 14.71 KB)
-            153- 📄 StudentProgress.tsx   (23 lines, 0.64 KB)
+            161- 📄 EnrolledCourses.tsx   (314 lines, 11.42 KB)
+            162- 📄 PaymentHistory.tsx   (506 lines, 19.57 KB)
+            163- 📄 RecommendedCourses.tsx   (481 lines, 17.52 KB)
+            164- 📄 StudentCertificates.tsx   (23 lines, 0.62 KB)
+            165- 📄 StudentDashboard.tsx   (373 lines, 14.71 KB)
+            166- 📄 StudentProgress.tsx   (23 lines, 0.64 KB)
         📁 ui/
-            154- 📄 accordion.tsx   (58 lines, 2.05 KB)
-            155- 📄 alert-dialog.tsx   (139 lines, 4.45 KB)
-            156- 📄 alert.tsx   (60 lines, 1.64 KB)
-            157- 📄 aurora-background.tsx   (53 lines, 2.04 KB)
-            158- 📄 badge.tsx   (36 lines, 1.13 KB)
-            159- 📄 button.tsx   (60 lines, 2.07 KB)
-            160- 📄 card.tsx   (93 lines, 1.94 KB)
-            161- 📄 dialog.tsx   (123 lines, 3.93 KB)
-            162- 📄 dropdown-menu.tsx   (201 lines, 7.37 KB)
-            163- 📄 input.tsx   (22 lines, 0.94 KB)
-            164- 📄 label.tsx   (25 lines, 0.60 KB)
-            165- 📄 progress.tsx   (29 lines, 0.83 KB)
-            166- 📄 select.tsx   (161 lines, 5.53 KB)
-            167- 📄 separator.tsx   (29 lines, 0.80 KB)
-            168- 📄 sheet.tsx   (140 lines, 4.35 KB)
-            169- 📄 skeleton.tsx   (15 lines, 0.27 KB)
-            170- 📄 slider.tsx   (29 lines, 1.12 KB)
-            171- 📄 sonner.tsx   (26 lines, 0.55 KB)
-            172- 📄 switch.tsx   (27 lines, 1.14 KB)
-            173- 📄 tabs.tsx   (56 lines, 1.93 KB)
-            174- 📄 textarea.tsx   (24 lines, 0.78 KB)
+            167- 📄 accordion.tsx   (58 lines, 2.05 KB)
+            168- 📄 alert-dialog.tsx   (139 lines, 4.45 KB)
+            169- 📄 alert.tsx   (60 lines, 1.64 KB)
+            170- 📄 aurora-background.tsx   (53 lines, 2.04 KB)
+            171- 📄 badge.tsx   (36 lines, 1.13 KB)
+            172- 📄 button.tsx   (60 lines, 2.07 KB)
+            173- 📄 card.tsx   (93 lines, 1.94 KB)
+            174- 📄 dialog.tsx   (123 lines, 3.93 KB)
+            175- 📄 dropdown-menu.tsx   (201 lines, 7.37 KB)
+            176- 📄 input.tsx   (22 lines, 0.94 KB)
+            177- 📄 label.tsx   (25 lines, 0.60 KB)
+            178- 📄 progress.tsx   (29 lines, 0.83 KB)
+            179- 📄 select.tsx   (161 lines, 5.53 KB)
+            180- 📄 separator.tsx   (29 lines, 0.80 KB)
+            181- 📄 sheet.tsx   (140 lines, 4.35 KB)
+            182- 📄 skeleton.tsx   (15 lines, 0.27 KB)
+            183- 📄 slider.tsx   (29 lines, 1.12 KB)
+            184- 📄 sonner.tsx   (26 lines, 0.55 KB)
+            185- 📄 switch.tsx   (27 lines, 1.14 KB)
+            186- 📄 tabs.tsx   (56 lines, 1.93 KB)
+            187- 📄 textarea.tsx   (24 lines, 0.78 KB)
+        📁 upload/
+            188- 📄 FileUploader.tsx   (342 lines, 10.44 KB)
         📁 video/
-            175- 📄 BunnyVideoPlayer.tsx   (457 lines, 14.86 KB)
+            189- 📄 BunnyVideoPlayer.tsx   (488 lines, 15.73 KB)
     📁 hooks/
-        176- 📄 useAuth.ts   (15 lines, 0.30 KB)
-        177- 📄 useProgressTracking.ts   (93 lines, 2.28 KB)
-        178- 📄 useViewingHistory.ts   (132 lines, 3.82 KB)
+        190- 📄 useAuth.ts   (15 lines, 0.30 KB)
+        191- 📄 useProgressTracking.ts   (93 lines, 2.28 KB)
+        192- 📄 useViewingHistory.ts   (132 lines, 3.82 KB)
     📁 lib/
         📁 api/
-            179- 📄 categories.ts   (178 lines, 5.19 KB)
-            180- 📄 course-access.ts   (96 lines, 2.26 KB)
-            181- 📄 courses.ts   (301 lines, 8.17 KB)
-            182- 📄 payments.ts   (273 lines, 7.40 KB)
+            193- 📄 categories.ts   (178 lines, 5.19 KB)
+            194- 📄 course-access.ts   (96 lines, 2.26 KB)
+            195- 📄 courses.ts   (301 lines, 8.17 KB)
+            196- 📄 payments.ts   (273 lines, 7.40 KB)
         📁 services/
-            183- 📄 course-service.ts   (417 lines, 11.33 KB)
-            184- 📄 enrollment-service.ts   (631 lines, 17.03 KB)
-        185- 📄 actions.ts   (653 lines, 19.29 KB)
-        186- 📄 api-utils.ts   (62 lines, 1.88 KB)
-        187- 📄 auth-redirects.ts   (58 lines, 1.77 KB)
-        188- 📄 auth-utils.ts   (136 lines, 4.09 KB)
-        189- 📄 auth.ts   (125 lines, 3.48 KB)
-        190- 📄 bunny.ts   (44 lines, 1.43 KB)
-        191- 📄 certificate.ts   (423 lines, 10.20 KB)
-        192- 📄 course-access.ts   (399 lines, 10.67 KB)
-        193- 📄 course-utils.ts   (257 lines, 6.70 KB)
-        194- 📄 paymob.ts   (536 lines, 13.85 KB)
-        195- 📄 prisma.ts   (17 lines, 0.38 KB)
-        196- 📄 utils.ts   (16 lines, 0.40 KB)
-        197- 📄 webhook-processor.ts   (137 lines, 3.63 KB)
+            197- 📄 course-service.ts   (455 lines, 11.97 KB)
+            198- 📄 enrollment-service.ts   (630 lines, 16.97 KB)
+        199- 📄 actions.ts   (653 lines, 19.30 KB)
+        200- 📄 api-utils.ts   (62 lines, 1.88 KB)
+        201- 📄 auth-redirects.ts   (58 lines, 1.77 KB)
+        202- 📄 auth-utils.ts   (136 lines, 4.09 KB)
+        203- 📄 auth.ts   (124 lines, 3.48 KB)
+        204- 📄 bunny.ts   (158 lines, 4.15 KB)
+        205- 📄 certificate.ts   (418 lines, 10.02 KB)
+        206- 📄 course-access.ts   (400 lines, 10.67 KB)
+        207- 📄 course-utils.ts   (257 lines, 6.70 KB)
+        208- 📄 paymob.ts   (536 lines, 13.85 KB)
+        209- 📄 prisma.ts   (17 lines, 0.38 KB)
+        210- 📄 utils.ts   (16 lines, 0.40 KB)
+        211- 📄 webhook-processor.ts   (135 lines, 3.42 KB)
     📁 types/
-        198- 📄 course.ts   (203 lines, 4.43 KB)
+        212- 📄 course.ts   (203 lines, 4.43 KB)
 
-Total files in 'src': 198
+Total files in 'src': 212
 
-How many top files with most lines of code do you want to list? Enter an integer: 20
+How many top files with most lines of code do you want to list? Enter an integer: 50
 
-Top 20 files with most lines of code in 'src':
-1- src\lib\actions.ts   (653 lines, 19.29 KB)
-2- src\lib\services\enrollment-service.ts   (631 lines, 17.03 KB)
-3- src\components\analytics\AdminAnalytics.tsx   (550 lines, 21.50 KB)
-4- src\lib\paymob.ts   (536 lines, 13.85 KB)
-5- src\components\admin\AdminPaymentManagement.tsx   (535 lines, 19.81 KB)
-6- src\components\admin\AdminStudentDetail.tsx   (528 lines, 20.26 KB)
+Top 50 files with most lines of code in 'src':
+[done]1- src\lib\actions.ts   (653 lines, 19.30 KB) [done]
+[done]2- src\lib\services\enrollment-service.ts   (630 lines, 16.97 KB) [done]
+[done]3- src\components\analytics\AdminAnalytics.tsx   (550 lines, 21.50 KB) [done]
+[done]4- src\lib\paymob.ts   (536 lines, 13.85 KB) [done]
+[done]5- src\components\admin\AdminPaymentManagement.tsx   (535 lines, 19.81 KB) [done]
+[done]6- src\components\admin\AdminStudentDetail.tsx   (528 lines, 20.26 KB) [done]
 7- src\components\analytics\ProfessorAnalytics.tsx   (528 lines, 20.76 KB)
 8- src\components\student\PaymentHistory.tsx   (506 lines, 19.57 KB)
-9- src\components\professor\StudentEngagement.tsx   (490 lines, 19.26 KB)
-10- src\components\student\RecommendedCourses.tsx   (481 lines, 17.52 KB)
-11- src\components\professor\CourseAnalytics.tsx   (465 lines, 17.90 KB)
-12- src\components\video\BunnyVideoPlayer.tsx   (457 lines, 14.86 KB)
-13- src\components\professor\EarningsReport.tsx   (447 lines, 16.43 KB)
-14- src\components\course\CourseCatalog.tsx   (429 lines, 14.71 KB)
-15- src\components\admin\CourseManagement.tsx   (428 lines, 16.13 KB)
-16- src\lib\certificate.ts   (423 lines, 10.20 KB)
-17- src\lib\services\course-service.ts   (417 lines, 11.33 KB)
-18- src\components\professor\StudentEnrollmentStats.tsx   (404 lines, 15.64 KB)
-19- src\lib\course-access.ts   (399 lines, 10.67 KB)
-20- src\components\admin\RevenueAnalytics.tsx   (398 lines, 14.21 KB)
-PS D:\newplatform\newplatformgem> 
+9- src\components\admin\SystemLogs.tsx   (493 lines, 18.09 KB)
+10- src\components\professor\StudentEngagement.tsx   (490 lines, 19.26 KB)
+[done]11- src\components\video\BunnyVideoPlayer.tsx   (488 lines, 15.73 KB)
+12- src\components\student\RecommendedCourses.tsx   (481 lines, 17.52 KB)
+13- src\components\professor\CourseAnalytics.tsx   (465 lines, 17.90 KB)
+14- src\components\admin\CreateCourseForm.tsx   (458 lines, 15.88 KB)
+[done]15- src\lib\services\course-service.ts   (455 lines, 11.97 KB)
+16- src\components\professor\EarningsReport.tsx   (447 lines, 16.43 KB)
+[in progress]17- src\components\admin\UserManagement.tsx   (444 lines, 15.49 KB)
+18- src\components\course\CourseCatalog.tsx   (429 lines, 14.71 KB)
+19- src\components\admin\CourseManagement.tsx   (428 lines, 16.13 KB)
+20- src\lib\certificate.ts   (418 lines, 10.02 KB)
+21- src\components\professor\StudentEnrollmentStats.tsx   (404 lines, 15.64 KB)
+[done]22- src\lib\course-access.ts   (400 lines, 10.67 KB)
+23- src\components\admin\RevenueAnalytics.tsx   (398 lines, 14.21 KB)
+24- src\components\course\CourseContent.tsx   (390 lines, 15.73 KB)
+25- src\components\payment\PaymentResultPage.tsx   (386 lines, 13.56 KB)
+[in progress]26- src\components\student\StudentDashboard.tsx   (373 lines, 14.71 KB)
+27- src\components\payment\PaymentPage.tsx   (371 lines, 13.95 KB)
+28- src\components\analytics\StudentProgress.tsx   (364 lines, 13.81 KB)
+29- src\components\course\CourseCard.tsx   (362 lines, 12.42 KB)
+[in progress]30- src\app\api\admin\logs\route.ts   (357 lines, 10.40 KB)
+31- src\components\course\CourseAccessGuard.tsx   (357 lines, 10.81 KB)
+[in progress]32- src\app\api\courses\[id]\route.ts   (352 lines, 10.14 KB)
+33- src\components\professor\ProfessorDashboard.tsx   (344 lines, 12.34 KB)
+34- src\components\upload\FileUploader.tsx   (342 lines, 10.44 KB)
+35- src\components\analytics\VideoAnalytics.tsx   (339 lines, 11.15 KB)
+[in progress]36- src\app\api\professor\student-engagement\route.ts   (335 lines, 12.78 KB)
+37- src\components\payment\PaymentDetailsModal.tsx   (332 lines, 12.19 KB)
+[in progress]38- src\components\professor\ProfessorCourseManagement.tsx   (326 lines, 12.73 KB)
+39- src\components\payment\PaymentModal.tsx   (317 lines, 11.94 KB)
+40- src\components\payment\PaymentSuccessPage.tsx   (315 lines, 11.69 KB)
+41- src\components\student\EnrolledCourses.tsx   (314 lines, 11.42 KB)
+[in progress]42- src\components\course\MaterialManager.tsx   (310 lines, 10.13 KB)
+43- src\app\professor\analytics\page.tsx   (304 lines, 11.47 KB)
+44- src\app\api\categories\[id]\route.ts   (301 lines, 8.70 KB)
+45- src\lib\api\courses.ts   (301 lines, 8.17 KB)
+46- src\components\professor\ProfessorOverview.tsx   (298 lines, 11.79 KB)
+47- src\components\payment\PaymentStatus.tsx   (293 lines, 9.60 KB)
+48- src\components\admin\CategoryManagement.tsx   (292 lines, 10.59 KB)
+49- src\components\admin\PlatformOverview.tsx   (278 lines, 11.20 KB)
+50- src\components\landing\FeaturedCoursesSection.tsx   (277 lines, 11.03 KB)
