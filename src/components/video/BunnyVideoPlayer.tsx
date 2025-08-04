@@ -61,13 +61,44 @@ export function BunnyVideoPlayer({
   const [showControls, setShowControls] = useState(true);
   const [watchedDuration, setWatchedDuration] = useState(0);
 
-  // Generate signed URL for the video
-  const videoUrl = getSignedBunnyUrl(bunnyLibraryId, bunnyVideoId);
+  // State for secure video URL
+  const [videoUrl, setVideoUrl] = useState<string>('');
+
+  // Fetch secure video URL
+  useEffect(() => {
+    const fetchSecureUrl = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/videos/${bunnyVideoId}/secure-url`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ lessonId }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to get secure video URL');
+        }
+
+        const data = await response.json();
+        setVideoUrl(data.secureUrl);
+      } catch (error) {
+        console.error('Error fetching secure URL:', error);
+        setError('فشل في تحميل الفيديو الآمن');
+        setIsLoading(false);
+      }
+    };
+
+    if (lessonId && bunnyVideoId) {
+      fetchSecureUrl();
+    }
+  }, [lessonId, bunnyVideoId]);
 
   // Initialize video and load viewing history
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !videoUrl) return;
 
     const handleLoadedMetadata = () => {
       setDuration(video.duration);
@@ -118,7 +149,7 @@ export function BunnyVideoPlayer({
       video.removeEventListener('ended', handleEnded);
       video.removeEventListener('error', handleError);
     };
-  }, [initialPosition, onLessonComplete]);
+  }, [initialPosition, onLessonComplete, videoUrl]);
 
   // Progress tracking and API updates
   useEffect(() => {

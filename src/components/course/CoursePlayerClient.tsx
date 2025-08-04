@@ -7,7 +7,7 @@ import { CompletionButton } from "@/app/courses/[courseId]/_components/completio
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Lesson } from "@prisma/client";
 import { getSignedBunnyUrl } from "@/lib/bunny";
-import LessonMaterials from "./LessonMaterials";
+import { MaterialManager } from "./MaterialManager";
 import { ChevronLeft, ChevronRight, ShieldCheck } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -104,7 +104,28 @@ export default function CoursePlayerClient({
       </Card>
       
       {/* Lesson Materials Section */}
-      <LessonMaterials materials={currentLesson.materials} />
+      <MaterialManager 
+        lessonId={currentLesson.id}
+        materials={currentLesson.materials}
+        onUpdate={async (materials) => {
+          try {
+            const response = await fetch(`/api/lessons/${currentLesson.id}/materials`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ materials }),
+            });
+
+            if (!response.ok) {
+              throw new Error('Failed to update materials');
+            }
+          } catch (error) {
+            console.error('Error updating materials:', error);
+          }
+        }}
+        canEdit={false} // Students can't edit, only professors can
+      />
     </div>
   );
 }
