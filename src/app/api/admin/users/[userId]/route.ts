@@ -1,8 +1,8 @@
 // src/app/api/admin/users/[userId]/route.ts
-import { NextRequest} from 'next/server';
+import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client'; // Use this import for the transaction type
 import { createSuccessResponse, createErrorResponse, ApiErrors } from '@/lib/api-utils';
 
 interface RouteParams {
@@ -111,7 +111,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
 
     // Delete user and all related data
-    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => { // Correct Type Here
       // Delete related data first
       await tx.paymentWebhook.deleteMany({
         where: {

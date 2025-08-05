@@ -1,2 +1,16 @@
+// settings.json
 {
-}
+    // Hide .next in the Explorer
+    "files.exclude": {
+      "**/.next": true
+    },
+    // Prevent search & diagnostics scanning
+    "search.exclude": {
+      "**/.next": true
+    },
+    // Reduce watcher load (optional, but helps large projects)
+    "files.watcherExclude": {
+      "**/.next/**": true
+    }
+  }
+  

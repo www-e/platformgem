@@ -3,9 +3,7 @@
 import type { Config } from "tailwindcss"
 
 const config = {
-  darkMode: ["class"],
-  // This 'content' section is the corrected part.
-  // It now correctly points to your src directory.
+  darkMode: "class", // Corrected from ['class'] to "class"
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',

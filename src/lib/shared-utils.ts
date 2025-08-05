@@ -4,18 +4,18 @@
 /**
  * Currency formatting utilities
  */
-export function formatCurrency(amount: number): string {
+export function formatCurrency(amount: number, currency: string = 'EGP'): string {
   return new Intl.NumberFormat('ar-EG', {
     style: 'currency',
-    currency: 'EGP',
+    currency: currency,
     minimumFractionDigits: 0
   }).format(amount);
 }
 
-export function formatCurrencyWithDecimals(amount: number): string {
+export function formatCurrencyWithDecimals(amount: number, currency: string = 'EGP'): string {
   return new Intl.NumberFormat('ar-EG', {
     style: 'currency',
-    currency: 'EGP'
+    currency: currency
   }).format(amount);
 }
 

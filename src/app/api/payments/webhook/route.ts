@@ -1,7 +1,6 @@
 // src/app/api/payments/webhook/route.ts
 import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { payMobService } from "@/lib/paymob/client";
 import { createSuccessResponse, createErrorResponse } from "@/lib/api-utils";
 
@@ -13,19 +12,22 @@ export async function POST(request: NextRequest) {
   try {
     // Parse webhook data
     webhookData = await request.json();
-    transactionId = webhookData.id;
+    transactionId = webhookData?.obj?.id ?? null;
 
     console.log("PayMob webhook received:", {
-      transactionId: webhookData.id,
-      orderId: webhookData.order?.id,
-      success: webhookData.success,
-      amount: webhookData.amount_cents,
+      transactionId: transactionId,
+      orderId: webhookData?.obj?.order?.id,
+      success: webhookData?.obj?.success,
+      amount: webhookData?.obj?.amount_cents,
       timestamp: new Date().toISOString(),
     });
 
+    // We process the 'obj' part of the payload
+    const webhookObject = webhookData.obj;
+
     // Validate webhook payload structure
-    if (!payMobService.validateWebhookPayload(webhookData)) {
-      console.error("Invalid webhook payload structure:", webhookData);
+    if (!payMobService.validateWebhookPayload(webhookObject)) {
+      console.error("Invalid webhook payload structure:", webhookObject);
       return createErrorResponse(
         "INVALID_PAYLOAD",
         "Invalid webhook payload structure",
@@ -34,7 +36,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify webhook signature
-    if (!payMobService.verifyWebhookSignature(webhookData)) {
+    if (!payMobService.verifyWebhookSignature(webhookObject)) {
       console.error(
         "Invalid PayMob webhook signature for transaction:",
         transactionId
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Process webhook data
-    const processedData = await payMobService.processWebhook(webhookData);
+    const processedData = await payMobService.processWebhook(webhookObject);
 
     // Validate processed data
     if (!processedData.isValid) {
@@ -59,7 +61,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate required fields
+    // *** FIX: Ensure transactionId is valid before proceeding ***
     if (!processedData.transactionId) {
       console.error("Missing transaction ID in webhook data");
       return createErrorResponse(
@@ -69,8 +71,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Type assertion after validation - we know transactionId exists now
-    const validatedTransactionId = processedData.transactionId as number;
+    const validatedTransactionId = processedData.transactionId; // Now we know it's a number
 
     // Build search conditions
     const searchConditions = [];
@@ -83,7 +84,6 @@ export async function POST(request: NextRequest) {
       searchConditions.push({ paymobOrderId: processedData.merchantOrderId });
     }
 
-    // If no search conditions, we can't find the payment
     if (searchConditions.length === 0) {
       console.error("No order ID or merchant order ID in webhook data");
       return createErrorResponse(
@@ -95,24 +95,10 @@ export async function POST(request: NextRequest) {
 
     // Find the payment record
     const payment = await prisma.payment.findFirst({
-      where: {
-        OR: searchConditions,
-      },
+      where: { OR: searchConditions },
       include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        course: {
-          select: {
-            id: true,
-            title: true,
-            professorId: true,
-          },
-        },
+        user: { select: { id: true, name: true, email: true } },
+        course: { select: { id: true, title: true, professorId: true } },
       },
     });
 
@@ -120,7 +106,7 @@ export async function POST(request: NextRequest) {
       console.error("Payment not found for webhook:", {
         orderId: processedData.orderId,
         merchantOrderId: processedData.merchantOrderId,
-        transactionId: transactionId,
+        transactionId: validatedTransactionId,
       });
 
       // Store webhook for manual review
@@ -157,7 +143,7 @@ export async function POST(request: NextRequest) {
     if (existingWebhook && existingWebhook.processedAt) {
       console.log("Webhook already processed:", {
         paymentId: payment.id,
-        transactionId: transactionId,
+        transactionId: validatedTransactionId,
         processedAt: existingWebhook.processedAt,
       });
       return createSuccessResponse({
@@ -175,7 +161,8 @@ export async function POST(request: NextRequest) {
       ? "Payment failed at PayMob gateway"
       : null;
 
-    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    // Use correct Prisma transaction type
+    await prisma.$transaction(async (tx) => {
       // Create or update webhook record
       const webhookId =
         existingWebhook?.id ||
@@ -215,7 +202,7 @@ export async function POST(request: NextRequest) {
           paymobResponse: {
             ...(payment.paymobResponse as any),
             webhook: {
-              transactionId: transactionId,
+              transactionId: validatedTransactionId,
               success: processedData.isSuccess,
               amountCents: processedData.amountCents,
               currency: processedData.currency,
@@ -225,9 +212,6 @@ export async function POST(request: NextRequest) {
           },
         },
       });
-
-      // Note: Enrollment creation will be handled outside the transaction
-      // to avoid transaction timeout issues
     });
 
     // Handle enrollment creation for successful payments
@@ -271,11 +255,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Log the result
     console.log("Payment webhook processed:", {
       paymentId: payment.id,
       status: newStatus,
-      transactionId: transactionId,
+      transactionId: validatedTransactionId,
       success: processedData.isSuccess,
       enrollmentCreated: enrollmentResult?.success || false,
       enrollmentId: enrollmentResult?.enrollmentId,
@@ -285,24 +268,22 @@ export async function POST(request: NextRequest) {
       message: "Webhook processed successfully",
       paymentId: payment.id,
       status: newStatus,
-      transactionId: transactionId,
+      transactionId: validatedTransactionId,
       enrollmentCreated: enrollmentResult?.success || false,
       enrollmentId: enrollmentResult?.enrollmentId,
     });
   } catch (error) {
     console.error("PayMob webhook processing error:", error);
 
-    // Try to store failed webhook for retry
+    // *** FIX: Use correct `transactionId` variable and check if it exists ***
     if (transactionId && webhookData) {
       try {
         await prisma.paymentWebhook.upsert({
-          where: {
-            id: `webhook_${transactionId}_error_${Date.now()}`,
-          },
+          where: { id: `webhook_${transactionId}_error_${Date.now()}` },
           create: {
-            id: `webhook_${validatedTransactionId}_error_${Date.now()}`,
+            id: `webhook_${transactionId}_error_${Date.now()}`,
             paymentId: "error", // Will need manual linking
-            paymobTransactionId: BigInt(validatedTransactionId),
+            paymobTransactionId: BigInt(transactionId),
             webhookPayload: webhookData,
             lastError: error instanceof Error ? error.message : "Unknown error",
             processingAttempts: 1,
@@ -318,8 +299,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Return success to PayMob to avoid retries for our internal errors
-    // But log the error for investigation
     return createSuccessResponse({
       message: "Webhook received but processing failed",
       error: error instanceof Error ? error.message : "Unknown error",
