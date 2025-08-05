@@ -109,13 +109,13 @@ export function useCourseManagement() {
   const categories = useMemo(() => {
     return Array.from(new Set(courses.map(c => c.category.id)))
       .map(id => courses.find(c => c.category.id === id)?.category)
-      .filter(Boolean);
+      .filter((category): category is NonNullable<typeof category> => Boolean(category));
   }, [courses]);
   
   const professors = useMemo(() => {
     return Array.from(new Set(courses.map(c => c.professor.id)))
       .map(id => courses.find(c => c.professor.id === id)?.professor)
-      .filter(Boolean);
+      .filter((professor): professor is NonNullable<typeof professor> => Boolean(professor));
   }, [courses]);
 
   return {

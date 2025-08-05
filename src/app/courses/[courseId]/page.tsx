@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { CourseAccessGuard } from "@/components/course/CourseAccessGuard";
 import { CourseContent } from "@/components/course/CourseContent";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   BookOpen, 
@@ -68,6 +68,8 @@ export default async function CoursePage({ params }: CoursePageProps) {
   const formattedCourse = {
     ...course,
     price: course.price ? Number(course.price) : null,
+    createdAt: course.createdAt.toISOString(),
+    updatedAt: course.updatedAt.toISOString(),
     _count: course._count
   };
 

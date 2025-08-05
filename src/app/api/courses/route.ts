@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { CourseFilters } from '@/types/course';
 import { validateCourseFilters } from '@/lib/course-utils';
-import { CourseService } from '@/lib/services/course-service';
+import { CourseService } from '@/lib/services/course/index.service';
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,8 +33,7 @@ export async function GET(request: NextRequest) {
       page,
       limit,
       sort,
-      session?.user?.id,
-      session?.user?.role
+      session?.user?.id
     );
 
     return NextResponse.json(response, {

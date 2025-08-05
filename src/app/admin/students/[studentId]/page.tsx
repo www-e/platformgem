@@ -6,12 +6,13 @@ import { Metadata } from 'next';
 import AdminStudentDetail from '@/components/admin/AdminStudentDetail';
 
 interface StudentDetailPageProps {
-  params: { studentId: string };
+  params: Promise<{ studentId: string }>;
 }
 
 export async function generateMetadata({ params }: StudentDetailPageProps): Promise<Metadata> {
+  const { studentId } = await params;
   const student = await prisma.user.findUnique({
-    where: { id: params.studentId },
+    where: { id: studentId },
     select: { name: true }
   });
 
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: StudentDetailPageProps): Prom
 }
 
 export default async function StudentDetailPage({ params }: StudentDetailPageProps) {
-  const { studentId } = params;
+  const { studentId } = await params;
   
   const student = await prisma.user.findUnique({
     where: { id: studentId },

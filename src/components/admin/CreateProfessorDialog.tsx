@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { createProfessor } from "@/lib/actions";
+import { createProfessor } from "@/lib/actions/auth.actions";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";

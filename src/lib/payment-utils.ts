@@ -1,51 +1,83 @@
 // src/lib/payment-utils.ts
-import { Badge } from '@/components/ui/badge';
-import { 
-  CreditCard, 
-  DollarSign,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Receipt
-} from 'lucide-react';
 
 /**
- * Get status badge component for payment status
+ * Get payment status color class
  */
-export function getStatusBadge(status: string) {
+export function getPaymentStatusColor(status: string): string {
   switch (status) {
-    case 'completed':
-      return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />مكتمل</Badge>;
-    case 'pending':
-      return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />معلق</Badge>;
-    case 'failed':
-      return <Badge className="bg-red-100 text-red-800"><XCircle className="h-3 w-3 mr-1" />فاشل</Badge>;
-    case 'cancelled':
-      return <Badge className="bg-gray-100 text-gray-800"><XCircle className="h-3 w-3 mr-1" />ملغي</Badge>;
-    case 'refunded':
-      return <Badge className="bg-gray-100 text-gray-800"><Receipt className="h-3 w-3 mr-1" />مسترد</Badge>;
+    case 'COMPLETED':
+      return 'text-green-600';
+    case 'PENDING':
+      return 'text-yellow-600';
+    case 'FAILED':
+      return 'text-red-600';
+    case 'CANCELLED':
+      return 'text-gray-600';
+    case 'REFUNDED':
+      return 'text-blue-600';
     default:
-      return <Badge variant="outline">غير محدد</Badge>;
+      return 'text-gray-600';
   }
 }
 
 /**
- * Get payment method icon component
+ * Get payment status background color
  */
-export function getPaymentMethodIcon(method: string) {
-  switch (method.toLowerCase()) {
-    case 'credit_card':
-    case 'debit_card':
-      return <CreditCard className="h-4 w-4" />;
+export function getPaymentStatusBgColor(status: string): string {
+  switch (status) {
+    case 'COMPLETED':
+      return 'bg-green-100';
+    case 'PENDING':
+      return 'bg-yellow-100';
+    case 'FAILED':
+      return 'bg-red-100';
+    case 'CANCELLED':
+      return 'bg-gray-100';
+    case 'REFUNDED':
+      return 'bg-blue-100';
     default:
-      return <DollarSign className="h-4 w-4" />;
+      return 'bg-gray-100';
   }
 }
 
 /**
- * Format currency amount in Arabic locale
+ * Get payment status text in Arabic
  */
-export function formatCurrency(amount: number, currency: string = 'EGP'): string {
+export function getPaymentStatusText(status: string): string {
+  switch (status) {
+    case 'COMPLETED':
+      return 'مكتمل';
+    case 'PENDING':
+      return 'معلق';
+    case 'FAILED':
+      return 'فاشل';
+    case 'CANCELLED':
+      return 'ملغي';
+    case 'REFUNDED':
+      return 'مسترد';
+    default:
+      return 'غير محدد';
+  }
+}
+
+/**
+ * Get payment method text in Arabic
+ */
+export function getPaymentMethodText(method: string): string {
+  switch (method) {
+    case 'CARD':
+      return 'بطاقة';
+    case 'WALLET':
+      return 'محفظة';
+    default:
+      return method;
+  }
+}
+
+/**
+ * Format payment amount
+ */
+export function formatPaymentAmount(amount: number, currency: string): string {
   return new Intl.NumberFormat('ar-EG', {
     style: 'currency',
     currency,
@@ -54,15 +86,24 @@ export function formatCurrency(amount: number, currency: string = 'EGP'): string
 }
 
 /**
- * Format date in Arabic locale
+ * Get payment method icon name
  */
-export function formatDateArabic(date: Date | string): string {
-  return new Date(date).toLocaleDateString('ar-SA');
+export function getPaymentMethodIconName(method: string): string {
+  switch (method) {
+    case 'CARD':
+      return 'CreditCard';
+    case 'WALLET':
+      return 'DollarSign';
+    default:
+      return 'CreditCard';
+  }
 }
 
-/**
- * Format payment method display name
- */
-export function formatPaymentMethod(method: string): string {
-  return method.replace('_', ' ');
-}
+// Additional exports for backward compatibility
+export const formatCurrency = formatPaymentAmount;
+export const getPaymentMethodIcon = getPaymentMethodIconName;
+export const formatPaymentMethod = getPaymentMethodText;
+export const getStatusBadge = getPaymentStatusText;
+export const formatDateArabic = (date: Date | string): string => {
+  return new Date(date).toLocaleDateString('ar-SA');
+};

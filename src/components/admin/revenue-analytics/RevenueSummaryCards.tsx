@@ -54,7 +54,7 @@ export function RevenueSummaryCards({ revenueData }: RevenueSummaryCardsProps) {
       value:
         revenueData.recentPayments.length > 0
           ? formatCurrency(
-              calculateAverageOrderValue(revenueData.recentPayments)
+              calculateAverageOrderValue(revenueData.recentPayments.map(p => Number(p.amount)))
             )
           : "0 ج.م",
       subtitle: "قيمة الطلب الواحد",

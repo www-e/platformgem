@@ -3,7 +3,7 @@
 
 import { NextResponse } from 'next/server';
 import { FeaturedCoursesResponse } from '@/types/course';
-import { CourseService } from '@/lib/services/course-service';
+import { CourseService } from '@/lib/services/course/index.service';
 
 export async function GET() {
   try {

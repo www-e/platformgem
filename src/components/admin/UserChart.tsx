@@ -34,7 +34,7 @@ export default function UserChart({ data }: UserChartProps) {
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `${value}`}
+                tickFormatter={(value: any) => `${value}`}
               />
               <Tooltip
                 contentStyle={{ 

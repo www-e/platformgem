@@ -1,6 +1,6 @@
 // src/app/api/courses/[id]/access/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { checkCourseAccess } from '@/lib/course-access';
+import { checkCourseAccess } from '@/lib/services/course-access.service';
 
 interface RouteParams {
   params: { id: string }

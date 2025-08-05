@@ -310,7 +310,16 @@ export function ProfessorDashboard() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          <ProfessorOverview stats={stats} />
+          {stats && (
+            <ProfessorOverview stats={{
+              ...stats,
+              totalEarnings: stats.totalRevenue,
+              monthlyEarnings: stats.monthlyRevenue,
+              totalViews: 0, // Add missing field
+              topCourses: [], // Add missing field
+              monthlyStats: [] // Add missing field
+            }} />
+          )}
         </TabsContent>
 
         <TabsContent value="students" className="space-y-6">

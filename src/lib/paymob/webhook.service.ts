@@ -1,8 +1,8 @@
 // src/lib/paymob/webhook.service.ts
 
-import crypto from 'crypto';
-import { paymobConfig } from './config';
-import { PayMobTransactionResponse } from './types';
+import crypto from "crypto";
+import { paymobConfig } from "./config";
+import { PayMobTransactionResponse } from "./types";
 
 /**
  * Constant-time string comparison to prevent timing attacks.
@@ -25,90 +25,107 @@ function constantTimeCompare(a: string, b: string): boolean {
  * @param webhookObject - The full object received from the webhook `obj` key.
  * @returns True if the signature is valid, otherwise false.
  */
-function verifyWebhookSignature(webhookObject: PayMobTransactionResponse): boolean {
+export function verifyWebhookSignature(
+  webhookObject: PayMobTransactionResponse
+): boolean {
   try {
     const { hmac, ...data } = webhookObject;
 
-    if (!hmac || typeof hmac !== 'string') {
-      console.error('HMAC verification failed: Missing or invalid HMAC');
+    if (!hmac || typeof hmac !== "string") {
+      console.error("HMAC verification failed: Missing or invalid HMAC");
       return false;
     }
 
     // The fields must be ordered alphabetically by key.
     const orderedKeys = [
-      'amount_cents',
-      'created_at',
-      'currency',
-      'error_occured',
-      'has_parent_transaction',
-      'id',
-      'integration_id',
-      'is_3d_secure',
-      'is_auth',
-      'is_capture',
-      'is_refunded',
-      'is_standalone_payment',
-      'is_voided',
-      'order',
-      'owner',
-      'pending',
-      'source_data.pan',
-      'source_data.sub_type',
-      'source_data.type',
-      'success',
+      "amount_cents",
+      "created_at",
+      "currency",
+      "error_occured",
+      "has_parent_transaction",
+      "id",
+      "integration_id",
+      "is_3d_secure",
+      "is_auth",
+      "is_capture",
+      "is_refunded",
+      "is_standalone_payment",
+      "is_voided",
+      "order",
+      "owner",
+      "pending",
+      "source_data.pan",
+      "source_data.sub_type",
+      "source_data.type",
+      "success",
     ];
 
     // Build the concatenated string from the data object
     const concatenatedString = orderedKeys
       .map((key) => {
-        if (key.startsWith('source_data.')) {
-          const subKey = key.split('.')[1];
-          return data.source_data?.[subKey as keyof typeof data.source_data] ?? 'false';
+        if (key.startsWith("source_data.")) {
+          const subKey = key.split(".")[1];
+          return (
+            data.source_data?.[subKey as keyof typeof data.source_data] ??
+            "false"
+          );
         }
-        if (key === 'order') {
+        if (key === "order") {
           return data.order?.id;
         }
         return data[key as keyof typeof data];
       })
-      .join('');
+      .join("");
 
     // Generate our own HMAC
     const calculatedHmac = crypto
-      .createHmac('sha512', paymobConfig.hmacSecret)
+      .createHmac("sha512", paymobConfig.hmacSecret)
       .update(concatenatedString)
-      .digest('hex');
+      .digest("hex");
 
     // Compare safely
     return constantTimeCompare(calculatedHmac, hmac);
   } catch (error) {
-    console.error('HMAC verification error:', error);
+    console.error("HMAC verification error:", error);
     return false;
   }
 }
-
 
 /**
  * Validates the structure of the incoming webhook payload.
  * @param data - The full webhook data object.
  * @returns True if the payload is valid, false otherwise.
  */
-function validateWebhookPayload(data: any): data is PayMobTransactionResponse {
-  if (!data || typeof data !== 'object') return false;
+export function validateWebhookPayload(
+  data: any
+): data is PayMobTransactionResponse {
+  if (!data || typeof data !== "object") return false;
 
   const requiredFields = [
-    'id', 'amount_cents', 'success', 'pending',
-    'currency', 'integration_id', 'order', 'created_at', 'hmac'
+    "id",
+    "amount_cents",
+    "success",
+    "pending",
+    "currency",
+    "integration_id",
+    "order",
+    "created_at",
+    "hmac",
   ];
 
   for (const field of requiredFields) {
     if (!(field in data)) {
-      console.error(`Webhook validation failed: Missing required field '${field}'`);
+      console.error(
+        `Webhook validation failed: Missing required field '${field}'`
+      );
       return false;
     }
   }
 
-  if (!data.order || typeof data.order !== 'object' || !('id' in data.order)) {
-    console.error('Webhook validation failed: Invalid or missing order object/ID');
+  if (!data.order || typeof data.order !== "object" || !("id" in data.order)) {
+    console.error(
+      "Webhook validation failed: Invalid or missing order object/ID"
+    );
     return false;
   }
 

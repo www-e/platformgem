@@ -4,7 +4,7 @@
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
-import { CourseService } from '@/lib/services/course-service';
+import { CourseService } from '@/lib/services/course/index.service';
 import PaymentResultPage from '@/components/payment/PaymentResultPage';
 import prisma from '@/lib/prisma';
 

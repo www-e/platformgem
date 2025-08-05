@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     
     // Try to import PayMob service
     try {
-      const { payMobService } = await import('@/lib/paymob');
+      const { payMobService } = await import('@/lib/paymob/client');
       console.log('✅ PayMob service imported successfully');
       
       // Test authentication

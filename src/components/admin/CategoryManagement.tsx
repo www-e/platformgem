@@ -43,7 +43,7 @@ import {
   Calendar,
   Link as LinkIcon,
 } from "lucide-react";
-import { deleteCategory } from "@/lib/actions";
+import { deleteCategory } from "@/lib/actions/category.actions";
 import { Category } from "@/lib/api/categories";
 import { toast } from "sonner";
 
@@ -192,7 +192,7 @@ export function CategoryManagement({
                       category={category}
                       onSuccess={refreshCategories}
                       trigger={
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        <DropdownMenuItem onSelect={(e: Event) => e.preventDefault()}>
                           <Edit className="w-4 h-4 mr-2" />
                           تعديل
                         </DropdownMenuItem>
@@ -202,7 +202,7 @@ export function CategoryManagement({
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <DropdownMenuItem
-                          onSelect={(e) => e.preventDefault()}
+                          onSelect={(e: Event) => e.preventDefault()}
                           className="text-destructive focus:text-destructive"
                           disabled={category._count.courses > 0}
                         >

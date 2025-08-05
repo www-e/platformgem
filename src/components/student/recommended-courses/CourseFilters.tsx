@@ -26,7 +26,7 @@ export function CourseFilters({ filters, setFilters }: CourseFiltersProps) {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <Select value={filters.category} onValueChange={(value) => setFilters({...filters, category: value})}>
+          <Select value={filters.category} onValueChange={(value: string) => setFilters({...filters, category: value})}>
             <SelectTrigger>
               <SelectValue placeholder="الفئة" />
             </SelectTrigger>
@@ -39,7 +39,7 @@ export function CourseFilters({ filters, setFilters }: CourseFiltersProps) {
             </SelectContent>
           </Select>
 
-          <Select value={filters.priceRange} onValueChange={(value) => setFilters({...filters, priceRange: value})}>
+          <Select value={filters.priceRange} onValueChange={(value: string) => setFilters({...filters, priceRange: value})}>
             <SelectTrigger>
               <SelectValue placeholder="السعر" />
             </SelectTrigger>
@@ -52,7 +52,7 @@ export function CourseFilters({ filters, setFilters }: CourseFiltersProps) {
             </SelectContent>
           </Select>
 
-          <Select value={filters.level} onValueChange={(value) => setFilters({...filters, level: value})}>
+          <Select value={filters.level} onValueChange={(value: string) => setFilters({...filters, level: value})}>
             <SelectTrigger>
               <SelectValue placeholder="المستوى" />
             </SelectTrigger>
@@ -64,7 +64,7 @@ export function CourseFilters({ filters, setFilters }: CourseFiltersProps) {
             </SelectContent>
           </Select>
 
-          <Select value={filters.duration} onValueChange={(value) => setFilters({...filters, duration: value})}>
+          <Select value={filters.duration} onValueChange={(value: string) => setFilters({...filters, duration: value})}>
             <SelectTrigger>
               <SelectValue placeholder="المدة" />
             </SelectTrigger>
@@ -76,7 +76,7 @@ export function CourseFilters({ filters, setFilters }: CourseFiltersProps) {
             </SelectContent>
           </Select>
 
-          <Select value={filters.rating} onValueChange={(value) => setFilters({...filters, rating: value})}>
+          <Select value={filters.rating} onValueChange={(value: string) => setFilters({...filters, rating: value})}>
             <SelectTrigger>
               <SelectValue placeholder="التقييم" />
             </SelectTrigger>

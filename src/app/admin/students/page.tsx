@@ -13,11 +13,12 @@ const ITEMS_PER_PAGE = 10;
 export default async function StudentsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   // We access the searchParams properties here, inside the function body.
-  const page = typeof searchParams.page === 'string' ? Number(searchParams.page) : 1;
-  const query = typeof searchParams.q === 'string' ? searchParams.q : undefined;
+  const resolvedSearchParams = await searchParams;
+  const page = typeof resolvedSearchParams.page === 'string' ? Number(resolvedSearchParams.page) : 1;
+  const query = typeof resolvedSearchParams.q === 'string' ? resolvedSearchParams.q : undefined;
 
   const whereClause = {
     role: 'STUDENT' as const,

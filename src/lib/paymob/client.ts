@@ -1,13 +1,19 @@
 // src/lib/paymob/client.ts
 
-import { paymobConfig } from './config';
+import { paymobConfig } from "./config";
 import {
   PayMobAuthResponse,
   PayMobOrderRequest,
   PayMobOrderResponse,
   PayMobPaymentKeyResponse,
   PayMobBillingData,
-} from './types';
+} from "./types";
+// Import utility functions from utils file
+import {
+  formatAmountToCents as formatAmount,
+  generateMerchantOrderId,
+  createBillingData,
+} from "./utils";
 
 /**
  * Step 1: Authenticates with PayMob to get an auth token.
@@ -16,9 +22,9 @@ import {
 export async function authenticate(): Promise<string> {
   try {
     const response = await fetch(`${paymobConfig.baseUrl}/auth/tokens`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         api_key: paymobConfig.apiKey,
@@ -32,8 +38,8 @@ export async function authenticate(): Promise<string> {
     const data: PayMobAuthResponse = await response.json();
     return data.token;
   } catch (error) {
-    console.error('PayMob authentication error:', error);
-    throw new Error('فشل في الاتصال بنظام الدفع');
+    console.error("PayMob authentication error:", error);
+    throw new Error("فشل في الاتصال بنظام الدفع");
   }
 }
 
@@ -49,9 +55,9 @@ export async function createOrder(
 ): Promise<PayMobOrderResponse> {
   try {
     const response = await fetch(`${paymobConfig.baseUrl}/ecommerce/orders`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         auth_token: authToken,
@@ -62,15 +68,15 @@ export async function createOrder(
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error('PayMob order creation failed response:', errorBody);
+      console.error("PayMob order creation failed response:", errorBody);
       throw new Error(`PayMob order creation failed: ${response.statusText}`);
     }
 
     const data: PayMobOrderResponse = await response.json();
     return data;
   } catch (error) {
-    console.error('PayMob order creation error:', error);
-    throw new Error('فشل في إنشاء طلب الدفع');
+    console.error("PayMob order creation error:", error);
+    throw new Error("فشل في إنشاء طلب الدفع");
   }
 }
 
@@ -92,9 +98,9 @@ export async function getPaymentKey(
     const response = await fetch(
       `${paymobConfig.baseUrl}/acceptance/payment_keys`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           auth_token: authToken,
@@ -102,7 +108,7 @@ export async function getPaymentKey(
           expiration: 3600, // 1 hour expiration
           order_id: orderId,
           billing_data: billingData,
-          currency: 'EGP',
+          currency: "EGP",
           integration_id: parseInt(paymobConfig.integrationIdOnlineCard),
           lock_order_when_paid: true,
         }),
@@ -111,14 +117,44 @@ export async function getPaymentKey(
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error('PayMob payment key failed response:', errorBody);
-      throw new Error(`PayMob payment key generation failed: ${response.statusText}`);
+      console.error("PayMob payment key failed response:", errorBody);
+      throw new Error(
+        `PayMob payment key generation failed: ${response.statusText}`
+      );
     }
 
     const data: PayMobPaymentKeyResponse = await response.json();
     return data.token;
   } catch (error) {
-    console.error('PayMob payment key error:', error);
-    throw new Error('فشل في إنشاء مفتاح الدفع');
+    console.error("PayMob payment key error:", error);
+    throw new Error("فشل في إنشاء مفتاح الدفع");
   }
 }
+
+// Export a service object for backward compatibility
+export const payMobService = {
+  authenticate,
+  createOrder,
+  getPaymentKey,
+  formatAmount,
+  generateMerchantOrderId,
+  createBillingData,
+  // Import webhook methods
+  async validateWebhookPayload(data: any) {
+    const { validateWebhookPayload } = await import("./webhook.service");
+    return validateWebhookPayload(data);
+  },
+  async verifyWebhookSignature(webhookObject: any) {
+    const { processWebhook } = await import("./webhook.service");
+    const result = processWebhook(webhookObject);
+    return result.isValid;
+  },
+  async processWebhook(webhookObject: any) {
+    const { processWebhook } = await import("./webhook.service");
+    return processWebhook(webhookObject);
+  },
+  async initiatePayment(orderData: any, courseId?: string) {
+    const { initiatePayment } = await import("./payment.service");
+    return initiatePayment(orderData, courseId);
+  },
+};

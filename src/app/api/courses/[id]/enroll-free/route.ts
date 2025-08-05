@@ -1,17 +1,27 @@
 // src/app/api/courses/[id]/enroll-free/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { enrollInFreeCourse } from '@/lib/course-access';
+import { auth } from '@/lib/auth';
+import { enrollInFreeCourse } from '@/lib/services/enrollment/core.service';
 
 interface RouteParams {
   params: { id: string }
 }
 
 // POST /api/courses/[id]/enroll-free - Enroll in free course
-export async function POST(request: NextRequest, { params }: RouteParams) {
+export async function POST(_request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      return NextResponse.json({
+        success: false,
+        message: 'يجب تسجيل الدخول أولاً'
+      }, { status: 401 });
+    }
+
     const { id: courseId } = params;
 
-    const result = await enrollInFreeCourse(courseId);
+    const result = await enrollInFreeCourse(courseId, session.user.id);
 
     if (result.success) {
       return NextResponse.json({

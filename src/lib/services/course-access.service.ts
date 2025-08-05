@@ -116,3 +116,32 @@ export async function requireCourseAccess(courseId: string): Promise<CourseAcces
 
   return accessResult;
 }
+
+/**
+ * Get access message based on course access result
+ */
+export function getAccessMessage(reason: CourseAccessResult['reason']): string {
+  switch (reason) {
+    case 'enrolled':
+      return 'لديك وصول كامل لهذه الدورة';
+    case 'free_course':
+      return 'هذه دورة مجانية، يمكنك الوصول إليها';
+    case 'admin_access':
+      return 'لديك وصول إداري لهذه الدورة';
+    case 'professor_owns':
+      return 'هذه دورتك الخاصة';
+    case 'payment_required':
+      return 'يتطلب دفع رسوم للوصول لهذه الدورة';
+    case 'not_published':
+      return 'هذه الدورة غير منشورة حالياً';
+    case 'not_found':
+      return 'الدورة غير موجودة';
+    case 'not_authenticated':
+      return 'يجب تسجيل الدخول للوصول لهذه الدورة';
+    default:
+      return 'غير مصرح بالوصول لهذه الدورة';
+  }
+}
+
+// Export enrollInFreeCourse function for backward compatibility
+export { enrollInFreeCourse } from './enrollment/core.service';

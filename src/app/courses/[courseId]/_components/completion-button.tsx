@@ -3,7 +3,7 @@
 
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
-import { toggleLessonComplete } from "@/lib/actions";
+import { toggleLessonComplete } from "@/lib/actions/lesson.actions";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Circle, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";

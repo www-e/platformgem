@@ -24,7 +24,6 @@ declare module "next-auth" {
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  trustHost: true, // ADD THIS LINE
   providers: [
     Credentials({
       credentials: {
@@ -32,8 +31,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const { login, password } = credentials
-        if (!login || !password) return null;
+        if (!credentials?.login || !credentials?.password) return null;
+        const { login, password } = credentials;
 
         // Support login with phone, email, or studentId
         const user = await prisma.user.findFirst({

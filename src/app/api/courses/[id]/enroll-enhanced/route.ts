@@ -3,7 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { EnrollmentService } from '@/lib/services/enrollment-service';
+import { EnrollmentService } from '@/lib/services/enrollment/core.service';
 import { z } from 'zod';
 
 const enrollmentSchema = z.object({

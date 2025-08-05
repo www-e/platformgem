@@ -1,87 +1,109 @@
 // src/lib/logs-utils.ts
-import { Badge } from '@/components/ui/badge';
-import { 
-  Activity, 
-  Users, 
-  CreditCard, 
-  BookOpen, 
-  Award,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Info
-} from 'lucide-react';
 
 /**
- * Get severity icon component
+ * Get severity color class
  */
-export function getSeverityIcon(severity: string) {
+export function getSeverityColor(severity: string): string {
   switch (severity) {
     case 'SUCCESS':
-      return <CheckCircle className="w-4 h-4 text-green-500" />;
+      return 'text-green-500';
     case 'ERROR':
-      return <XCircle className="w-4 h-4 text-red-500" />;
+      return 'text-red-500';
     case 'WARNING':
-      return <AlertCircle className="w-4 h-4 text-yellow-500" />;
+      return 'text-yellow-500';
     default:
-      return <Info className="w-4 h-4 text-blue-500" />;
+      return 'text-blue-500';
   }
 }
 
 /**
- * Get severity badge component
+ * Get severity background color
  */
-export function getSeverityBadge(severity: string) {
-  const colors = {
-    SUCCESS: 'bg-green-100 text-green-800',
-    ERROR: 'bg-red-100 text-red-800',
-    WARNING: 'bg-yellow-100 text-yellow-800',
-    INFO: 'bg-blue-100 text-blue-800'
-  };
-
-  const labels = {
-    SUCCESS: 'نجح',
-    ERROR: 'خطأ',
-    WARNING: 'تحذير',
-    INFO: 'معلومات'
-  };
-
-  return (
-    <Badge className={colors[severity as keyof typeof colors] || colors.INFO}>
-      {labels[severity as keyof typeof labels] || labels.INFO}
-    </Badge>
-  );
-}
-
-/**
- * Get type icon component
- */
-export function getTypeIcon(type: string) {
-  switch (type) {
-    case 'USER':
-      return <Users className="w-4 h-4" />;
-    case 'PAYMENT':
-      return <CreditCard className="w-4 h-4" />;
-    case 'COURSE':
-      return <BookOpen className="w-4 h-4" />;
-    case 'CERTIFICATE':
-      return <Award className="w-4 h-4" />;
+export function getSeverityBgColor(severity: string): string {
+  switch (severity) {
+    case 'SUCCESS':
+      return 'bg-green-100';
+    case 'ERROR':
+      return 'bg-red-100';
+    case 'WARNING':
+      return 'bg-yellow-100';
     default:
-      return <Activity className="w-4 h-4" />;
+      return 'bg-blue-100';
   }
 }
 
 /**
- * Format timestamp to Arabic date and time
+ * Get severity text in Arabic
  */
-export function formatTimestamp(timestamp: string) {
-  const date = new Date(timestamp);
-  return {
-    date: date.toLocaleDateString('ar-SA'),
-    time: date.toLocaleTimeString('ar-SA', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      second: '2-digit'
-    })
-  };
+export function getSeverityText(severity: string): string {
+  switch (severity) {
+    case 'SUCCESS':
+      return 'نجح';
+    case 'ERROR':
+      return 'خطأ';
+    case 'WARNING':
+      return 'تحذير';
+    default:
+      return 'معلومات';
+  }
 }
+
+/**
+ * Get action type text in Arabic
+ */
+export function getActionTypeText(actionType: string): string {
+  switch (actionType) {
+    case 'USER_REGISTRATION':
+      return 'تسجيل مستخدم';
+    case 'PAYMENT_PROCESSED':
+      return 'معالجة دفع';
+    case 'COURSE_ENROLLMENT':
+      return 'تسجيل في دورة';
+    case 'CERTIFICATE_GENERATED':
+      return 'إنشاء شهادة';
+    case 'SYSTEM_ERROR':
+      return 'خطأ في النظام';
+    default:
+      return actionType;
+  }
+}
+
+/**
+ * Format log timestamp
+ */
+export function formatLogTimestamp(timestamp: Date): string {
+  return new Date(timestamp).toLocaleString('ar-SA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+}
+
+/**
+ * Get action icon name
+ */
+export function getActionIconName(actionType: string): string {
+  switch (actionType) {
+    case 'USER_REGISTRATION':
+      return 'Users';
+    case 'PAYMENT_PROCESSED':
+      return 'CreditCard';
+    case 'COURSE_ENROLLMENT':
+      return 'BookOpen';
+    case 'CERTIFICATE_GENERATED':
+      return 'Award';
+    case 'SYSTEM_ERROR':
+      return 'AlertCircle';
+    default:
+      return 'Activity';
+  }
+}
+
+// Additional exports for backward compatibility
+export const formatTimestamp = formatLogTimestamp;
+export const getSeverityIcon = getSeverityColor;
+export const getTypeIcon = getActionIconName;
+export const getSeverityBadge = getSeverityText;

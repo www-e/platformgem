@@ -2,7 +2,7 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
-import { enrollInCourse } from "@/lib/actions";
+import { enrollInCourse } from "@/lib/actions/course.actions";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 

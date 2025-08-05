@@ -1,12 +1,12 @@
 // src/app/api/payments/[paymentId]/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest} from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { payMobService } from '@/lib/paymob';
+import { payMobService } from '@/lib/paymob/client';
 import { createSuccessResponse, createErrorResponse, ApiErrors } from '@/lib/api-utils';
 
 interface RouteParams {
-  params: { paymentId: string }
+  params: Promise<{ paymentId: string }>
 }
 
 // GET /api/payments/[paymentId] - Get payment details and status
@@ -20,7 +20,7 @@ export async function GET(
       return createErrorResponse(ApiErrors.UNAUTHORIZED.code, ApiErrors.UNAUTHORIZED.message, ApiErrors.UNAUTHORIZED.status);
     }
 
-    const { paymentId } = params;
+    const { paymentId } = await params;
     const payment = await prisma.payment.findUnique({
       where: { id: paymentId },
       include: {
@@ -70,7 +70,7 @@ export async function POST(
       return createErrorResponse(ApiErrors.UNAUTHORIZED.code, ApiErrors.UNAUTHORIZED.message, ApiErrors.UNAUTHORIZED.status);
     }
 
-    const { paymentId } = params;
+    const { paymentId } = await params;
     const body = await request.json();
     const { action } = body; // We expect an 'action' field in the request body
 

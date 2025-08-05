@@ -25,7 +25,7 @@ export function TeachingSettingsStep({ formData, professors, onInputChange }: Te
       <CardContent className="space-y-6">
         <div>
           <Label htmlFor="professor">المدرس *</Label>
-          <Select value={formData.professorId} onValueChange={(value) => onInputChange('professorId', value)}>
+          <Select value={formData.professorId} onValueChange={(value: string) => onInputChange('professorId', value)}>
             <SelectTrigger className="mt-2">
               <SelectValue placeholder="اختر المدرس" />
             </SelectTrigger>
@@ -71,7 +71,7 @@ export function TeachingSettingsStep({ formData, professors, onInputChange }: Te
 
           <div>
             <Label htmlFor="currency">العملة</Label>
-            <Select value={formData.currency} onValueChange={(value) => onInputChange('currency', value)}>
+            <Select value={formData.currency} onValueChange={(value: string) => onInputChange('currency', value)}>
               <SelectTrigger className="mt-2">
                 <SelectValue />
               </SelectTrigger>

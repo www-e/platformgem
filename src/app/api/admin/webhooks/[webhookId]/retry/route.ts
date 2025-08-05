@@ -1,5 +1,5 @@
 // src/app/api/admin/webhooks/[webhookId]/retry/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest} from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { createSuccessResponse, createErrorResponse, ApiErrors } from '@/lib/api-utils';
@@ -7,7 +7,7 @@ import { processWebhookPayload } from '@/lib/webhook-processor';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { webhookId: string } }
+  { params }: { params: Promise<{ webhookId: string }> }
 ) {
   try {
     const session = await auth();
@@ -20,7 +20,7 @@ export async function POST(
       );
     }
 
-    const { webhookId } = params;
+    const { webhookId } = await params;
 
     // Find the webhook event using the correct model
     const webhook = await prisma.paymentWebhook.findUnique({

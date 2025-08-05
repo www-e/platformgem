@@ -1,7 +1,7 @@
 // src/app/api/student/enrolled-courses/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { CourseService } from '@/lib/services/course-service';
+import { CourseService } from '@/lib/services/course/index.service';
 
 export async function GET(_request: NextRequest) {
   try {

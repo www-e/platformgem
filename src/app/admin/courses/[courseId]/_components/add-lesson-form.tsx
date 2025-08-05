@@ -4,7 +4,7 @@
 import { useActionState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
-import { createLesson } from "@/lib/actions";
+import { createLesson } from "@/lib/actions/lesson.actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

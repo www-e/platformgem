@@ -69,7 +69,7 @@ export async function createCategory(
 
 export async function updateCategory(
   categoryId: string,
-  prevState: ActionState,
+  prevState: ActionState | undefined,
   formData: FormData
 ): Promise<ActionState> {
   const session = await auth();

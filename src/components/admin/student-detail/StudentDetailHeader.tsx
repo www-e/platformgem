@@ -82,7 +82,7 @@ export function StudentDetailHeader({
             <AlertDialogTrigger asChild>
               <DropdownMenuItem
                 className="text-red-600 focus:text-red-600 focus:bg-red-50"
-                onSelect={(e: React.SyntheticEvent) => e.preventDefault()}
+                onSelect={(e) => e.preventDefault()}
               >
                 <Trash2 className="h-4 w-4 ml-2" />
                 <span>حذف الطالب</span>

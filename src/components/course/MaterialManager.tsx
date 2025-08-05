@@ -1,26 +1,26 @@
 // src/components/course/MaterialManager.tsx
 "use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { FileUploader } from '@/components/upload/FileUploader';
-import { 
-  Plus, 
-  Trash2, 
-  Edit, 
-  Save, 
-  X, 
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { FileUploader } from "@/components/upload/FileUploader";
+import {
+  Plus,
+  Trash2,
+  Edit,
+  Save,
+  X,
   Download,
   Eye,
   FileText,
   Image,
-  Video
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { JsonValue } from '@prisma/client/runtime/library';
+  Video,
+} from "lucide-react";
+import { toast } from "sonner";
+import { JsonValue } from "@prisma/client/runtime/library";
 
 interface Material {
   title: string;
@@ -37,37 +37,43 @@ interface MaterialManagerProps {
   canEdit?: boolean;
 }
 
-export function MaterialManager({ 
-  lessonId, 
-  materials, 
-  onUpdate, 
-  canEdit = false 
+export function MaterialManager({
+  lessonId,
+  materials,
+  onUpdate,
+  canEdit = false,
 }: MaterialManagerProps) {
   const [parsedMaterials, setParsedMaterials] = useState<Material[]>(() => {
     if (Array.isArray(materials)) {
-      return materials.filter(
-        (m): m is Material =>
-          typeof m === 'object' && m !== null && 'title' in m && 'url' in m
-      );
+      return materials
+        .filter((m) => {
+          return (
+            typeof m === "object" &&
+            m !== null &&
+            typeof (m as any).title === "string" &&
+            typeof (m as any).url === "string"
+          );
+        })
+        .map((m) => m as unknown as Material);
     }
     return [];
   });
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editTitle, setEditTitle] = useState('');
+  const [editTitle, setEditTitle] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
   const getFileIcon = (url: string, type?: string) => {
     if (type) {
-      if (type.startsWith('image/')) return <Image className="w-4 h-4" />;
-      if (type.startsWith('video/')) return <Video className="w-4 h-4" />;
+      if (type.startsWith("image/")) return <Image className="w-4 h-4" />;
+      if (type.startsWith("video/")) return <Video className="w-4 h-4" />;
     }
-    
-    const extension = url.split('.').pop()?.toLowerCase();
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '')) {
+
+    const extension = url.split(".").pop()?.toLowerCase();
+    if (["jpg", "jpeg", "png", "gif", "webp"].includes(extension || "")) {
       return <Image className="w-4 h-4" />;
     }
-    if (['mp4', 'webm', 'ogg'].includes(extension || '')) {
+    if (["mp4", "webm", "ogg"].includes(extension || "")) {
       return <Video className="w-4 h-4" />;
     }
     return <FileText className="w-4 h-4" />;
@@ -76,21 +82,21 @@ export function MaterialManager({
   const handleFileUpload = async (uploadedFiles: any[]) => {
     setIsUploading(true);
     try {
-      const newMaterials = uploadedFiles.map(file => ({
+      const newMaterials = uploadedFiles.map((file) => ({
         title: file.name,
         url: file.url,
         type: file.type,
         size: file.size,
-        uploadedAt: file.uploadedAt
+        uploadedAt: file.uploadedAt,
       }));
 
       const updatedMaterials = [...parsedMaterials, ...newMaterials];
       setParsedMaterials(updatedMaterials);
       onUpdate(updatedMaterials);
-      
+
       toast.success(`تم رفع ${uploadedFiles.length} ملف بنجاح`);
     } catch (error) {
-      toast.error('حدث خطأ في رفع الملفات');
+      toast.error("حدث خطأ في رفع الملفات");
     } finally {
       setIsUploading(false);
     }
@@ -107,61 +113,61 @@ export function MaterialManager({
     const updatedMaterials = [...parsedMaterials];
     updatedMaterials[editingIndex] = {
       ...updatedMaterials[editingIndex],
-      title: editTitle
+      title: editTitle,
     };
 
     setParsedMaterials(updatedMaterials);
     onUpdate(updatedMaterials);
     setEditingIndex(null);
-    setEditTitle('');
-    toast.success('تم تحديث اسم الملف');
+    setEditTitle("");
+    toast.success("تم تحديث اسم الملف");
   };
 
   const handleCancelEdit = () => {
     setEditingIndex(null);
-    setEditTitle('');
+    setEditTitle("");
   };
 
   const handleDelete = async (index: number) => {
     const material = parsedMaterials[index];
-    
+
     try {
       // Delete file from server if it's an uploaded file
-      if (material.url.startsWith('/uploads/')) {
+      if (material.url.startsWith("/uploads/")) {
         await fetch(`/api/upload?url=${encodeURIComponent(material.url)}`, {
-          method: 'DELETE'
+          method: "DELETE",
         });
       }
 
       const updatedMaterials = parsedMaterials.filter((_, i) => i !== index);
       setParsedMaterials(updatedMaterials);
       onUpdate(updatedMaterials);
-      
-      toast.success('تم حذف الملف');
+
+      toast.success("تم حذف الملف");
     } catch (error) {
-      toast.error('حدث خطأ في حذف الملف');
+      toast.error("حدث خطأ في حذف الملف");
     }
   };
 
   const handleDownload = (material: Material) => {
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = material.url;
     link.download = material.title;
-    link.target = '_blank';
+    link.target = "_blank";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   const handlePreview = (material: Material) => {
-    window.open(material.url, '_blank');
+    window.open(material.url, "_blank");
   };
 
   const formatFileSize = (bytes?: number) => {
-    if (!bytes) return '';
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    if (!bytes) return "";
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i];
   };
 
   return (
@@ -197,7 +203,9 @@ export function MaterialManager({
               <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p>لا توجد مواد تعليمية مرفقة بهذا الدرس</p>
               {canEdit && (
-                <p className="text-sm mt-2">استخدم النموذج أعلاه لإضافة ملفات</p>
+                <p className="text-sm mt-2">
+                  استخدم النموذج أعلاه لإضافة ملفات
+                </p>
               )}
             </div>
           ) : (
@@ -246,7 +254,9 @@ export function MaterialManager({
                           )}
                           {material.uploadedAt && (
                             <span>
-                              {new Date(material.uploadedAt).toLocaleDateString('ar-EG')}
+                              {new Date(material.uploadedAt).toLocaleDateString(
+                                "ar-EG"
+                              )}
                             </span>
                           )}
                         </div>
@@ -265,7 +275,7 @@ export function MaterialManager({
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      
+
                       <Button
                         size="sm"
                         variant="ghost"
@@ -285,7 +295,7 @@ export function MaterialManager({
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
-                          
+
                           <Button
                             size="sm"
                             variant="ghost"

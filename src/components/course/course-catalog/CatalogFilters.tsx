@@ -80,7 +80,7 @@ export function CatalogFilters({
           </div>
 
           {/* Category Filter */}
-          <Select value={categoryFilter} onValueChange={(value) => onFilterChange('category', value)}>
+          <Select value={categoryFilter} onValueChange={(value: string) => onFilterChange('category', value)}>
             <SelectTrigger>
               <SelectValue placeholder="الفئة" />
             </SelectTrigger>
@@ -95,7 +95,7 @@ export function CatalogFilters({
           </Select>
 
           {/* Price Range Filter */}
-          <Select value={priceRangeFilter} onValueChange={(value) => onFilterChange('priceRange', value)}>
+          <Select value={priceRangeFilter} onValueChange={(value: string) => onFilterChange('priceRange', value)}>
             <SelectTrigger>
               <SelectValue placeholder="السعر" />
             </SelectTrigger>
@@ -109,7 +109,7 @@ export function CatalogFilters({
           </Select>
 
           {/* Sort Filter */}
-          <Select value={sortFilter} onValueChange={(value) => onFilterChange('sort', value)}>
+          <Select value={sortFilter} onValueChange={(value: string) => onFilterChange('sort', value)}>
             <SelectTrigger>
               <SelectValue placeholder="الترتيب" />
             </SelectTrigger>

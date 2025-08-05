@@ -4,8 +4,8 @@
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
-import { EnrollmentService } from '@/lib/services/enrollment-service';
-import { CourseService } from '@/lib/services/course-service';
+import { EnrollmentService } from '@/lib/services/enrollment/core.service';
+import { CourseService } from '@/lib/services/course/index.service';
 import PaymentPage from '@/components/payment/PaymentPage';
 
 interface CoursePaymentPageProps {

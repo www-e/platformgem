@@ -20,14 +20,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Trash, Edit, ExternalLink } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Course } from "@prisma/client";
-import { deleteCourse } from "@/lib/actions";
+import { deleteCourse } from "@/lib/actions/course.actions";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 // Type for the course data we need
 type CourseData = Pick<Course, 'id' | 'title' | 'description' | 'thumbnailUrl' | 'bunnyLibraryId' | 'categoryId' | 'professorId'>;

@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PaymentButton } from "@/components/payment/PaymentButton";
-import { CourseAccessResult, getAccessMessage } from "@/lib/course-access";
+import { CourseAccessResult } from "@/lib/services/course-access.service";
+import { getAccessMessage } from "@/lib/access-messages";
 import { checkCourseAccess, enrollInFreeCourse } from "@/lib/api/course-access";
 import { 
   Lock, 

@@ -64,7 +64,7 @@ export function ReviewPublishStep({ formData, categories, professors, onInputCha
           <Switch
             id="publish"
             checked={formData.isPublished}
-            onCheckedChange={(checked) => onInputChange('isPublished', checked)}
+            onCheckedChange={(checked: boolean) => onInputChange('isPublished', checked)}
           />
         </div>
       </CardContent>

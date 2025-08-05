@@ -2,6 +2,11 @@
 
 import prisma from '@/lib/prisma';
 import { EnrollmentResult } from './types';
+// Import webhook service functions
+import { 
+  createEnrollmentFromPayment as createEnrollmentFromPaymentWebhook,
+  handleEnrollmentFailure as handleEnrollmentFailureWebhook
+} from './webhook.service';
 
 /**
  * Enroll a user in a free course.
@@ -157,6 +162,39 @@ export async function createPaidEnrollment(
       success: false,
       message: 'حدث خطأ أثناء إنشاء التسجيل',
       error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+// Export a service class for backward compatibility
+export class EnrollmentService {
+  static async enrollInFreeCourse(courseId: string, userId: string) {
+    return enrollInFreeCourse(courseId, userId);
+  }
+
+  static async createPaidEnrollment(courseId: string, userId: string, paymentId: string) {
+    return createPaidEnrollment(courseId, userId, paymentId);
+  }
+
+  static async checkCourseAccess(courseId: string, userId?: string, userRole?: any) {
+    // Import and use the access service
+    const { checkCourseAccess } = await import('../enrollment/access.service');
+    return checkCourseAccess(courseId, userId, userRole);
+  }
+
+  static async createEnrollmentFromPayment(paymentData: {
+    courseId: string;
+    userId: string;
+    paymentId: string;
+  }) {
+    return createEnrollmentFromPaymentWebhook(paymentData.paymentId);
+  }
+
+  static async handleEnrollmentFailure(paymentId: string, reason: string) {
+    await handleEnrollmentFailureWebhook(paymentId, reason);
+    return {
+      success: false,
+      message: `فشل في إنشاء التسجيل: ${reason}`,
     };
   }
 }

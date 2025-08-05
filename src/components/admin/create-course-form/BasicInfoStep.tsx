@@ -48,7 +48,7 @@ export function BasicInfoStep({ formData, categories, onInputChange }: BasicInfo
 
         <div>
           <Label htmlFor="category">التصنيف *</Label>
-          <Select value={formData.categoryId} onValueChange={(value) => onInputChange('categoryId', value)}>
+          <Select value={formData.categoryId} onValueChange={(value: string) => onInputChange('categoryId', value)}>
             <SelectTrigger className="mt-2">
               <SelectValue placeholder="اختر تصنيف الدورة" />
             </SelectTrigger>

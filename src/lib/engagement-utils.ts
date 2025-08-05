@@ -1,5 +1,4 @@
 // src/lib/engagement-utils.ts
-import { Badge } from '@/components/ui/badge';
 
 /**
  * Get engagement score color class
@@ -11,12 +10,12 @@ export function getEngagementColor(score: number): string {
 }
 
 /**
- * Get engagement badge component
+ * Get engagement badge text
  */
-export function getEngagementBadge(score: number) {
-  if (score >= 80) return <Badge className="bg-green-100 text-green-800">ممتاز</Badge>;
-  if (score >= 60) return <Badge className="bg-yellow-100 text-yellow-800">جيد</Badge>;
-  return <Badge className="bg-red-100 text-red-800">يحتاج تحسين</Badge>;
+export function getEngagementBadgeText(score: number): string {
+  if (score >= 80) return 'ممتاز';
+  if (score >= 60) return 'جيد';
+  return 'يحتاج تحسين';
 }
 
 /**
@@ -79,3 +78,6 @@ export function getInteractionTypeText(type: string): string {
       return 'تفاعل';
   }
 }
+
+// Additional exports for backward compatibility
+export const getEngagementBadge = getEngagementBadgeText;

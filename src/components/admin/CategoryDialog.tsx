@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { createCategory, updateCategory } from "@/lib/actions";
+import { updateCategory, createCategory } from "@/lib/actions/category.actions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -63,7 +63,7 @@ export function CategoryDialog({
     : null;
 
   const [state, dispatch] = useActionState(
-    (prevState: any, formData: FormData) => createCourse(prevState, formData),
+    category ? boundUpdateAction! : createCategory,
     undefined
   );
 

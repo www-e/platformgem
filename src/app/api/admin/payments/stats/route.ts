@@ -1,5 +1,5 @@
 // src/app/api/admin/payments/stats/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { createSuccessResponse, createErrorResponse, ApiErrors } from '@/lib/api-utils';

@@ -1,12 +1,12 @@
 // src/app/api/admin/payments/[paymentId]/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest} from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { createSuccessResponse, createErrorResponse, ApiErrors } from '@/lib/api-utils';
 
 // This is a placeholder for the full type definition we will build out
 interface RouteParams {
-  params: { paymentId: string }
+  params: Promise<{ paymentId: string }>
 }
 
 // NOTE: This file will eventually handle GET, PATCH, DELETE, etc.

@@ -1,8 +1,8 @@
 // src/app/api/payments/initiate/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest} from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { payMobService } from '@/lib/paymob';
+import { payMobService } from '@/lib/paymob/client';
 import { createSuccessResponse, createErrorResponse, ApiErrors } from '@/lib/api-utils';
 import { z } from 'zod';
 

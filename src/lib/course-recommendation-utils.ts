@@ -1,40 +1,58 @@
 // src/lib/course-recommendation-utils.ts
-import { Badge } from '@/components/ui/badge';
-import { Target, Users, TrendingUp, Award, Sparkles } from 'lucide-react';
 
 /**
- * Get recommendation badge component based on reason
+ * Get recommendation badge text based on reason
  */
-export function getRecommendationBadge(reason: string) {
+export function getRecommendationBadgeText(reason: string): string {
   switch (reason) {
     case 'category_match':
-      return <Badge className="bg-blue-100 text-blue-800"><Target className="h-3 w-3 mr-1" />مشابه لاهتماماتك</Badge>;
+      return 'مشابه لاهتماماتك';
     case 'similar_students':
-      return <Badge className="bg-green-100 text-green-800"><Users className="h-3 w-3 mr-1" />اختيار الطلاب</Badge>;
+      return 'اختيار الطلاب';
     case 'trending':
-      return <Badge className="bg-orange-100 text-orange-800"><TrendingUp className="h-3 w-3 mr-1" />رائج الآن</Badge>;
+      return 'رائج الآن';
     case 'professor_match':
-      return <Badge className="bg-purple-100 text-purple-800"><Award className="h-3 w-3 mr-1" />من مدرس مفضل</Badge>;
+      return 'من مدرس مفضل';
     case 'completion_based':
-      return <Badge className="bg-teal-100 text-teal-800"><Sparkles className="h-3 w-3 mr-1" />مقترح لك</Badge>;
+      return 'مقترح لك';
     default:
-      return <Badge variant="outline">مقترح</Badge>;
+      return 'مقترح';
   }
 }
 
 /**
- * Get level badge component
+ * Get recommendation badge variant based on reason
  */
-export function getLevelBadge(level: string) {
+export function getRecommendationBadgeVariant(reason: string): 'default' | 'secondary' | 'outline' {
+  switch (reason) {
+    case 'category_match':
+      return 'default';
+    case 'similar_students':
+      return 'secondary';
+    case 'trending':
+      return 'default';
+    case 'professor_match':
+      return 'secondary';
+    case 'completion_based':
+      return 'default';
+    default:
+      return 'outline';
+  }
+}
+
+/**
+ * Get level badge text
+ */
+export function getLevelBadgeText(level: string): string {
   switch (level) {
     case 'beginner':
-      return <Badge variant="outline" className="text-green-600 border-green-600">مبتدئ</Badge>;
+      return 'مبتدئ';
     case 'intermediate':
-      return <Badge variant="outline" className="text-yellow-600 border-yellow-600">متوسط</Badge>;
+      return 'متوسط';
     case 'advanced':
-      return <Badge variant="outline" className="text-red-600 border-red-600">متقدم</Badge>;
+      return 'متقدم';
     default:
-      return <Badge variant="outline">غير محدد</Badge>;
+      return 'غير محدد';
   }
 }
 
@@ -59,3 +77,7 @@ export function formatPrice(price: number, currency: string): string {
     minimumFractionDigits: 0
   }).format(price);
 }
+
+// Additional exports for backward compatibility
+export const getRecommendationBadge = getRecommendationBadgeText;
+export const getLevelBadge = getLevelBadgeText;

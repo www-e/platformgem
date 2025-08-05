@@ -225,7 +225,7 @@ export function ProfessorCourseManagement({ courses: initialCourses }: Professor
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <DropdownMenuItem 
-                            onSelect={(e) => e.preventDefault()}
+                            onSelect={(e: Event) => e.preventDefault()}
                             className="text-destructive focus:text-destructive"
                             disabled={course._count.enrollments > 0}
                           >

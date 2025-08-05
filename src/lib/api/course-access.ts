@@ -1,7 +1,7 @@
 // src/lib/api/course-access.ts
 "use client";
 
-import { CourseAccessResult } from '@/lib/course-access';
+import { CourseAccessResult } from '@/lib/services/course-access.service';
 
 /**
  * Client-side function to check course access
