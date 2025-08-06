@@ -15,13 +15,13 @@ const categoryUpdateSchema = z.object({
 });
 
 interface RouteParams {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 // GET /api/categories/[id] - Get single category
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const category = await prisma.category.findUnique({
       where: { id },
@@ -112,7 +112,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }, { status: 403 });
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Check if category exists
     const existingCategory = await prisma.category.findUnique({
@@ -240,7 +240,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       }, { status: 403 });
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Check if category exists
     const existingCategory = await prisma.category.findUnique({

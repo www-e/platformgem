@@ -1,7 +1,7 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
 import { Inter } from 'next/font/google';
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from "@/components/providers/SessionProvider";
 import { Navbar } from "@/components/shared/navbar";
 import Footer from "@/components/shared/footer"; // Import the new Footer
 import { Toaster } from "@/components/ui/sonner";

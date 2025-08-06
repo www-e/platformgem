@@ -7,11 +7,9 @@ declare module "next-auth" {
       id: string;
       name?: string | null;
       email?: string | null;
-      phone?: string | null; // Add phone
+      phone?: string | null;
       role: UserRole;
       isActive: boolean;
-      
-      // Convenience properties for role checking
       isAdmin: boolean;
       isProfessor: boolean;
       isStudent: boolean;
