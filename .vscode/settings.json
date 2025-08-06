@@ -1,16 +1,31 @@
-// settings.json
+// .vscode/settings.json
 {
-    // Hide .next in the Explorer
-    "files.exclude": {
-      "**/.next": true
-    },
-    // Prevent search & diagnostics scanning
-    "search.exclude": {
-      "**/.next": true
-    },
-    // Reduce watcher load (optional, but helps large projects)
-    "files.watcherExclude": {
-      "**/.next/**": true
-    }
-  }
-  
+  // Show .next in Explorer
+  "files.exclude": {
+    "**/.next": false
+  },
+
+  // Include .next in searches
+  "search.exclude": {
+    "**/.next": false
+  },
+
+  // Watch .next for file-changes
+  "files.watcherExclude": {
+    "**/.next/**": false
+  },
+
+  // Enable full-project TypeScript diagnostics
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+
+  // Ensure TS-server watches all files in your TS project
+  "typescript.tsserver.watchOptions": {
+    "watchFile": "fixedPollingInterval",
+    "watchDirectory": "recursive",
+    "fallbackPolling": "dynamicPriority"
+  },
+
+  // Validate TypeScript only (disable JS validation)
+  "typescript.validate.enable": true,
+  "javascript.validate.enable": false
+}

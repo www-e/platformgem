@@ -27,7 +27,6 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-switch": "^1.2.5",
     "@radix-ui/react-tabs": "^1.1.12",
-    "@tailwindcss/postcss": "^4.1.11",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.536.0",
@@ -42,14 +41,19 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.16.1",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
-    "@types/bcryptjs": "^2.4.6",
-    "typescript": "^5.9.0",
-    "prisma": "^6.13.0",
-    "tsx": "^4.16.5",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9.32.0",
-    "eslint-config-next": "15.4.5"
+    "eslint-config-next": "15.4.5",
+    "postcss": "^8.4.35",
+    "prisma": "^6.13.0",
+    "tailwindcss": "^4.1.11",
+    "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.16.5",
+    "typescript": "^5.9.0"
   }
 }

@@ -1,83 +1,76 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  :root {
-    /* Light Theme :root */
-    --background: 145 55% 98%; /* #f4fcf7 - Soft Greenish White */
-    --foreground: 145 21% 18%; /* #232d23 - Deep Leaf */
+:root {
+  /* Light Theme :root */
+  --background: 145 55% 98%; /* #f4fcf7 - Soft Greenish White */
+  --foreground: 145 21% 18%; /* #232d23 - Deep Leaf */
 
-    --card: 145 33% 96%; /* #eaf7ee - Subtle Green Card */
-    --card-foreground: 145 21% 18%;
+  --card: 145 33% 96%; /* #eaf7ee - Subtle Green Card */
+  --card-foreground: 145 21% 18%;
 
-    --popover: 145 55% 98%;
-    --popover-foreground: 145 21% 18%;
+  --popover: 145 55% 98%;
+  --popover-foreground: 145 21% 18%;
 
-    --primary: 157 72% 40%; /* #16ba62 - Vibrant Green Primary */
-    --primary-foreground: 0 0% 100%;
+  --primary: 157 72% 40%; /* #16ba62 - Vibrant Green Primary */
+  --primary-foreground: 0 0% 100%;
 
-    --secondary: 91 36% 62%; /* #b7d95c - Soft Lime Green */
-    --secondary-foreground: 145 21% 18%;
+  --secondary: 91 36% 62%; /* #b7d95c - Soft Lime Green */
+  --secondary-foreground: 145 21% 18%;
 
-    --muted: 145 15% 92%; /* #ecf6ef - Muted Green */
-    --muted-foreground: 146 10% 50%; /* #728973 */
+  --muted: 145 15% 92%; /* #ecf6ef - Muted Green */
+  --muted-foreground: 146 10% 50%; /* #728973 */
 
-    --accent: 157 72% 29%; /* #118c44 - Darker Accent Green */
-    --accent-foreground: 145 55% 98%;
+  --accent: 157 72% 29%; /* #118c44 - Darker Accent Green */
+  --accent-foreground: 145 55% 98%;
 
-    --destructive: 359 81% 59%; /* #f14c4c */
-    --destructive-foreground: 0 0% 100%;
+  --destructive: 359 81% 59%; /* #f14c4c */
+  --destructive-foreground: 0 0% 100%;
 
-    --border: 145 21% 88%; /* #d8ecd8 - Light Green Border */
-    --input: 145 33% 96%; /* #eaf7ee - Card */
-    --ring: 157 72% 40%;
+  --border: 145 21% 88%; /* #d8ecd8 - Light Green Border */
+  --input: 145 33% 96%; /* #eaf7ee - Card */
+  --ring: 157 72% 40%;
 
-    --radius: 0.75rem;
-  }
-
-  .dark {
-    /* Dark Theme (.dark) */
-    --background: 145 21% 18%;
-    --foreground: 145 55% 98%;
-    --card: 145 21% 24%;
-    --card-foreground: 145 55% 98%;
-    --popover: 145 21% 18%;
-    --popover-foreground: 145 55% 98%;
-    --primary: 157 72% 40%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 91 36% 62%;
-    --secondary-foreground: 145 21% 18%;
-    --muted: 145 21% 24%;
-    --muted-foreground: 146 10% 70%;
-    --accent: 157 72% 29%;
-    --accent-foreground: 145 55% 98%;
-    --destructive: 359 81% 59%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 145 21% 28%;
-    --input: 145 21% 24%;
-    --ring: 157 72% 40%;
-    --radius: 0.75rem;
-  }
+  --radius: 0.75rem;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-bold tracking-tight;
-  }
+.dark {
+  /* Dark Theme (.dark) */
+  --background: 145 21% 18%;
+  --foreground: 145 55% 98%;
+  --card: 145 21% 24%;
+  --card-foreground: 145 55% 98%;
+  --popover: 145 21% 18%;
+  --popover-foreground: 145 55% 98%;
+  --primary: 157 72% 40%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 91 36% 62%;
+  --secondary-foreground: 145 21% 18%;
+  --muted: 145 21% 24%;
+  --muted-foreground: 146 10% 70%;
+  --accent: 157 72% 29%;
+  --accent-foreground: 145 55% 98%;
+  --destructive: 359 81% 59%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 145 21% 28%;
+  --input: 145 21% 24%;
+  --ring: 157 72% 40%;
+  --radius: 0.75rem;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  letter-spacing: -0.025em;
 }
 
 /* Custom Animations */
@@ -105,16 +98,41 @@
 
 /* Custom Card Hover Effect */
 .card-hover-effect {
-  @apply transition-all duration-300 ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 .card-hover-effect:hover {
-  @apply transform -translate-y-2 shadow-2xl shadow-primary/20;
+  transform: translateY(-8px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
 /* Custom Button Hover Effect */
 .btn-hover-effect {
-  @apply transition-all duration-300 ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 .btn-hover-effect:hover {
-  @apply transform scale-105 shadow-lg;
+  transform: scale(1.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Animations */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
 }
