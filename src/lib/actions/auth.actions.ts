@@ -4,7 +4,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
-import { auth, signIn } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { ActionState } from "./types";
 
@@ -64,12 +64,8 @@ export async function signupStudent(
       },
     });
 
-    // Auto-login after successful registration
-    await signIn("credentials", {
-      login: phone,
-      password: password,
-      redirect: false, // Handle redirect manually
-    });
+    // Note: Auto-login after registration is disabled for now
+    // User will need to login manually after signup
   } catch (error) {
     // Handle redirect errors by re-throwing them
     if (
@@ -91,8 +87,8 @@ export async function signupStudent(
     return { error: "حدث خطأ في قاعدة البيانات أثناء إنشاء الحساب." };
   }
 
-  // Redirect to student dashboard (since signup is for students)
-  redirect("/dashboard");
+  // Redirect to login page after successful signup
+  redirect("/login?message=تم إنشاء الحساب بنجاح. يرجى تسجيل الدخول.");
 }
 
 // --- PROFESSOR SIGNUP ACTION (Admin only) ---

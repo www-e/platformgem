@@ -4,7 +4,7 @@
  * This utility generates realistic test data for comprehensive testing
  */
 
-import { faker } from 'faker';
+import { faker } from '@faker-js/faker';
 
 export interface GeneratedTestUser {
   id: string;
@@ -102,19 +102,19 @@ export class TestDataGenerator {
   static generateUser(role: 'STUDENT' | 'PROFESSOR' | 'ADMIN' = 'STUDENT'): GeneratedTestUser {
     const name = faker.helpers.arrayElement(this.arabicNames);
     const phonePrefix = faker.helpers.arrayElement(['010', '011', '012', '015']);
-    const phone = `${phonePrefix}${faker.datatype.number({ min: 10000000, max: 99999999 })}`;
+    const phone = `${phonePrefix}${faker.number.int({ min: 10000000, max: 99999999 })}`;
     
     return {
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       name,
       phone,
       email: faker.internet.email(),
       password: 'TestPassword123!',
-      studentId: faker.datatype.number({ min: 100000, max: 999999 }).toString(),
-      parentPhone: `011${faker.datatype.number({ min: 10000000, max: 99999999 })}`,
+      studentId: faker.number.int({ min: 100000, max: 999999 }).toString(),
+      parentPhone: `011${faker.number.int({ min: 10000000, max: 99999999 })}`,
       role,
       isActive: true,
-      createdAt: faker.date.past(1)
+      createdAt: faker.date.past({ years: 1 })
     };
   }
 
@@ -132,7 +132,7 @@ export class TestDataGenerator {
     const category = faker.helpers.arrayElement(this.courseCategories);
     
     return {
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       name: category.name,
       description: category.description,
       slug: category.slug,
@@ -146,7 +146,7 @@ export class TestDataGenerator {
    */
   static generateCategories(count: number = 8): GeneratedTestCategory[] {
     return this.courseCategories.slice(0, count).map(category => ({
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       name: category.name,
       description: category.description,
       slug: category.slug,
@@ -160,11 +160,11 @@ export class TestDataGenerator {
    */
   static generateLessons(count: number = 5): GeneratedTestLesson[] {
     return Array.from({ length: count }, (_, index) => ({
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       title: `الدرس ${index + 1}: ${faker.lorem.words(3)}`,
       order: index + 1,
-      duration: faker.datatype.number({ min: 600, max: 3600 }), // 10 minutes to 1 hour
-      bunnyVideoId: faker.datatype.uuid(),
+      duration: faker.number.int({ min: 600, max: 3600 }), // 10 minutes to 1 hour
+      bunnyVideoId: faker.string.uuid(),
       materials: [
         {
           title: `ملف الدرس ${index + 1}`,
@@ -182,17 +182,17 @@ export class TestDataGenerator {
     const isFree = faker.datatype.boolean();
     
     return {
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       title,
       description: `${title} - دورة شاملة تغطي جميع الأساسيات والمفاهيم المتقدمة. ستتعلم من خلال هذه الدورة المهارات العملية والنظرية اللازمة للتميز في هذا المجال.`,
-      thumbnailUrl: `https://picsum.photos/400/300?random=${faker.datatype.number()}`,
-      price: isFree ? 0 : faker.datatype.number({ min: 99, max: 999 }),
+      thumbnailUrl: `https://picsum.photos/400/300?random=${faker.number.int()}`,
+      price: isFree ? 0 : faker.number.int({ min: 99, max: 999 }),
       currency: 'EGP',
       isPublished: true,
       categoryId,
       professorId,
-      lessons: this.generateLessons(faker.datatype.number({ min: 3, max: 8 })),
-      createdAt: faker.date.past(1)
+      lessons: this.generateLessons(faker.number.int({ min: 3, max: 8 })),
+      createdAt: faker.date.past({ years: 1 })
     };
   }
 
@@ -215,14 +215,14 @@ export class TestDataGenerator {
       ['PENDING', 'COMPLETED', 'FAILED', 'CANCELLED', 'REFUNDED'];
     
     return {
-      id: faker.datatype.uuid(),
-      amount: faker.datatype.number({ min: 99, max: 999 }),
+      id: faker.string.uuid(),
+      amount: faker.number.int({ min: 99, max: 999 }),
       currency: 'EGP',
       status: faker.helpers.arrayElement(statuses),
       paymentMethod: faker.helpers.arrayElement(['CARD', 'WALLET']),
       userId,
       courseId,
-      createdAt: faker.date.past(1)
+      createdAt: faker.date.past({ years: 1 })
     };
   }
 
@@ -349,12 +349,12 @@ export class TestDataGenerator {
     ];
     
     return Array.from({ length: 10 }, () => ({
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       type: faker.helpers.arrayElement(activityTypes),
       courseName: faker.helpers.arrayElement(this.courseTitles),
-      lessonName: `الدرس ${faker.datatype.number({ min: 1, max: 10 })}`,
-      timestamp: faker.date.recent(30),
-      progress: faker.datatype.number({ min: 10, max: 100 })
+      lessonName: `الدرس ${faker.number.int({ min: 1, max: 10 })}`,
+      timestamp: faker.date.recent({ days: 30 }),
+      progress: faker.number.int({ min: 10, max: 100 })
     }));
   }
 

@@ -17,12 +17,12 @@
     "install-browsers": "playwright install"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.9.0",
     "@playwright/test": "^1.40.0",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "faker": "^6.6.6",
     "dotenv": "^16.3.1"
   }
 }

@@ -1,11 +1,12 @@
 // src/lib/auth.ts
 
-import NextAuth from "next-auth"
-import Credentials from "next-auth/providers/credentials"
-import bcrypt from "bcryptjs"
-import { UserRole } from "@prisma/client"
+import NextAuth, { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { UserRole } from "@prisma/client";
+import { getServerSession } from "next-auth/next";
 
-import prisma from "@/lib/prisma"
+import prisma from "@/lib/prisma";
 
 // Extend the JWT and User types to include our custom fields
 declare module "next-auth/jwt" {
@@ -22,10 +23,9 @@ declare module "next-auth" {
   }
 }
 
-
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
-    Credentials({
+    CredentialsProvider({
       credentials: {
         login: { label: "Student ID or Phone" },
         password: { label: "Password", type: "password" },
@@ -36,20 +36,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         // Support login with phone, email, or studentId
         const user = await prisma.user.findFirst({
-          where: { 
+          where: {
             OR: [
               { phone: login as string },
               { email: login as string },
-              { studentId: login as string }
+              { studentId: login as string },
             ],
-            isActive: true // Only allow active users to login
+            isActive: true, // Only allow active users to login
           },
-        })
+        });
 
         if (!user || !user.password) return null;
 
-        const passwordsMatch = await bcrypt.compare(password as string, user.password)
-        
+        const passwordsMatch = await bcrypt.compare(
+          password as string,
+          user.password
+        );
+
         if (passwordsMatch) {
           return {
             id: user.id,
@@ -60,8 +63,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             isActive: user.isActive,
           };
         }
-        
-        return null
+
+        return null;
       },
     }),
   ],
@@ -84,39 +87,47 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string;
         session.user.name = token.name;
-        session.user.email = token.email ;
+        session.user.email = token.email;
         session.user.phone = token.phone as string | null;
         session.user.role = token.role as UserRole;
         session.user.isActive = token.isActive as boolean;
-    
+
         // Convenience properties
-        session.user.isAdmin = token.role === 'ADMIN';
-        session.user.isProfessor = token.role === 'PROFESSOR';
-        session.user.isStudent = token.role === 'STUDENT';
+        session.user.isAdmin = token.role === "ADMIN";
+        session.user.isProfessor = token.role === "PROFESSOR";
+        session.user.isStudent = token.role === "STUDENT";
       }
       return session;
     },
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
-      console.log('🔄 Auth redirect called:', { url, baseUrl });
-      
+      console.log("🔄 Auth redirect called:", { url, baseUrl });
+
       // For sign-in redirects, we'll handle role-based redirects in the login page
       // This callback is mainly for other redirect scenarios
-      
+
       // Default behavior for relative URLs
       if (url.startsWith("/")) {
-        console.log('🔄 Relative URL redirect:', `${baseUrl}${url}`);
+        console.log("🔄 Relative URL redirect:", `${baseUrl}${url}`);
         return `${baseUrl}${url}`;
       }
       if (new URL(url).origin === baseUrl) {
-        console.log('🔄 Same origin redirect:', url);
+        console.log("🔄 Same origin redirect:", url);
         return url;
       }
-      
-      console.log('🔄 Default redirect to base:', baseUrl);
+
+      console.log("🔄 Default redirect to base:", baseUrl);
       return baseUrl;
-    }
+    },
   },
   pages: {
-    signIn: '/login'
-  }
-});
+    signIn: "/login",
+  },
+};
+
+export default NextAuth(authOptions);
+
+// Helper function to get session in server components (NextAuth v4 style)
+export const auth = () => getServerSession(authOptions);
+
+// Export signOut for client components
+export { signOut } from "next-auth/react";

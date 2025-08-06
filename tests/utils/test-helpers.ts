@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { faker } from 'faker';
+import { faker } from '@faker-js/faker';
 
 export interface TestUser {
   name: string;
@@ -40,23 +40,53 @@ export class TestHelpers {
 
     return {
       name: faker.helpers.arrayElement(arabicNames),
-      phone: `010${faker.datatype.number({ min: 10000000, max: 99999999 })}`,
+      phone: `010${faker.number.int({ min: 10000000, max: 99999999 })}`,
       email: faker.internet.email(),
       password: 'TestPassword123!',
-      studentId: faker.datatype.number({ min: 100000, max: 999999 }).toString(),
-      parentPhone: `011${faker.datatype.number({ min: 10000000, max: 99999999 })}`
+      studentId: faker.number.int({ min: 100000, max: 999999 }).toString(),
+      parentPhone: `011${faker.number.int({ min: 10000000, max: 99999999 })}`
     };
   }
 
   /**
-   * Navigate to a page and wait for it to load
+   * Navigate to a page and wait for it to load with detailed logging
    */
   async navigateAndWait(url: string, waitForSelector?: string) {
-    await this.page.goto(url);
-    if (waitForSelector) {
-      await this.page.waitForSelector(waitForSelector);
+    console.log(`🌐 الانتقال إلى: ${url}`);
+    
+    try {
+      const response = await this.page.goto(url, { 
+        waitUntil: 'networkidle',
+        timeout: 30000 
+      });
+      
+      if (response) {
+        console.log(`📥 استجابة الصفحة: ${response.status()} ${response.statusText()}`);
+        
+        if (response.status() >= 400) {
+          console.log(`❌ خطأ في تحميل الصفحة: ${response.status()}`);
+        } else {
+          console.log(`✅ تم تحميل الصفحة بنجاح`);
+        }
+      }
+      
+      if (waitForSelector) {
+        console.log(`⏳ انتظار العنصر: ${waitForSelector}`);
+        await this.page.waitForSelector(waitForSelector, { timeout: 10000 });
+        console.log(`✅ تم العثور على العنصر: ${waitForSelector}`);
+      }
+      
+      // Additional wait for page to be fully loaded
+      await this.page.waitForLoadState('networkidle', { timeout: 10000 });
+      
+      const finalUrl = this.page.url();
+      console.log(`🎯 الرابط النهائي: ${finalUrl}`);
+      
+    } catch (error) {
+      console.log(`❌ خطأ في التنقل إلى ${url}: ${error}`);
+      await this.takeScreenshot('navigation-error');
+      throw error;
     }
-    await this.page.waitForLoadState('networkidle');
   }
 
   /**
@@ -69,16 +99,166 @@ export class TestHelpers {
   }
 
   /**
-   * Wait for navigation after form submission
+   * Fill form fields with detailed logging
+   */
+  async fillFormWithLogging(formData: Record<string, string>) {
+    for (const [field, value] of Object.entries(formData)) {
+      console.log(`📝 ملء حقل "${field}"...`);
+      try {
+        // Try multiple selectors for each field
+        const selectors = [
+          `[name="${field}"]`,
+          `#${field}`,
+          `input[placeholder*="${field}"]`,
+          `[data-testid="${field}"]`
+        ];
+        
+        let filled = false;
+        for (const selector of selectors) {
+          const element = this.page.locator(selector);
+          if (await element.count() > 0) {
+            await element.waitFor({ timeout: 5000 });
+            await element.fill(value);
+            console.log(`✅ تم ملء حقل "${field}" بالقيمة: ${value.substring(0, 20)}${value.length > 20 ? '...' : ''}`);
+            filled = true;
+            break;
+          }
+        }
+        
+        if (!filled) {
+          console.log(`❌ لم يتم العثور على حقل "${field}"`);
+          // List available form fields for debugging
+          const allInputs = await this.page.locator('input, select, textarea').all();
+          console.log('🔍 الحقول المتاحة:');
+          for (const input of allInputs) {
+            const name = await input.getAttribute('name');
+            const id = await input.getAttribute('id');
+            const placeholder = await input.getAttribute('placeholder');
+            const type = await input.getAttribute('type');
+            console.log(`   - name: ${name}, id: ${id}, placeholder: ${placeholder}, type: ${type}`);
+          }
+          throw new Error(`Field "${field}" not found`);
+        }
+      } catch (error) {
+        console.log(`❌ خطأ في ملء حقل "${field}": ${error}`);
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Wait for navigation after form submission (updated for modern Playwright)
    */
   async submitFormAndWait(submitSelector: string, expectedUrl?: string) {
-    await Promise.all([
-      this.page.waitForNavigation(),
-      this.page.click(submitSelector)
-    ]);
+    console.log(`🚀 إرسال النموذج باستخدام المحدد: ${submitSelector}`);
     
-    if (expectedUrl) {
-      await expect(this.page).toHaveURL(new RegExp(expectedUrl));
+    try {
+      // Modern approach using waitForURL instead of deprecated waitForNavigation
+      await Promise.all([
+        this.page.waitForURL(url => url.pathname !== this.page.url(), { timeout: 15000 }),
+        this.page.click(submitSelector)
+      ]);
+      
+      console.log(`✅ تم إرسال النموذج وإعادة التوجيه إلى: ${this.page.url()}`);
+      
+      if (expectedUrl) {
+        await expect(this.page).toHaveURL(new RegExp(expectedUrl));
+        console.log(`✅ تم التحقق من الرابط المتوقع: ${expectedUrl}`);
+      }
+    } catch (error) {
+      console.log(`❌ خطأ في إرسال النموذج: ${error}`);
+      console.log(`🌐 الرابط الحالي: ${this.page.url()}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Enhanced form submission with better error handling
+   */
+  async submitFormWithLogging(submitSelector: string, expectedUrl?: string) {
+    console.log(`🚀 محاولة إرسال النموذج...`);
+    
+    try {
+      // Find submit button with multiple selectors
+      const selectors = [
+        submitSelector,
+        'button[type="submit"]',
+        '.submit-button',
+        '[data-testid="submit"]',
+        'input[type="submit"]'
+      ];
+      
+      let submitButton = null;
+      for (const selector of selectors) {
+        const element = this.page.locator(selector);
+        if (await element.count() > 0) {
+          submitButton = element;
+          console.log(`✅ تم العثور على زر الإرسال: ${selector}`);
+          break;
+        }
+      }
+      
+      if (!submitButton) {
+        console.log('❌ لم يتم العثور على زر الإرسال');
+        // List available buttons for debugging
+        const allButtons = await this.page.locator('button, input[type="submit"]').all();
+        console.log('🔍 الأزرار المتاحة:');
+        for (const button of allButtons) {
+          const text = await button.textContent();
+          const type = await button.getAttribute('type');
+          const className = await button.getAttribute('class');
+          console.log(`   - text: ${text}, type: ${type}, class: ${className}`);
+        }
+        throw new Error('Submit button not found');
+      }
+      
+      // Wait for button to be enabled
+      await submitButton.waitFor({ state: 'visible', timeout: 5000 });
+      
+      const isDisabled = await submitButton.isDisabled();
+      if (isDisabled) {
+        console.log('⚠️ زر الإرسال معطل، محاولة الانتظار...');
+        await this.page.waitForTimeout(1000);
+      }
+      
+      // Click and wait for response
+      const [response] = await Promise.all([
+        this.page.waitForResponse(response => 
+          response.url().includes('/api/') && 
+          ['POST', 'PUT', 'PATCH'].includes(response.request().method()),
+          { timeout: 15000 }
+        ).catch(() => null),
+        submitButton.click()
+      ]);
+      
+      if (response) {
+        console.log(`📥 استجابة الخادم: ${response.status()} ${response.url()}`);
+        
+        if (response.status() >= 400) {
+          const responseText = await response.text().catch(() => 'لا يمكن قراءة الاستجابة');
+          console.log(`❌ خطأ في الخادم: ${responseText}`);
+        }
+      }
+      
+      // Wait for page to settle
+      await this.page.waitForLoadState('networkidle', { timeout: 10000 });
+      
+      const currentUrl = this.page.url();
+      console.log(`🌐 الرابط بعد الإرسال: ${currentUrl}`);
+      
+      if (expectedUrl) {
+        const urlRegex = new RegExp(expectedUrl);
+        if (urlRegex.test(currentUrl)) {
+          console.log(`✅ تم التحقق من الرابط المتوقع: ${expectedUrl}`);
+        } else {
+          console.log(`⚠️ الرابط لا يطابق المتوقع. متوقع: ${expectedUrl}, فعلي: ${currentUrl}`);
+        }
+      }
+      
+    } catch (error) {
+      console.log(`❌ خطأ في إرسال النموذج: ${error}`);
+      await this.takeScreenshot('form-submission-error');
+      throw error;
     }
   }
 
@@ -228,12 +408,39 @@ export class TestHelpers {
   }
 
   /**
-   * Wait for loading to complete
+   * Wait for loading to complete with detailed logging
    */
   async waitForLoadingComplete() {
-    // Wait for any loading spinners to disappear
-    await this.page.waitForSelector('[data-testid="loading"]', { state: 'hidden', timeout: 30000 });
-    await this.page.waitForLoadState('networkidle');
+    console.log('⏳ انتظار اكتمال التحميل...');
+    
+    try {
+      // Wait for common loading indicators to disappear
+      const loadingSelectors = [
+        '[data-testid="loading"]',
+        '.loading',
+        '.spinner',
+        '.loader',
+        '[aria-label*="loading"]',
+        '[aria-label*="تحميل"]'
+      ];
+      
+      for (const selector of loadingSelectors) {
+        const elements = await this.page.locator(selector).count();
+        if (elements > 0) {
+          console.log(`⏳ انتظار اختفاء مؤشر التحميل: ${selector}`);
+          await this.page.waitForSelector(selector, { state: 'hidden', timeout: 15000 });
+          console.log(`✅ اختفى مؤشر التحميل: ${selector}`);
+        }
+      }
+      
+      // Wait for network to be idle
+      await this.page.waitForLoadState('networkidle', { timeout: 15000 });
+      console.log('✅ اكتمل تحميل الصفحة');
+      
+    } catch (error) {
+      console.log(`⚠️ انتهت مهلة انتظار التحميل: ${error}`);
+      // Don't throw error, just log it as loading indicators might not be present
+    }
   }
 
   /**

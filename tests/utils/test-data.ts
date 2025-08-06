@@ -1,4 +1,4 @@
-import { faker } from 'faker';
+import { faker } from '@faker-js/faker';
 
 export const TEST_USERS = {
   STUDENT: {
@@ -172,10 +172,10 @@ export const RESPONSIVE_BREAKPOINTS = {
 
 export function generateRandomUser() {
   return {
-    name: faker.name.findName(),
-    phone: `010${faker.datatype.number({ min: 10000000, max: 99999999 })}`,
+    name: faker.person.fullName(),
+    phone: `010${faker.number.int({ min: 10000000, max: 99999999 })}`,
     email: faker.internet.email(),
     password: 'TestPassword123!',
-    studentId: faker.datatype.number({ min: 100000, max: 999999 }).toString()
+    studentId: faker.number.int({ min: 100000, max: 999999 }).toString()
   };
 }

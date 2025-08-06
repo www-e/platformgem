@@ -3,8 +3,11 @@ import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Button } from "@/components/ui/button";
 import { MoveLeft } from "lucide-react";
 import Link from "next/link";
+import { auth } from "@/lib/auth";
+import { getRoleBasedRedirectUrl } from "@/lib/auth-redirects";
 
-export default function HeroSection() {
+export default async function HeroSection() {
+  const session = await auth();
   return (
     <AuroraBackground>
       <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 -mt-20">
@@ -16,8 +19,8 @@ export default function HeroSection() {
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
           <Button size="lg" className="h-14 px-8 text-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl btn-hover-effect shadow-lg shadow-primary/20" asChild>
-            <Link href="/signup">
-              ابدأ رحلتك الآن
+            <Link href={session?.user ? getRoleBasedRedirectUrl(session.user.role) : "/signup"}>
+              {session?.user ? "انتقل إلى لوحة التحكم" : "ابدأ رحلتك الآن"}
               <MoveLeft className="mr-2 h-5 w-5" />
             </Link>
           </Button>
