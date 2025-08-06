@@ -20,11 +20,13 @@ export interface PaymentInitiationResult {
  * 3. Generates a payment key for the iframe.
  * @param orderData - The data required to create the order.
  * @param courseId - The optional ID of the course for constructing the return URL.
+ * @param paymentMethod - The payment method to use ('credit-card' or 'e-wallet').
  * @returns A promise that resolves to an object containing the payment key, order ID, and iframe URL.
  */
 export async function initiatePayment(
   orderData: PayMobOrderRequest,
-  courseId?: string
+  courseId?: string,
+  paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card'
 ): Promise<PaymentInitiationResult> {
   try {
     // Step 1: Authenticate
@@ -38,7 +40,8 @@ export async function initiatePayment(
       authToken,
       order.id,
       orderData.amount_cents,
-      orderData.billing_data
+      orderData.billing_data,
+      paymentMethod
     );
 
     // Step 4: Generate iframe URL

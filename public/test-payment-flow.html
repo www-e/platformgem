@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Flow Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .info {
+            background-color: #e3f2fd;
+            border-color: #bbdefb;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            background: #007cba;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #005a8b;
+        }
+        .log {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Payment Flow Test</h1>
+        
+        <div class="test-section info">
+            <h3>Test Instructions</h3>
+            <ol>
+                <li>Make sure the development server is running</li>
+                <li>Click "Test Payment Button Navigation" to test the button</li>
+                <li>Click "Test Direct Payment Page" to test the payment page directly</li>
+                <li>Check the console for any errors</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3>Navigation Tests</h3>
+            <button onclick="testPaymentButton()">Test Payment Button Navigation</button>
+            <button onclick="testPaymentPage()">Test Direct Payment Page</button>
+            <button onclick="testSuccessPage()">Test Success Page</button>
+        </div>
+
+        <div class="test-section">
+            <h3>Component Tests</h3>
+            <button onclick="testPaymentAPI()">Test Payment API</button>
+            <button onclick="testPayMobAuth()">Test PayMob Authentication</button>
+            <button onclick="clearLog()">Clear Log</button>
+        </div>
+
+        <div class="test-section">
+            <h3>Test Results</h3>
+            <div id="log" class="log">Ready to test...</div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'color: red' : type === 'success' ? 'color: green' : 'color: black';
+            logDiv.innerHTML += `<div style="${className}">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = 'Log cleared...';
+        }
+
+        function testPaymentButton() {
+            log('Testing payment button navigation...', 'info');
+            // Test if we can navigate to a course payment page
+            const testCourseId = 'test-course-123';
+            const paymentUrl = `http://localhost:3000/courses/${testCourseId}/payment`;
+            
+            log(`Attempting to open: ${paymentUrl}`, 'info');
+            window.open(paymentUrl, '_blank');
+            log('Payment page opened in new tab', 'success');
+        }
+
+        function testPaymentPage() {
+            log('Testing payment page directly...', 'info');
+            // You would need a real course ID for this to work
+            const realCourseId = prompt('Enter a real course ID to test:');
+            if (realCourseId) {
+                const paymentUrl = `http://localhost:3000/courses/${realCourseId}/payment`;
+                log(`Opening payment page for course: ${realCourseId}`, 'info');
+                window.open(paymentUrl, '_blank');
+            } else {
+                log('Test cancelled - no course ID provided', 'error');
+            }
+        }
+
+        function testSuccessPage() {
+            log('Testing success page...', 'info');
+            const testCourseId = 'test-course-123';
+            const testPaymentId = 'test-payment-456';
+            const successUrl = `http://localhost:3000/courses/${testCourseId}/payment/success?paymentId=${testPaymentId}`;
+            
+            log(`Opening success page: ${successUrl}`, 'info');
+            window.open(successUrl, '_blank');
+            log('Success page opened in new tab', 'success');
+        }
+
+        async function testPaymentAPI() {
+            log('Testing payment API...', 'info');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/payments/initiate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        courseId: 'test-course-123',
+                        paymentMethod: 'credit-card'
+                    }),
+                });
+
+                log(`API Response Status: ${response.status}`, response.ok ? 'success' : 'error');
+                
+                const data = await response.json();
+                log(`API Response: ${JSON.stringify(data, null, 2)}`, 'info');
+                
+                if (response.status === 401) {
+                    log('✅ API correctly requires authentication', 'success');
+                } else if (response.status === 404) {
+                    log('⚠️ Course not found (expected for test course)', 'info');
+                } else {
+                    log(`Unexpected response: ${response.status}`, 'error');
+                }
+                
+            } catch (error) {
+                log(`API Test Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testPayMobAuth() {
+            log('Testing PayMob authentication...', 'info');
+            
+            try {
+                // This would need to be done server-side in a real app
+                log('PayMob auth test would need server-side implementation', 'info');
+                log('Check the server console for PayMob authentication status', 'info');
+                
+            } catch (error) {
+                log(`PayMob Test Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Log initial status
+        log('Payment Flow Test Page Loaded', 'success');
+        log('Make sure your development server is running on localhost:3000', 'info');
+    </script>
+</body>
+</html>

@@ -9,6 +9,7 @@ import { z } from 'zod';
 // Validation schema for payment initiation
 const paymentInitiateSchema = z.object({
   courseId: z.string().min(1, 'معرف الدورة مطلوب'),
+  paymentMethod: z.enum(['credit-card', 'e-wallet']).default('credit-card'),
 });
 
 // POST /api/payments/initiate - Initiate payment for a course
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { courseId } = validationResult.data;
+    const { courseId, paymentMethod } = validationResult.data;
 
     // Check if course exists and is published
     const course = await prisma.course.findFirst({
@@ -211,7 +212,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Initiate payment with PayMob
-    const paymentResult = await payMobService.initiatePayment(orderData, courseId);
+    const paymentResult = await payMobService.initiatePayment(orderData, courseId, paymentMethod);
 
     // Update payment record with PayMob order ID
     await prisma.payment.update({

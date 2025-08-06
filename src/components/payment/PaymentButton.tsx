@@ -1,17 +1,13 @@
 // src/components/payment/PaymentButton.tsx
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PaymentModal } from "./PaymentModal";
 import { Course } from "@/lib/api/courses";
 import { useAuth } from "@/hooks/useAuth";
 import {
   CreditCard,
-  Lock,
   CheckCircle,
   UserCheck,
-  ShoppingCart,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -33,7 +29,6 @@ export function PaymentButton({
   showPrice = true,
   onPaymentSuccess,
 }: PaymentButtonProps) {
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const { isAuthenticated, session } = useAuth();
   const isStudent = session?.user?.isStudent;
   const isAdmin = session?.user?.isAdmin;
@@ -82,19 +77,14 @@ export function PaymentButton({
       return;
     }
 
-    // Open payment modal for paid courses
-    setIsPaymentModalOpen(true);
+    // Navigate to payment page for paid courses
+    router.push(`/courses/${course.id}/payment`);
   };
 
-  // Handle payment success
-  const handlePaymentSuccess = (paymentId: string) => {
+  // Handle payment success (called from payment page)
+  const handlePaymentSuccess = () => {
     toast.success("تم الدفع بنجاح! تم تسجيلك في الدورة.");
     onPaymentSuccess?.();
-
-    // Redirect to course page
-    setTimeout(() => {
-      router.push(`/courses/${course.id}`);
-    }, 1000);
   };
 
   // Determine button content based on course state
@@ -132,26 +122,16 @@ export function PaymentButton({
   const buttonContent = getButtonContent();
 
   return (
-    <>
-      <Button
-        variant={course.isEnrolled ? "outline" : variant}
-        size={size}
-        className={className}
-        onClick={handleClick}
-        disabled={buttonContent.disabled || !canAccess()}
-      >
-        {buttonContent.icon}
-        {buttonContent.text}
-      </Button>
-
-      {/* Payment Modal */}
-      <PaymentModal
-        course={course}
-        isOpen={isPaymentModalOpen}
-        onClose={() => setIsPaymentModalOpen(false)}
-        onSuccess={handlePaymentSuccess}
-      />
-    </>
+    <Button
+      variant={course.isEnrolled ? "outline" : variant}
+      size={size}
+      className={className}
+      onClick={handleClick}
+      disabled={buttonContent.disabled || !canAccess()}
+    >
+      {buttonContent.icon}
+      {buttonContent.text}
+    </Button>
   );
 }
 

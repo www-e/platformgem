@@ -86,15 +86,24 @@ export async function createOrder(
  * @param orderId - The ID of the order created in Step 2.
  * @param amountCents - The total amount in cents.
  * @param billingData - The customer's billing information.
+ * @param paymentMethod - The payment method to use ('credit-card' or 'e-wallet').
  * @returns A promise that resolves to the payment key token.
  */
 export async function getPaymentKey(
   authToken: string,
   orderId: number,
   amountCents: number,
-  billingData: PayMobBillingData
+  billingData: PayMobBillingData,
+  paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card'
 ): Promise<string> {
   try {
+    // Select the appropriate integration ID based on payment method
+    const integrationId = paymentMethod === 'e-wallet' 
+      ? parseInt(paymobConfig.integrationIdMobileWallet)
+      : parseInt(paymobConfig.integrationIdOnlineCard);
+
+    console.log(`Using integration ID ${integrationId} for payment method: ${paymentMethod}`);
+
     const response = await fetch(
       `${paymobConfig.baseUrl}/acceptance/payment_keys`,
       {
@@ -109,7 +118,7 @@ export async function getPaymentKey(
           order_id: orderId,
           billing_data: billingData,
           currency: "EGP",
-          integration_id: parseInt(paymobConfig.integrationIdOnlineCard),
+          integration_id: integrationId,
           lock_order_when_paid: true,
         }),
       }
@@ -153,8 +162,8 @@ export const payMobService = {
     const { processWebhook } = await import("./webhook.service");
     return processWebhook(webhookObject);
   },
-  async initiatePayment(orderData: any, courseId?: string) {
+  async initiatePayment(orderData: any, courseId?: string, paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card') {
     const { initiatePayment } = await import("./payment.service");
-    return initiatePayment(orderData, courseId);
+    return initiatePayment(orderData, courseId, paymentMethod);
   },
 };

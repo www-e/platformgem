@@ -55,22 +55,32 @@ export function useCreateCourseForm() {
   const fetchCategories = async () => {
     try {
       const response = await fetch('/api/categories');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
-      setCategories(data);
+      // Handle the API response structure
+      setCategories(data.categories || []);
     } catch (error) {
       console.error('Failed to fetch categories:', error);
       toast.error('فشل في تحميل التصنيفات');
+      setCategories([]); // Set empty array as fallback
     }
   };
 
   const fetchProfessors = async () => {
     try {
       const response = await fetch('/api/users?role=PROFESSOR');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
-      setProfessors(data.users || []);
+      // Handle the API response structure
+      setProfessors(data.data?.users || []);
     } catch (error) {
       console.error('Failed to fetch professors:', error);
       toast.error('فشل في تحميل قائمة المدرسين');
+      setProfessors([]); // Set empty array as fallback
     }
   };
 

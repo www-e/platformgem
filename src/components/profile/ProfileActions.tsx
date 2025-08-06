@@ -7,7 +7,7 @@ export default function ProfileActions() {
   return (
     <form action={async () => {
         "use server";
-        await signOut({ redirectTo: "/" });
+        await signOut({ redirect: true, callbackUrl: "/" });
     }}>
         <Button type="submit" variant="outline" className="w-full">
             <LogOut className="ml-2 h-4 w-4" />

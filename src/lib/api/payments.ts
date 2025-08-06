@@ -42,13 +42,16 @@ class PaymentsApi {
   /**
    * Initiate payment for a course
    */
-  async initiatePayment(courseId: string): Promise<PaymentInitiationResponse> {
+  async initiatePayment(courseId: string, paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card'): Promise<PaymentInitiationResponse> {
     const response = await fetch(`${this.baseUrl}/initiate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ courseId }),
+      body: JSON.stringify({ 
+        courseId,
+        paymentMethod 
+      }),
     });
     
     const data: ApiResponse<PaymentInitiationResponse> = await response.json();
@@ -72,6 +75,25 @@ class PaymentsApi {
     }
     
     return data.data!;
+  }
+
+  /**
+   * Cancel a pending payment
+   */
+  async cancelPayment(paymentId: string): Promise<void> {
+    const response = await fetch(`${this.baseUrl}/${paymentId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ action: 'cancel' }),
+    });
+    
+    const data: ApiResponse = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error?.message || 'فشل في إلغاء عملية الدفع');
+    }
   }
 
   /**

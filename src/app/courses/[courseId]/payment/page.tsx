@@ -1,95 +1,83 @@
 // src/app/courses/[courseId]/payment/page.tsx
-// Payment page for course enrollment
+"use client";
 
-import { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation';
-import { auth } from '@/lib/auth';
-import { EnrollmentService } from '@/lib/services/enrollment/core.service';
-import { CourseService } from '@/lib/services/course/index.service';
-import PaymentPage from '@/components/payment/PaymentPage';
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { PaymentFlow } from "@/components/payment/PaymentFlow";
+import { coursesApi, Course } from "@/lib/api/courses";
+import { Loader2, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-interface CoursePaymentPageProps {
-  params: {
-    courseId: string;
-  };
-}
-
-export async function generateMetadata({ params }: CoursePaymentPageProps): Promise<Metadata> {
-  const course = await CourseService.getCourseById(params.courseId);
+export default function PaymentPage() {
+  const params = useParams();
+  const router = useRouter();
+  const courseId = params.courseId as string;
   
-  if (!course) {
-    return {
-      title: 'دورة غير موجودة',
+  const [course, setCourse] = useState<Course | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const courseData = await coursesApi.getById(courseId);
+        setCourse(courseData);
+      } catch (error) {
+        console.error('Error fetching course:', error);
+        setError('فشل في تحميل بيانات الدورة');
+      } finally {
+        setLoading(false);
+      }
     };
-  }
 
-  return {
-    title: `الدفع - ${course.title}`,
-    description: `إتمام عملية الدفع للتسجيل في دورة ${course.title}`,
-    robots: {
-      index: false,
-      follow: false,
-    },
+    if (courseId) {
+      fetchCourse();
+    }
+  }, [courseId]);
+
+  const handlePaymentSuccess = (paymentId: string) => {
+    router.push(`/courses/${courseId}/payment/success?paymentId=${paymentId}`);
   };
-}
 
-export default async function CoursePaymentPage({ params }: CoursePaymentPageProps) {
-  const session = await auth();
-  
-  // Require authentication
-  if (!session?.user?.id) {
-    redirect('/login');
+  const handlePaymentCancel = () => {
+    router.push(`/courses/${courseId}`);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p>جاري تحميل بيانات الدورة...</p>
+        </div>
+      </div>
+    );
   }
 
-  // Only students can make payments
-  if (session.user.role !== 'STUDENT') {
-    redirect('/courses');
-  }
-
-  const courseId = params.courseId;
-
-  // Get course details
-  const course = await CourseService.getCourseById(courseId, session.user.id, session.user.role);
-  
-  if (!course) {
-    notFound();
-  }
-
-  // Check course access
-  const accessResult = await EnrollmentService.checkCourseAccess(
-    courseId,
-    session.user.id,
-    session.user.role
-  );
-
-  // If already enrolled, redirect to course
-  if (accessResult.hasAccess) {
-    redirect(`/courses/${courseId}`);
-  }
-
-  // If course is free, redirect to free enrollment
-  if (!accessResult.requiresPayment) {
-    redirect(`/courses/${courseId}`);
-  }
-
-  // If cannot enroll, redirect to course catalog
-  if (!accessResult.canEnroll) {
-    redirect('/courses');
+  if (error || !course) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error || 'الدورة غير موجودة'}</p>
+          <Link href="/courses">
+            <Button variant="outline">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              العودة للدورات
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      <div className="container mx-auto px-4 py-8">
-        <PaymentPage
-          course={course}
-          user={{
-            id: session.user.id,
-            name: session.user.name || '',
-            email: session.user.email || '',
-            phone: session.user.phone || ''
-          }}
-        />
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <PaymentFlow
+        course={course}
+        onSuccess={handlePaymentSuccess}
+        onCancel={handlePaymentCancel}
+      />
     </div>
   );
 }
