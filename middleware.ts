@@ -34,7 +34,6 @@ export async function middleware(request: NextRequest) {
   const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup');
   const isAdminRoute = pathname.startsWith('/admin');
   const isProfessorRoute = pathname.startsWith('/professor');
-  const isStudentRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/profile');
   
   // Public routes that don't require authentication
   const isPublicRoute = pathname.startsWith('/courses') || 

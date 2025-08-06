@@ -71,15 +71,19 @@ export function getActionTypeText(actionType: string): string {
 /**
  * Format log timestamp
  */
-export function formatLogTimestamp(timestamp: Date): string {
-  return new Date(timestamp).toLocaleString('ar-SA', {
+export function formatLogTimestamp(timestamp: Date | string): { date: string; time: string } {
+  const dateObj = new Date(timestamp);
+  const date = dateObj.toLocaleDateString('ar-SA', {
     year: 'numeric',
     month: '2-digit',
-    day: '2-digit',
+    day: '2-digit'
+  });
+  const time = dateObj.toLocaleTimeString('ar-SA', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit'
   });
+  return { date, time };
 }
 
 /**

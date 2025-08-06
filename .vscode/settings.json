@@ -1,19 +1,5 @@
 // .vscode/settings.json
 {
-  // Show .next in Explorer
-  "files.exclude": {
-    "**/.next": false
-  },
-
-  // Include .next in searches
-  "search.exclude": {
-    "**/.next": false
-  },
-
-  // Watch .next for file-changes
-  "files.watcherExclude": {
-    "**/.next/**": false
-  },
 
   // Enable full-project TypeScript diagnostics
   "typescript.tsserver.experimental.enableProjectDiagnostics": true,

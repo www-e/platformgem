@@ -77,12 +77,19 @@ export function getPaymentMethodText(method: string): string {
 /**
  * Format payment amount
  */
-export function formatPaymentAmount(amount: number, currency: string): string {
+export function formatPaymentAmount(amount: number, currency: string = 'EGP'): string {
   return new Intl.NumberFormat('ar-EG', {
     style: 'currency',
     currency,
     minimumFractionDigits: 0
   }).format(amount);
+}
+
+/**
+ * Format currency with default EGP
+ */
+export function formatCurrency(amount: number, currency: string = 'EGP'): string {
+  return formatPaymentAmount(amount, currency);
 }
 
 /**
@@ -98,9 +105,6 @@ export function getPaymentMethodIconName(method: string): string {
       return 'CreditCard';
   }
 }
-
-// Additional exports for backward compatibility
-export const formatCurrency = formatPaymentAmount;
 export const getPaymentMethodIcon = getPaymentMethodIconName;
 export const formatPaymentMethod = getPaymentMethodText;
 export const getStatusBadge = getPaymentStatusText;
