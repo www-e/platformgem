@@ -10,6 +10,8 @@
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
 - [ ] 1.1 Implement premium Arabic typography system
+
+
   - Install and configure Tajawal (primary), Cairo (headings), IBM Plex Sans Arabic (code)
   - Create fluid typography scale (12px-96px) with proper Arabic line heights
   - Implement font loading optimization using Next.js 15.4.5 font system

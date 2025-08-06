@@ -2,7 +2,9 @@
 
 ## Overview
 
-This design document outlines the comprehensive modernization of the course selling platform's user interface and user experience. The design focuses on creating a cutting-edge, performant, and highly engaging educational platform that provides exceptional user experience across all devices while maintaining production-ready functionality.
+This design document outlines the comprehensive modernization of the Arabic-first course selling platform's user interface and user experience. Based on detailed analysis of the current codebase (384 TypeScript files, Next.js 15.4.5, React 19.1.1, Shadcn/UI) and inspiration from modern platforms like peec.ai, promptwatch.com, klasio.com, and khaled-sakr.com, this design creates a premium educational experience.
+
+The design focuses on transforming basic Shadcn components into premium interactive elements with 3D effects, implementing gamification systems, creating enterprise-grade admin dashboards, and building a mobile-first PWA experience that generates significant revenue through enhanced user engagement.
 
 ## Architecture
 
@@ -66,85 +68,161 @@ graph LR
 
 ### 1. Enhanced Design System
 
-#### Color System
+#### Advanced Color System with 50+ Semantic Colors
 ```typescript
-// Enhanced color palette with semantic meanings
+// Premium educational platform color system
 const colorSystem = {
-  // Primary Brand Colors
+  // Primary Brand Colors (Emerald-based for education)
   primary: {
-    50: '#f0fdf4',   // Lightest green
-    100: '#dcfce7',  // Very light green
-    200: '#bbf7d0',  // Light green
-    300: '#86efac',  // Medium light green
-    400: '#4ade80',  // Medium green
-    500: '#22c55e',  // Primary green
-    600: '#16a34a',  // Dark green
-    700: '#15803d',  // Darker green
-    800: '#166534',  // Very dark green
-    900: '#14532d',  // Darkest green
+    50: '#ecfdf5',   // Ultra light emerald
+    100: '#d1fae5',  // Very light emerald
+    200: '#a7f3d0',  // Light emerald
+    300: '#6ee7b7',  // Medium light emerald
+    400: '#34d399',  // Medium emerald
+    500: '#10b981',  // Primary emerald (main brand)
+    600: '#059669',  // Dark emerald
+    700: '#047857',  // Darker emerald
+    800: '#065f46',  // Very dark emerald
+    900: '#064e3b',  // Darkest emerald
+    950: '#022c22',  // Ultra dark emerald
   },
   
-  // Secondary Accent Colors
+  // Secondary Colors (Amber for highlights)
   secondary: {
-    50: '#fefce8',   // Lightest yellow
-    100: '#fef3c7',  // Very light yellow
-    500: '#eab308',  // Primary yellow
-    600: '#ca8a04',  // Dark yellow
+    50: '#fffbeb',   // Ultra light amber
+    100: '#fef3c7',  // Very light amber
+    200: '#fde68a',  // Light amber
+    300: '#fcd34d',  // Medium light amber
+    400: '#fbbf24',  // Medium amber
+    500: '#f59e0b',  // Primary amber
+    600: '#d97706',  // Dark amber
+    700: '#b45309',  // Darker amber
+    800: '#92400e',  // Very dark amber
+    900: '#78350f',  // Darkest amber
   },
   
-  // Semantic Colors
-  success: '#10b981',
-  warning: '#f59e0b',
-  error: '#ef4444',
-  info: '#3b82f6',
+  // Semantic Colors with Arabic cultural considerations
+  success: {
+    light: '#10b981',
+    DEFAULT: '#059669',
+    dark: '#047857',
+  },
+  warning: {
+    light: '#f59e0b',
+    DEFAULT: '#d97706',
+    dark: '#b45309',
+  },
+  error: {
+    light: '#ef4444',
+    DEFAULT: '#dc2626',
+    dark: '#b91c1c',
+  },
+  info: {
+    light: '#3b82f6',
+    DEFAULT: '#2563eb',
+    dark: '#1d4ed8',
+  },
   
-  // Neutral Grays
-  gray: {
-    50: '#f9fafb',
-    100: '#f3f4f6',
-    200: '#e5e7eb',
-    300: '#d1d5db',
-    400: '#9ca3af',
-    500: '#6b7280',
-    600: '#4b5563',
-    700: '#374151',
-    800: '#1f2937',
-    900: '#111827',
+  // Gradient System (20+ predefined gradients)
+  gradients: {
+    primary: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+    secondary: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+    hero: 'linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%)',
+    glass: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+    mesh: 'radial-gradient(circle at 20% 80%, #10b981 0%, transparent 50%), radial-gradient(circle at 80% 20%, #3b82f6 0%, transparent 50%)',
+  },
+  
+  // Glass Morphism Colors
+  glass: {
+    light: 'rgba(255, 255, 255, 0.1)',
+    medium: 'rgba(255, 255, 255, 0.15)',
+    dark: 'rgba(0, 0, 0, 0.1)',
+  },
+  
+  // Arabic-optimized neutral grays
+  neutral: {
+    50: '#fafafa',   // Ultra light gray
+    100: '#f5f5f5',  // Very light gray
+    200: '#e5e5e5',  // Light gray
+    300: '#d4d4d4',  // Medium light gray
+    400: '#a3a3a3',  // Medium gray
+    500: '#737373',  // Primary gray
+    600: '#525252',  // Dark gray
+    700: '#404040',  // Darker gray
+    800: '#262626',  // Very dark gray
+    900: '#171717',  // Darkest gray
+    950: '#0a0a0a',  // Ultra dark gray
   }
 }
 ```
 
-#### Typography System
+#### Premium Arabic Typography System
 ```typescript
-const typographySystem = {
+const arabicTypographySystem = {
   fontFamily: {
-    sans: ['Inter', 'system-ui', 'sans-serif'],
-    display: ['Cal Sans', 'Inter', 'system-ui', 'sans-serif'],
-    mono: ['JetBrains Mono', 'monospace'],
+    // Primary font for body text (excellent Arabic support)
+    primary: ['Tajawal', 'system-ui', '-apple-system', 'sans-serif'],
+    
+    // Display font for headings (modern Arabic design)
+    display: ['Cairo', 'Tajawal', 'system-ui', 'sans-serif'],
+    
+    // Monospace font for code (Arabic-compatible)
+    mono: ['IBM Plex Sans Arabic', 'Courier New', 'monospace'],
+    
+    // Fallback system fonts
+    system: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
   },
   
+  // Fluid typography scale optimized for Arabic text
   fontSize: {
-    xs: ['0.75rem', { lineHeight: '1rem' }],
-    sm: ['0.875rem', { lineHeight: '1.25rem' }],
-    base: ['1rem', { lineHeight: '1.5rem' }],
-    lg: ['1.125rem', { lineHeight: '1.75rem' }],
-    xl: ['1.25rem', { lineHeight: '1.75rem' }],
-    '2xl': ['1.5rem', { lineHeight: '2rem' }],
-    '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
-    '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
-    '5xl': ['3rem', { lineHeight: '1' }],
-    '6xl': ['3.75rem', { lineHeight: '1' }],
+    xs: ['0.75rem', { lineHeight: '1.2rem' }],      // 12px - Arabic optimized
+    sm: ['0.875rem', { lineHeight: '1.4rem' }],     // 14px - Arabic optimized
+    base: ['1rem', { lineHeight: '1.6rem' }],       // 16px - Arabic optimized
+    lg: ['1.125rem', { lineHeight: '1.8rem' }],     // 18px - Arabic optimized
+    xl: ['1.25rem', { lineHeight: '2rem' }],        // 20px - Arabic optimized
+    '2xl': ['1.5rem', { lineHeight: '2.2rem' }],    // 24px - Arabic optimized
+    '3xl': ['1.875rem', { lineHeight: '2.6rem' }],  // 30px - Arabic optimized
+    '4xl': ['2.25rem', { lineHeight: '3rem' }],     // 36px - Arabic optimized
+    '5xl': ['3rem', { lineHeight: '3.6rem' }],      // 48px - Arabic optimized
+    '6xl': ['3.75rem', { lineHeight: '4.2rem' }],   // 60px - Arabic optimized
+    '7xl': ['4.5rem', { lineHeight: '5rem' }],      // 72px - Arabic optimized
+    '8xl': ['6rem', { lineHeight: '6.5rem' }],      // 96px - Arabic optimized
+    '9xl': ['8rem', { lineHeight: '8.5rem' }],      // 128px - Arabic optimized
   },
   
+  // Font weights optimized for Arabic readability
   fontWeight: {
-    thin: '100',
-    light: '300',
-    normal: '400',
-    medium: '500',
-    semibold: '600',
-    bold: '700',
-    extrabold: '800',
-    black: '900',
+    thin: '200',      // Tajawal 200
+    light: '300',     // Tajawal 300
+    normal: '400',    // Tajawal 400 (primary)
+    medium: '500',    // Tajawal 500
+    semibold: '600',  // Cairo 600 (headings)
+    bold: '700',      // Cairo 700 (headings)
+    extrabold: '800', // Cairo 800 (display)
+    black: '900',     // Cairo 900 (display)
+  },
+  
+  // Arabic-specific line heights
+  lineHeight: {
+    'arabic-tight': '1.4',    // For headings
+    'arabic-normal': '1.6',   // For body text
+    'arabic-relaxed': '1.8',  // For long-form content
+    'arabic-loose': '2.0',    // For captions
+  },
+  
+  // Letter spacing for Arabic (minimal adjustments)
+  letterSpacing: {
+    'arabic-tight': '-0.01em',
+    'arabic-normal': '0em',
+    'arabic-wide': '0.01em',
+  },
+  
+  // Font loading optimization
+  fontDisplay: 'swap',
+  fontOptimization: {
+    preload: ['Tajawal-400', 'Cairo-600', 'Cairo-700'],
+    fallback: 'system-ui',
+    adjustPeriod: '100ms',
   }
 }
 ```
