@@ -21,6 +21,7 @@ import {
 import { FeaturedCourse } from '@/types/course';
 import { formatCoursePrice, formatCourseDuration } from '@/lib/course-utils';
 import { StructuredData } from '@/components/seo/StructuredData';
+import { cn } from '@/lib/utils';
 
 interface FeaturedCoursesSectionProps {
   className?: string;
@@ -51,103 +52,66 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
   };
 
   const CourseCard = ({ course }: { course: FeaturedCourse }) => (
-    <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 bg-white/80 backdrop-blur-sm overflow-hidden">
-      <div className="relative">
+    <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-neutral-200/80 bg-white overflow-hidden">
+      <CardHeader className="p-0">
         <div className="aspect-video relative overflow-hidden">
           <Image
             src={course.thumbnailUrl}
             alt={course.title}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-110"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           
-          {/* Play Button Overlay */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
-              <Play className="w-6 h-6 text-primary ml-1" />
-            </div>
-          </div>
-
-          {/* Price Badge */}
-          <div className="absolute top-4 right-4">
-            <Badge 
-              variant={course.price === null ? "secondary" : "default"}
-              className="bg-white/90 text-gray-900 hover:bg-white font-semibold"
-            >
-              {formatCoursePrice(course.price, course.currency)}
-            </Badge>
-          </div>
-
-          {/* Category Badge */}
           <div className="absolute top-4 left-4">
-            <Badge variant="outline" className="bg-primary/90 text-white border-white/20">
+            <Badge variant="secondary" className="bg-white/90 text-neutral-900">
               {course.category.name}
             </Badge>
           </div>
-        </div>
 
-        <CardHeader className="pb-3">
-          <h3 className="font-bold text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+          <div className="absolute top-4 right-4">
+            <Badge className="bg-white/90 text-neutral-900 font-semibold">
+              {formatCoursePrice(course.price, course.currency)}
+            </Badge>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="p-6 space-y-4">
+        <div>
+          <h3 className="font-bold text-xl leading-tight line-clamp-2 group-hover:text-primary transition-colors font-display">
             {course.title}
           </h3>
-          <p className="text-muted-foreground text-sm line-clamp-2 leading-relaxed">
-            {course.description}
+          <p className="text-muted-foreground text-sm line-clamp-2 mt-2 font-primary">
+            بواسطة {course.professor.name}
           </p>
-        </CardHeader>
+        </div>
 
-        <CardContent className="pt-0">
-          {/* Professor Info */}
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-              <Award className="w-4 h-4 text-primary" />
-            </div>
-            <span className="text-sm font-medium text-gray-700">
-              {course.professor.name}
-            </span>
+        <div className="flex items-center justify-between text-sm text-muted-foreground border-t pt-4">
+          <div className="flex items-center gap-1">
+            <BookOpen className="w-4 h-4" />
+            <span>{course.lessonCount} درس</span>
           </div>
-
-          {/* Course Stats */}
-          <div className="grid grid-cols-3 gap-4 mb-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <BookOpen className="w-4 h-4" />
-              <span>{course.lessonCount} درس</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              <span>{formatCourseDuration(course.totalDuration)}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Users className="w-4 h-4" />
-              <span>{course.enrollmentCount} طالب</span>
-            </div>
+          <div className="flex items-center gap-1">
+            <Users className="w-4 h-4" />
+            <span>{course.enrollmentCount} طالب</span>
           </div>
-
-          {/* Rating (Mock) */}
-          <div className="flex items-center gap-2 mb-4">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star 
-                  key={i} 
-                  className={`w-4 h-4 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
-                />
-              ))}
-            </div>
-            <span className="text-sm text-muted-foreground">4.8 (127 تقييم)</span>
+          <div className="flex items-center gap-1">
+            <Star className="w-4 h-4 text-yellow-400 fill-current" />
+            <span>4.8</span>
           </div>
+        </div>
 
-          {/* CTA Button */}
-          <Link href={`/courses/${course.id}`}>
-            <Button className="w-full group/btn">
-              <span>استكشف الدورة</span>
-              <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover/btn:-translate-x-1" />
-            </Button>
-          </Link>
-        </CardContent>
-      </div>
+        <Link href={`/courses/${course.id}`}>
+          <Button className="w-full mt-2" variant="outline">
+            <span>استكشف الدورة</span>
+            <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
+          </Button>
+        </Link>
+      </CardContent>
     </Card>
-  );
+);
 
   const LoadingSkeleton = () => (
     <Card className="overflow-hidden">
@@ -173,7 +137,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
 
   if (error) {
     return (
-      <section className={`py-20 bg-gradient-to-br from-blue-50 to-indigo-100 ${className}`}>
+      <section className={cn('py-20 sm:py-32 bg-white', className)}>
         <div className="container mx-auto px-4">
           <div className="text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">

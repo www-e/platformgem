@@ -55,6 +55,7 @@ import { StudentProgress } from "./StudentProgress";
 import { StudentCertificates } from "./StudentCertificates";
 import { cn } from "@/lib/utils";
 
+// --- INTERFACES (Keep as is) ---
 interface StudentStats {
   totalEnrolledCourses: number;
   completedCourses: number;
@@ -138,6 +139,7 @@ interface QuickAction {
   priority: number;
 }
 
+
 export function StudentDashboard() {
   const [stats, setStats] = useState<StudentStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -147,19 +149,22 @@ export function StudentDashboard() {
   const [lastUpdate, setLastUpdate] = useState(new Date());
   const { shouldReduceMotion } = useOptimizedMotion();
 
-  // Fetch student stats with real-time updates
   const fetchStudentStats = useCallback(async () => {
     try {
+      // Ensure we don't fetch if already loading
+      if(!isLoading) setIsLoading(true);
+
       const response = await fetch("/api/student/dashboard-stats");
+      if (!response.ok) {
+        throw new Error("Failed to fetch dashboard stats");
+      }
       const data = await response.json();
 
-      // Check for level up
       if (stats && data.level > stats.level) {
         setShowLevelUpAnimation(true);
         setTimeout(() => setShowLevelUpAnimation(false), 3000);
       }
 
-      // Check for new achievements
       if (stats && data.achievements.length > stats.achievements.length) {
         const newAchievements = data.achievements.filter(
           (achievement: Achievement) =>
@@ -175,27 +180,24 @@ export function StudentDashboard() {
       setLastUpdate(new Date());
     } catch (error) {
       console.error("Failed to fetch student stats:", error);
+      setStats(null); // Set stats to null on error
     } finally {
       setIsLoading(false);
     }
-  }, [stats]);
+  }, [stats, isLoading]); // Add isLoading to dependencies
 
   useEffect(() => {
     fetchStudentStats();
-
-    // Set up periodic updates every 2 minutes
     const interval = setInterval(fetchStudentStats, 120000);
-
     return () => clearInterval(interval);
-  }, [fetchStudentStats]);
+  }, []); // Remove fetchStudentStats from here to prevent re-triggering
 
-  // Helper functions
   const formatWatchTime = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return hours > 0 ? `${hours}س ${mins}د` : `${mins}د`;
   };
-
+  
   const getRarityColor = (rarity: Achievement["rarity"]) => {
     switch (rarity) {
       case "common":
@@ -229,22 +231,20 @@ export function StudentDashboard() {
     return ((stats.currentXP % 1000) / 1000) * 100;
   };
 
-  if (isLoading) {
+  // --- START OF THE FIX ---
+
+  // 1. Loading State
+  if (isLoading && !stats) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="h-10 bg-neutral-200 rounded w-64 animate-pulse" />
-          <div className="h-8 bg-neutral-200 rounded w-32 animate-pulse" />
-        </div>
-        <LoadingState
-          cardCount={8}
-          gridCols="grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
-        />
-      </div>
+      <LoadingState
+        cardCount={8}
+        gridCols="grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+      />
     );
   }
 
-  if (!stats) {
+  // 2. Error State
+  if (!isLoading && !stats) {
     return (
       <div className="text-center py-12">
         <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -263,7 +263,12 @@ export function StudentDashboard() {
       </div>
     );
   }
+  
+  // 3. Render content only if stats is not null
+  if (!stats) return null; // Or a more specific error component
 
+  // --- END OF THE FIX ---
+  
   return (
     <div className="space-y-8">
       {/* Level Up Animation */}
@@ -490,66 +495,6 @@ export function StudentDashboard() {
               {stats.certificatesEarned}
             </div>
             <p className="text-xs text-muted-foreground">شهادة مكتسبة</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-red-500">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              إجمالي الإنفاق
-            </CardTitle>
-            <DollarSign className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {new Intl.NumberFormat("ar-EG", {
-                style: "currency",
-                currency: "EGP",
-                minimumFractionDigits: 0,
-              }).format(stats.totalSpent)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              على الدورات المدفوعة
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-teal-500">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">سلسلة التعلم</CardTitle>
-            <TrendingUp className="h-4 w-4 text-teal-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-teal-600">
-              {stats.currentStreak}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              يوم متتالي من التعلم
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-indigo-500">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">الإنجازات</CardTitle>
-            <Star className="h-4 w-4 text-indigo-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-indigo-600">
-              {stats.achievements.length}
-            </div>
-            <p className="text-xs text-muted-foreground">إنجاز مكتسب</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-pink-500">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">معدل النشاط</CardTitle>
-            <BarChart3 className="h-4 w-4 text-pink-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-pink-600">85%</div>
-            <p className="text-xs text-muted-foreground">نشاط أسبوعي</p>
           </CardContent>
         </Card>
       </div>

@@ -1,9 +1,11 @@
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
-import { Loader2 } from "lucide-react";
+// src/components/ui/button.tsx
 
-import { cn } from "@/lib/utils";
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+import { Loader2 } from "lucide-react"
+
+import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 relative overflow-hidden group font-primary",
@@ -99,7 +101,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const Comp = asChild ? Slot : "button";
 
-    // Determine the current state
     const isDisabled = disabled || loading;
     const currentVariant = error
       ? "destructive"
@@ -120,75 +121,67 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={isDisabled}
         {...props}
       >
-        {/* Loading state */}
-        {loading && (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span className="sr-only">Loading...</span>
-          </>
-        )}
+        <div className="flex items-center justify-center gap-2">
+          {loading && (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span className="sr-only">Loading...</span>
+            </>
+          )}
 
-        {/* Success state */}
-        {success && !loading && (
-          <svg
-            className="h-4 w-4 animate-scale-in"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        )}
+          {success && !loading && (
+            <svg
+              className="h-4 w-4 animate-scale-in"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          )}
 
-        {/* Error state */}
-        {error && !loading && (
-          <svg
-            className="h-4 w-4 animate-scale-in"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        )}
+          {error && !loading && (
+            <svg
+              className="h-4 w-4 animate-scale-in"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          )}
 
-        {/* Normal state with optional icon */}
-        {!loading && !success && !error && (
-          <>
-            {icon && iconPosition === "left" && (
-              <span className="flex-shrink-0">{icon}</span>
-            )}
+          {!loading && !success && !error && (
+            <>
+              {icon && iconPosition === "left" && (
+                <span className="flex-shrink-0">{icon}</span>
+              )}
 
-            {children && (
-              <span className="leading-arabic-normal">{children}</span>
-            )}
+              {children && (
+                <span className="leading-arabic-normal">{children}</span>
+              )}
 
-            {icon && iconPosition === "right" && (
-              <span className="flex-shrink-0">{icon}</span>
-            )}
-          </>
-        )}
+              {icon && iconPosition === "right" && (
+                <span className="flex-shrink-0">{icon}</span>
+              )}
+            </>
+          )}
 
-        {/* Shimmer effect for gradient variants */}
-        {(variant === "gradient" || variant === "neon") && (
-          <div className="absolute inset-0 -top-px overflow-hidden rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-shimmer" />
-          </div>
-        )}
-
-        {/* Ripple effect container */}
-        <div className="absolute inset-0 overflow-hidden rounded-lg">
-          <div className="absolute inset-0 bg-white/20 scale-0 group-active:scale-100 transition-transform duration-150 rounded-full" />
+          {(variant === "gradient" || variant === "neon") && (
+            <div className="absolute inset-0 -top-px overflow-hidden rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-shimmer" />
+            </div>
+          )}
         </div>
       </Comp>
     );

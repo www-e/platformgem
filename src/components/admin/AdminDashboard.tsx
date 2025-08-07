@@ -25,7 +25,6 @@ import {
   Minimize2,
   Filter,
   AlertTriangle,
-  CheckCircle,
   Clock,
   Zap,
   Shield,

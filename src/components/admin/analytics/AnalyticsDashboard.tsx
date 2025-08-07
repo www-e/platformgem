@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { InteractiveCharts } from "./InteractiveCharts";
 import { FadeInScroll, StaggerChildren, StaggerItem } from "@/components/ui/micro-interactions";
 import {
@@ -15,12 +14,9 @@ import {
   DollarSign,
   BookOpen,
   Download,
-  Calendar,
-  Filter,
   RefreshCw,
   ArrowUp,
   ArrowDown,
-  Eye,
   Clock,
   Target,
   Award

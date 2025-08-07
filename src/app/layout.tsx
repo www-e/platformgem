@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <SessionProvider>
       <html lang="ar" dir="rtl" className="h-full">
-        <body className={`${font.variable} font-sans bg-background antialiased flex flex-col h-full`}>
+        <body className={`${font.variable} font-sans bg-background antialiased flex flex-col h-full pt-20`}>
           <Navbar />
           {/* The main content area will grow to fill available space, pushing the footer down */}
           <main className="flex-grow">

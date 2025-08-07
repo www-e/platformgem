@@ -70,7 +70,7 @@ export default function SignupPage() {
                     <Input id="phone" name="phone" type="tel" placeholder="01012345678" required className="h-11 bg-input/80 border-border/60" dir="ltr" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">البريد الإلكتروني (اختياري)</Label>
+                    <Label htmlFor="email">البريد الإلكتروني</Label>
                     <Input id="email" name="email" type="email" placeholder="ahmed@example.com" className="h-11 bg-input/80 border-border/60" dir="ltr" />
                   </div>
                 </div>
