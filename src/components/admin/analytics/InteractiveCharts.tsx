@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  LineChart,
   Line,
   AreaChart,
   Area,
@@ -23,19 +22,14 @@ import {
   Legend,
   ResponsiveContainer,
   ComposedChart,
-  RadialBarChart,
-  RadialBar
 } from "recharts";
 import {
   TrendingUp,
-  TrendingDown,
-  BarChart3,
   PieChart as PieChartIcon,
   LineChart as LineChartIcon,
   Download,
   Maximize2,
   Filter,
-  Calendar,
   Users,
   DollarSign,
   BookOpen,
@@ -281,109 +275,111 @@ export function InteractiveCharts({
             <CardContent>
               <div className={cn("h-80", isFullscreen && "h-96")}>
                 <ResponsiveContainer width="100%" height="100%">
-                  {selectedChart === 'revenue' ? (
-                    <ComposedChart data={revenueData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                      <XAxis 
-                        dataKey="name" 
-                        tick={{ fontSize: 12, fill: '#64748b' }}
-                        tickLine={{ stroke: '#e2e8f0' }}
-                      />
-                      <YAxis 
-                        tick={{ fontSize: 12, fill: '#64748b' }}
-                        tickLine={{ stroke: '#e2e8f0' }}
-                        tickFormatter={formatCurrency}
-                      />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Legend />
-                      <Area
-                        type="monotone"
-                        dataKey="value"
-                        fill="url(#revenueGradient)"
-                        stroke="#10b981"
-                        strokeWidth={2}
-                        name="الإيرادات"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="value"
-                        stroke="#10b981"
-                        strokeWidth={3}
-                        dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
-                        activeDot={{ r: 6, stroke: '#10b981', strokeWidth: 2 }}
-                      />
-                      <defs>
-                        <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#10b981" stopOpacity={0.05}/>
-                        </linearGradient>
-                      </defs>
-                    </ComposedChart>
-                  ) : selectedChart === 'users' ? (
-                    <AreaChart data={userGrowthData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                      <XAxis 
-                        dataKey="name" 
-                        tick={{ fontSize: 12, fill: '#64748b' }}
-                      />
-                      <YAxis 
-                        tick={{ fontSize: 12, fill: '#64748b' }}
-                        tickFormatter={formatNumber}
-                      />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Area
-                        type="monotone"
-                        dataKey="value"
-                        stroke="#3b82f6"
-                        fill="url(#userGradient)"
-                        strokeWidth={2}
-                        name="المستخدمين الجدد"
-                      />
-                      <defs>
-                        <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.05}/>
-                        </linearGradient>
-                      </defs>
-                    </AreaChart>
-                  ) : selectedChart === 'courses' ? (
-                    <BarChart data={courseEnrollmentData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                      <XAxis 
-                        dataKey="name" 
-                        tick={{ fontSize: 12, fill: '#64748b' }}
-                      />
-                      <YAxis 
-                        tick={{ fontSize: 12, fill: '#64748b' }}
-                        tickFormatter={formatNumber}
-                      />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Bar 
-                        dataKey="value" 
-                        fill="#8b5cf6" 
-                        radius={[4, 4, 0, 0]}
-                        name="التسجيلات"
-                      />
-                    </BarChart>
-                  ) : selectedChart === 'categories' ? (
-                    <PieChart>
-                      <Pie
-                        data={categoryDistribution}
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={120}
-                        fill="#8884d8"
-                        dataKey="value"
-                        label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
-                        onClick={(data) => onDrillDown?.(data.name, data)}
-                      >
-                        {categoryDistribution.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip content={<CustomTooltip />} />
-                    </PieChart>
-                  ) : null}
+                  <>
+                    {selectedChart === 'revenue' ? (
+                      <ComposedChart data={revenueData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                        <XAxis 
+                          dataKey="name" 
+                          tick={{ fontSize: 12, fill: '#64748b' }}
+                          tickLine={{ stroke: '#e2e8f0' }}
+                        />
+                        <YAxis 
+                          tick={{ fontSize: 12, fill: '#64748b' }}
+                          tickLine={{ stroke: '#e2e8f0' }}
+                          tickFormatter={formatCurrency}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend />
+                        <Area
+                          type="monotone"
+                          dataKey="value"
+                          fill="url(#revenueGradient)"
+                          stroke="#10b981"
+                          strokeWidth={2}
+                          name="الإيرادات"
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="value"
+                          stroke="#10b981"
+                          strokeWidth={3}
+                          dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+                          activeDot={{ r: 6, stroke: '#10b981', strokeWidth: 2 }}
+                        />
+                        <defs>
+                          <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                            <stop offset="95%" stopColor="#10b981" stopOpacity={0.05}/>
+                          </linearGradient>
+                        </defs>
+                      </ComposedChart>
+                    ) : selectedChart === 'users' ? (
+                      <AreaChart data={userGrowthData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                        <XAxis 
+                          dataKey="name" 
+                          tick={{ fontSize: 12, fill: '#64748b' }}
+                        />
+                        <YAxis 
+                          tick={{ fontSize: 12, fill: '#64748b' }}
+                          tickFormatter={formatNumber}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Area
+                          type="monotone"
+                          dataKey="value"
+                          stroke="#3b82f6"
+                          fill="url(#userGradient)"
+                          strokeWidth={2}
+                          name="المستخدمين الجدد"
+                        />
+                        <defs>
+                          <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.05}/>
+                          </linearGradient>
+                        </defs>
+                      </AreaChart>
+                    ) : selectedChart === 'courses' ? (
+                      <BarChart data={courseEnrollmentData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                        <XAxis 
+                          dataKey="name" 
+                          tick={{ fontSize: 12, fill: '#64748b' }}
+                        />
+                        <YAxis 
+                          tick={{ fontSize: 12, fill: '#64748b' }}
+                          tickFormatter={formatNumber}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Bar 
+                          dataKey="value" 
+                          fill="#8b5cf6" 
+                          radius={[4, 4, 0, 0]}
+                          name="التسجيلات"
+                        />
+                      </BarChart>
+                    ) : selectedChart === 'categories' ? (
+                      <PieChart>
+                        <Pie
+                          data={categoryDistribution}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={120}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
+                          onClick={(data) => onDrillDown?.(data.name, data)}
+                        >
+                          {categoryDistribution.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<CustomTooltip />} />
+                      </PieChart>
+                    ) : null}
+                  </>
                 </ResponsiveContainer>
               </div>
             </CardContent>

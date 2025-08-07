@@ -14,31 +14,19 @@ import {
   Star,
   Flame,
   Target,
-  Calendar,
   Clock,
   Award,
   Zap,
-  Crown,
-  Gem,
   Shield,
   Rocket,
   Brain,
-  Heart,
-  Zap,
   Sparkles,
-  Medal,
   TrendingUp,
   BarChart3,
   CheckCircle,
   Play,
   BookOpen,
-  Users,
   Share2,
-  Download,
-  Gift,
-  Bookmark,
-  Eye,
-  ArrowUp,
   Plus,
   ChevronRight
 } from "lucide-react";
@@ -57,6 +45,7 @@ interface CourseProgressProps {
   studyGoals: StudyGoal[];
   achievements: Achievement[];
   learningPath: LearningPathNode[];
+  userId: string; // Added userId prop
   onGoalCreate?: (goal: Partial<StudyGoal>) => void;
   onCertificateGenerate?: () => void;
 }
@@ -127,6 +116,7 @@ export function CourseProgress({
   studyGoals,
   achievements,
   learningPath,
+  userId, // Destructure userId
   onGoalCreate,
   onCertificateGenerate
 }: CourseProgressProps) {

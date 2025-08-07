@@ -6,7 +6,6 @@ import { motion, HTMLMotionProps } from "framer-motion"
 import { Card, CardProps } from "./card"
 import { cardHover, fadeInUp, getReducedMotionVariants } from "@/lib/animations"
 import { useOptimizedMotion, useInViewOptimized } from "@/hooks/useAnimations"
-import { cn } from "@/lib/utils"
 
 interface AnimatedCardProps extends CardProps {
   motionProps?: Omit<HTMLMotionProps<"div">, keyof CardProps>
@@ -31,14 +30,12 @@ export const AnimatedCard = React.forwardRef<
   const { ref: inViewRef, isInView } = useInViewOptimized()
   
   // Combine refs
-  const combinedRef = React.useCallback((node: HTMLDivElement | null) => {
+  const combinedRef = React.useCallback((node: HTMLDivElement) => {
     if (ref) {
       if (typeof ref === 'function') ref(node)
-      else ref.current = node
+      else (ref as React.MutableRefObject<HTMLDivElement | null>).current = node
     }
-    if (inViewRef) {
-      inViewRef.current = node
-    }
+    (inViewRef as React.MutableRefObject<HTMLDivElement | null>).current = node
   }, [ref, inViewRef])
   
   // Use reduced motion variants if needed
@@ -51,32 +48,28 @@ export const AnimatedCard = React.forwardRef<
     : fadeInUp
   
   return (
-    <motion.div
-      ref={combinedRef}
-      className={cn(
-        // Performance optimizations
-        "will-change-transform transform-gpu",
-        className
-      )}
-      // In-view animation
-      variants={enableInView ? inViewVariants : enableHover ? hoverVariants : undefined}
-      initial={enableInView ? "initial" : undefined}
-      animate={enableInView && isInView ? "animate" : undefined}
-      // Hover animation
-      whileHover={enableHover ? "whileHover" : undefined}
-      // Stagger delay
-      transition={{
-        delay: delay,
-        type: "spring",
-        stiffness: 400,
-        damping: 30,
-        mass: 0.8,
-      }}
-      {...motionProps}
-      {...props}
-    >
-      {children}
-    </motion.div>
+    <Card ref={ref} className={className} {...props}>
+      <motion.div
+        ref={inViewRef}
+        // In-view animation
+        variants={enableInView ? inViewVariants : enableHover ? hoverVariants : undefined}
+        initial={enableInView ? "initial" : undefined}
+        animate={enableInView && isInView ? "animate" : undefined}
+        // Hover animation
+        whileHover={enableHover ? "whileHover" : undefined}
+        // Stagger delay
+        transition={{
+          delay: delay,
+          type: "spring",
+          stiffness: 400,
+          damping: 30,
+          mass: 0.8,
+        }}
+        {...motionProps}
+      >
+        {children}
+      </motion.div>
+    </Card>
   )
 })
 

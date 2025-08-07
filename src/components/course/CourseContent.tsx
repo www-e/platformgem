@@ -1,7 +1,7 @@
 // src/components/course/CourseContent.tsx - Modular Course Content
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ import { LessonMaterials } from "./course-content/LessonMaterials";
 import { CourseProgressCard } from "./course-content/CourseProgressCard";
 import {
   useCourseContent,
-  type Lesson,
+  type Lesson as HookLesson, // Rename imported type
   type Course,
 } from "@/hooks/useCourseContent";
 import { useOptimizedMotion } from "@/hooks/useAnimations";
@@ -29,8 +29,6 @@ import {
   CheckCircle,
   Bookmark,
   Share2,
-  ChevronRight,
-  ChevronLeft,
   FileText,
   MessageSquare,
   Award,
@@ -38,6 +36,12 @@ import {
   Play
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { JsonValue } from "@prisma/client/runtime/library";
+
+// Extend the hook's Lesson type locally
+interface Lesson extends HookLesson {
+    materials?: JsonValue;
+}
 
 interface CourseContentProps {
   course: Course;
@@ -50,13 +54,11 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
     setSelectedLesson,
     lessonProgress,
     completedLessons,
-    viewingHistory,
     overallProgress,
     totalWatchedTime,
     totalDuration,
     completedCount,
     handleLessonComplete,
-    handleProgressUpdate,
   } = useCourseContent(course, lessons);
 
   const { shouldReduceMotion } = useOptimizedMotion();
@@ -76,6 +78,17 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
       handleLessonComplete();
     }
   };
+
+  const parsedMaterials = useMemo(() => {
+    const materials = (selectedLesson as Lesson)?.materials;
+    if (Array.isArray(materials)) {
+      return materials.filter(
+        (m): m is any => // Using 'any' for now, should be a defined Material type
+          typeof m === 'object' && m !== null && 'title' in m && 'url' in m
+      );
+    }
+    return [];
+  }, [selectedLesson]);
 
   return (
     <div className="space-y-6">
@@ -313,7 +326,7 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
         {/* Materials Tab */}
         <TabsContent value="materials" className="space-y-6">
           <LessonMaterials 
-            materials={selectedLesson?.materials ? JSON.parse(selectedLesson.materials as string) : []}
+            materials={parsedMaterials}
           />
         </TabsContent>
 
@@ -347,10 +360,9 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
         <TabsContent value="certificate" className="space-y-6">
           {completionRate >= 100 ? (
             <CertificateGenerator
-              studentName="اسم الطالب"
+              courseId={course.id}
               courseName={course.title}
-              completionDate={new Date()}
-              certificateId={`CERT-${course.id}-${Date.now()}`}
+              completionRate={completionRate}
             />
           ) : (
             <Card>

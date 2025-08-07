@@ -1,6 +1,6 @@
 // Performance-optimized animation hooks
 import { useReducedMotion, useInView } from "framer-motion"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, RefObject } from "react"
 
 // Hook for reduced motion preference
 export const useOptimizedMotion = () => {
@@ -14,12 +14,20 @@ export const useOptimizedMotion = () => {
   }
 }
 
+// Correct type for the 'margin' property
+type MarginType = `${number}px` | `${number}px ${number}px` | `${number}px ${number}px ${number}px` | `${number}px ${number}px ${number}px ${number}px`;
+
 // Hook for intersection observer with performance optimization
-export const useInViewOptimized = (options?: { once?: boolean; margin?: string; amount?: number }) => {
-  const ref = useRef(null)
+export const useInViewOptimized = (options?: {
+    root?: RefObject<Element>;
+    once?: boolean;
+    margin?: MarginType;
+    amount?: "some" | "all" | number;
+}) => {
+  const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, {
     once: true, // Only trigger once for performance
-    margin: "0px 0px -100px 0px", // Trigger before element is visible
+    margin: options?.margin || "0px 0px -100px 0px", // Trigger before element is visible
     ...options,
   })
   
