@@ -25,7 +25,7 @@ export function AnalyticsHeader({
         {(['week', 'month', 'year'] as const).map((range) => (
           <Button
             key={range}
-            variant={timeRange === range ? 'default' : 'outline'}
+            variant={timeRange === range ? 'primary' : 'outline'}
             size="sm"
             onClick={() => setTimeRange(range)}
           >

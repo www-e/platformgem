@@ -128,28 +128,28 @@ export function EnrolledCourses() {
       {/* Filter Tabs */}
       <div className="flex items-center gap-2 border-b">
         <Button
-          variant={filter === 'all' ? 'default' : 'ghost'}
+          variant={filter === 'all' ? 'primary' : 'ghost'}
           size="sm"
           onClick={() => setFilter('all')}
         >
           جميع الدورات ({courses.length})
         </Button>
         <Button
-          variant={filter === 'in_progress' ? 'default' : 'ghost'}
+          variant={filter === 'in_progress' ? 'primary' : 'ghost'}
           size="sm"
           onClick={() => setFilter('in_progress')}
         >
           قيد التقدم ({courses.filter(c => c.status === 'in_progress').length})
         </Button>
         <Button
-          variant={filter === 'completed' ? 'default' : 'ghost'}
+          variant={filter === 'completed' ? 'primary' : 'ghost'}
           size="sm"
           onClick={() => setFilter('completed')}
         >
           مكتملة ({courses.filter(c => c.status === 'completed').length})
         </Button>
         <Button
-          variant={filter === 'not_started' ? 'default' : 'ghost'}
+          variant={filter === 'not_started' ? 'primary' : 'ghost'}
           size="sm"
           onClick={() => setFilter('not_started')}
         >

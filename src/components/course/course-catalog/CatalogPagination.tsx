@@ -30,7 +30,7 @@ export function CatalogPagination({ currentPage, totalPages, onPageChange }: Cat
         {pageNumbers.map((page) => (
           <Button
             key={page}
-            variant={currentPage === page ? "default" : "outline"}
+            variant={currentPage === page ? "primary" : "outline"}
             size="sm"
             onClick={() => onPageChange(page)}
           >

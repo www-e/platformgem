@@ -100,7 +100,7 @@ export function CategoryDialog({
 
   const defaultTrigger = (
     <Button
-      variant={isEdit ? "outline" : "default"}
+      variant={isEdit ? "outline" : "primary"}
       size={isEdit ? "sm" : "default"}
     >
       {isEdit ? <Edit className="w-4 h-4" /> : <Plus className="w-4 h-4" />}

@@ -27,7 +27,7 @@ interface EmptyStateProps {
    * Button variant
    * @default "outline"
    */
-  actionVariant?: 'default' | 'outline' | 'secondary' | 'ghost';
+  actionVariant?: 'primary' | 'outline' | 'secondary' | 'ghost';
   /**
    * Icon size classes
    * @default "w-16 h-16"

@@ -37,7 +37,7 @@ export function ActionButton({ course, userRole, userActions, isLoading, onEnrol
     // Enrolled student
     return (
       <Link href={`/courses/${course.id}`}>
-        <Button className="w-full" variant="default">
+        <Button className="w-full" variant="primary">
           <Play className="w-4 h-4 mr-2" />
           متابعة التعلم
         </Button>

@@ -47,21 +47,21 @@ export function EarningsReport() {
         <div className="flex items-center gap-2">
           <div className="flex items-center border rounded-lg">
             <Button
-              variant={selectedPeriod === 'week' ? 'default' : 'ghost'}
+              variant={selectedPeriod === 'week' ? 'primary' : 'ghost'}
               size="sm"
               onClick={() => setSelectedPeriod('week')}
             >
               أسبوع
             </Button>
             <Button
-              variant={selectedPeriod === 'month' ? 'default' : 'ghost'}
+              variant={selectedPeriod === 'month' ? 'primary' : 'ghost'}
               size="sm"
               onClick={() => setSelectedPeriod('month')}
             >
               شهر
             </Button>
             <Button
-              variant={selectedPeriod === 'year' ? 'default' : 'ghost'}
+              variant={selectedPeriod === 'year' ? 'primary' : 'ghost'}
               size="sm"
               onClick={() => setSelectedPeriod('year')}
             >

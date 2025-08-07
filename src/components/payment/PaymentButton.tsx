@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 
 interface PaymentButtonProps {
   course: Course;
-  variant?: "default" | "outline" | "secondary";
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "destructive";
   size?: "default" | "sm" | "lg";
   className?: string;
   showPrice?: boolean;
@@ -23,7 +23,7 @@ interface PaymentButtonProps {
 
 export function PaymentButton({
   course,
-  variant = "default",
+  variant = "primary",
   size = "default",
   className = "",
   showPrice = true,
@@ -146,7 +146,7 @@ export function BuyNowButton({
   return (
     <PaymentButton
       course={course}
-      variant="default"
+      variant="primary"
       size="lg"
       className="w-full"
       showPrice={true}

@@ -53,7 +53,7 @@ function CompletionForm({
       <Button 
         type="submit" 
         disabled={isDisabled}
-        variant={isCompleted ? "secondary" : "default"}
+        variant={isCompleted ? "secondary" : "primary"}
         className="w-full md:w-auto btn-hover-effect"
         aria-label={buttonText}
       >

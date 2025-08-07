@@ -13,9 +13,9 @@ interface ActionButtonProps {
   onClick: () => void;
   /**
    * Button variant
-   * @default "default"
+   * @default "primary"
    */
-  variant?: 'default' | 'outline' | 'secondary' | 'ghost' | 'destructive';
+  variant?: 'primary' | 'outline' | 'secondary' | 'ghost' | 'destructive';
   /**
    * Button size
    * @default "default"
@@ -51,7 +51,7 @@ interface ActionButtonProps {
 export function ActionButton({
   text,
   onClick,
-  variant = 'default',
+  variant = 'primary',
   size = 'default',
   icon: Icon,
   iconPosition = 'left',

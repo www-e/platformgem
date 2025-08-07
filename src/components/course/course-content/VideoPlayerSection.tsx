@@ -71,7 +71,7 @@ export function VideoPlayerSection({
             <div className="flex items-center gap-2">
               <Button 
                 size="sm" 
-                variant={completedLessons.has(selectedLesson.id) ? "default" : "outline"}
+                variant={completedLessons.has(selectedLesson.id) ? "primary" : "outline"}
                 disabled={completedLessons.has(selectedLesson.id)}
               >
                 <CheckCircle className="w-4 h-4" />

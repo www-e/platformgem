@@ -85,7 +85,7 @@ export function PaymentFilters({
             <RefreshCw className="h-4 w-4 ml-2" />
             تحديث
           </Button>
-          <Button onClick={onExport} variant="default">
+          <Button onClick={onExport} variant="primary">
             <Download className="h-4 w-4 ml-2" />
             تصدير
           </Button>
