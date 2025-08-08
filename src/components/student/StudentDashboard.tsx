@@ -8,42 +8,22 @@ import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import {
   FadeInScroll,
-  StaggerChildren,
-  StaggerItem,
 } from "@/components/ui/micro-interactions";
 import { useOptimizedMotion } from "@/hooks/useAnimations";
 import {
   BookOpen,
-  TrendingUp,
   Award,
   Clock,
   Star,
-  BarChart3,
-  Calendar,
   Target,
   Zap,
-  Flame,
   Trophy,
   Crown,
-  Gem,
-  Shield,
-  Rocket,
-  Brain,
-  Sparkles,
-  DollarSign,
-  Medal,
-  ChevronRight,
-  Plus,
-  ArrowUp,
   Activity,
   Eye,
-  Play,
-  CheckCircle,
   Users,
-  Gift,
   Bell,
   Settings,
   RefreshCw,
@@ -53,7 +33,6 @@ import { PaymentHistory } from "./PaymentHistory";
 import { RecommendedCourses } from "./RecommendedCourses";
 import { StudentProgress } from "./StudentProgress";
 import { StudentCertificates } from "./StudentCertificates";
-import { cn } from "@/lib/utils";
 
 // --- INTERFACES (Keep as is) ---
 interface StudentStats {
@@ -406,15 +385,15 @@ export function StudentDashboard() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-lg font-bold font-display">
-                  المستوى {stats.level} • {stats.currentXP.toLocaleString()} XP
+                  المستوى {stats.level??0} • {(stats.currentXP ?? 0).toLocaleString()} XP
                 </h3>
                 <p className="text-white/80 font-primary">
-                  {stats.nextLevelXP - stats.currentXP} XP متبقية للمستوى التالي
+                {((stats.nextLevelXP ?? 0) - (stats.currentXP ?? 0))} XP متبقية للمستوى التالي
                 </p>
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold font-display">
-                  #{stats.monthlyRank}
+                  #{stats.monthlyRank??0}
                 </div>
                 <p className="text-white/80 text-sm font-primary">
                   ترتيبك الشهري
@@ -445,7 +424,7 @@ export function StudentDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
-              {stats.totalEnrolledCourses}
+              {stats.totalEnrolledCourses??0}
             </div>
             <p className="text-xs text-muted-foreground">
               {stats.completedCourses} مكتملة • {stats.inProgressCourses} قيد
@@ -461,7 +440,7 @@ export function StudentDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {stats.averageProgress.toFixed(1)}%
+              {(stats.averageProgress??0).toFixed(1)}%
             </div>
             <div className="w-full bg-muted rounded-full h-2 mt-2">
               <div
@@ -492,7 +471,7 @@ export function StudentDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">
-              {stats.certificatesEarned}
+              {stats.certificatesEarned??0}
             </div>
             <p className="text-xs text-muted-foreground">شهادة مكتسبة</p>
           </CardContent>

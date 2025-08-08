@@ -6,24 +6,120 @@ import { cn } from "@/lib/utils";
 
 export function HeroVisual() {
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden -z-10">
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
-        <div className="h-[40rem] w-[80rem] rounded-full bg-gradient-to-t from-primary/10 to-transparent blur-3xl" />
-      </div>
+    <div className="absolute inset-0 overflow-hidden -z-10">
+      {/* Main Background Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-secondary-50" />
+      
+      {/* Large Gradient Orbs */}
+      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-primary-200/30 to-primary-300/20 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-gradient-to-br from-secondary-200/30 to-secondary-300/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+      
+      {/* Animated Geometric Shapes */}
       <motion.div
-        className={cn(
-          "absolute -bottom-48 left-1/2 h-[50rem] w-[50rem] -translate-x-1/2 rounded-full border border-primary/20",
-          "bg-[radial-gradient(closest-side,rgba(255,255,255,0.05),transparent)]"
-        )}
+        className="absolute top-20 right-20 w-24 h-24 border-2 border-primary-300/20 rounded-2xl"
         animate={{
           rotate: 360,
+          scale: [1, 1.1, 1],
         }}
         transition={{
-          duration: 40,
+          rotate: { duration: 20, repeat: Infinity, ease: "linear" },
+          scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+        }}
+      />
+      
+      <motion.div
+        className="absolute bottom-32 right-32 w-16 h-16 bg-gradient-to-br from-secondary-300/30 to-secondary-400/20 rounded-full"
+        animate={{
+          y: [-20, 20, -20],
+          x: [-10, 10, -10],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+      
+      <motion.div
+        className="absolute top-1/3 left-20 w-32 h-32 border border-primary-200/30 rounded-full"
+        animate={{
+          scale: [1, 1.2, 1],
+          rotate: [0, 180, 360],
+        }}
+        transition={{
+          duration: 15,
           repeat: Infinity,
           ease: "linear",
         }}
       />
+      
+      {/* Floating Academic Icons */}
+      <motion.div
+        className="absolute top-40 left-1/3 w-12 h-12 bg-white/50 backdrop-blur-sm rounded-lg shadow-elevation-2 flex items-center justify-center"
+        animate={{
+          y: [-15, 15, -15],
+          rotate: [0, 5, 0, -5, 0],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        <span className="text-2xl">📚</span>
+      </motion.div>
+      
+      <motion.div
+        className="absolute bottom-40 right-1/3 w-12 h-12 bg-white/50 backdrop-blur-sm rounded-lg shadow-elevation-2 flex items-center justify-center"
+        animate={{
+          y: [15, -15, 15],
+          rotate: [0, -5, 0, 5, 0],
+        }}
+        transition={{
+          duration: 7,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1,
+        }}
+      >
+        <span className="text-2xl">🎓</span>
+      </motion.div>
+      
+      <motion.div
+        className="absolute top-2/3 left-1/4 w-12 h-12 bg-white/50 backdrop-blur-sm rounded-lg shadow-elevation-2 flex items-center justify-center"
+        animate={{
+          y: [-10, 20, -10],
+          x: [-5, 5, -5],
+        }}
+        transition={{
+          duration: 9,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2,
+        }}
+      >
+        <span className="text-2xl">⭐</span>
+      </motion.div>
+      
+      {/* Subtle Grid Pattern */}
+      <div className="absolute inset-0 opacity-[0.02]">
+        <div 
+          className="w-full h-full"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px',
+          }}
+        />
+      </div>
+      
+      {/* Radial Highlight */}
+      <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-white/20" />
+      
+      {/* Top Edge Gradient */}
+      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-white/50 to-transparent" />
     </div>
   );
 }
