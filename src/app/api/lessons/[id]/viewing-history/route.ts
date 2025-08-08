@@ -24,7 +24,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
     }
 
-    const { id: lessonId } = params;
+    const { id: lessonId } = await params;
 
     // Verify lesson exists and user has access
     const lesson = await prisma.lesson.findUnique({
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
     }
 
-    const { id: lessonId } = params;
+    const { id: lessonId } = await params;
     const body = await request.json();
 
     // Validate request body

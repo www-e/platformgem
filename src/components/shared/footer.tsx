@@ -45,7 +45,7 @@ export default function Footer() {
   const [isLoading, setIsLoading] = useState(false);
   const { shouldReduceMotion } = useOptimizedMotion();
 
-  // Social media links with follower counts (mock data)
+  // Social media links with current follower counts
   const socialLinks = [
     {
       name: "Facebook",
@@ -152,7 +152,7 @@ export default function Footer() {
                 transition={{ duration: 0.2 }}
               >
                 <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg font-display">م</span>
+                  <span className="text-black font-bold text-lg font-display">م</span>
                 </div>
                 <span className="text-xl font-bold text-neutral-900 font-display">منصة التعلم</span>
               </motion.div>
@@ -289,7 +289,7 @@ export default function Footer() {
                     <social.icon className="h-5 w-5" />
                     
                     {/* Follower count tooltip */}
-                    <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-neutral-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap font-primary">
+                    <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-neutral-900 text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap font-primary">
                       {social.followers}
                     </div>
                   </motion.a>
@@ -300,7 +300,7 @@ export default function Footer() {
             {/* Scroll to Top Button */}
             <motion.button
               onClick={scrollToTop}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-primary"
+              className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-black rounded-lg hover:bg-primary-600 transition-colors text-sm font-primary"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

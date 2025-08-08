@@ -191,7 +191,7 @@ export function AdminDashboard() {
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <AlertTriangle className="w-8 h-8 text-red-600" />
           </div>
-          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white font-display mb-2">
+          <h3 className="text-lg font-semibold text-neutral-900 dark:text-black font-display mb-2">
             خطأ في تحميل البيانات
           </h3>
           <p className="text-neutral-600 dark:text-neutral-400 font-primary mb-4">
@@ -213,7 +213,7 @@ export function AdminDashboard() {
         <FadeInScroll>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-neutral-900 dark:text-white font-display">
+              <h1 className="text-3xl font-bold text-neutral-900 dark:text-black font-display">
                 لوحة التحكم الإدارية
               </h1>
               <div className="flex items-center gap-4 mt-2">
@@ -290,7 +290,7 @@ export function AdminDashboard() {
               className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4 border"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-neutral-900 dark:text-white font-display">
+                <h3 className="font-semibold text-neutral-900 dark:text-black font-display">
                   تخصيص الويدجت
                 </h3>
                 <Button variant="ghost" size="sm" onClick={() => setIsCustomizing(false)}>
@@ -317,7 +317,7 @@ export function AdminDashboard() {
         {/* Real-time Metrics Bar */}
         <FadeInScroll>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
+            <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-black border-0">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -331,7 +331,7 @@ export function AdminDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0">
+            <Card className="bg-gradient-to-r from-green-500 to-green-600 text-black border-0">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -345,7 +345,7 @@ export function AdminDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0">
+            <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-black border-0">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -359,7 +359,7 @@ export function AdminDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0">
+            <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-black border-0">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -395,7 +395,7 @@ export function AdminDashboard() {
                     {widget.id === 'revenue' && <DollarSign className="h-4 w-4 text-neutral-500" />}
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-neutral-900 dark:text-white font-display">
+                    <div className="text-2xl font-bold text-neutral-900 dark:text-black font-display">
                       {widget.id === 'users' && stats.totalUsers}
                       {widget.id === 'courses' && stats.totalCourses}
                       {widget.id === 'revenue' && new Intl.NumberFormat('ar-EG', {
@@ -429,7 +429,7 @@ export function AdminDashboard() {
                 <UserCheck className="h-4 w-4 text-neutral-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-neutral-900 dark:text-white font-display">
+                <div className="text-2xl font-bold text-neutral-900 dark:text-black font-display">
                   {stats.totalEnrollments}
                 </div>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400 font-primary mt-1">
@@ -445,7 +445,7 @@ export function AdminDashboard() {
           <FadeInScroll>
             <Card className="dark:bg-neutral-800 dark:border-neutral-700">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-neutral-900 dark:text-white font-display">
+                <CardTitle className="flex items-center gap-2 text-neutral-900 dark:text-black font-display">
                   <Shield className="w-5 h-5 text-green-600" />
                   حالة النظام
                 </CardTitle>
@@ -457,7 +457,7 @@ export function AdminDashboard() {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <Database className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
-                        <span className="text-sm font-medium text-neutral-900 dark:text-white font-primary">
+                        <span className="text-sm font-medium text-neutral-900 dark:text-black font-primary">
                           قاعدة البيانات
                         </span>
                       </div>
@@ -476,7 +476,7 @@ export function AdminDashboard() {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <Server className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
-                        <span className="text-sm font-medium text-neutral-900 dark:text-white font-primary">
+                        <span className="text-sm font-medium text-neutral-900 dark:text-black font-primary">
                           الخادم
                         </span>
                       </div>
@@ -495,7 +495,7 @@ export function AdminDashboard() {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <HardDrive className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
-                        <span className="text-sm font-medium text-neutral-900 dark:text-white font-primary">
+                        <span className="text-sm font-medium text-neutral-900 dark:text-black font-primary">
                           التخزين
                         </span>
                       </div>
@@ -514,7 +514,7 @@ export function AdminDashboard() {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <Wifi className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
-                        <span className="text-sm font-medium text-neutral-900 dark:text-white font-primary">
+                        <span className="text-sm font-medium text-neutral-900 dark:text-black font-primary">
                           الشبكة
                         </span>
                       </div>

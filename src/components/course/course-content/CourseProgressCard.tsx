@@ -150,7 +150,7 @@ export function CourseProgressCard({
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg text-white text-center"
+            className="p-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg text-black text-center"
           >
             <CheckCircle className="w-8 h-8 mx-auto mb-2" />
             <h3 className="font-bold mb-1">تهانينا! 🎉</h3>

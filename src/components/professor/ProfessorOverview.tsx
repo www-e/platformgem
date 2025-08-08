@@ -188,7 +188,7 @@ export function ProfessorOverview({ stats }: ProfessorOverviewProps) {
             <div className="space-y-4">
               {stats.topCourses.slice(0, 3).map((course, index) => (
                 <div key={course.id} className="flex items-start gap-3 p-3 border rounded-lg">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center text-white font-bold text-sm">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center text-black font-bold text-sm">
                     #{index + 1}
                   </div>
                   <div className="flex-1 min-w-0">

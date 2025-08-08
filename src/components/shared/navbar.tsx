@@ -184,7 +184,7 @@ export function Navbar() {
                   >
                     {/* User Avatar & Logout */}
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                      <div className="w-8 h-8 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-black text-sm font-semibold">
                         {session?.user?.name?.charAt(0) || "U"}
                       </div>
                       <Button variant="ghost" size="sm" onClick={handleLogout}>

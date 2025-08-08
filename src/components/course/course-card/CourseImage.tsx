@@ -68,7 +68,7 @@ export function CourseImage({ course, viewMode, isEnrolled, imageSizes }: Course
 
       {/* Category Badge */}
       <div className="absolute top-4 left-4">
-        <Badge variant="outline" className="bg-primary/90 text-white border-white/20">
+        <Badge variant="outline" className="bg-primary/90 text-black border-white/20">
           {course.category.name}
         </Badge>
       </div>
@@ -76,7 +76,7 @@ export function CourseImage({ course, viewMode, isEnrolled, imageSizes }: Course
       {/* Enrollment Status */}
       {isEnrolled && (
         <div className="absolute bottom-4 left-4">
-          <Badge className="bg-green-500/90 text-white">
+          <Badge className="bg-green-500/90 text-black">
             <CheckCircle className="w-3 h-3 mr-1" />
             مسجل
           </Badge>

@@ -130,7 +130,7 @@ export function VideoPlayer({
             variant="ghost"
             size="icon"
             onClick={togglePlay}
-            className="w-16 h-16 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border-0"
+            className="w-16 h-16 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-black border-0"
           >
             {isPlaying ? (
               <Pause className="w-8 h-8" />
@@ -148,7 +148,7 @@ export function VideoPlayer({
               value={(currentTime / duration) * 100}
               className="h-1 bg-white/20"
             />
-            <div className="flex justify-between text-xs text-white/80">
+            <div className="flex justify-between text-xs text-black/80">
               <span>{formatTime(currentTime)}</span>
               <span>{formatTime(duration)}</span>
             </div>
@@ -161,7 +161,7 @@ export function VideoPlayer({
                 variant="ghost"
                 size="sm"
                 onClick={skipBackward}
-                className="text-white hover:bg-white/20 border-0"
+                className="text-black hover:bg-white/20 border-0"
               >
                 <SkipBack className="w-4 h-4" />
               </Button>
@@ -170,7 +170,7 @@ export function VideoPlayer({
                 variant="ghost"
                 size="sm"
                 onClick={togglePlay}
-                className="text-white hover:bg-white/20 border-0"
+                className="text-black hover:bg-white/20 border-0"
               >
                 {isPlaying ? (
                   <Pause className="w-4 h-4" />
@@ -183,7 +183,7 @@ export function VideoPlayer({
                 variant="ghost"
                 size="sm"
                 onClick={skipForward}
-                className="text-white hover:bg-white/20 border-0"
+                className="text-black hover:bg-white/20 border-0"
               >
                 <SkipForward className="w-4 h-4" />
               </Button>
@@ -192,7 +192,7 @@ export function VideoPlayer({
                 variant="ghost"
                 size="sm"
                 onClick={toggleMute}
-                className="text-white hover:bg-white/20 border-0"
+                className="text-black hover:bg-white/20 border-0"
               >
                 {isMuted ? (
                   <VolumeX className="w-4 h-4" />
@@ -206,7 +206,7 @@ export function VideoPlayer({
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/20 border-0"
+                className="text-black hover:bg-white/20 border-0"
               >
                 <RotateCcw className="w-4 h-4" />
               </Button>
@@ -214,7 +214,7 @@ export function VideoPlayer({
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/20 border-0"
+                className="text-black hover:bg-white/20 border-0"
               >
                 <Settings className="w-4 h-4" />
               </Button>
@@ -222,7 +222,7 @@ export function VideoPlayer({
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/20 border-0"
+                className="text-black hover:bg-white/20 border-0"
               >
                 <Maximize className="w-4 h-4" />
               </Button>

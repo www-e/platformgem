@@ -192,7 +192,7 @@ export function CertificateGenerator({
       {/* Header */}
       <FadeInScroll>
         <Card className="overflow-hidden border-0 shadow-elevation-3">
-          <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 p-6 text-white relative">
+          <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 p-6 text-black relative">
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-20">
               <div className="absolute top-4 right-4 w-20 h-20 border-2 border-white rounded-full" />
@@ -206,7 +206,7 @@ export function CertificateGenerator({
                   <h2 className="text-3xl font-bold mb-2 font-display leading-arabic-tight">
                     🎉 تهانينا!
                   </h2>
-                  <p className="text-white/90 text-lg font-primary">
+                  <p className="text-black/90 text-lg font-primary">
                     لقد أكملت الدورة بنجاح واستحققت الشهادة
                   </p>
                 </div>
@@ -214,7 +214,7 @@ export function CertificateGenerator({
                   <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mb-2 backdrop-blur-sm">
                     <Award className="w-10 h-10" />
                   </div>
-                  <p className="text-sm text-white/80 font-primary">شهادة معتمدة</p>
+                  <p className="text-sm text-black/80 font-primary">شهادة معتمدة</p>
                 </div>
               </div>
             </div>
@@ -247,7 +247,7 @@ export function CertificateGenerator({
               >
                 {template.premium && (
                   <div className="absolute top-2 right-2">
-                    <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs">
+                    <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs">
                       <Crown className="w-3 h-3 ml-1" />
                       بريميوم
                     </Badge>
@@ -323,7 +323,7 @@ export function CertificateGenerator({
                         className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
                         style={{ backgroundColor: selectedTemplateData.colors.primary }}
                       >
-                        <Award className="w-8 h-8 text-white" />
+                        <Award className="w-8 h-8 text-black" />
                       </div>
                       <h1 
                         className="text-3xl font-bold font-display mb-2"
@@ -539,7 +539,7 @@ export function CertificateGenerator({
             >
               <div className="text-center mb-6">
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Share2 className="w-8 h-8 text-white" />
+                  <Share2 className="w-8 h-8 text-black" />
                 </div>
                 <h3 className="text-xl font-bold text-neutral-900 font-display mb-2">
                   شارك إنجازك
@@ -558,7 +558,7 @@ export function CertificateGenerator({
                     className="flex items-center gap-2 p-4 h-auto"
                   >
                     <div className={cn("w-8 h-8 rounded-full flex items-center justify-center", platform.color)}>
-                      <platform.icon className="w-4 h-4 text-white" />
+                      <platform.icon className="w-4 h-4 text-black" />
                     </div>
                     <span className="font-primary">{platform.name}</span>
                   </Button>

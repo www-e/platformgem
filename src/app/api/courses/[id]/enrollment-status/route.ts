@@ -10,7 +10,7 @@ interface RouteParams {
 // GET /api/courses/[id]/enrollment-status - Get enrollment status
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id: courseId } = params;
+    const { id: courseId } = await params;
     const session = await auth();
 
     if (!session?.user) {

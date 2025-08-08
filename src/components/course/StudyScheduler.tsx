@@ -242,13 +242,13 @@ export function StudyScheduler({
       {/* Header */}
       <FadeInScroll>
         <Card className="overflow-hidden border-0 shadow-elevation-2">
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-black">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold mb-2 font-display leading-arabic-tight">
                   مخطط الدراسة الذكي
                 </h2>
-                <p className="text-white/90 font-primary">
+                <p className="text-black/90 font-primary">
                   نظم وقتك وحقق أهدافك التعليمية بكفاءة
                 </p>
               </div>
@@ -256,7 +256,7 @@ export function StudyScheduler({
                 <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-2">
                   <Calendar className="w-8 h-8" />
                 </div>
-                <p className="text-sm text-white/80 font-primary">
+                <p className="text-sm text-black/80 font-primary">
                   {currentSchedule?.active ? "نشط" : "غير نشط"}
                 </p>
               </div>
@@ -565,7 +565,7 @@ export function StudyScheduler({
                             className={cn(
                               "w-10 h-10 rounded-full flex items-center justify-center",
                               reminder.completed
-                                ? "bg-success text-white"
+                                ? "bg-success text-black"
                                 : "bg-white"
                             )}
                           >

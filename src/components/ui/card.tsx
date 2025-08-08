@@ -121,7 +121,7 @@ const CardTitle = React.forwardRef<
     ref={ref}
     data-slot="card-title"
     className={cn(
-      "text-xl font-semibold leading-arabic-tight tracking-tight text-neutral-900 dark:text-white font-display", 
+      "text-xl font-semibold leading-arabic-tight tracking-tight text-neutral-900 dark:text-black font-display", 
       className
     )}
     {...props}

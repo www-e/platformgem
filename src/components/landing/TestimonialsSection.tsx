@@ -75,7 +75,7 @@ const TestimonialCard = ({
     <div className="relative z-10">
       <div className="flex items-start justify-between mb-6">
         <div className="w-12 h-12 bg-gradient-to-br from-primary-400 to-primary-500 rounded-2xl flex items-center justify-center shadow-elevation-2 group-hover:shadow-elevation-3 transition-all duration-300">
-          <Quote className="w-6 h-6 text-white" />
+          <Quote className="w-6 h-6 text-black" />
         </div>
         
         {testimonial.achievement && (

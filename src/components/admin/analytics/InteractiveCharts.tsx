@@ -87,7 +87,7 @@ export function InteractiveCharts({
     if (active && payload && payload.length) {
       return (
         <div className="bg-white dark:bg-neutral-800 p-3 border rounded-lg shadow-lg">
-          <p className="font-semibold text-neutral-900 dark:text-white font-display mb-2">
+          <p className="font-semibold text-neutral-900 dark:text-black font-display mb-2">
             {label}
           </p>
           {payload.map((entry: any, index: number) => (
@@ -99,7 +99,7 @@ export function InteractiveCharts({
               <span className="font-primary text-neutral-600 dark:text-neutral-400">
                 {entry.name}: 
               </span>
-              <span className="font-semibold font-primary text-neutral-900 dark:text-white">
+              <span className="font-semibold font-primary text-neutral-900 dark:text-black">
                 {entry.name === 'الإيرادات' ? formatCurrency(entry.value) : formatNumber(entry.value)}
               </span>
             </div>

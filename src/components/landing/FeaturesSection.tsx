@@ -42,10 +42,10 @@ const BentoFeatureCard = ({
         <div className="flex items-center gap-3">
           <div className={cn(
             "w-12 h-12 rounded-xl flex items-center justify-center shadow-elevation-2 group-hover:shadow-elevation-3 transition-all duration-300",
-            accentColor === "primary" && "bg-gradient-to-br from-primary-400 to-primary-500 text-white",
-            accentColor === "secondary" && "bg-gradient-to-br from-secondary-400 to-secondary-500 text-white",
-            accentColor === "success" && "bg-gradient-to-br from-emerald-400 to-emerald-500 text-white",
-            accentColor === "warning" && "bg-gradient-to-br from-amber-400 to-amber-500 text-white"
+            accentColor === "primary" && "bg-gradient-to-br from-primary-400 to-primary-500 text-black",
+            accentColor === "secondary" && "bg-gradient-to-br from-secondary-400 to-secondary-500 text-black",
+            accentColor === "success" && "bg-gradient-to-br from-emerald-400 to-emerald-500 text-black",
+            accentColor === "warning" && "bg-gradient-to-br from-amber-400 to-amber-500 text-black"
           )}>
             <Icon className="w-6 h-6" />
           </div>
@@ -149,7 +149,7 @@ export default function FeaturesSection() {
             accentColor="secondary"
           >
             <div className="flex items-center justify-center mt-4 p-3 bg-neutral-800 rounded-lg">
-              <Video className="w-8 h-8 text-white/60" />
+              <Video className="w-8 h-8 text-black/60" />
             </div>
           </BentoFeatureCard>
 
@@ -183,7 +183,7 @@ export default function FeaturesSection() {
           >
             <div className="mt-6 space-y-4">
               <div className="flex items-start gap-3 p-3 bg-emerald-50/50 rounded-lg border border-emerald-100">
-                <div className="w-8 h-8 bg-emerald-400 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                <div className="w-8 h-8 bg-emerald-400 rounded-full flex items-center justify-center text-black text-sm font-bold">
                   م
                 </div>
                 <div className="flex-1">
@@ -207,7 +207,7 @@ export default function FeaturesSection() {
           >
             <div className="mt-4 flex justify-center">
               <div className="w-16 h-12 bg-gradient-to-br from-amber-400 to-amber-500 rounded-lg flex items-center justify-center">
-                <Award className="w-8 h-8 text-white" />
+                <Award className="w-8 h-8 text-black" />
               </div>
             </div>
           </BentoFeatureCard>

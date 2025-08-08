@@ -42,16 +42,17 @@ interface CoursesPageProps {
 
 export default async function CoursesPage({ searchParams }: CoursesPageProps) {
   const session = await auth();
+  const resolvedSearchParams = await searchParams;
   
   // Parse search parameters
   const filters = {
-    page: parseInt(searchParams.page || '1'),
-    category: searchParams.category,
-    search: searchParams.search,
-    priceRange: searchParams.priceRange,
-    level: searchParams.level,
-    sort: searchParams.sort || 'newest',
-    limit: parseInt(searchParams.limit || '12'),
+    page: parseInt(resolvedSearchParams.page || '1'),
+    category: resolvedSearchParams.category,
+    search: resolvedSearchParams.search,
+    priceRange: resolvedSearchParams.priceRange,
+    level: resolvedSearchParams.level,
+    sort: resolvedSearchParams.sort || 'newest',
+    limit: parseInt(resolvedSearchParams.limit || '12'),
   };
 
   return (

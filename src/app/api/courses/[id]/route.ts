@@ -24,7 +24,7 @@ interface RouteParams {
 // GET /api/courses/[id] - Get single course with details
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const session = await auth();
     const { searchParams } = new URL(request.url);
     const includeUnpublished = searchParams.get('includeUnpublished') === 'true';
@@ -146,7 +146,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Check if course exists and user can edit it
     const existingCourse = await prisma.course.findUnique({
@@ -283,7 +283,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Check if course exists and user can delete it
     const existingCourse = await prisma.course.findUnique({

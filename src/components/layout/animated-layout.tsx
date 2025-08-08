@@ -132,7 +132,7 @@ export const PerformanceMonitor: React.FC = () => {
   if (process.env.NODE_ENV !== 'development') return null
   
   return (
-    <div className="fixed bottom-4 left-4 bg-black/80 text-white p-2 rounded text-xs font-mono z-50">
+    <div className="fixed bottom-4 left-4 bg-black/80 text-black p-2 rounded text-xs font-mono z-50">
       <div>LCP: {metrics.lcp.toFixed(0)}ms</div>
       <div>FID: {metrics.fid.toFixed(0)}ms</div>
       <div>CLS: {metrics.cls.toFixed(3)}</div>

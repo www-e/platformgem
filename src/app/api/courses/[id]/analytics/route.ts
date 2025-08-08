@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'غير مصرح' }, { status: 401 });
     }
 
-    const { id: courseId } = params;
+    const { id: courseId } = await params;
 
     // Get course and verify access
     const course = await prisma.course.findUnique({

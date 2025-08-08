@@ -95,13 +95,13 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
       {/* Enhanced Progress Card */}
       <FadeInScroll>
         <Card className="overflow-hidden border-0 shadow-elevation-2">
-          <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-6 text-white">
+          <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-6 text-black">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-2xl font-bold font-display leading-arabic-tight">
                   {course.title}
                 </h2>
-                <p className="text-white/80 font-primary">
+                <p className="text-black/80 font-primary">
                   {course.description}
                 </p>
               </div>
@@ -109,7 +109,7 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
                 <div className="text-3xl font-bold font-display">
                   {Math.round(overallProgress)}%
                 </div>
-                <p className="text-white/80 text-sm font-primary">مكتمل</p>
+                <p className="text-black/80 text-sm font-primary">مكتمل</p>
               </div>
             </div>
 
@@ -120,7 +120,7 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
                 <div className="text-xl font-bold font-display">
                   {completedCount}
                 </div>
-                <p className="text-white/80 text-sm font-primary">
+                <p className="text-black/80 text-sm font-primary">
                   دروس مكتملة
                 </p>
               </div>
@@ -128,7 +128,7 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
                 <div className="text-xl font-bold font-display">
                   {lessons.length}
                 </div>
-                <p className="text-white/80 text-sm font-primary">
+                <p className="text-black/80 text-sm font-primary">
                   إجمالي الدروس
                 </p>
               </div>
@@ -136,7 +136,7 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
                 <div className="text-xl font-bold font-display">
                   {Math.round(totalWatchedTime / 60)}
                 </div>
-                <p className="text-white/80 text-sm font-primary">
+                <p className="text-black/80 text-sm font-primary">
                   دقيقة مشاهدة
                 </p>
               </div>
@@ -227,9 +227,9 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
                               className={cn(
                                 "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold",
                                 completedLessons.has(lesson.id)
-                                  ? "bg-success text-white"
+                                  ? "bg-success text-black"
                                   : selectedLesson?.id === lesson.id
-                                  ? "bg-primary-500 text-white"
+                                  ? "bg-primary-500 text-black"
                                   : "bg-neutral-200 text-neutral-600"
                               )}
                             >

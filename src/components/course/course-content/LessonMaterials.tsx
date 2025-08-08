@@ -118,7 +118,7 @@ export function LessonMaterials({ materials, className }: LessonMaterialsProps) 
                   </div>
                   
                   <div className="flex-1">
-                    <h4 className="font-medium text-sm text-neutral-900 dark:text-white">
+                    <h4 className="font-medium text-sm text-neutral-900 dark:text-black">
                       {material.title}
                     </h4>
                     <div className="flex items-center gap-2 mt-1">

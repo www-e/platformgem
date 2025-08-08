@@ -60,7 +60,7 @@ export function PlayerControls({
           step={0.1}
           className="w-full h-2 group"
         />
-        <div className="flex justify-between text-xs text-white/90 font-medium">
+        <div className="flex justify-between text-xs text-black/90 font-medium">
           <span>{formatTime(currentTime)}</span>
           <span>{formatTime(duration)}</span>
         </div>
@@ -70,17 +70,17 @@ export function PlayerControls({
       <div className="flex items-center justify-between">
         {/* Left Controls */}
         <div className="flex items-center gap-1 md:gap-2">
-          <Button variant="ghost" size="icon" onClick={togglePlay} className="text-white">
+          <Button variant="ghost" size="icon" onClick={togglePlay} className="text-black">
             {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => skipTime(-10)} className="text-white">
+          <Button variant="ghost" size="icon" onClick={() => skipTime(-10)} className="text-black">
             <RotateCcw className="w-5 h-5" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => skipTime(10)} className="text-white">
+          <Button variant="ghost" size="icon" onClick={() => skipTime(10)} className="text-black">
             <RotateCw className="w-5 h-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={toggleMute} className="text-white">
+            <Button variant="ghost" size="icon" onClick={toggleMute} className="text-black">
               {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
             </Button>
             <Slider
@@ -97,7 +97,7 @@ export function PlayerControls({
           <select
             value={playbackRate}
             onChange={(e) => changePlaybackRate(Number(e.target.value))}
-            className="bg-transparent text-white text-sm rounded px-2 py-1 border-none outline-none hover:bg-white/20"
+            className="bg-transparent text-black text-sm rounded px-2 py-1 border-none outline-none hover:bg-white/20"
           >
             <option value={0.75}>0.75x</option>
             <option value={1}>1x</option>
@@ -105,7 +105,7 @@ export function PlayerControls({
             <option value={1.5}>1.5x</option>
             <option value={2}>2x</option>
           </select>
-          <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="text-white">
+          <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="text-black">
             <Maximize className="w-5 h-5" />
           </Button>
         </div>

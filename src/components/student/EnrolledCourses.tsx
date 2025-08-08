@@ -191,7 +191,7 @@ export function EnrolledCourses() {
               )}
 
               {/* Progress Overlay */}
-              <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-2">
+              <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-black p-2">
                 <div className="flex items-center justify-between text-sm mb-1">
                   <span>{course.progress.toFixed(0)}% مكتمل</span>
                   <span>{course.completedLessons}/{course.totalLessons} دروس</span>

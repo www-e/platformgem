@@ -21,6 +21,9 @@ import {
  */
 export async function authenticate(): Promise<string> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
     const response = await fetch(`${paymobConfig.baseUrl}/auth/tokens`, {
       method: "POST",
       headers: {
@@ -29,7 +32,10 @@ export async function authenticate(): Promise<string> {
       body: JSON.stringify({
         api_key: paymobConfig.apiKey,
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`PayMob authentication failed: ${response.statusText}`);
@@ -39,6 +45,11 @@ export async function authenticate(): Promise<string> {
     return data.token;
   } catch (error) {
     console.error("PayMob authentication error:", error);
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error(
+        "انتهت مهلة الاتصال بنظام الدفع. يرجى المحاولة مرة أخرى."
+      );
+    }
     throw new Error("فشل في الاتصال بنظام الدفع");
   }
 }
@@ -54,6 +65,9 @@ export async function createOrder(
   orderData: PayMobOrderRequest
 ): Promise<PayMobOrderResponse> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
     const response = await fetch(`${paymobConfig.baseUrl}/ecommerce/orders`, {
       method: "POST",
       headers: {
@@ -64,7 +78,10 @@ export async function createOrder(
         delivery_needed: false, // Assuming this is always false for digital goods
         ...orderData,
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorBody = await response.text();
@@ -76,6 +93,9 @@ export async function createOrder(
     return data;
   } catch (error) {
     console.error("PayMob order creation error:", error);
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error("انتهت مهلة إنشاء طلب الدفع. يرجى المحاولة مرة أخرى.");
+    }
     throw new Error("فشل في إنشاء طلب الدفع");
   }
 }
@@ -94,15 +114,21 @@ export async function getPaymentKey(
   orderId: number,
   amountCents: number,
   billingData: PayMobBillingData,
-  paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card'
+  paymentMethod: "credit-card" | "e-wallet" = "credit-card"
 ): Promise<string> {
   try {
     // Select the appropriate integration ID based on payment method
-    const integrationId = paymentMethod === 'e-wallet' 
-      ? parseInt(paymobConfig.integrationIdMobileWallet)
-      : parseInt(paymobConfig.integrationIdOnlineCard);
+    const integrationId =
+      paymentMethod === "e-wallet"
+        ? parseInt(paymobConfig.integrationIdMobileWallet)
+        : parseInt(paymobConfig.integrationIdOnlineCard);
 
-    console.log(`Using integration ID ${integrationId} for payment method: ${paymentMethod}`);
+    console.log(
+      `Using integration ID ${integrationId} for payment method: ${paymentMethod}`
+    );
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
     const response = await fetch(
       `${paymobConfig.baseUrl}/acceptance/payment_keys`,
@@ -121,8 +147,11 @@ export async function getPaymentKey(
           integration_id: integrationId,
           lock_order_when_paid: true,
         }),
+        signal: controller.signal,
       }
     );
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorBody = await response.text();
@@ -136,6 +165,9 @@ export async function getPaymentKey(
     return data.token;
   } catch (error) {
     console.error("PayMob payment key error:", error);
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error("انتهت مهلة إنشاء مفتاح الدفع. يرجى المحاولة مرة أخرى.");
+    }
     throw new Error("فشل في إنشاء مفتاح الدفع");
   }
 }
@@ -162,7 +194,11 @@ export const payMobService = {
     const { processWebhook } = await import("./webhook.service");
     return processWebhook(webhookObject);
   },
-  async initiatePayment(orderData: any, courseId?: string, paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card') {
+  async initiatePayment(
+    orderData: any,
+    courseId?: string,
+    paymentMethod: "credit-card" | "e-wallet" = "credit-card"
+  ) {
     const { initiatePayment } = await import("./payment.service");
     return initiatePayment(orderData, courseId, paymentMethod);
   },

@@ -26,12 +26,11 @@ const config: Config = {
       },
     },
     extend: {
-      /* Premium Arabic Font Families */
+      /* Arabic Font Families */
       fontFamily: {
         primary: ['var(--font-primary)'],
         display: ['var(--font-display)'],
-        mono: ['var(--font-mono)'],
-        sans: ['var(--font-primary)'], // Override default sans
+        sans: ['var(--font-primary)'],
       },
       
       /* Enhanced Color System */
@@ -59,7 +58,7 @@ const config: Config = {
           foreground: "hsl(var(--primary-foreground))",
         },
         
-        /* Secondary Colors (Amber) */
+        /* Secondary Colors (Orange) */
         secondary: {
           50: "hsl(var(--secondary-50))",
           100: "hsl(var(--secondary-100))",
@@ -75,34 +74,7 @@ const config: Config = {
           foreground: "hsl(var(--secondary-foreground))",
         },
         
-        /* Semantic Colors */
-        success: {
-          light: "hsl(var(--success-light))",
-          DEFAULT: "hsl(var(--success))",
-          dark: "hsl(var(--success-dark))",
-        },
-        warning: {
-          light: "hsl(var(--warning-light))",
-          DEFAULT: "hsl(var(--warning))",
-          dark: "hsl(var(--warning-dark))",
-        },
-        error: {
-          light: "hsl(var(--error-light))",
-          DEFAULT: "hsl(var(--error))",
-          dark: "hsl(var(--error-dark))",
-        },
-        info: {
-          light: "hsl(var(--info-light))",
-          DEFAULT: "hsl(var(--info))",
-          dark: "hsl(var(--info-dark))",
-        },
-        
-        /* Glass Morphism Colors */
-        glass: {
-          light: "hsl(var(--glass-light))",
-          medium: "hsl(var(--glass-medium))",
-          dark: "hsl(var(--glass-dark))",
-        },
+
         
         /* Enhanced Neutral Grays */
         neutral: {
@@ -117,6 +89,24 @@ const config: Config = {
           800: "hsl(var(--neutral-800))",
           900: "hsl(var(--neutral-900))",
           950: "hsl(var(--neutral-950))",
+        },
+
+        /* Status Colors */
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          dark: "hsl(var(--info-dark))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          dark: "hsl(var(--success-dark))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          dark: "hsl(var(--warning-dark))",
+        },
+        error: {
+          DEFAULT: "hsl(var(--error))",
+          dark: "hsl(var(--error-dark))",
         },
         
         destructive: {
@@ -158,33 +148,13 @@ const config: Config = {
         "3xl": "calc(var(--radius) + 12px)",
       },
       
-      /* Arabic-optimized Line Heights */
+      /* Arabic Line Heights */
       lineHeight: {
         'arabic-tight': 'var(--leading-arabic-tight)',
         'arabic-normal': 'var(--leading-arabic-normal)',
         'arabic-relaxed': 'var(--leading-arabic-relaxed)',
-        'arabic-loose': 'var(--leading-arabic-loose)',
       },
-      
-      /* Enhanced Spacing System (4px base) */
-      spacing: {
-        '18': '4.5rem',
-        '88': '22rem',
-        '128': '32rem',
-        '144': '36rem',
-      },
-      
-      /* Modern Shadow System */
-      boxShadow: {
-        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
-        'glass-inset': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05)',
-        'elevation-1': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        'elevation-2': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-        'elevation-3': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        'elevation-4': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        'elevation-5': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-      },
-      /* Enhanced Animations */
+      /* Basic Animations */
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -194,76 +164,14 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        aurora: {
-          from: { backgroundPosition: "50% 50%, 50% 50%" },
-          to: { backgroundPosition: "350% 50%, 350% 50%" },
-        },
-        "fade-in": {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
-        },
-        "fade-in-up": {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-        "scale-in": {
-          "0%": { opacity: "0", transform: "scale(0.9)" },
-          "100%": { opacity: "1", transform: "scale(1)" },
-        },
-        "slide-in-right": {
-          "0%": { opacity: "0", transform: "translateX(10px)" },
-          "100%": { opacity: "1", transform: "translateX(0)" },
-        },
-        "shimmer": {
-          "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(100%)" },
-        },
-        "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 5px rgba(16, 185, 129, 0.5)" },
-          "50%": { boxShadow: "0 0 20px rgba(16, 185, 129, 0.8)" },
-        },
-        "float": {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-10px)" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        aurora: "aurora 60s linear infinite",
-        "fade-in": "fade-in 0.5s ease-out",
-        "fade-in-up": "fade-in-up 0.5s ease-out",
-        "scale-in": "scale-in 0.3s ease-out",
-        "slide-in-right": "slide-in-right 0.3s ease-out",
-        "shimmer": "shimmer 2s infinite",
-        "pulse-glow": "pulse-glow 2s infinite",
-        "float": "float 3s ease-in-out infinite",
-      },
-      
-      /* Backdrop Blur for Glass Morphism */
-      backdropBlur: {
-        xs: '2px',
-      },
-      
-      /* Container Query Support */
-      containers: {
-        xs: '20rem',
-        sm: '24rem',
-        md: '28rem',
-        lg: '32rem',
-        xl: '36rem',
-        '2xl': '42rem',
-        '3xl': '48rem',
-        '4xl': '56rem',
-        '5xl': '64rem',
-        '6xl': '72rem',
-        '7xl': '80rem',
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/container-queries'),
-  ],
+  plugins: [],
 };
 
 export default config;

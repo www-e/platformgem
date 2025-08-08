@@ -90,7 +90,7 @@ export function BunnyVideoPlayer({
   if (error) {
     return (
       <Card className={className}>
-        <CardContent className="aspect-video flex items-center justify-center bg-black text-white">
+        <CardContent className="aspect-video flex items-center justify-center bg-black text-black">
           <div className="text-center">
             <p className="text-xl mb-2">⚠️</p>
             <p className="font-semibold">حدث خطأ</p>

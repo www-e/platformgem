@@ -18,7 +18,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { videoId } = params;
+    const { videoId } = await params;
     const { lessonId } = await request.json();
 
     // Verify user has access to this video through lesson enrollment

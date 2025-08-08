@@ -146,7 +146,7 @@ export function PaymentResult({
           >
             <Card className="border-0 shadow-2xl overflow-hidden">
               {/* Success Header */}
-              <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-8 text-white text-center relative">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-8 text-black text-center relative">
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
@@ -169,7 +169,7 @@ export function PaymentResult({
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-white/90 text-lg font-primary"
+                  className="text-black/90 text-lg font-primary"
                 >
                   مرحباً بك في رحلة التعلم الجديدة
                 </motion.p>
@@ -345,7 +345,7 @@ export function PaymentResult({
               >
                 <div className="text-center mb-6">
                   <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Share2 className="w-8 h-8 text-white" />
+                    <Share2 className="w-8 h-8 text-black" />
                   </div>
                   <h3 className="text-xl font-bold text-neutral-900 font-display mb-2">
                     شارك إنجازك
@@ -369,7 +369,7 @@ export function PaymentResult({
                       className="flex items-center gap-2 p-4 h-auto"
                     >
                       <div className={cn("w-8 h-8 rounded-full flex items-center justify-center", platform.color)}>
-                        <platform.icon className="w-4 h-4 text-white" />
+                        <platform.icon className="w-4 h-4 text-black" />
                       </div>
                       <span className="font-primary">{platform.name}</span>
                     </Button>
@@ -412,7 +412,7 @@ export function PaymentResult({
         >
           <Card className="border-0 shadow-2xl overflow-hidden">
             {/* Error Header */}
-            <div className="bg-gradient-to-r from-red-500 to-pink-600 p-8 text-white text-center">
+            <div className="bg-gradient-to-r from-red-500 to-pink-600 p-8 text-black text-center">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -425,7 +425,7 @@ export function PaymentResult({
               <h1 className="text-3xl font-bold font-display mb-2">
                 فشل في عملية الدفع
               </h1>
-              <p className="text-white/90 text-lg font-primary">
+              <p className="text-black/90 text-lg font-primary">
                 لم نتمكن من إتمام عملية الدفع
               </p>
             </div>
@@ -532,7 +532,7 @@ export function PaymentResult({
         className="w-full max-w-2xl"
       >
         <Card className="border-0 shadow-2xl overflow-hidden">
-          <div className="bg-gradient-to-r from-yellow-500 to-orange-600 p-8 text-white text-center">
+          <div className="bg-gradient-to-r from-yellow-500 to-orange-600 p-8 text-black text-center">
             <motion.div
               className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm"
               animate={{ rotate: 360 }}
@@ -544,7 +544,7 @@ export function PaymentResult({
             <h1 className="text-3xl font-bold font-display mb-2">
               جاري معالجة الدفع
             </h1>
-            <p className="text-white/90 text-lg font-primary">
+            <p className="text-black/90 text-lg font-primary">
               يرجى الانتظار بينما نتحقق من عملية الدفع
             </p>
           </div>

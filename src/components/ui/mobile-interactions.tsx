@@ -380,8 +380,8 @@ export function TouchButton({
   );
 
   const variantClasses = {
-    primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500",
-    secondary: "bg-neutral-600 text-white hover:bg-neutral-700 focus:ring-neutral-500",
+    primary: "bg-primary-600 text-black hover:bg-primary-700 focus:ring-primary-500",
+    secondary: "bg-neutral-600 text-black hover:bg-neutral-700 focus:ring-neutral-500",
     outline: "border-2 border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-500",
     ghost: "text-primary-600 hover:bg-primary-50 focus:ring-primary-500"
   };

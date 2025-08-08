@@ -33,9 +33,9 @@ const StatCard = ({
   <div className="glass-medium rounded-2xl p-6 text-center border border-white/30 card-hover-effect group">
     <div className={cn(
       "w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center shadow-elevation-2 group-hover:shadow-elevation-3 transition-all duration-300",
-      accent === "primary" && "bg-gradient-to-br from-primary-400 to-primary-500 text-white",
-      accent === "secondary" && "bg-gradient-to-br from-secondary-400 to-secondary-500 text-white",
-      accent === "success" && "bg-gradient-to-br from-emerald-400 to-emerald-500 text-white"
+      accent === "primary" && "bg-gradient-to-br from-primary-400 to-primary-500 text-black",
+      accent === "secondary" && "bg-gradient-to-br from-secondary-400 to-secondary-500 text-black",
+      accent === "success" && "bg-gradient-to-br from-emerald-400 to-emerald-500 text-black"
     )}>
       <Icon className="w-6 h-6" />
     </div>
@@ -136,7 +136,7 @@ export default function InstructorSection() {
             <div className="space-y-6">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-primary-400 to-primary-600 rounded-2xl flex items-center justify-center shadow-elevation-3">
-                  <GraduationCap className="w-8 h-8 text-white" />
+                  <GraduationCap className="w-8 h-8 text-black" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-primary-700 font-display leading-arabic-tight">
@@ -186,7 +186,7 @@ export default function InstructorSection() {
             <div className="pt-6">
               <Button 
                 size="xl" 
-                className="h-14 px-10 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-bold rounded-xl shadow-elevation-3 hover:shadow-elevation-4 btn-hover-effect relative overflow-hidden group"
+                className="h-14 px-10 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-black font-bold rounded-xl shadow-elevation-3 hover:shadow-elevation-4 btn-hover-effect relative overflow-hidden group"
                 asChild
               >
                 <Link href="/courses">
@@ -277,7 +277,7 @@ export default function InstructorSection() {
               <Link href="/courses">
                 <Button 
                   size="xl" 
-                  className="min-w-[220px] h-14 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-bold rounded-xl shadow-elevation-3 hover:shadow-elevation-4 btn-hover-effect"
+                  className="min-w-[220px] h-14 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-black font-bold rounded-xl shadow-elevation-3 hover:shadow-elevation-4 btn-hover-effect"
                 >
                   <BookOpen className="w-5 h-5 mr-2" />
                   ابدأ دورتك الآن
@@ -286,9 +286,9 @@ export default function InstructorSection() {
               
               <div className="flex items-center gap-3 text-neutral-600">
                 <div className="flex -space-x-2">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full border-2 border-white flex items-center justify-center text-white text-sm font-bold">A</div>
-                  <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-500 rounded-full border-2 border-white flex items-center justify-center text-white text-sm font-bold">S</div>
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full border-2 border-white flex items-center justify-center text-white text-sm font-bold">M</div>
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full border-2 border-white flex items-center justify-center text-black text-sm font-bold">A</div>
+                  <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-500 rounded-full border-2 border-white flex items-center justify-center text-black text-sm font-bold">S</div>
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full border-2 border-white flex items-center justify-center text-black text-sm font-bold">M</div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium">طلاب متفوقون</p>

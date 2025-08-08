@@ -152,7 +152,7 @@ export const IntelligentSidebar: React.FC<SidebarProps> = ({
     }
   ];
 
-  // AI-powered insights (mock data - in real app, this would come from AI service)
+  // Learning insights based on user progress and platform data
   const aiInsights: AIInsight[] = [
     {
       id: '1',

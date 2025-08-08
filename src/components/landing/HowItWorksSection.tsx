@@ -110,8 +110,8 @@ const StepCard = ({
           <div className={cn(
             "w-16 h-16 rounded-2xl flex items-center justify-center shadow-elevation-2 transition-all duration-300",
             isActive 
-              ? `bg-gradient-to-br ${step.accentColor} text-white shadow-elevation-3` 
-              : "bg-neutral-100 text-neutral-600 group-hover:bg-gradient-to-br group-hover:from-primary-400 group-hover:to-primary-500 group-hover:text-white"
+              ? `bg-gradient-to-br ${step.accentColor} text-black shadow-elevation-3` 
+              : "bg-neutral-100 text-neutral-600 group-hover:bg-gradient-to-br group-hover:from-primary-400 group-hover:to-primary-500 group-hover:text-black"
           )}>
             <step.icon className="w-8 h-8" />
           </div>
@@ -263,7 +263,7 @@ export default function HowItWorksSection() {
               <Link href="/signup">
                 <Button 
                   size="xl" 
-                  className="h-14 px-10 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-bold rounded-xl shadow-elevation-3 hover:shadow-elevation-4 btn-hover-effect relative overflow-hidden group min-w-[220px]"
+                  className="h-14 px-10 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-black font-bold rounded-xl shadow-elevation-3 hover:shadow-elevation-4 btn-hover-effect relative overflow-hidden group min-w-[220px]"
                 >
                   <span className="flex items-center justify-center gap-3 relative z-10">
                     <span>ابدأ رحلتك الآن</span>
@@ -276,9 +276,9 @@ export default function HowItWorksSection() {
               
               <div className="flex items-center gap-3 text-neutral-600">
                 <div className="flex -space-x-2">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full border-2 border-white flex items-center justify-center text-white text-sm font-bold">A</div>
-                  <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-500 rounded-full border-2 border-white flex items-center justify-center text-white text-sm font-bold">S</div>
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full border-2 border-white flex items-center justify-center text-white text-sm font-bold">M</div>
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full border-2 border-white flex items-center justify-center text-black text-sm font-bold">A</div>
+                  <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-500 rounded-full border-2 border-white flex items-center justify-center text-black text-sm font-bold">S</div>
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full border-2 border-white flex items-center justify-center text-black text-sm font-bold">M</div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium">انضم إلى +500 طالب</p>

@@ -19,7 +19,7 @@ export async function POST(_request: NextRequest, { params }: RouteParams) {
       }, { status: 401 });
     }
 
-    const { id: courseId } = params;
+    const { id: courseId } = await params;
 
     const result = await enrollInFreeCourse(courseId, session.user.id);
 

@@ -54,6 +54,7 @@ export default function CourseCard({
   const { isLoading, userActions, handleEnroll } = useCourseCard(course, userRole, userId);
   const { shouldReduceMotion } = useOptimizedMotion();
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [showQuickPreview, setShowQuickPreview] = useState(false);
   
   // 3D tilt effect
@@ -155,7 +156,7 @@ export default function CourseCard({
                       {course.category.name}
                     </Badge>
                     {userActions.isEnrolled && (
-                      <Badge className="bg-success text-white text-xs">
+                      <Badge className="bg-success text-black text-xs">
                         <CheckCircle className="w-3 h-3 ml-1" />
                         مسجل
                       </Badge>
@@ -268,7 +269,7 @@ export default function CourseCard({
     );
   }
 
-  // Grid view with 3D tilt effect
+  // Grid view with modern 3D effects and enhanced styling
   return (
     <motion.div
       ref={cardRef}
@@ -280,22 +281,31 @@ export default function CourseCard({
       }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
       whileHover={shouldReduceMotion ? {} : { 
         scale: 1.02,
         transition: { duration: 0.3 }
       }}
     >
-      <Card className="overflow-hidden border-0 shadow-elevation-2 hover:shadow-elevation-5 transition-all duration-300 will-change-transform">
-        {/* Course Image */}
-        <div className="aspect-video relative overflow-hidden">
+      <Card className="overflow-hidden border-0 bg-gradient-to-br from-white to-neutral-50/50 shadow-elevation-2 hover:shadow-primary transition-all duration-500 will-change-transform backdrop-blur-sm">
+        {/* Enhanced Course Image with Modern Overlay */}
+        <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-primary-100 to-secondary-100">
           <Image
             src={course.thumbnailUrl}
             alt={course.title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          
+          {/* Modern Shimmer Effect */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"
+            animate={isHovered ? { translateX: "200%" } : { translateX: "-100%" }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+          />
           
           {/* Quick Actions Overlay */}
           <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -351,7 +361,7 @@ export default function CourseCard({
 
           {/* Category Badge */}
           <div className="absolute bottom-3 left-3">
-            <Badge variant="secondary" className="text-white border-white/20">
+            <Badge variant="secondary" className="text-black border-white/20">
               {course.category.name}
             </Badge>
           </div>
@@ -359,7 +369,7 @@ export default function CourseCard({
           {/* Enrollment Status */}
           {userActions.isEnrolled && (
             <div className="absolute bottom-3 right-3">
-              <Badge className="bg-success text-white shadow-elevation-2">
+              <Badge className="bg-success text-black shadow-elevation-2">
                 <CheckCircle className="w-3 h-3 ml-1" />
                 مسجل
               </Badge>

@@ -80,7 +80,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
 
           {/* Premium price badge */}
           <div className="absolute top-4 right-4">
-            <Badge className="bg-gradient-to-r from-secondary-400 to-secondary-500 text-white border-0 font-bold px-3 py-1 shadow-elevation-2">
+            <Badge className="bg-gradient-to-r from-secondary-400 to-secondary-500 text-black border-0 font-bold px-3 py-1 shadow-elevation-2">
               {formatCoursePrice(course.price, course.currency)}
             </Badge>
           </div>
@@ -88,7 +88,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
           {/* Play button overlay */}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
             <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
-              <Play className="w-8 h-8 text-white mr-1" fill="currentColor" />
+              <Play className="w-8 h-8 text-black mr-1" fill="currentColor" />
             </div>
           </div>
         </div>
@@ -101,7 +101,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
             {course.title}
           </h3>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary-400 to-primary-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary-400 to-primary-500 rounded-full flex items-center justify-center text-black text-sm font-bold">
               {course.professor.name.charAt(0)}
             </div>
             <p className="text-neutral-600 text-sm font-medium">
@@ -137,7 +137,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
 
         {/* Enhanced CTA button */}
         <Link href={`/courses/${course.id}`} className="block">
-          <Button className="w-full h-12 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-bold rounded-xl shadow-elevation-2 hover:shadow-elevation-3 btn-hover-effect relative overflow-hidden group/btn">
+          <Button className="w-full h-12 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-black font-bold rounded-xl shadow-elevation-2 hover:shadow-elevation-3 btn-hover-effect relative overflow-hidden group/btn">
             <span className="flex items-center justify-center gap-2 relative z-10">
               <span>استكشف الدورة</span>
               <ArrowLeft className="w-5 h-5 transition-transform group-hover/btn:-translate-x-1" />
@@ -215,7 +215,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
             <h2 className="text-4xl md:text-5xl font-bold font-display mb-6 leading-arabic-tight">
               <span className="text-neutral-800">ابدأ رحلتك التعليمية</span>
               <br />
-              <span className="bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 bg-clip-text text-transparent">
+              <span className="text-primary-600 font-bold">
                 مع أحدث دوراتنا
               </span>
             </h2>
@@ -264,7 +264,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/courses">
-                  <Button size="lg" className="min-w-[200px] h-12 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-bold rounded-xl shadow-elevation-2 hover:shadow-elevation-3 btn-hover-effect">
+                  <Button size="lg" className="min-w-[200px] h-12 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-black font-bold rounded-xl shadow-elevation-2 hover:shadow-elevation-3 btn-hover-effect">
                     <BookOpen className="w-5 h-5 mr-2" />
                     تصفح جميع الدورات
                   </Button>

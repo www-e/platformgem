@@ -22,7 +22,7 @@ export function TopEarningCourses({ courses }: TopEarningCoursesProps) {
           {courses.map((course, index) => (
             <div key={course.id} className="flex items-center justify-between p-4 border rounded-lg">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center text-white font-bold text-sm">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center text-black font-bold text-sm">
                   #{index + 1}
                 </div>
                 <div>

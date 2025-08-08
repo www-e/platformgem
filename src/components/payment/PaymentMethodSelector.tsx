@@ -106,7 +106,7 @@ export function PaymentMethodSelector({
                 whileTap={{ scale: 0.99 }}
               >
                 {method.popular && (
-                  <Badge className="absolute -top-3 right-6 bg-gradient-to-r from-orange-500 to-red-500 text-white">
+                  <Badge className="absolute -top-3 right-6 bg-gradient-to-r from-orange-500 to-red-500 text-black">
                     الأكثر استخداماً
                   </Badge>
                 )}
@@ -116,8 +116,8 @@ export function PaymentMethodSelector({
                     "p-4 rounded-xl transition-all duration-200",
                     isSelected 
                       ? method.color === 'blue' 
-                        ? "bg-blue-500 text-white" 
-                        : "bg-green-500 text-white"
+                        ? "bg-blue-500 text-black" 
+                        : "bg-green-500 text-black"
                       : method.color === 'blue'
                         ? "bg-blue-100 text-blue-600"
                         : "bg-green-100 text-green-600"
@@ -134,7 +134,7 @@ export function PaymentMethodSelector({
                           animate={{ scale: 1 }}
                           className="w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center"
                         >
-                          <CheckCircle className="w-4 h-4 text-white" />
+                          <CheckCircle className="w-4 h-4 text-black" />
                         </motion.div>
                       )}
                     </div>

@@ -1,0 +1,8 @@
+{
+    "servers": {
+      "platformgem Docs": {
+        "type": "sse",
+        "url": "https://gitmcp.io/www-e/platformgem"
+      }
+    }
+  }

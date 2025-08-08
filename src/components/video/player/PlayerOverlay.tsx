@@ -20,7 +20,7 @@ export function PlayerOverlay({
   if (isLoading) {
     return (
       <div className="absolute inset-0 flex items-center justify-center bg-black/50 pointer-events-none">
-        <Loader2 className="w-10 h-10 animate-spin text-white" />
+        <Loader2 className="w-10 h-10 animate-spin text-black" />
       </div>
     );
   }
@@ -31,7 +31,7 @@ export function PlayerOverlay({
         variant="ghost"
         size="lg"
         onClick={togglePlay}
-        className="w-20 h-20 rounded-full bg-black/50 hover:bg-black/70 text-white transition-opacity group-hover:opacity-100 opacity-0 focus:opacity-100"
+        className="w-20 h-20 rounded-full bg-black/50 hover:bg-black/70 text-black transition-opacity group-hover:opacity-100 opacity-0 focus:opacity-100"
       >
         {isPlaying ? (
           <Pause className="w-10 h-10" />

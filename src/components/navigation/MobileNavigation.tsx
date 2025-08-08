@@ -100,7 +100,7 @@ export function MobileNavigation({ user, notifications = 0 }: MobileNavigationPr
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
+              <Zap className="w-5 h-5 text-black" />
             </div>
             <span className="text-lg font-bold text-neutral-900 font-display">
               المنصة
@@ -200,7 +200,7 @@ export function MobileNavigation({ user, notifications = 0 }: MobileNavigationPr
                           className="w-full h-full rounded-full object-cover"
                         />
                       ) : (
-                        <User className="w-6 h-6 text-white" />
+                        <User className="w-6 h-6 text-black" />
                       )}
                     </div>
                     <div className="flex-1">

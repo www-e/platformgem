@@ -31,7 +31,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { id: courseId } = params;
+    const { id: courseId } = await params;
 
     // Check if course exists and is published
     const course = await prisma.course.findFirst({

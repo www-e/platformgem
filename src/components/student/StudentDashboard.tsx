@@ -8,9 +8,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import {
-  FadeInScroll,
-} from "@/components/ui/micro-interactions";
+import { FadeInScroll } from "@/components/ui/micro-interactions";
 import { useOptimizedMotion } from "@/hooks/useAnimations";
 import {
   BookOpen,
@@ -118,7 +116,6 @@ interface QuickAction {
   priority: number;
 }
 
-
 export function StudentDashboard() {
   const [stats, setStats] = useState<StudentStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -131,7 +128,7 @@ export function StudentDashboard() {
   const fetchStudentStats = useCallback(async () => {
     try {
       // Ensure we don't fetch if already loading
-      if(!isLoading) setIsLoading(true);
+      if (!isLoading) setIsLoading(true);
 
       const response = await fetch("/api/student/dashboard-stats");
       if (!response.ok) {
@@ -176,7 +173,7 @@ export function StudentDashboard() {
     const mins = minutes % 60;
     return hours > 0 ? `${hours}س ${mins}د` : `${mins}د`;
   };
-  
+
   const getRarityColor = (rarity: Achievement["rarity"]) => {
     switch (rarity) {
       case "common":
@@ -242,12 +239,12 @@ export function StudentDashboard() {
       </div>
     );
   }
-  
+
   // 3. Render content only if stats is not null
   if (!stats) return null; // Or a more specific error component
 
   // --- END OF THE FIX ---
-  
+
   return (
     <div className="space-y-8">
       {/* Level Up Animation */}
@@ -271,7 +268,7 @@ export function StudentDashboard() {
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
               >
-                <Crown className="w-10 h-10 text-white" />
+                <Crown className="w-10 h-10 text-black" />
               </motion.div>
               <h2 className="text-2xl font-bold text-neutral-900 font-display mb-2">
                 🎉 مستوى جديد!
@@ -292,7 +289,7 @@ export function StudentDashboard() {
         {newAchievements.map((achievement) => (
           <motion.div
             key={achievement.id}
-            className="fixed top-20 right-4 z-50 bg-gradient-to-r from-yellow-400 to-orange-500 text-white p-4 rounded-lg shadow-elevation-5 max-w-sm"
+            className="fixed top-20 right-4 z-50 bg-gradient-to-r from-yellow-400 to-orange-500 text-black p-4 rounded-lg shadow-elevation-5 max-w-sm"
             initial={{ opacity: 0, x: 300, scale: 0.8 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: 300, scale: 0.8 }}
@@ -322,7 +319,7 @@ export function StudentDashboard() {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-3 text-neutral-900 font-display">
               <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
-                <Zap className="w-6 h-6 text-white" />
+                <Zap className="w-6 h-6 text-black" />
               </div>
               لوحة تحكم الطالب
             </h1>
@@ -344,7 +341,7 @@ export function StudentDashboard() {
             <div className="text-center">
               <div className="relative">
                 <div className="w-16 h-16 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mb-2">
-                  <span className="text-xl font-bold text-white font-display">
+                  <span className="text-xl font-bold text-black font-display">
                     {stats.level}
                   </span>
                 </div>
@@ -381,21 +378,23 @@ export function StudentDashboard() {
       {/* XP Progress Bar */}
       <FadeInScroll>
         <Card className="overflow-hidden border-0 shadow-elevation-2">
-          <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-6 text-white">
+          <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-6 text-black">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-lg font-bold font-display">
-                  المستوى {stats.level??0} • {(stats.currentXP ?? 0).toLocaleString()} XP
+                  المستوى {stats.level ?? 0} •{" "}
+                  {(stats.currentXP ?? 0).toLocaleString()} XP
                 </h3>
-                <p className="text-white/80 font-primary">
-                {((stats.nextLevelXP ?? 0) - (stats.currentXP ?? 0))} XP متبقية للمستوى التالي
+                <p className="text-black/80 font-primary">
+                  {(stats.nextLevelXP ?? 0) - (stats.currentXP ?? 0)} XP متبقية
+                  للمستوى التالي
                 </p>
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold font-display">
-                  #{stats.monthlyRank??0}
+                  #{stats.monthlyRank ?? 0}
                 </div>
-                <p className="text-white/80 text-sm font-primary">
+                <p className="text-black/80 text-sm font-primary">
                   ترتيبك الشهري
                 </p>
               </div>
@@ -424,7 +423,7 @@ export function StudentDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
-              {stats.totalEnrolledCourses??0}
+              {stats.totalEnrolledCourses ?? 0}
             </div>
             <p className="text-xs text-muted-foreground">
               {stats.completedCourses} مكتملة • {stats.inProgressCourses} قيد
@@ -440,7 +439,7 @@ export function StudentDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {(stats.averageProgress??0).toFixed(1)}%
+              {(stats.averageProgress ?? 0).toFixed(1)}%
             </div>
             <div className="w-full bg-muted rounded-full h-2 mt-2">
               <div
@@ -471,7 +470,7 @@ export function StudentDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">
-              {stats.certificatesEarned??0}
+              {stats.certificatesEarned ?? 0}
             </div>
             <p className="text-xs text-muted-foreground">شهادة مكتسبة</p>
           </CardContent>

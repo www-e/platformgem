@@ -27,7 +27,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id: lessonId } = params;
+    const { id: lessonId } = await params;
     const body = await request.json();
 
     // Validate request body

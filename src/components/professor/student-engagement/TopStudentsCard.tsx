@@ -21,7 +21,7 @@ export function TopStudentsCard({ topStudents }: TopStudentsCardProps) {
         <div className="space-y-4">
           {topStudents.map((student, index) => (
             <div key={student.id} className="flex items-center gap-3 p-3 border rounded-lg">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-black font-bold text-sm">
                 #{index + 1}
               </div>
               <div className="flex-1">

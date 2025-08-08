@@ -290,7 +290,7 @@ export const FloatingAction: React.FC<FloatingActionProps> = ({
   return (
     <motion.button
       className={cn(
-        "fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-elevation-4 flex items-center justify-center will-change-transform transform-gpu z-50",
+        "fixed bottom-6 right-6 w-14 h-14 bg-primary text-black rounded-full shadow-elevation-4 flex items-center justify-center will-change-transform transform-gpu z-50",
         className
       )}
       whileHover={shouldReduceMotion ? {} : { 

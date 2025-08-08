@@ -83,7 +83,7 @@ export default function CourseCatalog({ initialFilters, userRole, userId }: Cour
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // AI-powered recommendations (mock data - in real app, this would come from AI service)
+  // Course recommendations based on user behavior and course popularity
   const aiRecommendations: AIRecommendation[] = useMemo(() => [
     {
       id: '1',

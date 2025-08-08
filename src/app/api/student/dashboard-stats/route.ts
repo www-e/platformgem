@@ -91,11 +91,47 @@ export async function GET(_request: NextRequest) {
 
     const averageProgress = totalEnrolledCourses > 0 ? totalProgress / totalEnrolledCourses : 0;
 
-    // Get certificates count (mock for now)
-    const certificatesEarned = completedCourses;
+    // Get actual certificates count from database
+    const certificatesEarned = await prisma.certificate.count({
+      where: { 
+        userId: studentId,
+        status: 'ACTIVE'
+      }
+    });
 
-    // Calculate current streak (mock implementation)
-    const currentStreak = Math.floor(Math.random() * 15) + 1; // 1-15 days
+    // Calculate current streak from viewing history
+    const recentViewingHistory = await prisma.viewingHistory.findMany({
+      where: { 
+        userId: studentId,
+        updatedAt: {
+          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // Last 30 days
+        }
+      },
+      orderBy: { updatedAt: 'desc' }
+    });
+    
+    // Calculate streak based on consecutive days of activity
+    let currentStreak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    for (let i = 0; i < 30; i++) {
+      const checkDate = new Date(today);
+      checkDate.setDate(checkDate.getDate() - i);
+      const nextDay = new Date(checkDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+      
+      const hasActivity = recentViewingHistory.some(vh => {
+        const viewDate = new Date(vh.updatedAt);
+        return viewDate >= checkDate && viewDate < nextDay;
+      });
+      
+      if (hasActivity) {
+        currentStreak++;
+      } else {
+        break;
+      }
+    }
 
     // Generate recent activity
     const recentActivity = [];
@@ -113,25 +149,52 @@ export async function GET(_request: NextRequest) {
       }
     }
 
-    // Generate achievements (mock)
-    const achievements = [
-      {
+    // Generate achievements based on actual progress
+    const achievements = [];
+    
+    // First lesson completion achievement
+    const firstCompletedLesson = await prisma.viewingHistory.findFirst({
+      where: { 
+        userId: studentId,
+        completed: true
+      },
+      orderBy: { updatedAt: 'asc' }
+    });
+    
+    if (firstCompletedLesson) {
+      achievements.push({
         id: '1',
         title: 'أول خطوة',
         description: 'أكملت أول درس لك',
         icon: '🎯',
-        earnedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        earnedAt: firstCompletedLesson.updatedAt,
         category: 'completion' as const
-      },
-      {
+      });
+    }
+    
+    // Streak achievement
+    if (currentStreak >= 5) {
+      achievements.push({
         id: '2',
         title: 'متعلم نشط',
-        description: 'تعلمت لمدة 5 أيام متتالية',
+        description: `تعلمت لمدة ${currentStreak} أيام متتالية`,
         icon: '🔥',
-        earnedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+        earnedAt: new Date(),
         category: 'streak' as const
-      }
-    ];
+      });
+    }
+    
+    // Course completion achievement
+    if (completedCourses > 0) {
+      achievements.push({
+        id: '3',
+        title: 'منجز الدورات',
+        description: `أكملت ${completedCourses} دورة`,
+        icon: '🏆',
+        earnedAt: new Date(),
+        category: 'completion' as const
+      });
+    }
 
     const stats = {
       totalEnrolledCourses,
@@ -143,7 +206,7 @@ export async function GET(_request: NextRequest) {
       totalSpent,
       currentStreak,
       recentActivity,
-      upcomingDeadlines: [], // Mock empty for now
+      upcomingDeadlines: [], // Will be populated when assignment system is implemented
       achievements
     };
 

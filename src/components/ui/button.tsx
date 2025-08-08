@@ -14,38 +14,38 @@ const buttonVariants = cva(
       variant: {
         // Primary variant with gradient and glow effect
         primary:
-          "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-elevation-2 hover:shadow-elevation-4 hover:from-primary-600 hover:to-primary-700 active:scale-95 hover:scale-[1.02] transform-gpu",
+          "bg-gradient-to-r from-primary-500 to-primary-600 text-black shadow-elevation-2 hover:shadow-elevation-4 hover:from-primary-600 hover:to-primary-700 active:scale-95 hover:scale-[1.02] transform-gpu",
 
         // Secondary variant with amber gradient
         secondary:
-          "bg-gradient-to-r from-secondary-500 to-secondary-600 text-white shadow-elevation-2 hover:shadow-elevation-4 hover:from-secondary-600 hover:to-secondary-700 active:scale-95 hover:scale-[1.02] transform-gpu",
+          "bg-gradient-to-r from-secondary-500 to-secondary-600 text-black shadow-elevation-2 hover:shadow-elevation-4 hover:from-secondary-600 hover:to-secondary-700 active:scale-95 hover:scale-[1.02] transform-gpu",
 
         // Outline variant with hover fill
         outline:
-          "border-2 border-primary-500 bg-transparent text-primary-600 shadow-sm hover:bg-primary-500 hover:text-white hover:shadow-elevation-3 active:scale-95 hover:scale-[1.02] transform-gpu",
+          "border-2 border-primary-500 bg-transparent text-primary-600 shadow-sm hover:bg-primary-500 hover:text-black hover:shadow-elevation-3 active:scale-95 hover:scale-[1.02] transform-gpu",
 
         // Ghost variant with subtle hover
         ghost:
-          "bg-transparent text-neutral-700 hover:bg-primary-50 hover:text-primary-700 active:scale-95 hover:scale-[1.02] transform-gpu",
+          "bg-transparent text-neutral-800 hover:bg-primary-100 hover:text-primary-800 active:scale-95 hover:scale-[1.02] transform-gpu",
 
         // Gradient variant with rainbow effect
         gradient:
-          "bg-gradient-to-r from-primary-500 via-info to-secondary-500 text-white shadow-elevation-3 hover:shadow-elevation-5 hover:from-primary-600 hover:via-info-dark hover:to-secondary-600 active:scale-95 hover:scale-[1.02] transform-gpu animate-pulse-glow",
+          "bg-gradient-to-r from-primary-500 via-blue-500 to-secondary-500 text-black shadow-elevation-3 hover:shadow-elevation-5 hover:from-primary-600 hover:via-blue-600 hover:to-secondary-600 active:scale-95 hover:scale-[1.02] transform-gpu animate-pulse-glow",
 
         // Glass morphism variant
         glass:
-          "bg-white/10 backdrop-blur-md border border-white/20 text-neutral-800 dark:text-white shadow-glass hover:bg-white/20 hover:shadow-elevation-4 active:scale-95 hover:scale-[1.02] transform-gpu",
+          "bg-white/10 backdrop-blur-md border border-white/20 text-neutral-800 dark:text-black shadow-glass hover:bg-white/20 hover:shadow-elevation-4 active:scale-95 hover:scale-[1.02] transform-gpu",
 
         // Neon variant with glow effect
-        neon: "bg-primary-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:shadow-[0_0_30px_rgba(16,185,129,0.8)] border border-primary-400 active:scale-95 hover:scale-[1.02] transform-gpu animate-pulse-glow",
+        neon: "bg-primary-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:shadow-[0_0_30px_rgba(16,185,129,0.8)] border border-primary-400 active:scale-95 hover:scale-[1.02] transform-gpu animate-pulse-glow",
 
         // Minimal variant
         minimal:
-          "bg-neutral-100 text-neutral-700 hover:bg-neutral-200 hover:text-neutral-800 active:scale-95 hover:scale-[1.02] transform-gpu",
+          "bg-neutral-200 text-neutral-800 hover:bg-neutral-300 hover:text-neutral-900 active:scale-95 hover:scale-[1.02] transform-gpu",
 
         // Destructive variant
         destructive:
-          "bg-gradient-to-r from-error to-error-dark text-white shadow-elevation-2 hover:shadow-elevation-4 hover:from-error-dark hover:to-error active:scale-95 hover:scale-[1.02] transform-gpu",
+          "bg-gradient-to-r from-red-500 to-red-600 text-black shadow-elevation-2 hover:shadow-elevation-4 hover:from-red-600 hover:to-red-700 active:scale-95 hover:scale-[1.02] transform-gpu",
 
         // Link variant
         link: "text-primary-600 underline-offset-4 hover:underline hover:text-primary-700 active:scale-95 transform-gpu",

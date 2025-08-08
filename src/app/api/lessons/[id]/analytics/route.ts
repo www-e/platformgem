@@ -14,7 +14,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id: lessonId } = params;
+    const { id: lessonId } = await params;
     const { searchParams } = new URL(request.url);
     const range = searchParams.get('range') || '7d';
 

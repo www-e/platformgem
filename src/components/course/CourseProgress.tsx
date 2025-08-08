@@ -195,7 +195,7 @@ export function CourseProgress({
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
               >
-                <Trophy className="w-10 h-10 text-white" />
+                <Trophy className="w-10 h-10 text-black" />
               </motion.div>
               <h2 className="text-2xl font-bold text-neutral-900 font-display mb-2">🎉 تهانينا!</h2>
               <p className="text-neutral-600 font-primary mb-4">لقد حققت إنجازاً جديداً في رحلتك التعليمية</p>
@@ -207,7 +207,7 @@ export function CourseProgress({
 
       <FadeInScroll>
         <Card className="overflow-hidden border-0 shadow-elevation-3">
-          <div className="bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-500 p-6 text-white relative">
+          <div className="bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-500 p-6 text-black relative">
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-4 right-4 w-16 h-16 border-2 border-white rounded-full" />
               <div className="absolute bottom-4 left-4 w-12 h-12 border-2 border-white rounded-full" />
@@ -218,7 +218,7 @@ export function CourseProgress({
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-2xl font-bold mb-2 font-display leading-arabic-tight">{courseName}</h2>
-                  <p className="text-white/90 font-primary">المستوى {level} • {currentXP.toLocaleString()} XP</p>
+                  <p className="text-black/90 font-primary">المستوى {level} • {currentXP.toLocaleString()} XP</p>
                 </div>
                 
                 <div className="text-center">
@@ -233,7 +233,7 @@ export function CourseProgress({
                       transition={{ duration: 2, ease: "easeInOut" }}
                     />
                   </div>
-                  <p className="text-xs text-white/80 font-primary">{xpToNext} XP للمستوى التالي</p>
+                  <p className="text-xs text-black/80 font-primary">{xpToNext} XP للمستوى التالي</p>
                 </div>
               </div>
               
@@ -256,7 +256,7 @@ export function CourseProgress({
                         <stat.icon className="w-5 h-5" />
                       </div>
                       <div className="text-lg font-bold font-display">{stat.value}</div>
-                      <p className="text-white/80 text-xs font-primary">{stat.label}</p>
+                      <p className="text-black/80 text-xs font-primary">{stat.label}</p>
                     </div>
                   ))}
                 </div>
@@ -441,7 +441,7 @@ export function CourseProgress({
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
                             <div className={cn("w-10 h-10 rounded-full flex items-center justify-center",
-                              goal.completed ? "bg-success text-white" : "bg-white")}>
+                              goal.completed ? "bg-success text-black" : "bg-white")}>
                               {goal.completed ? <CheckCircle className="w-5 h-5" /> : <Target className="w-5 h-5 text-neutral-600" />}
                             </div>
                             <div>
@@ -502,7 +502,7 @@ export function CourseProgress({
                       {idx < learningPath.length - 1 && <div className="absolute left-8 top-16 w-0.5 h-8 bg-neutral-200" />}
                       
                       <div className={cn("w-12 h-12 rounded-full flex items-center justify-center relative z-10",
-                        node.completed ? "bg-success text-white" : node.locked ? "bg-neutral-200 text-neutral-400" : "bg-primary-500 text-white")}>
+                        node.completed ? "bg-success text-black" : node.locked ? "bg-neutral-200 text-neutral-400" : "bg-primary-500 text-black")}>
                         {node.completed ? <CheckCircle className="w-6 h-6" /> : 
                          node.type === 'lesson' ? <Play className="w-6 h-6" /> : 
                          node.type === 'quiz' ? <Brain className="w-6 h-6" /> : 

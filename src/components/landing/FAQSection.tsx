@@ -135,7 +135,7 @@ export default function FAQSection() {
             className={cn(
               "px-6 py-3 rounded-xl font-medium transition-all duration-300 btn-hover-effect",
               selectedCategory === "all"
-                ? "bg-primary-500 text-white shadow-elevation-3"
+                ? "bg-primary-500 text-black shadow-elevation-3"
                 : "bg-white/60 text-neutral-700 border border-neutral-200/50 hover:border-primary/30 hover:bg-primary/5"
             )}
           >
@@ -153,7 +153,7 @@ export default function FAQSection() {
                 className={cn(
                   "flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-300 btn-hover-effect",
                   selectedCategory === key
-                    ? "bg-primary-500 text-white shadow-elevation-3"
+                    ? "bg-primary-500 text-black shadow-elevation-3"
                     : "bg-white/60 text-neutral-700 border border-neutral-200/50 hover:border-primary/30 hover:bg-primary/5"
                 )}
               >
@@ -236,11 +236,11 @@ export default function FAQSection() {
               {/* WhatsApp */}
               <div className="text-center p-6 bg-green-50/50 rounded-2xl border border-green-200/30">
                 <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Phone className="w-6 h-6 text-white" />
+                  <Phone className="w-6 h-6 text-black" />
                 </div>
                 <h4 className="font-bold text-green-800 mb-2">واتساب</h4>
                 <p className="text-sm text-green-600 mb-3">رد فوري خلال دقائق</p>
-                <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white">
+                <Button size="sm" className="bg-green-500 hover:bg-green-600 text-black">
                   تواصل الآن
                 </Button>
               </div>
@@ -248,7 +248,7 @@ export default function FAQSection() {
               {/* Email */}
               <div className="text-center p-6 bg-blue-50/50 rounded-2xl border border-blue-200/30">
                 <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Mail className="w-6 h-6 text-white" />
+                  <Mail className="w-6 h-6 text-black" />
                 </div>
                 <h4 className="font-bold text-blue-800 mb-2">البريد الإلكتروني</h4>
                 <p className="text-sm text-blue-600 mb-3">استفسارات مفصلة</p>
@@ -260,11 +260,11 @@ export default function FAQSection() {
               {/* Live Chat */}
               <div className="text-center p-6 bg-primary-50/50 rounded-2xl border border-primary-200/30">
                 <div className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MessageCircle className="w-6 h-6 text-white" />
+                  <MessageCircle className="w-6 h-6 text-black" />
                 </div>
                 <h4 className="font-bold text-primary-800 mb-2">دردشة مباشرة</h4>
                 <p className="text-sm text-primary-600 mb-3">متاح 24/7</p>
-                <Button size="sm" className="bg-primary-500 hover:bg-primary-600 text-white">
+                <Button size="sm" className="bg-primary-500 hover:bg-primary-600 text-black">
                   ابدأ المحادثة
                 </Button>
               </div>

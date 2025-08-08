@@ -69,7 +69,7 @@ export default function PlatformPreviewSection() {
                 </div>
               </div>
               <div className="w-full flex-grow bg-neutral-800 rounded-b-md flex items-center justify-center">
-                 <PlayCircle className="w-16 h-16 text-white/20" strokeWidth={1}/>
+                 <PlayCircle className="w-16 h-16 text-black/20" strokeWidth={1}/>
               </div>
             </div>
           </BentoCard>
