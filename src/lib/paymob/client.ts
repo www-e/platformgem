@@ -118,10 +118,22 @@ export async function getPaymentKey(
 ): Promise<string> {
   try {
     // Select the appropriate integration ID based on payment method
-    const integrationId =
-      paymentMethod === "e-wallet"
-        ? parseInt(paymobConfig.integrationIdMobileWallet)
-        : parseInt(paymobConfig.integrationIdOnlineCard);
+    let integrationId: number;
+    try {
+      integrationId =
+        paymentMethod === "e-wallet"
+          ? parseInt(paymobConfig.integrationIdMobileWallet)
+          : parseInt(paymobConfig.integrationIdOnlineCard);
+
+      if (isNaN(integrationId)) {
+        throw new Error(
+          `Invalid integration ID for payment method: ${paymentMethod}`
+        );
+      }
+    } catch (error) {
+      console.error("PayMob integration ID error:", error);
+      throw new Error(`فشل في تكوين طريقة الدفع ${paymentMethod}`);
+    }
 
     console.log(
       `Using integration ID ${integrationId} for payment method: ${paymentMethod}`
@@ -140,7 +152,7 @@ export async function getPaymentKey(
         body: JSON.stringify({
           auth_token: authToken,
           amount_cents: amountCents,
-          expiration: 3600, // 1 hour expiration
+          expiration: paymobConfig.sessionExpiryMinutes * 60, // Dynamic expiration in seconds
           order_id: orderId,
           billing_data: billingData,
           currency: "EGP",
@@ -186,9 +198,8 @@ export const payMobService = {
     return validateWebhookPayload(data);
   },
   async verifyWebhookSignature(webhookObject: any) {
-    const { processWebhook } = await import("./webhook.service");
-    const result = processWebhook(webhookObject);
-    return result.isValid;
+    const { verifyWebhookSignature } = await import("./webhook.service");
+    return verifyWebhookSignature(webhookObject);
   },
   async processWebhook(webhookObject: any) {
     const { processWebhook } = await import("./webhook.service");

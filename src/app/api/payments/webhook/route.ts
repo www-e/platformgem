@@ -3,7 +3,236 @@ import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { payMobService } from "@/lib/paymob/client";
 import { createSuccessResponse, createErrorResponse } from "@/lib/api-utils";
+import { 
+  createStandardErrorResponse, 
+  createStandardSuccessResponse,
+  API_ERROR_CODES 
+} from "@/lib/api-error-handler";
+// Webhook retry configuration
+const WEBHOOK_RETRY_CONFIG = {
+  maxRetries: 3,
+  retryDelays: [1000, 5000, 15000], // 1s, 5s, 15s
+};
 
+/**
+ * Process webhook with retry mechanism for transient failures
+ */
+async function processWebhookWithRetry(
+  payment: any,
+  processedData: any,
+  webhookData: any,
+  validatedTransactionId: number,
+  existingWebhook: any,
+  retryCount = 0
+): Promise<any> {
+  try {
+    // Your existing transaction code will go here
+    // We'll move the main transaction logic into this function
+    
+    // Determine new payment status
+    const newStatus = processedData.isSuccess ? "COMPLETED" : "FAILED";
+    const completedAt = processedData.isSuccess ? new Date() : null;
+    const failureReason = !processedData.isSuccess
+      ? "Payment failed at PayMob gateway"
+      : null;
+
+    // Execute payment update and enrollment creation in a single transaction
+    const transactionResult = await prisma.$transaction(async (tx) => {
+      // Create or update webhook record
+      const webhookId =
+        existingWebhook?.id ||
+        `webhook_${validatedTransactionId}_${Date.now()}`;
+
+      if (existingWebhook) {
+        await tx.paymentWebhook.update({
+          where: { id: existingWebhook.id },
+          data: {
+            webhookPayload: webhookData,
+            processedAt: new Date(),
+            processingAttempts: existingWebhook.processingAttempts + 1,
+            lastError: null,
+          },
+        });
+      } else {
+        await tx.paymentWebhook.create({
+          data: {
+            id: webhookId,
+            paymentId: payment.id,
+            paymobTransactionId: BigInt(validatedTransactionId),
+            webhookPayload: webhookData,
+            processedAt: new Date(),
+            processingAttempts: 1,
+          },
+        });
+      }
+
+      // Update payment record
+      const updatedPayment = await tx.payment.update({
+        where: { id: payment.id },
+        data: {
+          status: newStatus,
+          paymobTransactionId: BigInt(validatedTransactionId),
+          completedAt,
+          failureReason,
+          paymobResponse: {
+            ...(payment.paymobResponse as any),
+            webhook: {
+              transactionId: validatedTransactionId,
+              success: processedData.isSuccess,
+              amountCents: processedData.amountCents,
+              currency: processedData.currency,
+              processedAt: new Date().toISOString(),
+              rawData: webhookData,
+              retryCount,
+            },
+          },
+        },
+      });
+
+      // For successful payments, create enrollment within the same transaction
+      let enrollmentResult = null;
+      if (processedData.isSuccess) {
+        try {
+          // Check if enrollment already exists
+          const existingEnrollment = await tx.enrollment.findUnique({
+            where: {
+              userId_courseId: {
+                userId: payment.userId,
+                courseId: payment.courseId,
+              },
+            },
+          });
+
+          if (!existingEnrollment) {
+            // Create enrollment
+            const newEnrollment = await tx.enrollment.create({
+              data: {
+                userId: payment.userId,
+                courseId: payment.courseId,
+                progressPercent: 0,
+                completedLessonIds: [],
+                totalWatchTime: 0,
+                enrolledAt: new Date(),
+                lastAccessedAt: null,
+              },
+            });
+
+            // Create progress milestone
+            await tx.progressMilestone.create({
+              data: {
+                userId: payment.userId,
+                courseId: payment.courseId,
+                milestoneType: 'COURSE_START',
+                metadata: {
+                  paymentId: payment.id,
+                  enrollmentId: newEnrollment.id,
+                  courseName: payment.course.title,
+                  amount: Number(payment.amount),
+                  webhookTransactionId: validatedTransactionId,
+                  retryCount,
+                },
+              },
+            });
+
+            enrollmentResult = {
+              success: true,
+              enrollmentId: newEnrollment.id,
+              created: true,
+            };
+
+            console.log('Enrollment created within transaction:', {
+              enrollmentId: newEnrollment.id,
+              paymentId: payment.id,
+              userId: payment.userId,
+              courseId: payment.courseId,
+              retryCount,
+            });
+          } else {
+            enrollmentResult = {
+              success: true,
+              enrollmentId: existingEnrollment.id,
+              created: false,
+            };
+
+            console.log('Enrollment already exists:', {
+              enrollmentId: existingEnrollment.id,
+              paymentId: payment.id,
+              retryCount,
+            });
+          }
+        } catch (enrollmentError) {
+          console.error('Enrollment creation failed within transaction:', enrollmentError);
+          
+          // Store enrollment error in payment record for manual review
+          await tx.payment.update({
+            where: { id: payment.id },
+            data: {
+              paymobResponse: {
+                ...(updatedPayment.paymobResponse as any),
+                enrollmentError: {
+                  error: enrollmentError instanceof Error ? enrollmentError.message : 'Unknown error',
+                  timestamp: new Date().toISOString(),
+                  requiresManualReview: true,
+                  retryCount,
+                },
+              },
+            },
+          });
+
+          // Don't throw - let payment complete but flag for manual enrollment
+          enrollmentResult = {
+            success: false,
+            error: enrollmentError instanceof Error ? enrollmentError.message : 'Unknown error',
+            requiresManualReview: true,
+          };
+        }
+      }
+
+      return {
+        payment: updatedPayment,
+        enrollment: enrollmentResult,
+      };
+    }, {
+      timeout: 30000, // 30 second timeout
+    });
+
+    return transactionResult;
+
+  } catch (error) {
+    console.error(`Webhook processing failed (attempt ${retryCount + 1}):`, error);
+    
+    // Check if this is a retryable error
+    const isRetryableError = 
+      error instanceof Error && (
+        error.message.includes('timeout') ||
+        error.message.includes('connection') ||
+        error.message.includes('deadlock') ||
+        error.message.includes('serialization')
+      );
+
+    if (isRetryableError && retryCount < WEBHOOK_RETRY_CONFIG.maxRetries) {
+      console.log(`Retrying webhook processing in ${WEBHOOK_RETRY_CONFIG.retryDelays[retryCount]}ms...`);
+      
+      // Wait before retry
+      await new Promise(resolve => 
+        setTimeout(resolve, WEBHOOK_RETRY_CONFIG.retryDelays[retryCount])
+      );
+      
+      // Retry with incremented count
+      return processWebhookWithRetry(
+        payment,
+        processedData,
+        webhookData,
+        validatedTransactionId,
+        existingWebhook,
+        retryCount + 1
+      );
+    }
+
+    // Non-retryable error or max retries exceeded
+    throw error;
+  }
+}
 // POST /api/payments/webhook - Handle PayMob webhook notifications
 export async function POST(request: NextRequest) {
   let webhookData: any;
@@ -28,24 +257,31 @@ export async function POST(request: NextRequest) {
     // Validate webhook payload structure
     if (!payMobService.validateWebhookPayload(webhookObject)) {
       console.error("Invalid webhook payload structure:", webhookObject);
-      return createErrorResponse(
-        "INVALID_PAYLOAD",
+      return createStandardErrorResponse(
+        API_ERROR_CODES.WEBHOOK_PAYLOAD_INVALID,
         "Invalid webhook payload structure",
-        400
+        400,
+        { receivedPayload: webhookObject }
       );
+      
     }
 
     // Verify webhook signature
-    if (!payMobService.verifyWebhookSignature(webhookObject)) {
+    const isValidSignature = await payMobService.verifyWebhookSignature(
+      webhookObject
+    );
+    if (!isValidSignature) {
       console.error(
         "Invalid PayMob webhook signature for transaction:",
         transactionId
       );
-      return createErrorResponse(
-        "INVALID_SIGNATURE",
+      return createStandardErrorResponse(
+        API_ERROR_CODES.WEBHOOK_SIGNATURE_INVALID,
         "Invalid webhook signature",
-        401
+        401,
+        { transactionId: transactionId }
       );
+      
     }
 
     // Process webhook data
@@ -140,18 +376,89 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Enhanced idempotency check
     if (existingWebhook && existingWebhook.processedAt) {
-      console.log("Webhook already processed:", {
-        paymentId: payment.id,
+      // Check if payment status matches webhook result
+      const expectedStatus = processedData.isSuccess ? "COMPLETED" : "FAILED";
+
+      if (payment.status === expectedStatus) {
+        console.log("Webhook already processed successfully:", {
+          paymentId: payment.id,
+          transactionId: validatedTransactionId,
+          processedAt: existingWebhook.processedAt,
+          status: payment.status,
+        });
+
+        return createSuccessResponse({
+          message: "Webhook already processed",
+          paymentId: payment.id,
+          status: payment.status,
+          transactionId: validatedTransactionId,
+          processedAt: existingWebhook.processedAt,
+          alreadyProcessed: true,
+        });
+      } else {
+        // Status mismatch - this could indicate a problem
+        console.warn("Webhook processed but payment status mismatch:", {
+          paymentId: payment.id,
+          transactionId: validatedTransactionId,
+          expectedStatus,
+          currentStatus: payment.status,
+          webhookProcessedAt: existingWebhook.processedAt,
+        });
+
+        // Mark for manual review but don't reprocess
+        await prisma.paymentWebhook.update({
+          where: { id: existingWebhook.id },
+          data: {
+            lastError: `Status mismatch: expected ${expectedStatus}, found ${payment.status}`,
+            processingAttempts: existingWebhook.processingAttempts + 1,
+          },
+        });
+
+        return createSuccessResponse({
+          message: "Webhook already processed but status mismatch detected",
+          paymentId: payment.id,
+          status: payment.status,
+          requiresManualReview: true,
+          processedAt: existingWebhook.processedAt,
+        });
+      }
+    }
+
+    // Check for potential duplicate transactions with different order IDs
+    const duplicateTransaction = await prisma.paymentWebhook.findFirst({
+      where: {
+        paymobTransactionId: BigInt(validatedTransactionId),
+        paymentId: { not: payment.id },
+        processedAt: { not: null },
+      },
+    });
+
+    if (duplicateTransaction) {
+      console.warn("Duplicate transaction ID detected:", {
         transactionId: validatedTransactionId,
-        processedAt: existingWebhook.processedAt,
+        currentPaymentId: payment.id,
+        existingPaymentId: duplicateTransaction.paymentId,
       });
-      return createSuccessResponse({
-        message: "Webhook already processed",
-        paymentId: payment.id,
-        status: payment.status,
-        processedAt: existingWebhook.processedAt,
+
+      // Store this webhook for manual review
+      await prisma.paymentWebhook.create({
+        data: {
+          id: `webhook_${validatedTransactionId}_duplicate_${Date.now()}`,
+          paymentId: payment.id,
+          paymobTransactionId: BigInt(validatedTransactionId),
+          webhookPayload: webhookData,
+          lastError: `Duplicate transaction ID - already processed for payment ${duplicateTransaction.paymentId}`,
+          processingAttempts: 1,
+        },
       });
+
+      return createErrorResponse(
+        "DUPLICATE_TRANSACTION",
+        "Duplicate transaction ID detected",
+        409
+      );
     }
 
     // Determine new payment status
@@ -161,8 +468,8 @@ export async function POST(request: NextRequest) {
       ? "Payment failed at PayMob gateway"
       : null;
 
-    // Use correct Prisma transaction type
-    await prisma.$transaction(async (tx) => {
+    // Execute payment update and enrollment creation in a single transaction
+    const transactionResult = await prisma.$transaction(async (tx) => {
       // Create or update webhook record
       const webhookId =
         existingWebhook?.id ||
@@ -192,7 +499,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Update payment record
-      await tx.payment.update({
+      const updatedPayment = await tx.payment.update({
         where: { id: payment.id },
         data: {
           status: newStatus,
@@ -212,66 +519,139 @@ export async function POST(request: NextRequest) {
           },
         },
       });
-    });
 
-    // Handle enrollment creation for successful payments
-    let enrollmentResult = null;
-    if (processedData.isSuccess) {
-      try {
-        const { EnrollmentService } = await import(
-          "@/lib/services/enrollment/core.service"
-        );
-        enrollmentResult = await EnrollmentService.createEnrollmentFromPayment({
-          courseId: payment.courseId,
-          userId: payment.userId,
-          paymentId: payment.id,
-        });
-
-        if (!enrollmentResult.success) {
-          console.error("Enrollment creation failed:", enrollmentResult);
-          await EnrollmentService.handleEnrollmentFailure(
-            payment.id,
-            enrollmentResult.error || "Unknown error"
-          );
-        } else {
-          console.log("Enrollment created successfully:", {
-            paymentId: payment.id,
-            enrollmentId: enrollmentResult.enrollmentId,
-            userId: payment.userId,
-            courseId: payment.courseId,
+      // For successful payments, create enrollment within the same transaction
+      let enrollmentResult = null;
+      if (processedData.isSuccess) {
+        try {
+          // Check if enrollment already exists
+          const existingEnrollment = await tx.enrollment.findUnique({
+            where: {
+              userId_courseId: {
+                userId: payment.userId,
+                courseId: payment.courseId,
+              },
+            },
           });
+
+          if (!existingEnrollment) {
+            // Create enrollment
+            const newEnrollment = await tx.enrollment.create({
+              data: {
+                userId: payment.userId,
+                courseId: payment.courseId,
+                progressPercent: 0,
+                completedLessonIds: [],
+                totalWatchTime: 0,
+                enrolledAt: new Date(),
+                lastAccessedAt: null,
+              },
+            });
+
+            // Create progress milestone
+            await tx.progressMilestone.create({
+              data: {
+                userId: payment.userId,
+                courseId: payment.courseId,
+                milestoneType: "COURSE_START",
+                metadata: {
+                  paymentId: payment.id,
+                  enrollmentId: newEnrollment.id,
+                  courseName: payment.course.title,
+                  amount: Number(payment.amount),
+                  webhookTransactionId: validatedTransactionId,
+                },
+              },
+            });
+
+            enrollmentResult = {
+              success: true,
+              enrollmentId: newEnrollment.id,
+              created: true,
+            };
+
+            console.log("Enrollment created within transaction:", {
+              enrollmentId: newEnrollment.id,
+              paymentId: payment.id,
+              userId: payment.userId,
+              courseId: payment.courseId,
+            });
+          } else {
+            enrollmentResult = {
+              success: true,
+              enrollmentId: existingEnrollment.id,
+              created: false,
+            };
+
+            console.log("Enrollment already exists:", {
+              enrollmentId: existingEnrollment.id,
+              paymentId: payment.id,
+            });
+          }
+        } catch (enrollmentError) {
+          console.error(
+            "Enrollment creation failed within transaction:",
+            enrollmentError
+          );
+
+          // Store enrollment error in payment record for manual review
+          await tx.payment.update({
+            where: { id: payment.id },
+            data: {
+              paymobResponse: {
+                ...(updatedPayment.paymobResponse as any),
+                enrollmentError: {
+                  error:
+                    enrollmentError instanceof Error
+                      ? enrollmentError.message
+                      : "Unknown error",
+                  timestamp: new Date().toISOString(),
+                  requiresManualReview: true,
+                },
+              },
+            },
+          });
+
+          // Don't throw - let payment complete but flag for manual enrollment
+          enrollmentResult = {
+            success: false,
+            error:
+              enrollmentError instanceof Error
+                ? enrollmentError.message
+                : "Unknown error",
+            requiresManualReview: true,
+          };
         }
-      } catch (enrollmentError) {
-        console.error("Enrollment service error:", enrollmentError);
-        const { EnrollmentService } = await import(
-          "@/lib/services/enrollment-service"
-        );
-        await EnrollmentService.handleEnrollmentFailure(
-          payment.id,
-          enrollmentError instanceof Error
-            ? enrollmentError.message
-            : "Enrollment service error"
-        );
       }
-    }
+
+      return {
+        payment: updatedPayment,
+        enrollment: enrollmentResult,
+      };
+    });
 
     console.log("Payment webhook processed:", {
       paymentId: payment.id,
       status: newStatus,
       transactionId: validatedTransactionId,
       success: processedData.isSuccess,
-      enrollmentCreated: enrollmentResult?.success || false,
-      enrollmentId: enrollmentResult?.enrollmentId,
+      enrollmentCreated: transactionResult.enrollment?.success || false,
+      enrollmentId: transactionResult.enrollment?.enrollmentId,
+      enrollmentRequiresManualReview:
+        transactionResult.enrollment?.requiresManualReview || false,
     });
 
-    return createSuccessResponse({
-      message: "Webhook processed successfully",
+    return createStandardSuccessResponse({
       paymentId: payment.id,
       status: newStatus,
       transactionId: validatedTransactionId,
-      enrollmentCreated: enrollmentResult?.success || false,
-      enrollmentId: enrollmentResult?.enrollmentId,
-    });
+      enrollment: {
+        created: transactionResult.enrollment?.success || false,
+        enrollmentId: transactionResult.enrollment?.enrollmentId,
+        requiresManualReview: transactionResult.enrollment?.requiresManualReview || false,
+      },
+    }, "Webhook processed successfully");
+    
   } catch (error) {
     console.error("PayMob webhook processing error:", error);
 

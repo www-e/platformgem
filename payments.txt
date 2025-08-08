@@ -1,0 +1,3942 @@
+════════════════════════════════════════════════════════════════════════════════
+                    PAYMENT & ENROLLMENT SERVICES REPORT
+                           Core System Files
+════════════════════════════════════════════════════════════════════════════════
+Generated on: 8/8/2025, 7:07:05 PM
+Location: Egypt
+
+████████████████████████████████████████████████████████████
+🔥 CORE PAYMENT SERVICES
+████████████████████████████████████████████████████████████
+
+▼ Payment Processing Core
+────────────────────────────────────────
+
+📄 FILE: route.ts
+📂 PATH: src/app/api/payments/initiate/route.ts
+📊 STATS: 303 lines | 8.57 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/app/api/payments/initiate/route.ts
+   2 │ import { NextRequest } from "next/server";
+   3 │ import { auth } from "@/lib/auth";
+   4 │ import prisma from "@/lib/prisma";
+   5 │ import { payMobService } from "@/lib/paymob/client";
+   6 │ import {
+   7 │   createSuccessResponse,
+   8 │   createErrorResponse,
+   9 │   ApiErrors,
+  10 │ } from "@/lib/api-utils";
+  11 │ import { z } from "zod";
+  12 │ import {
+  13 │   createStandardErrorResponse,
+  14 │   API_ERROR_CODES,
+  15 │   getErrorMessage,
+  16 │ } from "@/lib/api-error-handler";
+  17 │ import { paymobConfig } from '@/lib/paymob/config';
+  18 │ 
+  19 │ 
+  20 │ // Validation schema for payment initiation
+  21 │ const paymentInitiateSchema = z.object({
+  22 │   courseId: z.string().min(1, "معرف الدورة مطلوب"),
+  23 │   paymentMethod: z.enum(["credit-card", "e-wallet"]).default("credit-card"),
+  24 │ });
+  25 │ 
+  26 │ // POST /api/payments/initiate - Initiate payment for a course
+  27 │ export async function POST(request: NextRequest) {
+  28 │   try {
+  29 │     const session = await auth();
+  30 │ 
+  31 │     // Check authentication
+  32 │     if (!session?.user) {
+  33 │       return createErrorResponse(
+  34 │         ApiErrors.UNAUTHORIZED.code,
+  35 │         ApiErrors.UNAUTHORIZED.message,
+  36 │         ApiErrors.UNAUTHORIZED.status
+  37 │       );
+  38 │     }
+  39 │ 
+  40 │     // Only students can make payments (admins can for testing)
+  41 │     if (!["STUDENT", "ADMIN"].includes(session.user.role)) {
+  42 │       return createErrorResponse(
+  43 │         ApiErrors.FORBIDDEN.code,
+  44 │         "غير مصرح لك بإجراء عمليات الدفع",
+  45 │         ApiErrors.FORBIDDEN.status
+  46 │       );
+  47 │     }
+  48 │ 
+  49 │     // Parse and validate request body
+  50 │     const body = await request.json();
+  51 │     const validationResult = paymentInitiateSchema.safeParse(body);
+  52 │ 
+  53 │     if (!validationResult.success) {
+  54 │       return createErrorResponse(
+  55 │         ApiErrors.VALIDATION_ERROR.code,
+  56 │         ApiErrors.VALIDATION_ERROR.message,
+  57 │         ApiErrors.VALIDATION_ERROR.status,
+  58 │         validationResult.error.issues
+  59 │       );
+  60 │     }
+  61 │ 
+  62 │     const { courseId, paymentMethod } = validationResult.data;
+  63 │ 
+  64 │     // Check if course exists and is published
+  65 │     const course = await prisma.course.findFirst({
+  66 │       where: {
+  67 │         id: courseId,
+  68 │         isPublished: true,
+  69 │       },
+  70 │       include: {
+  71 │         professor: {
+  72 │           select: {
+  73 │             id: true,
+  74 │             name: true,
+  75 │           },
+  76 │         },
+  77 │         category: {
+  78 │           select: {
+  79 │             name: true,
+  80 │           },
+  81 │         },
+  82 │       },
+  83 │     });
+  84 │ 
+  85 │     if (!course) {
+  86 │       return createErrorResponse(
+  87 │         ApiErrors.NOT_FOUND.code,
+  88 │         "الدورة غير موجودة أو غير منشورة",
+  89 │         ApiErrors.NOT_FOUND.status
+  90 │       );
+  91 │     }
+  92 │ 
+  93 │     // Check if course is paid
+  94 │     if (!course.price || Number(course.price) <= 0) {
+  95 │       return createErrorResponse(
+  96 │         "FREE_COURSE",
+  97 │         "هذه الدورة مجانية ولا تحتاج لدفع",
+  98 │         400
+  99 │       );
+ 100 │     }
+ 101 │ 
+ 102 │     // Check if user is already enrolled
+ 103 │     const existingEnrollment = await prisma.enrollment.findUnique({
+ 104 │       where: {
+ 105 │         userId_courseId: {
+ 106 │           userId: session.user.id,
+ 107 │           courseId,
+ 108 │         },
+ 109 │       },
+ 110 │     });
+ 111 │ 
+ 112 │     if (existingEnrollment) {
+ 113 │       return createErrorResponse(
+ 114 │         ApiErrors.DUPLICATE_ERROR.code,
+ 115 │         "أنت مسجل في هذه الدورة بالفعل",
+ 116 │         ApiErrors.DUPLICATE_ERROR.status
+ 117 │       );
+ 118 │     }
+ 119 │ 
+ 120 │     // Check if there's already a pending payment
+ 121 │     const existingPayment = await prisma.payment.findFirst({
+ 122 │       where: {
+ 123 │         userId: session.user.id,
+ 124 │         courseId,
+ 125 │         status: "PENDING",
+ 126 │       },
+ 127 │       orderBy: {
+ 128 │         createdAt: "desc",
+ 129 │       },
+ 130 │     });
+ 131 │ 
+ 132 │     if (existingPayment) {
+ 133 │       const { isPaymentExpired, getPaymentTimeRemaining } = await import(
+ 134 │         "@/lib/services/payment-timeout.service"
+ 135 │       );
+ 136 │ 
+ 137 │       if (isPaymentExpired(existingPayment.createdAt)) {
+ 138 │         // Cancel the old payment and allow new one
+ 139 │         await prisma.payment.update({
+ 140 │           where: { id: existingPayment.id },
+ 141 │           data: {
+ 142 │             status: "CANCELLED",
+ 143 │             failureReason: `Payment abandoned - exceeded ${paymobConfig.abandonedPaymentCleanupMinutes} minute limit`,
+ 144 │             updatedAt: new Date(),
+ 145 │           },
+ 146 │         });
+ 147 │ 
+ 148 │         console.log("Cancelled abandoned payment:", existingPayment.id);
+ 149 │       } else {
+ 150 │         // Payment is recent, return error with remaining time info
+ 151 │         const timeRemaining = getPaymentTimeRemaining(
+ 152 │           existingPayment.createdAt
+ 153 │         );
+ 154 │ 
+ 155 │         return createErrorResponse(
+ 156 │           "PENDING_PAYMENT",
+ 157 │           `لديك عملية دفع معلقة لهذه الدورة بالفعل. الوقت المتبقي: ${timeRemaining.minutes} دقيقة و ${timeRemaining.seconds} ثانية`,
+ 158 │           409,
+ 159 │           {
+ 160 │             paymentId: existingPayment.id,
+ 161 │             createdAt: existingPayment.createdAt,
+ 162 │             expiresAt: new Date(
+ 163 │               existingPayment.createdAt.getTime() +
+ 164 │                 paymobConfig.paymentTimeoutMinutes * 60 * 1000
+ 165 │             ),
+ 166 │             timeRemaining: timeRemaining,
+ 167 │             canCancel: true,
+ 168 │           }
+ 169 │         );
+ 170 │       }
+ 171 │     }
+ 172 │ 
+ 173 │     // Prevent professors from buying their own courses
+ 174 │     if (course.professorId === session.user.id) {
+ 175 │       return createErrorResponse(
+ 176 │         "INVALID_PURCHASE",
+ 177 │         "لا يمكنك شراء دورتك الخاصة",
+ 178 │         400
+ 179 │       );
+ 180 │     }
+ 181 │ 
+ 182 │     // Get user information for billing
+ 183 │     const user = await prisma.user.findUnique({
+ 184 │       where: { id: session.user.id },
+ 185 │       select: {
+ 186 │         name: true,
+ 187 │         email: true,
+ 188 │         phone: true,
+ 189 │       },
+ 190 │     });
+ 191 │ 
+ 192 │     if (!user) {
+ 193 │       return createErrorResponse(
+ 194 │         ApiErrors.NOT_FOUND.code,
+ 195 │         "بيانات المستخدم غير موجودة",
+ 196 │         ApiErrors.NOT_FOUND.status
+ 197 │       );
+ 198 │     }
+ 199 │ 
+ 200 │     // Create payment record in database
+ 201 │     const merchantOrderId = payMobService.generateMerchantOrderId(
+ 202 │       courseId,
+ 203 │       session.user.id
+ 204 │     );
+ 205 │     const amountCents = payMobService.formatAmount(Number(course.price));
+ 206 │ 
+ 207 │     const payment = await prisma.payment.create({
+ 208 │       data: {
+ 209 │         userId: session.user.id,
+ 210 │         courseId,
+ 211 │         amount: course.price,
+ 212 │         currency: course.currency,
+ 213 │         status: "PENDING",
+ 214 │         paymobOrderId: merchantOrderId,
+ 215 │       },
+ 216 │     });
+ 217 │ 
+ 218 │     // Prepare PayMob order data
+ 219 │     const billingData = payMobService.createBillingData({
+ 220 │       name: user.name,
+ 221 │       email: user.email || undefined,
+ 222 │       phone: user.phone,
+ 223 │     });
+ 224 │     const orderData = {
+ 225 │       amount_cents: amountCents,
+ 226 │       currency: course.currency,
+ 227 │       merchant_order_id: merchantOrderId,
+ 228 │       items: [
+ 229 │         {
+ 230 │           name: course.title,
+ 231 │           amount_cents: amountCents,
+ 232 │           description: `دورة ${course.title} - ${course.category.name}`,
+ 233 │           quantity: 1,
+ 234 │         },
+ 235 │       ],
+ 236 │       billing_data: billingData,
+ 237 │     };
+ 238 │ 
+ 239 │     // Initiate payment with PayMob
+ 240 │     const paymentResult = await payMobService.initiatePayment(
+ 241 │       orderData,
+ 242 │       courseId,
+ 243 │       paymentMethod
+ 244 │     );
+ 245 │ 
+ 246 │     // Update payment record with PayMob order ID
+ 247 │     await prisma.payment.update({
+ 248 │       where: { id: payment.id },
+ 249 │       data: {
+ 250 │         paymobOrderId: paymentResult.orderId.toString(),
+ 251 │         paymobResponse: {
+ 252 │           paymentKey: paymentResult.paymentKey,
+ 253 │           orderId: paymentResult.orderId,
+ 254 │           iframeUrl: paymentResult.iframeUrl,
+ 255 │           initiatedAt: new Date().toISOString(),
+ 256 │         },
+ 257 │       },
+ 258 │     });
+ 259 │ 
+ 260 │     return createSuccessResponse(
+ 261 │       {
+ 262 │         paymentId: payment.id,
+ 263 │         paymentKey: paymentResult.paymentKey,
+ 264 │         iframeUrl: paymentResult.iframeUrl,
+ 265 │         orderId: paymentResult.orderId,
+ 266 │         amount: Number(course.price),
+ 267 │         currency: course.currency,
+ 268 │         course: {
+ 269 │           id: course.id,
+ 270 │           title: course.title,
+ 271 │           thumbnailUrl: course.thumbnailUrl,
+ 272 │           professor: course.professor.name,
+ 273 │         },
+ 274 │       },
+ 275 │       201
+ 276 │     );
+ 277 │   } catch (error) {
+ 278 │     console.error("Payment initiation error:", error);
+ 279 │ 
+ 280 │     // Handle PayMob specific errors
+ 281 │     // Handle PayMob specific errors
+ 282 │     if (error instanceof Error && error.message.includes("PayMob")) {
+ 283 │       return createStandardErrorResponse(
+ 284 │         API_ERROR_CODES.PAYMENT_GATEWAY_ERROR,
+ 285 │         getErrorMessage(API_ERROR_CODES.PAYMENT_GATEWAY_ERROR),
+ 286 │         502,
+ 287 │         {
+ 288 │           originalError: error.message,
+ 289 │           gateway: "PayMob",
+ 290 │           timestamp: new Date().toISOString(),
+ 291 │         }
+ 292 │       );
+ 293 │     }
+ 294 │ 
+ 295 │     return createErrorResponse(
+ 296 │       ApiErrors.INTERNAL_ERROR.code,
+ 297 │       ApiErrors.INTERNAL_ERROR.message,
+ 298 │       ApiErrors.INTERNAL_ERROR.status,
+ 299 │       error
+ 300 │     );
+ 301 │   }
+ 302 │ }
+ 303 │ 
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: route.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: route.ts
+📂 PATH: src/app/api/payments/webhook/route.ts
+📊 STATS: 697 lines | 22.92 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/app/api/payments/webhook/route.ts
+   2 │ import { NextRequest } from "next/server";
+   3 │ import prisma from "@/lib/prisma";
+   4 │ import { payMobService } from "@/lib/paymob/client";
+   5 │ import { createSuccessResponse, createErrorResponse } from "@/lib/api-utils";
+   6 │ import { 
+   7 │   createStandardErrorResponse, 
+   8 │   createStandardSuccessResponse,
+   9 │   API_ERROR_CODES 
+  10 │ } from "@/lib/api-error-handler";
+  11 │ // Webhook retry configuration
+  12 │ const WEBHOOK_RETRY_CONFIG = {
+  13 │   maxRetries: 3,
+  14 │   retryDelays: [1000, 5000, 15000], // 1s, 5s, 15s
+  15 │ };
+  16 │ 
+  17 │ /**
+  18 │  * Process webhook with retry mechanism for transient failures
+  19 │  */
+  20 │ async function processWebhookWithRetry(
+  21 │   payment: any,
+  22 │   processedData: any,
+  23 │   webhookData: any,
+  24 │   validatedTransactionId: number,
+  25 │   existingWebhook: any,
+  26 │   retryCount = 0
+  27 │ ): Promise<any> {
+  28 │   try {
+  29 │     // Your existing transaction code will go here
+  30 │     // We'll move the main transaction logic into this function
+  31 │     
+  32 │     // Determine new payment status
+  33 │     const newStatus = processedData.isSuccess ? "COMPLETED" : "FAILED";
+  34 │     const completedAt = processedData.isSuccess ? new Date() : null;
+  35 │     const failureReason = !processedData.isSuccess
+  36 │       ? "Payment failed at PayMob gateway"
+  37 │       : null;
+  38 │ 
+  39 │     // Execute payment update and enrollment creation in a single transaction
+  40 │     const transactionResult = await prisma.$transaction(async (tx) => {
+  41 │       // Create or update webhook record
+  42 │       const webhookId =
+  43 │         existingWebhook?.id ||
+  44 │         `webhook_${validatedTransactionId}_${Date.now()}`;
+  45 │ 
+  46 │       if (existingWebhook) {
+  47 │         await tx.paymentWebhook.update({
+  48 │           where: { id: existingWebhook.id },
+  49 │           data: {
+  50 │             webhookPayload: webhookData,
+  51 │             processedAt: new Date(),
+  52 │             processingAttempts: existingWebhook.processingAttempts + 1,
+  53 │             lastError: null,
+  54 │           },
+  55 │         });
+  56 │       } else {
+  57 │         await tx.paymentWebhook.create({
+  58 │           data: {
+  59 │             id: webhookId,
+  60 │             paymentId: payment.id,
+  61 │             paymobTransactionId: BigInt(validatedTransactionId),
+  62 │             webhookPayload: webhookData,
+  63 │             processedAt: new Date(),
+  64 │             processingAttempts: 1,
+  65 │           },
+  66 │         });
+  67 │       }
+  68 │ 
+  69 │       // Update payment record
+  70 │       const updatedPayment = await tx.payment.update({
+  71 │         where: { id: payment.id },
+  72 │         data: {
+  73 │           status: newStatus,
+  74 │           paymobTransactionId: BigInt(validatedTransactionId),
+  75 │           completedAt,
+  76 │           failureReason,
+  77 │           paymobResponse: {
+  78 │             ...(payment.paymobResponse as any),
+  79 │             webhook: {
+  80 │               transactionId: validatedTransactionId,
+  81 │               success: processedData.isSuccess,
+  82 │               amountCents: processedData.amountCents,
+  83 │               currency: processedData.currency,
+  84 │               processedAt: new Date().toISOString(),
+  85 │               rawData: webhookData,
+  86 │               retryCount,
+  87 │             },
+  88 │           },
+  89 │         },
+  90 │       });
+  91 │ 
+  92 │       // For successful payments, create enrollment within the same transaction
+  93 │       let enrollmentResult = null;
+  94 │       if (processedData.isSuccess) {
+  95 │         try {
+  96 │           // Check if enrollment already exists
+  97 │           const existingEnrollment = await tx.enrollment.findUnique({
+  98 │             where: {
+  99 │               userId_courseId: {
+ 100 │                 userId: payment.userId,
+ 101 │                 courseId: payment.courseId,
+ 102 │               },
+ 103 │             },
+ 104 │           });
+ 105 │ 
+ 106 │           if (!existingEnrollment) {
+ 107 │             // Create enrollment
+ 108 │             const newEnrollment = await tx.enrollment.create({
+ 109 │               data: {
+ 110 │                 userId: payment.userId,
+ 111 │                 courseId: payment.courseId,
+ 112 │                 progressPercent: 0,
+ 113 │                 completedLessonIds: [],
+ 114 │                 totalWatchTime: 0,
+ 115 │                 enrolledAt: new Date(),
+ 116 │                 lastAccessedAt: null,
+ 117 │               },
+ 118 │             });
+ 119 │ 
+ 120 │             // Create progress milestone
+ 121 │             await tx.progressMilestone.create({
+ 122 │               data: {
+ 123 │                 userId: payment.userId,
+ 124 │                 courseId: payment.courseId,
+ 125 │                 milestoneType: 'COURSE_START',
+ 126 │                 metadata: {
+ 127 │                   paymentId: payment.id,
+ 128 │                   enrollmentId: newEnrollment.id,
+ 129 │                   courseName: payment.course.title,
+ 130 │                   amount: Number(payment.amount),
+ 131 │                   webhookTransactionId: validatedTransactionId,
+ 132 │                   retryCount,
+ 133 │                 },
+ 134 │               },
+ 135 │             });
+ 136 │ 
+ 137 │             enrollmentResult = {
+ 138 │               success: true,
+ 139 │               enrollmentId: newEnrollment.id,
+ 140 │               created: true,
+ 141 │             };
+ 142 │ 
+ 143 │             console.log('Enrollment created within transaction:', {
+ 144 │               enrollmentId: newEnrollment.id,
+ 145 │               paymentId: payment.id,
+ 146 │               userId: payment.userId,
+ 147 │               courseId: payment.courseId,
+ 148 │               retryCount,
+ 149 │             });
+ 150 │           } else {
+ 151 │             enrollmentResult = {
+ 152 │               success: true,
+ 153 │               enrollmentId: existingEnrollment.id,
+ 154 │               created: false,
+ 155 │             };
+ 156 │ 
+ 157 │             console.log('Enrollment already exists:', {
+ 158 │               enrollmentId: existingEnrollment.id,
+ 159 │               paymentId: payment.id,
+ 160 │               retryCount,
+ 161 │             });
+ 162 │           }
+ 163 │         } catch (enrollmentError) {
+ 164 │           console.error('Enrollment creation failed within transaction:', enrollmentError);
+ 165 │           
+ 166 │           // Store enrollment error in payment record for manual review
+ 167 │           await tx.payment.update({
+ 168 │             where: { id: payment.id },
+ 169 │             data: {
+ 170 │               paymobResponse: {
+ 171 │                 ...(updatedPayment.paymobResponse as any),
+ 172 │                 enrollmentError: {
+ 173 │                   error: enrollmentError instanceof Error ? enrollmentError.message : 'Unknown error',
+ 174 │                   timestamp: new Date().toISOString(),
+ 175 │                   requiresManualReview: true,
+ 176 │                   retryCount,
+ 177 │                 },
+ 178 │               },
+ 179 │             },
+ 180 │           });
+ 181 │ 
+ 182 │           // Don't throw - let payment complete but flag for manual enrollment
+ 183 │           enrollmentResult = {
+ 184 │             success: false,
+ 185 │             error: enrollmentError instanceof Error ? enrollmentError.message : 'Unknown error',
+ 186 │             requiresManualReview: true,
+ 187 │           };
+ 188 │         }
+ 189 │       }
+ 190 │ 
+ 191 │       return {
+ 192 │         payment: updatedPayment,
+ 193 │         enrollment: enrollmentResult,
+ 194 │       };
+ 195 │     }, {
+ 196 │       timeout: 30000, // 30 second timeout
+ 197 │     });
+ 198 │ 
+ 199 │     return transactionResult;
+ 200 │ 
+ 201 │   } catch (error) {
+ 202 │     console.error(`Webhook processing failed (attempt ${retryCount + 1}):`, error);
+ 203 │     
+ 204 │     // Check if this is a retryable error
+ 205 │     const isRetryableError = 
+ 206 │       error instanceof Error && (
+ 207 │         error.message.includes('timeout') ||
+ 208 │         error.message.includes('connection') ||
+ 209 │         error.message.includes('deadlock') ||
+ 210 │         error.message.includes('serialization')
+ 211 │       );
+ 212 │ 
+ 213 │     if (isRetryableError && retryCount < WEBHOOK_RETRY_CONFIG.maxRetries) {
+ 214 │       console.log(`Retrying webhook processing in ${WEBHOOK_RETRY_CONFIG.retryDelays[retryCount]}ms...`);
+ 215 │       
+ 216 │       // Wait before retry
+ 217 │       await new Promise(resolve => 
+ 218 │         setTimeout(resolve, WEBHOOK_RETRY_CONFIG.retryDelays[retryCount])
+ 219 │       );
+ 220 │       
+ 221 │       // Retry with incremented count
+ 222 │       return processWebhookWithRetry(
+ 223 │         payment,
+ 224 │         processedData,
+ 225 │         webhookData,
+ 226 │         validatedTransactionId,
+ 227 │         existingWebhook,
+ 228 │         retryCount + 1
+ 229 │       );
+ 230 │     }
+ 231 │ 
+ 232 │     // Non-retryable error or max retries exceeded
+ 233 │     throw error;
+ 234 │   }
+ 235 │ }
+ 236 │ // POST /api/payments/webhook - Handle PayMob webhook notifications
+ 237 │ export async function POST(request: NextRequest) {
+ 238 │   let webhookData: any;
+ 239 │   let transactionId: number | null = null;
+ 240 │ 
+ 241 │   try {
+ 242 │     // Parse webhook data
+ 243 │     webhookData = await request.json();
+ 244 │     transactionId = webhookData?.obj?.id ?? null;
+ 245 │ 
+ 246 │     console.log("PayMob webhook received:", {
+ 247 │       transactionId: transactionId,
+ 248 │       orderId: webhookData?.obj?.order?.id,
+ 249 │       success: webhookData?.obj?.success,
+ 250 │       amount: webhookData?.obj?.amount_cents,
+ 251 │       timestamp: new Date().toISOString(),
+ 252 │     });
+ 253 │ 
+ 254 │     // We process the 'obj' part of the payload
+ 255 │     const webhookObject = webhookData.obj;
+ 256 │ 
+ 257 │     // Validate webhook payload structure
+ 258 │     if (!payMobService.validateWebhookPayload(webhookObject)) {
+ 259 │       console.error("Invalid webhook payload structure:", webhookObject);
+ 260 │       return createStandardErrorResponse(
+ 261 │         API_ERROR_CODES.WEBHOOK_PAYLOAD_INVALID,
+ 262 │         "Invalid webhook payload structure",
+ 263 │         400,
+ 264 │         { receivedPayload: webhookObject }
+ 265 │       );
+ 266 │       
+ 267 │     }
+ 268 │ 
+ 269 │     // Verify webhook signature
+ 270 │     const isValidSignature = await payMobService.verifyWebhookSignature(
+ 271 │       webhookObject
+ 272 │     );
+ 273 │     if (!isValidSignature) {
+ 274 │       console.error(
+ 275 │         "Invalid PayMob webhook signature for transaction:",
+ 276 │         transactionId
+ 277 │       );
+ 278 │       return createStandardErrorResponse(
+ 279 │         API_ERROR_CODES.WEBHOOK_SIGNATURE_INVALID,
+ 280 │         "Invalid webhook signature",
+ 281 │         401,
+ 282 │         { transactionId: transactionId }
+ 283 │       );
+ 284 │       
+ 285 │     }
+ 286 │ 
+ 287 │     // Process webhook data
+ 288 │     const processedData = await payMobService.processWebhook(webhookObject);
+ 289 │ 
+ 290 │     // Validate processed data
+ 291 │     if (!processedData.isValid) {
+ 292 │       console.error("Invalid webhook data processing");
+ 293 │       return createErrorResponse(
+ 294 │         "WEBHOOK_INVALID",
+ 295 │         "Invalid webhook data",
+ 296 │         400
+ 297 │       );
+ 298 │     }
+ 299 │ 
+ 300 │     // *** FIX: Ensure transactionId is valid before proceeding ***
+ 301 │     if (!processedData.transactionId) {
+ 302 │       console.error("Missing transaction ID in webhook data");
+ 303 │       return createErrorResponse(
+ 304 │         "WEBHOOK_MISSING_DATA",
+ 305 │         "Missing transaction ID",
+ 306 │         400
+ 307 │       );
+ 308 │     }
+ 309 │ 
+ 310 │     const validatedTransactionId = processedData.transactionId; // Now we know it's a number
+ 311 │ 
+ 312 │     // Build search conditions
+ 313 │     const searchConditions = [];
+ 314 │     if (processedData.orderId) {
+ 315 │       searchConditions.push({
+ 316 │         paymobOrderId: processedData.orderId.toString(),
+ 317 │       });
+ 318 │     }
+ 319 │     if (processedData.merchantOrderId) {
+ 320 │       searchConditions.push({ paymobOrderId: processedData.merchantOrderId });
+ 321 │     }
+ 322 │ 
+ 323 │     if (searchConditions.length === 0) {
+ 324 │       console.error("No order ID or merchant order ID in webhook data");
+ 325 │       return createErrorResponse(
+ 326 │         "WEBHOOK_MISSING_ORDER_ID",
+ 327 │         "Missing order identification",
+ 328 │         400
+ 329 │       );
+ 330 │     }
+ 331 │ 
+ 332 │     // Find the payment record
+ 333 │     const payment = await prisma.payment.findFirst({
+ 334 │       where: { OR: searchConditions },
+ 335 │       include: {
+ 336 │         user: { select: { id: true, name: true, email: true } },
+ 337 │         course: { select: { id: true, title: true, professorId: true } },
+ 338 │       },
+ 339 │     });
+ 340 │ 
+ 341 │     if (!payment) {
+ 342 │       console.error("Payment not found for webhook:", {
+ 343 │         orderId: processedData.orderId,
+ 344 │         merchantOrderId: processedData.merchantOrderId,
+ 345 │         transactionId: validatedTransactionId,
+ 346 │       });
+ 347 │ 
+ 348 │       // Store webhook for manual review
+ 349 │       await prisma.paymentWebhook
+ 350 │         .create({
+ 351 │           data: {
+ 352 │             id: `webhook_${validatedTransactionId}_${Date.now()}`,
+ 353 │             paymentId: "unknown", // Will need manual linking
+ 354 │             paymobTransactionId: BigInt(validatedTransactionId),
+ 355 │             webhookPayload: webhookData,
+ 356 │             lastError: "Payment record not found",
+ 357 │             processingAttempts: 1,
+ 358 │           },
+ 359 │         })
+ 360 │         .catch((err: unknown) => {
+ 361 │           console.error("Failed to store orphaned webhook:", err);
+ 362 │         });
+ 363 │ 
+ 364 │       return createErrorResponse(
+ 365 │         "PAYMENT_NOT_FOUND",
+ 366 │         "Payment record not found",
+ 367 │         404
+ 368 │       );
+ 369 │     }
+ 370 │ 
+ 371 │     // Check for duplicate webhook processing (idempotency)
+ 372 │     const existingWebhook = await prisma.paymentWebhook.findFirst({
+ 373 │       where: {
+ 374 │         paymentId: payment.id,
+ 375 │         paymobTransactionId: BigInt(validatedTransactionId),
+ 376 │       },
+ 377 │     });
+ 378 │ 
+ 379 │     // Enhanced idempotency check
+ 380 │     if (existingWebhook && existingWebhook.processedAt) {
+ 381 │       // Check if payment status matches webhook result
+ 382 │       const expectedStatus = processedData.isSuccess ? "COMPLETED" : "FAILED";
+ 383 │ 
+ 384 │       if (payment.status === expectedStatus) {
+ 385 │         console.log("Webhook already processed successfully:", {
+ 386 │           paymentId: payment.id,
+ 387 │           transactionId: validatedTransactionId,
+ 388 │           processedAt: existingWebhook.processedAt,
+ 389 │           status: payment.status,
+ 390 │         });
+ 391 │ 
+ 392 │         return createSuccessResponse({
+ 393 │           message: "Webhook already processed",
+ 394 │           paymentId: payment.id,
+ 395 │           status: payment.status,
+ 396 │           transactionId: validatedTransactionId,
+ 397 │           processedAt: existingWebhook.processedAt,
+ 398 │           alreadyProcessed: true,
+ 399 │         });
+ 400 │       } else {
+ 401 │         // Status mismatch - this could indicate a problem
+ 402 │         console.warn("Webhook processed but payment status mismatch:", {
+ 403 │           paymentId: payment.id,
+ 404 │           transactionId: validatedTransactionId,
+ 405 │           expectedStatus,
+ 406 │           currentStatus: payment.status,
+ 407 │           webhookProcessedAt: existingWebhook.processedAt,
+ 408 │         });
+ 409 │ 
+ 410 │         // Mark for manual review but don't reprocess
+ 411 │         await prisma.paymentWebhook.update({
+ 412 │           where: { id: existingWebhook.id },
+ 413 │           data: {
+ 414 │             lastError: `Status mismatch: expected ${expectedStatus}, found ${payment.status}`,
+ 415 │             processingAttempts: existingWebhook.processingAttempts + 1,
+ 416 │           },
+ 417 │         });
+ 418 │ 
+ 419 │         return createSuccessResponse({
+ 420 │           message: "Webhook already processed but status mismatch detected",
+ 421 │           paymentId: payment.id,
+ 422 │           status: payment.status,
+ 423 │           requiresManualReview: true,
+ 424 │           processedAt: existingWebhook.processedAt,
+ 425 │         });
+ 426 │       }
+ 427 │     }
+ 428 │ 
+ 429 │     // Check for potential duplicate transactions with different order IDs
+ 430 │     const duplicateTransaction = await prisma.paymentWebhook.findFirst({
+ 431 │       where: {
+ 432 │         paymobTransactionId: BigInt(validatedTransactionId),
+ 433 │         paymentId: { not: payment.id },
+ 434 │         processedAt: { not: null },
+ 435 │       },
+ 436 │     });
+ 437 │ 
+ 438 │     if (duplicateTransaction) {
+ 439 │       console.warn("Duplicate transaction ID detected:", {
+ 440 │         transactionId: validatedTransactionId,
+ 441 │         currentPaymentId: payment.id,
+ 442 │         existingPaymentId: duplicateTransaction.paymentId,
+ 443 │       });
+ 444 │ 
+ 445 │       // Store this webhook for manual review
+ 446 │       await prisma.paymentWebhook.create({
+ 447 │         data: {
+ 448 │           id: `webhook_${validatedTransactionId}_duplicate_${Date.now()}`,
+ 449 │           paymentId: payment.id,
+ 450 │           paymobTransactionId: BigInt(validatedTransactionId),
+ 451 │           webhookPayload: webhookData,
+ 452 │           lastError: `Duplicate transaction ID - already processed for payment ${duplicateTransaction.paymentId}`,
+ 453 │           processingAttempts: 1,
+ 454 │         },
+ 455 │       });
+ 456 │ 
+ 457 │       return createErrorResponse(
+ 458 │         "DUPLICATE_TRANSACTION",
+ 459 │         "Duplicate transaction ID detected",
+ 460 │         409
+ 461 │       );
+ 462 │     }
+ 463 │ 
+ 464 │     // Determine new payment status
+ 465 │     const newStatus = processedData.isSuccess ? "COMPLETED" : "FAILED";
+ 466 │     const completedAt = processedData.isSuccess ? new Date() : null;
+ 467 │     const failureReason = !processedData.isSuccess
+ 468 │       ? "Payment failed at PayMob gateway"
+ 469 │       : null;
+ 470 │ 
+ 471 │     // Execute payment update and enrollment creation in a single transaction
+ 472 │     const transactionResult = await prisma.$transaction(async (tx) => {
+ 473 │       // Create or update webhook record
+ 474 │       const webhookId =
+ 475 │         existingWebhook?.id ||
+ 476 │         `webhook_${validatedTransactionId}_${Date.now()}`;
+ 477 │ 
+ 478 │       if (existingWebhook) {
+ 479 │         await tx.paymentWebhook.update({
+ 480 │           where: { id: existingWebhook.id },
+ 481 │           data: {
+ 482 │             webhookPayload: webhookData,
+ 483 │             processedAt: new Date(),
+ 484 │             processingAttempts: existingWebhook.processingAttempts + 1,
+ 485 │             lastError: null,
+ 486 │           },
+ 487 │         });
+ 488 │       } else {
+ 489 │         await tx.paymentWebhook.create({
+ 490 │           data: {
+ 491 │             id: webhookId,
+ 492 │             paymentId: payment.id,
+ 493 │             paymobTransactionId: BigInt(validatedTransactionId),
+ 494 │             webhookPayload: webhookData,
+ 495 │             processedAt: new Date(),
+ 496 │             processingAttempts: 1,
+ 497 │           },
+ 498 │         });
+ 499 │       }
+ 500 │ 
+ 501 │       // Update payment record
+ 502 │       const updatedPayment = await tx.payment.update({
+ 503 │         where: { id: payment.id },
+ 504 │         data: {
+ 505 │           status: newStatus,
+ 506 │           paymobTransactionId: BigInt(validatedTransactionId),
+ 507 │           completedAt,
+ 508 │           failureReason,
+ 509 │           paymobResponse: {
+ 510 │             ...(payment.paymobResponse as any),
+ 511 │             webhook: {
+ 512 │               transactionId: validatedTransactionId,
+ 513 │               success: processedData.isSuccess,
+ 514 │               amountCents: processedData.amountCents,
+ 515 │               currency: processedData.currency,
+ 516 │               processedAt: new Date().toISOString(),
+ 517 │               rawData: webhookData,
+ 518 │             },
+ 519 │           },
+ 520 │         },
+ 521 │       });
+ 522 │ 
+ 523 │       // For successful payments, create enrollment within the same transaction
+ 524 │       let enrollmentResult = null;
+ 525 │       if (processedData.isSuccess) {
+ 526 │         try {
+ 527 │           // Check if enrollment already exists
+ 528 │           const existingEnrollment = await tx.enrollment.findUnique({
+ 529 │             where: {
+ 530 │               userId_courseId: {
+ 531 │                 userId: payment.userId,
+ 532 │                 courseId: payment.courseId,
+ 533 │               },
+ 534 │             },
+ 535 │           });
+ 536 │ 
+ 537 │           if (!existingEnrollment) {
+ 538 │             // Create enrollment
+ 539 │             const newEnrollment = await tx.enrollment.create({
+ 540 │               data: {
+ 541 │                 userId: payment.userId,
+ 542 │                 courseId: payment.courseId,
+ 543 │                 progressPercent: 0,
+ 544 │                 completedLessonIds: [],
+ 545 │                 totalWatchTime: 0,
+ 546 │                 enrolledAt: new Date(),
+ 547 │                 lastAccessedAt: null,
+ 548 │               },
+ 549 │             });
+ 550 │ 
+ 551 │             // Create progress milestone
+ 552 │             await tx.progressMilestone.create({
+ 553 │               data: {
+ 554 │                 userId: payment.userId,
+ 555 │                 courseId: payment.courseId,
+ 556 │                 milestoneType: "COURSE_START",
+ 557 │                 metadata: {
+ 558 │                   paymentId: payment.id,
+ 559 │                   enrollmentId: newEnrollment.id,
+ 560 │                   courseName: payment.course.title,
+ 561 │                   amount: Number(payment.amount),
+ 562 │                   webhookTransactionId: validatedTransactionId,
+ 563 │                 },
+ 564 │               },
+ 565 │             });
+ 566 │ 
+ 567 │             enrollmentResult = {
+ 568 │               success: true,
+ 569 │               enrollmentId: newEnrollment.id,
+ 570 │               created: true,
+ 571 │             };
+ 572 │ 
+ 573 │             console.log("Enrollment created within transaction:", {
+ 574 │               enrollmentId: newEnrollment.id,
+ 575 │               paymentId: payment.id,
+ 576 │               userId: payment.userId,
+ 577 │               courseId: payment.courseId,
+ 578 │             });
+ 579 │           } else {
+ 580 │             enrollmentResult = {
+ 581 │               success: true,
+ 582 │               enrollmentId: existingEnrollment.id,
+ 583 │               created: false,
+ 584 │             };
+ 585 │ 
+ 586 │             console.log("Enrollment already exists:", {
+ 587 │               enrollmentId: existingEnrollment.id,
+ 588 │               paymentId: payment.id,
+ 589 │             });
+ 590 │           }
+ 591 │         } catch (enrollmentError) {
+ 592 │           console.error(
+ 593 │             "Enrollment creation failed within transaction:",
+ 594 │             enrollmentError
+ 595 │           );
+ 596 │ 
+ 597 │           // Store enrollment error in payment record for manual review
+ 598 │           await tx.payment.update({
+ 599 │             where: { id: payment.id },
+ 600 │             data: {
+ 601 │               paymobResponse: {
+ 602 │                 ...(updatedPayment.paymobResponse as any),
+ 603 │                 enrollmentError: {
+ 604 │                   error:
+ 605 │                     enrollmentError instanceof Error
+ 606 │                       ? enrollmentError.message
+ 607 │                       : "Unknown error",
+ 608 │                   timestamp: new Date().toISOString(),
+ 609 │                   requiresManualReview: true,
+ 610 │                 },
+ 611 │               },
+ 612 │             },
+ 613 │           });
+ 614 │ 
+ 615 │           // Don't throw - let payment complete but flag for manual enrollment
+ 616 │           enrollmentResult = {
+ 617 │             success: false,
+ 618 │             error:
+ 619 │               enrollmentError instanceof Error
+ 620 │                 ? enrollmentError.message
+ 621 │                 : "Unknown error",
+ 622 │             requiresManualReview: true,
+ 623 │           };
+ 624 │         }
+ 625 │       }
+ 626 │ 
+ 627 │       return {
+ 628 │         payment: updatedPayment,
+ 629 │         enrollment: enrollmentResult,
+ 630 │       };
+ 631 │     });
+ 632 │ 
+ 633 │     console.log("Payment webhook processed:", {
+ 634 │       paymentId: payment.id,
+ 635 │       status: newStatus,
+ 636 │       transactionId: validatedTransactionId,
+ 637 │       success: processedData.isSuccess,
+ 638 │       enrollmentCreated: transactionResult.enrollment?.success || false,
+ 639 │       enrollmentId: transactionResult.enrollment?.enrollmentId,
+ 640 │       enrollmentRequiresManualReview:
+ 641 │         transactionResult.enrollment?.requiresManualReview || false,
+ 642 │     });
+ 643 │ 
+ 644 │     return createStandardSuccessResponse({
+ 645 │       paymentId: payment.id,
+ 646 │       status: newStatus,
+ 647 │       transactionId: validatedTransactionId,
+ 648 │       enrollment: {
+ 649 │         created: transactionResult.enrollment?.success || false,
+ 650 │         enrollmentId: transactionResult.enrollment?.enrollmentId,
+ 651 │         requiresManualReview: transactionResult.enrollment?.requiresManualReview || false,
+ 652 │       },
+ 653 │     }, "Webhook processed successfully");
+ 654 │     
+ 655 │   } catch (error) {
+ 656 │     console.error("PayMob webhook processing error:", error);
+ 657 │ 
+ 658 │     // *** FIX: Use correct `transactionId` variable and check if it exists ***
+ 659 │     if (transactionId && webhookData) {
+ 660 │       try {
+ 661 │         await prisma.paymentWebhook.upsert({
+ 662 │           where: { id: `webhook_${transactionId}_error_${Date.now()}` },
+ 663 │           create: {
+ 664 │             id: `webhook_${transactionId}_error_${Date.now()}`,
+ 665 │             paymentId: "error", // Will need manual linking
+ 666 │             paymobTransactionId: BigInt(transactionId),
+ 667 │             webhookPayload: webhookData,
+ 668 │             lastError: error instanceof Error ? error.message : "Unknown error",
+ 669 │             processingAttempts: 1,
+ 670 │           },
+ 671 │           update: {
+ 672 │             processingAttempts: { increment: 1 },
+ 673 │             lastError: error instanceof Error ? error.message : "Unknown error",
+ 674 │             webhookPayload: webhookData,
+ 675 │           },
+ 676 │         });
+ 677 │       } catch (dbError) {
+ 678 │         console.error("Failed to store error webhook:", dbError);
+ 679 │       }
+ 680 │     }
+ 681 │ 
+ 682 │     return createSuccessResponse({
+ 683 │       message: "Webhook received but processing failed",
+ 684 │       error: error instanceof Error ? error.message : "Unknown error",
+ 685 │       transactionId,
+ 686 │     });
+ 687 │   }
+ 688 │ }
+ 689 │ 
+ 690 │ // GET /api/payments/webhook - Health check for webhook endpoint
+ 691 │ export async function GET() {
+ 692 │   return createSuccessResponse({
+ 693 │     message: "PayMob webhook endpoint is active",
+ 694 │     timestamp: new Date().toISOString(),
+ 695 │   });
+ 696 │ }
+ 697 │ 
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: route.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: client.ts
+📂 PATH: src/lib/paymob/client.ts
+📊 STATS: 217 lines | 7.05 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/lib/paymob/client.ts
+   2 │ 
+   3 │ import { paymobConfig } from "./config";
+   4 │ import {
+   5 │   PayMobAuthResponse,
+   6 │   PayMobOrderRequest,
+   7 │   PayMobOrderResponse,
+   8 │   PayMobPaymentKeyResponse,
+   9 │   PayMobBillingData,
+  10 │ } from "./types";
+  11 │ // Import utility functions from utils file
+  12 │ import {
+  13 │   formatAmountToCents as formatAmount,
+  14 │   generateMerchantOrderId,
+  15 │   createBillingData,
+  16 │ } from "./utils";
+  17 │ 
+  18 │ /**
+  19 │  * Step 1: Authenticates with PayMob to get an auth token.
+  20 │  * @returns A promise that resolves to the authentication token.
+  21 │  */
+  22 │ export async function authenticate(): Promise<string> {
+  23 │   try {
+  24 │     const controller = new AbortController();
+  25 │     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+  26 │ 
+  27 │     const response = await fetch(`${paymobConfig.baseUrl}/auth/tokens`, {
+  28 │       method: "POST",
+  29 │       headers: {
+  30 │         "Content-Type": "application/json",
+  31 │       },
+  32 │       body: JSON.stringify({
+  33 │         api_key: paymobConfig.apiKey,
+  34 │       }),
+  35 │       signal: controller.signal,
+  36 │     });
+  37 │ 
+  38 │     clearTimeout(timeoutId);
+  39 │ 
+  40 │     if (!response.ok) {
+  41 │       throw new Error(`PayMob authentication failed: ${response.statusText}`);
+  42 │     }
+  43 │ 
+  44 │     const data: PayMobAuthResponse = await response.json();
+  45 │     return data.token;
+  46 │   } catch (error) {
+  47 │     console.error("PayMob authentication error:", error);
+  48 │     if (error instanceof Error && error.name === "AbortError") {
+  49 │       throw new Error(
+  50 │         "انتهت مهلة الاتصال بنظام الدفع. يرجى المحاولة مرة أخرى."
+  51 │       );
+  52 │     }
+  53 │     throw new Error("فشل في الاتصال بنظام الدفع");
+  54 │   }
+  55 │ }
+  56 │ 
+  57 │ /**
+  58 │  * Step 2: Creates an order with PayMob.
+  59 │  * @param authToken - The authentication token from Step 1.
+  60 │  * @param orderData - The data for the order.
+  61 │  * @returns A promise that resolves to the created order details.
+  62 │  */
+  63 │ export async function createOrder(
+  64 │   authToken: string,
+  65 │   orderData: PayMobOrderRequest
+  66 │ ): Promise<PayMobOrderResponse> {
+  67 │   try {
+  68 │     const controller = new AbortController();
+  69 │     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+  70 │ 
+  71 │     const response = await fetch(`${paymobConfig.baseUrl}/ecommerce/orders`, {
+  72 │       method: "POST",
+  73 │       headers: {
+  74 │         "Content-Type": "application/json",
+  75 │       },
+  76 │       body: JSON.stringify({
+  77 │         auth_token: authToken,
+  78 │         delivery_needed: false, // Assuming this is always false for digital goods
+  79 │         ...orderData,
+  80 │       }),
+  81 │       signal: controller.signal,
+  82 │     });
+  83 │ 
+  84 │     clearTimeout(timeoutId);
+  85 │ 
+  86 │     if (!response.ok) {
+  87 │       const errorBody = await response.text();
+  88 │       console.error("PayMob order creation failed response:", errorBody);
+  89 │       throw new Error(`PayMob order creation failed: ${response.statusText}`);
+  90 │     }
+  91 │ 
+  92 │     const data: PayMobOrderResponse = await response.json();
+  93 │     return data;
+  94 │   } catch (error) {
+  95 │     console.error("PayMob order creation error:", error);
+  96 │     if (error instanceof Error && error.name === "AbortError") {
+  97 │       throw new Error("انتهت مهلة إنشاء طلب الدفع. يرجى المحاولة مرة أخرى.");
+  98 │     }
+  99 │     throw new Error("فشل في إنشاء طلب الدفع");
+ 100 │   }
+ 101 │ }
+ 102 │ 
+ 103 │ /**
+ 104 │  * Step 3: Gets a payment key for embedding the payment iframe.
+ 105 │  * @param authToken - The authentication token.
+ 106 │  * @param orderId - The ID of the order created in Step 2.
+ 107 │  * @param amountCents - The total amount in cents.
+ 108 │  * @param billingData - The customer's billing information.
+ 109 │  * @param paymentMethod - The payment method to use ('credit-card' or 'e-wallet').
+ 110 │  * @returns A promise that resolves to the payment key token.
+ 111 │  */
+ 112 │ export async function getPaymentKey(
+ 113 │   authToken: string,
+ 114 │   orderId: number,
+ 115 │   amountCents: number,
+ 116 │   billingData: PayMobBillingData,
+ 117 │   paymentMethod: "credit-card" | "e-wallet" = "credit-card"
+ 118 │ ): Promise<string> {
+ 119 │   try {
+ 120 │     // Select the appropriate integration ID based on payment method
+ 121 │     let integrationId: number;
+ 122 │     try {
+ 123 │       integrationId =
+ 124 │         paymentMethod === "e-wallet"
+ 125 │           ? parseInt(paymobConfig.integrationIdMobileWallet)
+ 126 │           : parseInt(paymobConfig.integrationIdOnlineCard);
+ 127 │ 
+ 128 │       if (isNaN(integrationId)) {
+ 129 │         throw new Error(
+ 130 │           `Invalid integration ID for payment method: ${paymentMethod}`
+ 131 │         );
+ 132 │       }
+ 133 │     } catch (error) {
+ 134 │       console.error("PayMob integration ID error:", error);
+ 135 │       throw new Error(`فشل في تكوين طريقة الدفع ${paymentMethod}`);
+ 136 │     }
+ 137 │ 
+ 138 │     console.log(
+ 139 │       `Using integration ID ${integrationId} for payment method: ${paymentMethod}`
+ 140 │     );
+ 141 │ 
+ 142 │     const controller = new AbortController();
+ 143 │     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+ 144 │ 
+ 145 │     const response = await fetch(
+ 146 │       `${paymobConfig.baseUrl}/acceptance/payment_keys`,
+ 147 │       {
+ 148 │         method: "POST",
+ 149 │         headers: {
+ 150 │           "Content-Type": "application/json",
+ 151 │         },
+ 152 │         body: JSON.stringify({
+ 153 │           auth_token: authToken,
+ 154 │           amount_cents: amountCents,
+ 155 │           expiration: paymobConfig.sessionExpiryMinutes * 60, // Dynamic expiration in seconds
+ 156 │           order_id: orderId,
+ 157 │           billing_data: billingData,
+ 158 │           currency: "EGP",
+ 159 │           integration_id: integrationId,
+ 160 │           lock_order_when_paid: true,
+ 161 │         }),
+ 162 │         signal: controller.signal,
+ 163 │       }
+ 164 │     );
+ 165 │ 
+ 166 │     clearTimeout(timeoutId);
+ 167 │ 
+ 168 │     if (!response.ok) {
+ 169 │       const errorBody = await response.text();
+ 170 │       console.error("PayMob payment key failed response:", errorBody);
+ 171 │       throw new Error(
+ 172 │         `PayMob payment key generation failed: ${response.statusText}`
+ 173 │       );
+ 174 │     }
+ 175 │ 
+ 176 │     const data: PayMobPaymentKeyResponse = await response.json();
+ 177 │     return data.token;
+ 178 │   } catch (error) {
+ 179 │     console.error("PayMob payment key error:", error);
+ 180 │     if (error instanceof Error && error.name === "AbortError") {
+ 181 │       throw new Error("انتهت مهلة إنشاء مفتاح الدفع. يرجى المحاولة مرة أخرى.");
+ 182 │     }
+ 183 │     throw new Error("فشل في إنشاء مفتاح الدفع");
+ 184 │   }
+ 185 │ }
+ 186 │ 
+ 187 │ // Export a service object for backward compatibility
+ 188 │ export const payMobService = {
+ 189 │   authenticate,
+ 190 │   createOrder,
+ 191 │   getPaymentKey,
+ 192 │   formatAmount,
+ 193 │   generateMerchantOrderId,
+ 194 │   createBillingData,
+ 195 │   // Import webhook methods
+ 196 │   async validateWebhookPayload(data: any) {
+ 197 │     const { validateWebhookPayload } = await import("./webhook.service");
+ 198 │     return validateWebhookPayload(data);
+ 199 │   },
+ 200 │   async verifyWebhookSignature(webhookObject: any) {
+ 201 │     const { verifyWebhookSignature } = await import("./webhook.service");
+ 202 │     return verifyWebhookSignature(webhookObject);
+ 203 │   },
+ 204 │   async processWebhook(webhookObject: any) {
+ 205 │     const { processWebhook } = await import("./webhook.service");
+ 206 │     return processWebhook(webhookObject);
+ 207 │   },
+ 208 │   async initiatePayment(
+ 209 │     orderData: any,
+ 210 │     courseId?: string,
+ 211 │     paymentMethod: "credit-card" | "e-wallet" = "credit-card"
+ 212 │   ) {
+ 213 │     const { initiatePayment } = await import("./payment.service");
+ 214 │     return initiatePayment(orderData, courseId, paymentMethod);
+ 215 │   },
+ 216 │ };
+ 217 │ 
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: client.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: payment.service.ts
+📂 PATH: src/lib/paymob/payment.service.ts
+📊 STATS: 81 lines | 2.54 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/lib/paymob/payment.service.ts
+   2 │ 
+   3 │ import * as paymob from './client';
+   4 │ import { paymobConfig } from './config';
+   5 │ import { PayMobOrderRequest } from './types';
+   6 │ 
+   7 │ /**
+   8 │  * The response structure for a successful payment initiation.
+   9 │  */
+  10 │ export interface PaymentInitiationResult {
+  11 │   paymentKey: string;
+  12 │   orderId: number;
+  13 │   iframeUrl: string;
+  14 │ }
+  15 │ 
+  16 │ /**
+  17 │  * Orchestrates the complete PayMob payment flow:
+  18 │  * 1. Authenticates with PayMob.
+  19 │  * 2. Creates an order.
+  20 │  * 3. Generates a payment key for the iframe.
+  21 │  * @param orderData - The data required to create the order.
+  22 │  * @param courseId - The optional ID of the course for constructing the return URL.
+  23 │  * @param paymentMethod - The payment method to use ('credit-card' or 'e-wallet').
+  24 │  * @returns A promise that resolves to an object containing the payment key, order ID, and iframe URL.
+  25 │  */
+  26 │ export async function initiatePayment(
+  27 │   orderData: PayMobOrderRequest,
+  28 │   courseId?: string,
+  29 │   paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card'
+  30 │ ): Promise<PaymentInitiationResult> {
+  31 │   try {
+  32 │     // Step 1: Authenticate
+  33 │     const authToken = await paymob.authenticate();
+  34 │ 
+  35 │     // Step 2: Create order
+  36 │     const order = await paymob.createOrder(authToken, orderData);
+  37 │ 
+  38 │     // Step 3: Get payment key
+  39 │     const paymentKey = await paymob.getPaymentKey(
+  40 │       authToken,
+  41 │       order.id,
+  42 │       orderData.amount_cents,
+  43 │       orderData.billing_data,
+  44 │       paymentMethod
+  45 │     );
+  46 │ 
+  47 │     // Step 4: Generate iframe URL
+  48 │     const iframeUrl = buildIframeUrl(paymentKey, courseId);
+  49 │ 
+  50 │     return {
+  51 │       paymentKey,
+  52 │       orderId: order.id,
+  53 │       iframeUrl,
+  54 │     };
+  55 │   } catch (error) {
+  56 │     console.error('PayMob payment initiation error:', error);
+  57 │     // Re-throw the original error to be handled by the calling function
+  58 │     throw error;
+  59 │   }
+  60 │ }
+  61 │ 
+  62 │ /**
+  63 │  * Constructs the PayMob iframe URL with an optional return URL.
+  64 │  * @param paymentKey - The payment token from PayMob.
+  65 │  * @param courseId - The optional course ID to embed in the return URL.
+  66 │  * @returns The fully constructed iframe URL.
+  67 │  */
+  68 │ function buildIframeUrl(paymentKey: string, courseId?: string): string {
+  69 │   let iframeUrl = `https://accept.paymob.com/api/acceptance/iframes/${paymobConfig.iframeId}?payment_token=${paymentKey}`;
+  70 │ 
+  71 │   // Add return URL if it's configured and a course ID is provided
+  72 │   if (paymobConfig.returnUrl && courseId) {
+  73 │     const returnUrlWithCourse = paymobConfig.returnUrl.replace(
+  74 │       '{courseId}',
+  75 │       courseId
+  76 │     );
+  77 │     iframeUrl += `&return_url=${encodeURIComponent(returnUrlWithCourse)}`;
+  78 │   }
+  79 │ 
+  80 │   return iframeUrl;
+  81 │ }
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: payment.service.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: webhook.service.ts
+📂 PATH: src/lib/paymob/webhook.service.ts
+📊 STATS: 173 lines | 4.41 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/lib/paymob/webhook.service.ts
+   2 │ 
+   3 │ import crypto from "crypto";
+   4 │ import { paymobConfig } from "./config";
+   5 │ import { PayMobTransactionResponse } from "./types";
+   6 │ 
+   7 │ /**
+   8 │  * Constant-time string comparison to prevent timing attacks.
+   9 │  */
+  10 │ function constantTimeCompare(a: string, b: string): boolean {
+  11 │   if (a.length !== b.length) {
+  12 │     return false;
+  13 │   }
+  14 │ 
+  15 │   let result = 0;
+  16 │   for (let i = 0; i < a.length; i++) {
+  17 │     result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  18 │   }
+  19 │ 
+  20 │   return result === 0;
+  21 │ }
+  22 │ 
+  23 │ /**
+  24 │  * Verifies the HMAC signature of a PayMob webhook payload.
+  25 │  * @param webhookObject - The full object received from the webhook `obj` key.
+  26 │  * @returns True if the signature is valid, otherwise false.
+  27 │  */
+  28 │ export function verifyWebhookSignature(
+  29 │   webhookObject: PayMobTransactionResponse
+  30 │ ): boolean {
+  31 │   try {
+  32 │     const { hmac, ...data } = webhookObject;
+  33 │ 
+  34 │     if (!hmac || typeof hmac !== "string") {
+  35 │       console.error("HMAC verification failed: Missing or invalid HMAC");
+  36 │       return false;
+  37 │     }
+  38 │ 
+  39 │     // The fields must be ordered alphabetically by key.
+  40 │     const orderedKeys = [
+  41 │       "amount_cents",
+  42 │       "created_at",
+  43 │       "currency",
+  44 │       "error_occured",
+  45 │       "has_parent_transaction",
+  46 │       "id",
+  47 │       "integration_id",
+  48 │       "is_3d_secure",
+  49 │       "is_auth",
+  50 │       "is_capture",
+  51 │       "is_refunded",
+  52 │       "is_standalone_payment",
+  53 │       "is_voided",
+  54 │       "order",
+  55 │       "owner",
+  56 │       "pending",
+  57 │       "source_data.pan",
+  58 │       "source_data.sub_type",
+  59 │       "source_data.type",
+  60 │       "success",
+  61 │     ];
+  62 │ 
+  63 │     // Build the concatenated string from the data object
+  64 │     const concatenatedString = orderedKeys
+  65 │       .map((key) => {
+  66 │         if (key.startsWith("source_data.")) {
+  67 │           const subKey = key.split(".")[1];
+  68 │           return (
+  69 │             data.source_data?.[subKey as keyof typeof data.source_data] ??
+  70 │             "false"
+  71 │           );
+  72 │         }
+  73 │         if (key === "order") {
+  74 │           return data.order?.id;
+  75 │         }
+  76 │         return data[key as keyof typeof data];
+  77 │       })
+  78 │       .join("");
+  79 │ 
+  80 │     // Generate our own HMAC
+  81 │     const calculatedHmac = crypto
+  82 │       .createHmac("sha512", paymobConfig.hmacSecret)
+  83 │       .update(concatenatedString)
+  84 │       .digest("hex");
+  85 │ 
+  86 │     // Compare safely
+  87 │     return constantTimeCompare(calculatedHmac, hmac);
+  88 │   } catch (error) {
+  89 │     console.error("HMAC verification error:", error);
+  90 │     return false;
+  91 │   }
+  92 │ }
+  93 │ 
+  94 │ /**
+  95 │  * Validates the structure of the incoming webhook payload.
+  96 │  * @param data - The full webhook data object.
+  97 │  * @returns True if the payload is valid, false otherwise.
+  98 │  */
+  99 │ export function validateWebhookPayload(
+ 100 │   data: any
+ 101 │ ): data is PayMobTransactionResponse {
+ 102 │   if (!data || typeof data !== "object") return false;
+ 103 │ 
+ 104 │   const requiredFields = [
+ 105 │     "id",
+ 106 │     "amount_cents",
+ 107 │     "success",
+ 108 │     "pending",
+ 109 │     "currency",
+ 110 │     "integration_id",
+ 111 │     "order",
+ 112 │     "created_at",
+ 113 │     "hmac",
+ 114 │   ];
+ 115 │ 
+ 116 │   for (const field of requiredFields) {
+ 117 │     if (!(field in data)) {
+ 118 │       console.error(
+ 119 │         `Webhook validation failed: Missing required field '${field}'`
+ 120 │       );
+ 121 │       return false;
+ 122 │     }
+ 123 │   }
+ 124 │ 
+ 125 │   if (!data.order || typeof data.order !== "object" || !("id" in data.order)) {
+ 126 │     console.error(
+ 127 │       "Webhook validation failed: Invalid or missing order object/ID"
+ 128 │     );
+ 129 │     return false;
+ 130 │   }
+ 131 │ 
+ 132 │   return true;
+ 133 │ }
+ 134 │ 
+ 135 │ /**
+ 136 │  * A processed webhook response with a clear structure.
+ 137 │  */
+ 138 │ export interface ProcessedWebhook {
+ 139 │   isValid: boolean;
+ 140 │   transactionId?: number;
+ 141 │   orderId?: number;
+ 142 │   isSuccess?: boolean;
+ 143 │   amountCents?: number;
+ 144 │   currency?: string;
+ 145 │   merchantOrderId?: string;
+ 146 │ }
+ 147 │ 
+ 148 │ /**
+ 149 │  * Processes the raw webhook data, including signature validation and data extraction.
+ 150 │  * @param webhookObject - The `obj` from the webhook payload.
+ 151 │  * @returns A structured object with the processing result.
+ 152 │  */
+ 153 │ export function processWebhook(webhookObject: unknown): ProcessedWebhook {
+ 154 │   if (!validateWebhookPayload(webhookObject)) {
+ 155 │     return { isValid: false };
+ 156 │   }
+ 157 │ 
+ 158 │   const isValid = verifyWebhookSignature(webhookObject);
+ 159 │   if (!isValid) {
+ 160 │     return { isValid: false };
+ 161 │   }
+ 162 │ 
+ 163 │   return {
+ 164 │     isValid: true,
+ 165 │     transactionId: webhookObject.id,
+ 166 │     orderId: webhookObject.order.id,
+ 167 │     isSuccess: webhookObject.success && !webhookObject.error_occured,
+ 168 │     amountCents: webhookObject.amount_cents,
+ 169 │     currency: webhookObject.currency,
+ 170 │     merchantOrderId: webhookObject.order.merchant_order_id,
+ 171 │   };
+ 172 │ }
+ 173 │ 
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: webhook.service.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+████████████████████████████████████████████████████████████
+🔥 CORE PAYMENT SERVICES
+████████████████████████████████████████████████████████████
+
+▼ Payment Configuration & Types
+────────────────────────────────────────
+
+📄 FILE: config.ts
+📂 PATH: src/lib/paymob/config.ts
+📊 STATS: 76 lines | 2.3 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/lib/paymob/config.ts
+   2 │ 
+   3 │ import { PayMobConfig } from "./types";
+   4 │ 
+   5 │ /**
+   6 │  * Loads and validates the PayMob configuration from environment variables.
+   7 │  * Throws an error if critical configuration is missing.
+   8 │  */
+   9 │ function loadPayMobConfig(): PayMobConfig {
+  10 │   const config: PayMobConfig = {
+  11 │     apiKey: process.env.PAYMOB_API_KEY || "",
+  12 │     integrationIdOnlineCard:
+  13 │       process.env.PAYMOB_INTEGRATION_ID_ONLINE_CARD || "",
+  14 │     integrationIdMobileWallet:
+  15 │       process.env.PAYMOB_INTEGRATION_ID_MOBILE_WALLET || "",
+  16 │     iframeId: process.env.PAYMOB_IFRAME_ID || "",
+  17 │     hmacSecret: process.env.PAYMOB_HMAC_SECRET || "",
+  18 │     baseUrl: process.env.PAYMOB_BASE_URL || "https://accept.paymob.com/api",
+  19 │     webhookUrl: process.env.PAYMOB_WEBHOOK_URL || "",
+  20 │     returnUrl: process.env.PAYMOB_RETURN_URL || "", // ← This line was missing
+  21 │     // Payment session configuration
+  22 │     paymentTimeoutMinutes: parseInt(
+  23 │       process.env.PAYMOB_PAYMENT_TIMEOUT_MINUTES || "60"
+  24 │     ),
+  25 │     sessionExpiryMinutes: parseInt(
+  26 │       process.env.PAYMOB_SESSION_EXPIRY_MINUTES || "60"
+  27 │     ),
+  28 │     abandonedPaymentCleanupMinutes: parseInt(
+  29 │       process.env.PAYMOB_ABANDONED_CLEANUP_MINUTES || "30"
+  30 │     ),
+  31 │   };
+  32 │ 
+  33 │   const requiredFields = {
+  34 │     apiKey: "PAYMOB_API_KEY",
+  35 │     integrationIdOnlineCard: "PAYMOB_INTEGRATION_ID_ONLINE_CARD",
+  36 │     hmacSecret: "PAYMOB_HMAC_SECRET",
+  37 │     iframeId: "PAYMOB_IFRAME_ID",
+  38 │   };
+  39 │ 
+  40 │   const missingFields = [];
+  41 │   for (const [field, envVar] of Object.entries(requiredFields)) {
+  42 │     if (!config[field as keyof PayMobConfig]) {
+  43 │       missingFields.push(envVar);
+  44 │     }
+  45 │   }
+  46 │ 
+  47 │   // Validate integration IDs are numbers
+  48 │   if (
+  49 │     config.integrationIdOnlineCard &&
+  50 │     isNaN(parseInt(config.integrationIdOnlineCard))
+  51 │   ) {
+  52 │     missingFields.push("PAYMOB_INTEGRATION_ID_ONLINE_CARD (must be a number)");
+  53 │   }
+  54 │ 
+  55 │   if (
+  56 │     config.integrationIdMobileWallet &&
+  57 │     isNaN(parseInt(config.integrationIdMobileWallet))
+  58 │   ) {
+  59 │     console.warn(
+  60 │       "PAYMOB_INTEGRATION_ID_MOBILE_WALLET is not a valid number - mobile wallet payments will fail"
+  61 │     );
+  62 │   }
+  63 │ 
+  64 │   if (missingFields.length > 0) {
+  65 │     throw new Error(
+  66 │       `PayMob configuration is incomplete. Missing or invalid: ${missingFields.join(
+  67 │         ", "
+  68 │       )}`
+  69 │     );
+  70 │   }
+  71 │ 
+  72 │   return config;
+  73 │ }
+  74 │ 
+  75 │ export const paymobConfig = loadPayMobConfig();
+  76 │ 
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: config.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: types.ts
+📂 PATH: src/lib/paymob/types.ts
+📊 STATS: 199 lines | 4.42 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/lib/paymob/types.ts
+   2 │ 
+   3 │ export interface PayMobConfig {
+   4 │   apiKey: string;
+   5 │   integrationIdOnlineCard: string;
+   6 │   integrationIdMobileWallet: string;
+   7 │   iframeId: string;
+   8 │   hmacSecret: string;
+   9 │   baseUrl: string;
+  10 │   webhookUrl: string;
+  11 │   returnUrl: string;
+  12 │   // Payment timeout configuration
+  13 │   paymentTimeoutMinutes: number;
+  14 │   sessionExpiryMinutes: number;
+  15 │   abandonedPaymentCleanupMinutes: number;
+  16 │ }
+  17 │ 
+  18 │ export interface PayMobBillingData {
+  19 │   first_name: string;
+  20 │   last_name: string;
+  21 │   email: string;
+  22 │   phone_number: string;
+  23 │   country: string;
+  24 │   state: string;
+  25 │   city: string;
+  26 │   street: string;
+  27 │   building: string;
+  28 │   floor: string;
+  29 │   apartment: string;
+  30 │ }
+  31 │ 
+  32 │ export interface PayMobOrderItem {
+  33 │   name: string;
+  34 │   amount_cents: number;
+  35 │   description: string;
+  36 │   quantity: number;
+  37 │ }
+  38 │ 
+  39 │ export interface PayMobOrderRequest {
+  40 │   amount_cents: number;
+  41 │   currency: string;
+  42 │   merchant_order_id: string;
+  43 │   items: PayMobOrderItem[];
+  44 │   billing_data: PayMobBillingData;
+  45 │ }
+  46 │ 
+  47 │ export interface PayMobAuthResponse {
+  48 │   token: string;
+  49 │ }
+  50 │ 
+  51 │ export interface PayMobOrderResponse {
+  52 │   id: number;
+  53 │   created_at: string;
+  54 │   delivery_needed: boolean;
+  55 │   merchant: {
+  56 │     id: number;
+  57 │     created_at: string;
+  58 │     phones: string[];
+  59 │     company_emails: string[];
+  60 │     company_name: string;
+  61 │     state: string;
+  62 │     country: string;
+  63 │     city: string;
+  64 │     postal_code: string;
+  65 │     street: string;
+  66 │   };
+  67 │   collector: any;
+  68 │   amount_cents: number;
+  69 │   shipping_data: any;
+  70 │   currency: string;
+  71 │   is_payment_locked: boolean;
+  72 │   is_return: boolean;
+  73 │   is_cancel: boolean;
+  74 │   is_returned: boolean;
+  75 │   is_canceled: boolean;
+  76 │   merchant_order_id: string;
+  77 │   wallet_notification: any;
+  78 │   paid_amount_cents: number;
+  79 │   notify_user_with_email: boolean;
+  80 │   items: Array<{
+  81 │     name: string;
+  82 │     description: string;
+  83 │     amount_cents: number;
+  84 │     quantity: number;
+  85 │   }>;
+  86 │   order_url: string;
+  87 │   commission_fees: number;
+  88 │   delivery_fees_cents: number;
+  89 │   delivery_vat_cents: number;
+  90 │   payment_method: string;
+  91 │   merchant_staff_tag: any;
+  92 │   api_source: string;
+  93 │   data: any;
+  94 │ }
+  95 │ 
+  96 │ export interface PayMobPaymentKeyResponse {
+  97 │   token: string;
+  98 │ }
+  99 │ 
+ 100 │ export interface PayMobTransactionResponse {
+ 101 │   id: number;
+ 102 │   pending: boolean;
+ 103 │   amount_cents: number;
+ 104 │   success: boolean;
+ 105 │   is_auth: boolean;
+ 106 │   is_capture: boolean;
+ 107 │   is_standalone_payment: boolean;
+ 108 │   is_voided: boolean;
+ 109 │   is_refunded: boolean;
+ 110 │   is_3d_secure: boolean;
+ 111 │   integration_id: number;
+ 112 │   profile_id: number;
+ 113 │   has_parent_transaction: boolean;
+ 114 │   order: {
+ 115 │     id: number;
+ 116 │     merchant_order_id: string;
+ 117 │     amount_cents: number;
+ 118 │     [key: string]: any;
+ 119 │   };
+ 120 │   created_at: string;
+ 121 │   currency: string;
+ 122 │   source_data: {
+ 123 │     pan: string;
+ 124 │     type: string;
+ 125 │     tenure: any;
+ 126 │     sub_type: string;
+ 127 │   };
+ 128 │   error_occured: boolean;
+ 129 │   is_live: boolean;
+ 130 │   refunded_amount_cents: number;
+ 131 │   source_id: number;
+ 132 │   is_captured: boolean;
+ 133 │   captured_amount: number;
+ 134 │   updated_at: string;
+ 135 │   is_settled: boolean;
+ 136 │   bill_balanced: boolean;
+ 137 │   is_bill: boolean;
+ 138 │   owner: number;
+ 139 │   parent_transaction: any;
+ 140 │   [key: string]: any; // For other potential fields
+ 141 │ }
+ 142 │ 
+ 143 │ // Enhanced PayMob types for better type safety
+ 144 │ 
+ 145 │ export interface PayMobWebhookData {
+ 146 │   type: 'TRANSACTION';
+ 147 │   obj: PayMobTransactionResponse;
+ 148 │ }
+ 149 │ 
+ 150 │ export interface PayMobApiError {
+ 151 │   detail?: string;
+ 152 │   message?: string;
+ 153 │   errors?: Record<string, string[]>;
+ 154 │   status_code?: number;
+ 155 │ }
+ 156 │ 
+ 157 │ export interface PayMobPaymentSession {
+ 158 │   paymentKey: string;
+ 159 │   orderId: number;
+ 160 │   iframeUrl: string;
+ 161 │   expiresAt: Date;
+ 162 │   merchantOrderId: string;
+ 163 │ }
+ 164 │ 
+ 165 │ export interface PayMobWebhookProcessingResult {
+ 166 │   success: boolean;
+ 167 │   transactionId?: number;
+ 168 │   orderId?: number;
+ 169 │   isPaymentSuccess?: boolean;
+ 170 │   amountCents?: number;
+ 171 │   currency?: string;
+ 172 │   merchantOrderId?: string;
+ 173 │   error?: string;
+ 174 │   requiresManualReview?: boolean;
+ 175 │ }
+ 176 │ 
+ 177 │ // PayMob Configuration with validation
+ 178 │ export interface ValidatedPayMobConfig extends PayMobConfig {
+ 179 │   paymentTimeoutMinutes: number;
+ 180 │   sessionExpiryMinutes: number;
+ 181 │   abandonedPaymentCleanupMinutes: number;
+ 182 │ }
+ 183 │ 
+ 184 │ // Billing data with validation helpers
+ 185 │ export interface ValidatedBillingData extends PayMobBillingData {
+ 186 │   isValid: boolean;
+ 187 │   validationErrors?: string[];
+ 188 │ }
+ 189 │ 
+ 190 │ // Enhanced order request with metadata
+ 191 │ export interface EnhancedOrderRequest extends PayMobOrderRequest {
+ 192 │   metadata?: {
+ 193 │     courseId: string;
+ 194 │     userId: string;
+ 195 │     paymentMethod: 'credit-card' | 'e-wallet';
+ 196 │     initiatedAt: string;
+ 197 │   };
+ 198 │ }
+ 199 │ 
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: types.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: webhook-processor.ts
+📂 PATH: src/lib/webhook-processor.ts
+📊 STATS: 135 lines | 3.42 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/lib/webhook-processor.ts
+   2 │ import prisma from "@/lib/prisma";
+   3 │ import crypto from "crypto";
+   4 │ 
+   5 │ export interface WebhookPayload {
+   6 │   type: string;
+   7 │   obj: {
+   8 │     id: string;
+   9 │     amount_cents: number;
+  10 │     currency: string;
+  11 │     success: boolean;
+  12 │     pending?: boolean;
+  13 │     refunded?: boolean;
+  14 │     order?: {
+  15 │       merchant_order_id: string;
+  16 │     };
+  17 │     source_data?: {
+  18 │       type: string;
+  19 │       pan?: string;
+  20 │     };
+  21 │   };
+  22 │ }
+  23 │ 
+  24 │ export async function processWebhookPayload(
+  25 │   payload: any,
+  26 │   signature: string
+  27 │ ): Promise<void> {
+  28 │   // Verify signature
+  29 │   const hmacSecret = process.env.PAYMOB_HMAC_SECRET;
+  30 │   if (!hmacSecret) {
+  31 │     throw new Error("PAYMOB_HMAC_SECRET not configured");
+  32 │   }
+  33 │ 
+  34 │   const expectedSignature = crypto
+  35 │     .createHmac("sha512", hmacSecret)
+  36 │     .update(JSON.stringify(payload))
+  37 │     .digest("hex");
+  38 │ 
+  39 │   if (signature !== expectedSignature) {
+  40 │     throw new Error("Invalid webhook signature");
+  41 │   }
+  42 │ 
+  43 │   // Validate payload structure
+  44 │   if (!payload.type || !payload.obj) {
+  45 │     throw new Error("Invalid webhook payload structure");
+  46 │   }
+  47 │ 
+  48 │   if (payload.type !== "TRANSACTION") {
+  49 │     // Ignore non-transaction webhooks
+  50 │     return;
+  51 │   }
+  52 │ 
+  53 │   const transaction = payload.obj;
+  54 │ 
+  55 │   if (!transaction.id || !transaction.order?.merchant_order_id) {
+  56 │     throw new Error("Missing required transaction data");
+  57 │   }
+  58 │ 
+  59 │   const paymentId = transaction.order.merchant_order_id;
+  60 │ 
+  61 │   // Find the payment
+  62 │   const payment = await prisma.payment.findUnique({
+  63 │     where: { id: paymentId },
+  64 │     include: {
+  65 │       user: true,
+  66 │       course: true,
+  67 │     },
+  68 │   });
+  69 │ 
+  70 │   if (!payment) {
+  71 │     throw new Error(`Payment not found: ${paymentId}`);
+  72 │   }
+  73 │ 
+  74 │   // Determine payment status based on transaction data
+  75 │   let newStatus: string;
+  76 │   let failureReason: string | null = null;
+  77 │ 
+  78 │   if (transaction.success && !transaction.pending && !transaction.refunded) {
+  79 │     newStatus = "COMPLETED";
+  80 │   } else if (transaction.pending) {
+  81 │     newStatus = "PROCESSING";
+  82 │   } else if (transaction.refunded) {
+  83 │     newStatus = "REFUNDED";
+  84 │   } else {
+  85 │     newStatus = "FAILED";
+  86 │     failureReason = "Payment failed at PayMob";
+  87 │   }
+  88 │ 
+  89 │   // Update payment
+  90 │   const updatedPayment = await prisma.payment.update({
+  91 │     where: { id: paymentId },
+  92 │     data: {
+  93 │       status: newStatus as any,
+  94 │       paymobTransactionId: transaction.id,
+  95 │       paymentMethod: transaction.source_data?.type?.toUpperCase() || "CARD",
+  96 │       failureReason,
+  97 │       updatedAt: new Date(),
+  98 │     },
+  99 │   });
+ 100 │ 
+ 101 │   // Handle enrollment creation for completed payments
+ 102 │   if (newStatus === "COMPLETED" && payment.status !== "COMPLETED") {
+ 103 │     try {
+ 104 │       // Check if enrollment already exists
+ 105 │       const existingEnrollment = await prisma.enrollment.findFirst({
+ 106 │         where: {
+ 107 │           userId: payment.userId,
+ 108 │           courseId: payment.courseId,
+ 109 │         },
+ 110 │       });
+ 111 │ 
+ 112 │       if (!existingEnrollment) {
+ 113 │         await prisma.enrollment.create({
+ 114 │           data: {
+ 115 │             userId: payment.userId,
+ 116 │             courseId: payment.courseId,
+ 117 │           },
+ 118 │         });
+ 119 │ 
+ 120 │         // Course enrollment count is calculated via _count.enrollments
+ 121 │       }
+ 122 │     } catch (enrollmentError) {
+ 123 │       console.error(
+ 124 │         "Failed to create enrollment during webhook processing:",
+ 125 │         enrollmentError
+ 126 │       );
+ 127 │       // Don't throw error as payment was processed successfully
+ 128 │     }
+ 129 │   }
+ 130 │ 
+ 131 │   console.log(
+ 132 │     `Webhook processed successfully for payment ${paymentId}: ${payment.status} -> ${newStatus}`
+ 133 │   );
+ 134 │ }
+ 135 │ 
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: webhook-processor.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+████████████████████████████████████████████████████████████
+📚 CORE ENROLLMENT SERVICES
+████████████████████████████████████████████████████████████
+
+▼ Enrollment Processing Core
+────────────────────────────────────────
+
+📄 FILE: core.service.ts
+📂 PATH: src/lib/services/enrollment/core.service.ts
+📊 STATS: 200 lines | 5.89 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/lib/services/enrollment/core.service.ts
+   2 │ 
+   3 │ import prisma from '@/lib/prisma';
+   4 │ import { EnrollmentResult } from './types';
+   5 │ // Import webhook service functions
+   6 │ import { 
+   7 │   createEnrollmentFromPayment as createEnrollmentFromPaymentWebhook,
+   8 │   handleEnrollmentFailure as handleEnrollmentFailureWebhook
+   9 │ } from './webhook.service';
+  10 │ 
+  11 │ /**
+  12 │  * Enroll a user in a free course.
+  13 │  * @param courseId - The ID of the free course.
+  14 │  * @param userId - The ID of the user to enroll.
+  15 │  * @returns A promise that resolves to an EnrollmentResult object.
+  16 │  */
+  17 │ export async function enrollInFreeCourse(
+  18 │   courseId: string,
+  19 │   userId: string
+  20 │ ): Promise<EnrollmentResult> {
+  21 │   try {
+  22 │     const user = await prisma.user.findUnique({ where: { id: userId } });
+  23 │     if (!user || user.role !== 'STUDENT') {
+  24 │       return { success: false, message: 'غير مصرح لك بالتسجيل في الدورات' };
+  25 │     }
+  26 │ 
+  27 │     const course = await prisma.course.findUnique({
+  28 │       where: { id: courseId },
+  29 │       select: { isPublished: true, price: true, professorId: true },
+  30 │     });
+  31 │ 
+  32 │     if (!course) {
+  33 │       return { success: false, message: 'الدورة غير موجودة' };
+  34 │     }
+  35 │     if (!course.isPublished) {
+  36 │       return { success: false, message: 'الدورة غير متاحة حالياً' };
+  37 │     }
+  38 │     if (course.professorId === userId) {
+  39 │       return { success: false, message: 'لا يمكنك التسجيل في دورتك الخاصة' };
+  40 │     }
+  41 │     if (course.price && Number(course.price) > 0) {
+  42 │       return {
+  43 │         success: false,
+  44 │         message: 'هذه الدورة مدفوعة وتتطلب دفع',
+  45 │         requiresPayment: true,
+  46 │       };
+  47 │     }
+  48 │ 
+  49 │     const existingEnrollment = await prisma.enrollment.findUnique({
+  50 │       where: { userId_courseId: { userId, courseId } },
+  51 │     });
+  52 │ 
+  53 │     if (existingEnrollment) {
+  54 │       return {
+  55 │         success: false,
+  56 │         message: 'أنت مسجل بالفعل في هذه الدورة',
+  57 │         enrollmentId: existingEnrollment.id,
+  58 │       };
+  59 │     }
+  60 │ 
+  61 │     const enrollment = await prisma.enrollment.create({
+  62 │       data: {
+  63 │         userId,
+  64 │         courseId,
+  65 │         enrolledAt: new Date(),
+  66 │         progressPercent: 0,
+  67 │         completedLessonIds: [],
+  68 │         totalWatchTime: 0,
+  69 │       },
+  70 │     });
+  71 │ 
+  72 │     return {
+  73 │       success: true,
+  74 │       message: 'تم التسجيل في الدورة بنجاح',
+  75 │       enrollmentId: enrollment.id,
+  76 │     };
+  77 │   } catch (error) {
+  78 │     console.error('Error enrolling in free course:', error);
+  79 │     return {
+  80 │       success: false,
+  81 │       message: 'حدث خطأ أثناء التسجيل',
+  82 │       error: error instanceof Error ? error.message : 'Unknown error',
+  83 │     };
+  84 │   }
+  85 │ }
+  86 │ 
+  87 │ /**
+  88 │  * Create an enrollment record after a successful payment has been verified.
+  89 │  * @param courseId - The ID of the course.
+  90 │  * @param userId - The ID of the user.
+  91 │  * @param paymentId - The ID of the completed payment record.
+  92 │  * @returns A promise that resolves to an EnrollmentResult object.
+  93 │  */
+  94 │ export async function createPaidEnrollment(
+  95 │   courseId: string,
+  96 │   userId: string,
+  97 │   paymentId: string
+  98 │ ): Promise<EnrollmentResult> {
+  99 │   try {
+ 100 │     // Verify payment exists and is completed
+ 101 │     const payment = await prisma.payment.findUnique({
+ 102 │       where: { id: paymentId },
+ 103 │       include: { course: true },
+ 104 │     });
+ 105 │ 
+ 106 │     if (!payment) {
+ 107 │       return {
+ 108 │         success: false,
+ 109 │         message: 'معلومات الدفع غير موجودة',
+ 110 │       };
+ 111 │     }
+ 112 │ 
+ 113 │     if (payment.status !== 'COMPLETED') {
+ 114 │       return {
+ 115 │         success: false,
+ 116 │         message: 'الدفع لم يكتمل بعد',
+ 117 │       };
+ 118 │     }
+ 119 │ 
+ 120 │     if (payment.courseId !== courseId || payment.userId !== userId) {
+ 121 │       return {
+ 122 │         success: false,
+ 123 │         message: 'بيانات الدفع غير متطابقة',
+ 124 │       };
+ 125 │     }
+ 126 │ 
+ 127 │     // Check if already enrolled
+ 128 │     const existingEnrollment = await prisma.enrollment.findUnique({
+ 129 │       where: {
+ 130 │         userId_courseId: {
+ 131 │           userId,
+ 132 │           courseId,
+ 133 │         },
+ 134 │       },
+ 135 │     });
+ 136 │ 
+ 137 │     if (existingEnrollment) {
+ 138 │       return {
+ 139 │         success: true,
+ 140 │         message: 'أنت مسجل بالفعل في هذه الدورة',
+ 141 │         enrollmentId: existingEnrollment.id,
+ 142 │       };
+ 143 │     }
+ 144 │ 
+ 145 │     // Create enrollment
+ 146 │     const enrollment = await prisma.enrollment.create({
+ 147 │       data: {
+ 148 │         userId,
+ 149 │         courseId,
+ 150 │         enrolledAt: new Date(),
+ 151 │       },
+ 152 │     });
+ 153 │ 
+ 154 │     return {
+ 155 │       success: true,
+ 156 │       message: 'تم التسجيل في الدورة بنجاح بعد الدفع',
+ 157 │       enrollmentId: enrollment.id,
+ 158 │     };
+ 159 │   } catch (error) {
+ 160 │     console.error('Error creating paid enrollment:', error);
+ 161 │     return {
+ 162 │       success: false,
+ 163 │       message: 'حدث خطأ أثناء إنشاء التسجيل',
+ 164 │       error: error instanceof Error ? error.message : 'Unknown error',
+ 165 │     };
+ 166 │   }
+ 167 │ }
+ 168 │ 
+ 169 │ // Export a service class for backward compatibility
+ 170 │ export class EnrollmentService {
+ 171 │   static async enrollInFreeCourse(courseId: string, userId: string) {
+ 172 │     return enrollInFreeCourse(courseId, userId);
+ 173 │   }
+ 174 │ 
+ 175 │   static async createPaidEnrollment(courseId: string, userId: string, paymentId: string) {
+ 176 │     return createPaidEnrollment(courseId, userId, paymentId);
+ 177 │   }
+ 178 │ 
+ 179 │   static async checkCourseAccess(courseId: string, userId?: string, userRole?: any) {
+ 180 │     // Import and use the access service
+ 181 │     const { checkCourseAccess } = await import('../enrollment/access.service');
+ 182 │     return checkCourseAccess(courseId, userId, userRole);
+ 183 │   }
+ 184 │ 
+ 185 │   static async createEnrollmentFromPayment(paymentData: {
+ 186 │     courseId: string;
+ 187 │     userId: string;
+ 188 │     paymentId: string;
+ 189 │   }) {
+ 190 │     return createEnrollmentFromPaymentWebhook(paymentData.paymentId);
+ 191 │   }
+ 192 │ 
+ 193 │   static async handleEnrollmentFailure(paymentId: string, reason: string) {
+ 194 │     await handleEnrollmentFailureWebhook(paymentId, reason);
+ 195 │     return {
+ 196 │       success: false,
+ 197 │       message: `فشل في إنشاء التسجيل: ${reason}`,
+ 198 │     };
+ 199 │   }
+ 200 │ }
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: core.service.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: route.ts
+📂 PATH: src/app/api/courses/[id]/enroll/route.ts
+📊 STATS: 221 lines | 5.81 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/app/api/courses/[id]/enroll/route.ts
+   2 │ import { NextRequest} from 'next/server';
+   3 │ import { auth } from '@/lib/auth';
+   4 │ import prisma from '@/lib/prisma';
+   5 │ import { createSuccessResponse, createErrorResponse, ApiErrors } from '@/lib/api-utils';
+   6 │ 
+   7 │ interface RouteParams {
+   8 │   params: { id: string }
+   9 │ }
+  10 │ 
+  11 │ // POST /api/courses/[id]/enroll - Enroll in course
+  12 │ export async function POST(request: NextRequest, { params }: RouteParams) {
+  13 │   try {
+  14 │     const session = await auth();
+  15 │     
+  16 │     // Check authentication
+  17 │     if (!session?.user) {
+  18 │       return createErrorResponse(
+  19 │         ApiErrors.UNAUTHORIZED.code,
+  20 │         ApiErrors.UNAUTHORIZED.message,
+  21 │         ApiErrors.UNAUTHORIZED.status
+  22 │       );
+  23 │     }
+  24 │ 
+  25 │     // Only students can enroll (admins can enroll for testing)
+  26 │     if (!['STUDENT', 'ADMIN'].includes(session.user.role)) {
+  27 │       return createErrorResponse(
+  28 │         ApiErrors.FORBIDDEN.code,
+  29 │         'غير مصرح لك بالتسجيل في الدورات',
+  30 │         ApiErrors.FORBIDDEN.status
+  31 │       );
+  32 │     }
+  33 │ 
+  34 │     const { id: courseId } = await params;
+  35 │ 
+  36 │     // Check if course exists and is published
+  37 │     const course = await prisma.course.findFirst({
+  38 │       where: { 
+  39 │         id: courseId, 
+  40 │         isPublished: true 
+  41 │       },
+  42 │       select: {
+  43 │         id: true,
+  44 │         title: true,
+  45 │         price: true,
+  46 │         currency: true,
+  47 │         professorId: true
+  48 │       }
+  49 │     });
+  50 │ 
+  51 │     if (!course) {
+  52 │       return createErrorResponse(
+  53 │         ApiErrors.NOT_FOUND.code,
+  54 │         'الدورة غير موجودة أو غير منشورة',
+  55 │         ApiErrors.NOT_FOUND.status
+  56 │       );
+  57 │     }
+  58 │ 
+  59 │     // Check if user is already enrolled
+  60 │     const existingEnrollment = await prisma.enrollment.findUnique({
+  61 │       where: {
+  62 │         userId_courseId: {
+  63 │           userId: session.user.id,
+  64 │           courseId
+  65 │         }
+  66 │       }
+  67 │     });
+  68 │ 
+  69 │     if (existingEnrollment) {
+  70 │       return createErrorResponse(
+  71 │         ApiErrors.DUPLICATE_ERROR.code,
+  72 │         'أنت مسجل في هذه الدورة بالفعل',
+  73 │         ApiErrors.DUPLICATE_ERROR.status
+  74 │       );
+  75 │     }
+  76 │ 
+  77 │     // Check if course is paid and requires payment
+  78 │     if (course.price && Number(course.price) > 0) {
+  79 │       // For paid courses, check if there's a completed payment
+  80 │       const completedPayment = await prisma.payment.findFirst({
+  81 │         where: {
+  82 │           userId: session.user.id,
+  83 │           courseId,
+  84 │           status: 'COMPLETED'
+  85 │         }
+  86 │       });
+  87 │ 
+  88 │       if (!completedPayment) {
+  89 │         return createErrorResponse(
+  90 │           'PAYMENT_REQUIRED',
+  91 │           'هذه دورة مدفوعة. يجب إتمام الدفع أولاً.',
+  92 │           402 // Payment Required
+  93 │         );
+  94 │       }
+  95 │     }
+  96 │ 
+  97 │     // Prevent professors from enrolling in their own courses
+  98 │     if (course.professorId === session.user.id) {
+  99 │       return createErrorResponse(
+ 100 │         'INVALID_ENROLLMENT',
+ 101 │         'لا يمكنك التسجيل في دورتك الخاصة',
+ 102 │         400
+ 103 │       );
+ 104 │     }
+ 105 │ 
+ 106 │     // Create enrollment for free courses
+ 107 │     const enrollment = await prisma.enrollment.create({
+ 108 │       data: {
+ 109 │         userId: session.user.id,
+ 110 │         courseId,
+ 111 │         progressPercent: 0,
+ 112 │         completedLessonIds: [],
+ 113 │         totalWatchTime: 0
+ 114 │       },
+ 115 │       include: {
+ 116 │         course: {
+ 117 │           select: {
+ 118 │             id: true,
+ 119 │             title: true,
+ 120 │             thumbnailUrl: true,
+ 121 │             professor: {
+ 122 │               select: {
+ 123 │                 name: true
+ 124 │               }
+ 125 │             }
+ 126 │           }
+ 127 │         }
+ 128 │       }
+ 129 │     });
+ 130 │ 
+ 131 │     return createSuccessResponse({
+ 132 │       enrollment,
+ 133 │       message: 'تم التسجيل في الدورة بنجاح!'
+ 134 │     }, 201);
+ 135 │ 
+ 136 │   } catch (error) {
+ 137 │     console.error('Course enrollment error:', error);
+ 138 │     return createErrorResponse(
+ 139 │       ApiErrors.INTERNAL_ERROR.code,
+ 140 │       ApiErrors.INTERNAL_ERROR.message,
+ 141 │       ApiErrors.INTERNAL_ERROR.status,
+ 142 │       error
+ 143 │     );
+ 144 │   }
+ 145 │ }
+ 146 │ 
+ 147 │ // DELETE /api/courses/[id]/enroll - Unenroll from course
+ 148 │ export async function DELETE(request: NextRequest, { params }: RouteParams) {
+ 149 │   try {
+ 150 │     const session = await auth();
+ 151 │     
+ 152 │     // Check authentication
+ 153 │     if (!session?.user) {
+ 154 │       return createErrorResponse(
+ 155 │         ApiErrors.UNAUTHORIZED.code,
+ 156 │         ApiErrors.UNAUTHORIZED.message,
+ 157 │         ApiErrors.UNAUTHORIZED.status
+ 158 │       );
+ 159 │     }
+ 160 │ 
+ 161 │     const { id: courseId } = params;
+ 162 │ 
+ 163 │     // Check if enrollment exists
+ 164 │     const enrollment = await prisma.enrollment.findUnique({
+ 165 │       where: {
+ 166 │         userId_courseId: {
+ 167 │           userId: session.user.id,
+ 168 │           courseId
+ 169 │         }
+ 170 │       },
+ 171 │       include: {
+ 172 │         course: {
+ 173 │           select: {
+ 174 │             title: true,
+ 175 │             price: true
+ 176 │           }
+ 177 │         }
+ 178 │       }
+ 179 │     });
+ 180 │ 
+ 181 │     if (!enrollment) {
+ 182 │       return createErrorResponse(
+ 183 │         ApiErrors.NOT_FOUND.code,
+ 184 │         'أنت غير مسجل في هذه الدورة',
+ 185 │         ApiErrors.NOT_FOUND.status
+ 186 │       );
+ 187 │     }
+ 188 │ 
+ 189 │     // Prevent unenrollment from paid courses (business rule)
+ 190 │     if (enrollment.course.price && Number(enrollment.course.price) > 0) {
+ 191 │       return createErrorResponse(
+ 192 │         'PAID_COURSE_UNENROLL',
+ 193 │         'لا يمكن إلغاء التسجيل من الدورات المدفوعة. تواصل مع الدعم الفني.',
+ 194 │         400
+ 195 │       );
+ 196 │     }
+ 197 │ 
+ 198 │     // Delete enrollment
+ 199 │     await prisma.enrollment.delete({
+ 200 │       where: {
+ 201 │         userId_courseId: {
+ 202 │           userId: session.user.id,
+ 203 │           courseId
+ 204 │         }
+ 205 │       }
+ 206 │     });
+ 207 │ 
+ 208 │     return createSuccessResponse({
+ 209 │       message: 'تم إلغاء التسجيل من الدورة بنجاح'
+ 210 │     });
+ 211 │ 
+ 212 │   } catch (error) {
+ 213 │     console.error('Course unenrollment error:', error);
+ 214 │     return createErrorResponse(
+ 215 │       ApiErrors.INTERNAL_ERROR.code,
+ 216 │       ApiErrors.INTERNAL_ERROR.message,
+ 217 │       ApiErrors.INTERNAL_ERROR.status,
+ 218 │       error
+ 219 │     );
+ 220 │   }
+ 221 │ }
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: route.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: route.ts
+📂 PATH: src/app/api/courses/[id]/enroll-enhanced/route.ts
+📊 STATS: 166 lines | 4.37 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/app/api/courses/[id]/enroll-enhanced/route.ts
+   2 │ // Enhanced enrollment API with payment integration
+   3 │ 
+   4 │ import { NextRequest, NextResponse } from 'next/server';
+   5 │ import { auth } from '@/lib/auth';
+   6 │ import { EnrollmentService } from '@/lib/services/enrollment/core.service';
+   7 │ import { z } from 'zod';
+   8 │ 
+   9 │ const enrollmentSchema = z.object({
+  10 │   paymentId: z.string().optional(), // For paid courses
+  11 │   enrollmentType: z.enum(['free', 'paid']).default('free')
+  12 │ });
+  13 │ 
+  14 │ export async function POST(
+  15 │   request: NextRequest,
+  16 │   { params }: { params: { id: string } }
+  17 │ ) {
+  18 │   try {
+  19 │     const session = await auth();
+  20 │     
+  21 │     if (!session?.user?.id) {
+  22 │       return NextResponse.json(
+  23 │         { error: 'يجب تسجيل الدخول أولاً', code: 'UNAUTHORIZED' },
+  24 │         { status: 401 }
+  25 │       );
+  26 │     }
+  27 │ 
+  28 │     if (session.user.role !== 'STUDENT') {
+  29 │       return NextResponse.json(
+  30 │         { error: 'التسجيل متاح للطلاب فقط', code: 'FORBIDDEN' },
+  31 │         { status: 403 }
+  32 │       );
+  33 │     }
+  34 │ 
+  35 │     const courseId = params.id;
+  36 │     const body = await request.json();
+  37 │     const { paymentId, enrollmentType } = enrollmentSchema.parse(body);
+  38 │ 
+  39 │     // Check course access first
+  40 │     const accessResult = await EnrollmentService.checkCourseAccess(
+  41 │       courseId,
+  42 │       session.user.id,
+  43 │       session.user.role
+  44 │     );
+  45 │ 
+  46 │     if (accessResult.hasAccess) {
+  47 │       return NextResponse.json({
+  48 │         success: true,
+  49 │         message: 'أنت مسجل بالفعل في هذه الدورة',
+  50 │         enrollment: accessResult.enrollment
+  51 │       });
+  52 │     }
+  53 │ 
+  54 │     if (!accessResult.canEnroll) {
+  55 │       return NextResponse.json(
+  56 │         { 
+  57 │           error: accessResult.message,
+  58 │           code: 'CANNOT_ENROLL'
+  59 │         },
+  60 │         { status: 400 }
+  61 │       );
+  62 │     }
+  63 │ 
+  64 │     let enrollmentResult;
+  65 │ 
+  66 │     if (enrollmentType === 'free' || !accessResult.requiresPayment) {
+  67 │       // Free enrollment
+  68 │       enrollmentResult = await EnrollmentService.enrollInFreeCourse(
+  69 │         courseId,
+  70 │         session.user.id
+  71 │       );
+  72 │     } else if (enrollmentType === 'paid' && paymentId) {
+  73 │       // Paid enrollment - verify payment first
+  74 │       enrollmentResult = await EnrollmentService.createPaidEnrollment(
+  75 │         courseId,
+  76 │         session.user.id,
+  77 │         paymentId
+  78 │       );
+  79 │     } else {
+  80 │       return NextResponse.json(
+  81 │         { 
+  82 │           error: 'هذه الدورة مدفوعة وتتطلب إتمام الدفع أولاً',
+  83 │           code: 'PAYMENT_REQUIRED',
+  84 │           requiresPayment: true
+  85 │         },
+  86 │         { status: 402 }
+  87 │       );
+  88 │     }
+  89 │ 
+  90 │     if (!enrollmentResult.success) {
+  91 │       return NextResponse.json(
+  92 │         { 
+  93 │           error: enrollmentResult.message,
+  94 │           code: 'ENROLLMENT_FAILED',
+  95 │           requiresPayment: enrollmentResult.requiresPayment
+  96 │         },
+  97 │         { status: 400 }
+  98 │       );
+  99 │     }
+ 100 │ 
+ 101 │     // Success response
+ 102 │     return NextResponse.json({
+ 103 │       success: true,
+ 104 │       message: enrollmentResult.message,
+ 105 │       enrollmentId: enrollmentResult.enrollmentId,
+ 106 │       redirectTo: `/courses/${courseId}` // Redirect to course content
+ 107 │     });
+ 108 │ 
+ 109 │   } catch (error) {
+ 110 │     console.error('Enhanced enrollment error:', error);
+ 111 │     
+ 112 │     if (error instanceof z.ZodError) {
+ 113 │       return NextResponse.json(
+ 114 │         { 
+ 115 │           error: 'بيانات غير صحيحة',
+ 116 │           code: 'VALIDATION_ERROR',
+ 117 │           details: error.issues
+ 118 │         },
+ 119 │         { status: 400 }
+ 120 │       );
+ 121 │     }
+ 122 │ 
+ 123 │     return NextResponse.json(
+ 124 │       { 
+ 125 │         error: 'حدث خطأ أثناء التسجيل',
+ 126 │         code: 'INTERNAL_ERROR'
+ 127 │       },
+ 128 │       { status: 500 }
+ 129 │     );
+ 130 │   }
+ 131 │ }
+ 132 │ 
+ 133 │ // GET endpoint to check enrollment status
+ 134 │ export async function GET(
+ 135 │   request: NextRequest,
+ 136 │   { params }: { params: { id: string } }
+ 137 │ ) {
+ 138 │   try {
+ 139 │     const session = await auth();
+ 140 │     const courseId = params.id;
+ 141 │ 
+ 142 │     // Check course access
+ 143 │     const accessResult = await EnrollmentService.checkCourseAccess(
+ 144 │       courseId,
+ 145 │       session?.user?.id,
+ 146 │       session?.user?.role
+ 147 │     );
+ 148 │ 
+ 149 │     return NextResponse.json({
+ 150 │       courseId,
+ 151 │       userId: session?.user?.id,
+ 152 │       userRole: session?.user?.role,
+ 153 │       access: accessResult
+ 154 │     });
+ 155 │ 
+ 156 │   } catch (error) {
+ 157 │     console.error('Access check error:', error);
+ 158 │     return NextResponse.json(
+ 159 │       { 
+ 160 │         error: 'حدث خطأ في التحقق من الوصول',
+ 161 │         code: 'ACCESS_CHECK_ERROR'
+ 162 │       },
+ 163 │       { status: 500 }
+ 164 │     );
+ 165 │   }
+ 166 │ }
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: route.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: access.service.ts
+📂 PATH: src/lib/services/enrollment/access.service.ts
+📊 STATS: 167 lines | 4.43 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/lib/services/enrollment/access.service.ts
+   2 │ 
+   3 │ import { UserRole } from '@prisma/client';
+   4 │ import prisma from '@/lib/prisma';
+   5 │ import { CourseAccessResult } from './types';
+   6 │ 
+   7 │ /**
+   8 │  * Check if a user can access a course and determine their access level.
+   9 │  * @param courseId - The ID of the course.
+  10 │  * @param userId - The ID of the user (optional).
+  11 │  * @param userRole - The role of the user (optional).
+  12 │  * @returns A promise that resolves to a CourseAccessResult object.
+  13 │  */
+  14 │ export async function checkCourseAccess(
+  15 │   courseId: string,
+  16 │   userId?: string,
+  17 │   userRole?: UserRole
+  18 │ ): Promise<CourseAccessResult> {
+  19 │   try {
+  20 │     // Get course details
+  21 │     const course = await prisma.course.findUnique({
+  22 │       where: { id: courseId },
+  23 │       include: {
+  24 │         professor: true,
+  25 │         _count: {
+  26 │           select: { lessons: true },
+  27 │         },
+  28 │       },
+  29 │     });
+  30 │ 
+  31 │     if (!course) {
+  32 │       return {
+  33 │         hasAccess: false,
+  34 │         accessType: 'free',
+  35 │         message: 'الدورة غير موجودة',
+  36 │         canEnroll: false,
+  37 │         requiresPayment: false,
+  38 │       };
+  39 │     }
+  40 │ 
+  41 │     // Check if course is published
+  42 │     if (!course.isPublished) {
+  43 │       // Only owner and admin can access unpublished courses
+  44 │       if (userId === course.professor.id || userRole === 'ADMIN') {
+  45 │         return {
+  46 │           hasAccess: true,
+  47 │           accessType: userRole === 'ADMIN' ? 'admin' : 'owner',
+  48 │           message: 'وصول كامل كمالك/مدير',
+  49 │           canEnroll: false,
+  50 │           requiresPayment: false,
+  51 │         };
+  52 │       }
+  53 │ 
+  54 │       return {
+  55 │         hasAccess: false,
+  56 │         accessType: 'free',
+  57 │         message: 'الدورة غير متاحة حالياً',
+  58 │         canEnroll: false,
+  59 │         requiresPayment: false,
+  60 │       };
+  61 │     }
+  62 │ 
+  63 │     // Admin has full access
+  64 │     if (userRole === 'ADMIN') {
+  65 │       return {
+  66 │         hasAccess: true,
+  67 │         accessType: 'admin',
+  68 │         message: 'وصول كامل كمدير',
+  69 │         canEnroll: false,
+  70 │         requiresPayment: false,
+  71 │       };
+  72 │     }
+  73 │ 
+  74 │     // Course owner has full access
+  75 │     if (userId === course.professor.id) {
+  76 │       return {
+  77 │         hasAccess: true,
+  78 │         accessType: 'owner',
+  79 │         message: 'وصول كامل كمالك الدورة',
+  80 │         canEnroll: false,
+  81 │         requiresPayment: false,
+  82 │       };
+  83 │     }
+  84 │ 
+  85 │     // Check if user is enrolled
+  86 │     if (userId) {
+  87 │       const enrollment = await prisma.enrollment.findUnique({
+  88 │         where: {
+  89 │           userId_courseId: {
+  90 │             userId,
+  91 │             courseId,
+  92 │           },
+  93 │         },
+  94 │         include: {
+  95 │           user: {
+  96 │             include: {
+  97 │               viewingHistory: {
+  98 │                 where: {
+  99 │                   lesson: {
+ 100 │                     courseId,
+ 101 │                   },
+ 102 │                 },
+ 103 │               },
+ 104 │             },
+ 105 │           },
+ 106 │         },
+ 107 │       });
+ 108 │ 
+ 109 │       if (enrollment) {
+ 110 │         // Calculate progress
+ 111 │         const totalLessons = course._count.lessons;
+ 112 │         const completedLessons = enrollment.user.viewingHistory.filter(
+ 113 │           (vh) => vh.completed
+ 114 │         ).length;
+ 115 │         const progress =
+ 116 │           totalLessons > 0
+ 117 │             ? Math.round((completedLessons / totalLessons) * 100)
+ 118 │             : 0;
+ 119 │ 
+ 120 │         return {
+ 121 │           hasAccess: true,
+ 122 │           accessType: 'enrolled',
+ 123 │           message: 'مسجل في الدورة',
+ 124 │           canEnroll: false,
+ 125 │           requiresPayment: false,
+ 126 │           enrollment: {
+ 127 │             id: enrollment.id,
+ 128 │             enrolledAt: enrollment.enrolledAt,
+ 129 │             progress,
+ 130 │             lastAccessedAt: enrollment.lastAccessedAt,
+ 131 │           },
+ 132 │         };
+ 133 │       }
+ 134 │     }
+ 135 │ 
+ 136 │     // Check if course is free
+ 137 │     const isFree = !course.price || Number(course.price) <= 0;
+ 138 │ 
+ 139 │     if (isFree) {
+ 140 │       return {
+ 141 │         hasAccess: false,
+ 142 │         accessType: 'free',
+ 143 │         message: 'دورة مجانية - يمكن التسجيل',
+ 144 │         canEnroll: true,
+ 145 │         requiresPayment: false,
+ 146 │       };
+ 147 │     }
+ 148 │ 
+ 149 │     // Paid course - requires payment
+ 150 │     return {
+ 151 │       hasAccess: false,
+ 152 │       accessType: 'paid',
+ 153 │       message: `دورة مدفوعة - ${course.price} ${course.currency}`,
+ 154 │       canEnroll: true,
+ 155 │       requiresPayment: true,
+ 156 │     };
+ 157 │   } catch (error) {
+ 158 │     console.error('Error checking course access:', error);
+ 159 │     return {
+ 160 │       hasAccess: false,
+ 161 │       accessType: 'free',
+ 162 │       message: 'حدث خطأ في التحقق من الوصول',
+ 163 │       canEnroll: false,
+ 164 │       requiresPayment: false,
+ 165 │     };
+ 166 │   }
+ 167 │ }
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: access.service.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+████████████████████████████████████████████████████████████
+📚 CORE ENROLLMENT SERVICES
+████████████████████████████████████████████████████████████
+
+▼ Enrollment Webhooks & Processing
+────────────────────────────────────────
+
+📄 FILE: webhook.service.ts
+📂 PATH: src/lib/services/enrollment/webhook.service.ts
+📊 STATS: 232 lines | 6.4 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/lib/services/enrollment/webhook.service.ts
+   2 │ 
+   3 │ import prisma from '@/lib/prisma';
+   4 │ import { EnrollmentResult } from './types';
+   5 │ 
+   6 │ /**
+   7 │  * Automatically creates an enrollment from a successful payment.
+   8 │  * Typically called by a payment webhook handler.
+   9 │  * @param paymentId - The ID of the completed payment.
+  10 │  * @returns A promise that resolves to an EnrollmentResult object.
+  11 │  */
+  12 │ export async function createEnrollmentFromPayment(
+  13 │   paymentId: string
+  14 │ ): Promise<EnrollmentResult> {
+  15 │   try {
+  16 │     // Get payment details with course and user info
+  17 │     const payment = await prisma.payment.findUnique({
+  18 │       where: { id: paymentId },
+  19 │       include: {
+  20 │         course: {
+  21 │           select: {
+  22 │             id: true,
+  23 │             title: true,
+  24 │             isPublished: true,
+  25 │             price: true,
+  26 │           },
+  27 │         },
+  28 │         user: {
+  29 │           select: {
+  30 │             id: true,
+  31 │             name: true,
+  32 │             email: true,
+  33 │           },
+  34 │         },
+  35 │       },
+  36 │     });
+  37 │ 
+  38 │     if (!payment) {
+  39 │       return {
+  40 │         success: false,
+  41 │         message: 'Payment record not found',
+  42 │         error: 'PAYMENT_NOT_FOUND',
+  43 │       };
+  44 │     }
+  45 │ 
+  46 │     if (payment.status !== 'COMPLETED') {
+  47 │       return {
+  48 │         success: false,
+  49 │         message: 'Payment not completed',
+  50 │         error: 'PAYMENT_NOT_COMPLETED',
+  51 │       };
+  52 │     }
+  53 │ 
+  54 │     if (!payment.course.isPublished) {
+  55 │       return {
+  56 │         success: false,
+  57 │         message: 'Course is not published',
+  58 │         error: 'COURSE_NOT_PUBLISHED',
+  59 │       };
+  60 │     }
+  61 │ 
+  62 │     // Check if enrollment already exists
+  63 │     const existingEnrollment = await prisma.enrollment.findUnique({
+  64 │       where: {
+  65 │         userId_courseId: {
+  66 │           userId: payment.userId,
+  67 │           courseId: payment.courseId,
+  68 │         },
+  69 │       },
+  70 │     });
+  71 │ 
+  72 │     if (existingEnrollment) {
+  73 │       console.log('Enrollment already exists for payment:', paymentId);
+  74 │       return {
+  75 │         success: true,
+  76 │         message: 'User already enrolled',
+  77 │         enrollmentId: existingEnrollment.id,
+  78 │       };
+  79 │     }
+  80 │ 
+  81 │     // Create enrollment with transaction to ensure consistency
+  82 │     const enrollment = await prisma.$transaction(async (tx) => {
+  83 │       // Create the enrollment
+  84 │       const newEnrollment = await tx.enrollment.create({
+  85 │         data: {
+  86 │           userId: payment.userId,
+  87 │           courseId: payment.courseId,
+  88 │           progressPercent: 0,
+  89 │           completedLessonIds: [],
+  90 │           totalWatchTime: 0,
+  91 │           enrolledAt: new Date(),
+  92 │           lastAccessedAt: null,
+  93 │         },
+  94 │       });
+  95 │ 
+  96 │       // Create a progress milestone for course start
+  97 │       await tx.progressMilestone.create({
+  98 │         data: {
+  99 │           userId: payment.userId,
+ 100 │           courseId: payment.courseId,
+ 101 │           milestoneType: 'COURSE_START',
+ 102 │           metadata: {
+ 103 │             paymentId: payment.id,
+ 104 │             enrollmentId: newEnrollment.id,
+ 105 │             courseName: payment.course.title,
+ 106 │             amount: Number(payment.amount),
+ 107 │           },
+ 108 │         },
+ 109 │       });
+ 110 │ 
+ 111 │       return newEnrollment;
+ 112 │     });
+ 113 │ 
+ 114 │     console.log('Automatic enrollment created:', {
+ 115 │       enrollmentId: enrollment.id,
+ 116 │       userId: payment.userId,
+ 117 │       courseId: payment.courseId,
+ 118 │       paymentId: payment.id,
+ 119 │     });
+ 120 │ 
+ 121 │     return {
+ 122 │       success: true,
+ 123 │       message: 'تم التسجيل في الدورة تلقائياً بعد الدفع',
+ 124 │       enrollmentId: enrollment.id,
+ 125 │     };
+ 126 │   } catch (error) {
+ 127 │     console.error('Error creating automatic enrollment:', error);
+ 128 │     // If an error occurs, we should handle it to allow for retries
+ 129 │     await handleEnrollmentFailure(
+ 130 │       paymentId,
+ 131 │       error instanceof Error ? error.message : 'Unknown transaction error'
+ 132 │     );
+ 133 │     return {
+ 134 │       success: false,
+ 135 │       message: 'Failed to create automatic enrollment',
+ 136 │       error: error instanceof Error ? error.message : 'Unknown error',
+ 137 │     };
+ 138 │   }
+ 139 │ }
+ 140 │ 
+ 141 │ /**
+ 142 │  * Logs an enrollment failure to the payment record for manual review and retry.
+ 143 │  * @param paymentId - The ID of the payment that failed to create an enrollment.
+ 144 │  * @param error - The error message.
+ 145 │  */
+ 146 │ export async function handleEnrollmentFailure(
+ 147 │   paymentId: string,
+ 148 │   error: string
+ 149 │ ): Promise<void> {
+ 150 │   try {
+ 151 │     // Log the failure for manual review
+ 152 │     console.error(
+ 153 │       'Enrollment failure for payment:',
+ 154 │       paymentId,
+ 155 │       'Error:',
+ 156 │       error
+ 157 │     );
+ 158 │ 
+ 159 │     const payment = await prisma.payment.findUnique({
+ 160 │       where: { id: paymentId },
+ 161 │     });
+ 162 │     
+ 163 │     // Ensure paymobResponse is treated as an object
+ 164 │     const paymobResponse = (payment?.paymobResponse || {}) as any;
+ 165 │ 
+ 166 │     // Update payment record to indicate enrollment failure
+ 167 │     await prisma.payment.update({
+ 168 │       where: { id: paymentId },
+ 169 │       data: {
+ 170 │         paymobResponse: {
+ 171 │           ...paymobResponse,
+ 172 │           enrollmentError: {
+ 173 │             error,
+ 174 │             timestamp: new Date().toISOString(),
+ 175 │             requiresManualReview: true,
+ 176 │           },
+ 177 │         },
+ 178 │       },
+ 179 │     });
+ 180 │ 
+ 181 │     // TODO: Send notification to administrators
+ 182 │     // TODO: Queue for manual enrollment processing
+ 183 │   } catch (dbError) {
+ 184 │     console.error('Failed to log enrollment failure:', dbError);
+ 185 │   }
+ 186 │ }
+ 187 │ 
+ 188 │ /**
+ 189 │  * Retries a failed enrollment creation process for a given payment.
+ 190 │  * @param paymentId - The ID of the payment to retry.
+ 191 │  * @returns A promise that resolves to an EnrollmentResult.
+ 192 │  */
+ 193 │ export async function retryFailedEnrollment(
+ 194 │   paymentId: string
+ 195 │ ): Promise<EnrollmentResult> {
+ 196 │   try {
+ 197 │     console.log('Retrying failed enrollment for payment:', paymentId);
+ 198 │ 
+ 199 │     const result = await createEnrollmentFromPayment(paymentId);
+ 200 │ 
+ 201 │     if (result.success) {
+ 202 │       const payment = await prisma.payment.findUnique({
+ 203 │         where: { id: paymentId },
+ 204 │       });
+ 205 │       const paymobResponse = (payment?.paymobResponse || {}) as any;
+ 206 │       
+ 207 │       // Clear the enrollment error flag
+ 208 │       await prisma.payment.update({
+ 209 │         where: { id: paymentId },
+ 210 │         data: {
+ 211 │           paymobResponse: {
+ 212 │             ...paymobResponse,
+ 213 │             enrollmentError: null, // Clear the error
+ 214 │             enrollmentRetry: {
+ 215 │               retriedAt: new Date().toISOString(),
+ 216 │               success: true,
+ 217 │             },
+ 218 │           },
+ 219 │         },
+ 220 │       });
+ 221 │     }
+ 222 │ 
+ 223 │     return result;
+ 224 │   } catch (error) {
+ 225 │     console.error('Error retrying enrollment:', error);
+ 226 │     return {
+ 227 │       success: false,
+ 228 │       message: 'Failed to retry enrollment',
+ 229 │       error: error instanceof Error ? error.message : 'Unknown error',
+ 230 │     };
+ 231 │   }
+ 232 │ }
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: webhook.service.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: route.ts
+📂 PATH: src/app/api/courses/[id]/enrollment-status/route.ts
+📊 STATS: 82 lines | 2.03 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/app/api/courses/[id]/enrollment-status/route.ts
+   2 │ import { NextRequest, NextResponse } from 'next/server';
+   3 │ import { auth } from '@/lib/auth';
+   4 │ import prisma from '@/lib/prisma';
+   5 │ 
+   6 │ interface RouteParams {
+   7 │   params: { id: string }
+   8 │ }
+   9 │ 
+  10 │ // GET /api/courses/[id]/enrollment-status - Get enrollment status
+  11 │ export async function GET(request: NextRequest, { params }: RouteParams) {
+  12 │   try {
+  13 │     const { id: courseId } = await params;
+  14 │     const session = await auth();
+  15 │ 
+  16 │     if (!session?.user) {
+  17 │       return NextResponse.json({ isEnrolled: false });
+  18 │     }
+  19 │ 
+  20 │     // Check enrollment
+  21 │     const enrollment = await prisma.enrollment.findUnique({
+  22 │       where: {
+  23 │         userId_courseId: {
+  24 │           userId: session.user.id,
+  25 │           courseId
+  26 │         }
+  27 │       },
+  28 │       select: {
+  29 │         id: true,
+  30 │         progressPercent: true,
+  31 │         enrolledAt: true
+  32 │       }
+  33 │     });
+  34 │ 
+  35 │     if (enrollment) {
+  36 │       return NextResponse.json({
+  37 │         isEnrolled: true,
+  38 │         enrollment: {
+  39 │           id: enrollment.id,
+  40 │           progressPercent: enrollment.progressPercent,
+  41 │           enrolledAt: enrollment.enrolledAt.toISOString()
+  42 │         }
+  43 │       });
+  44 │     }
+  45 │ 
+  46 │     // Check payment status
+  47 │     const payment = await prisma.payment.findFirst({
+  48 │       where: {
+  49 │         userId: session.user.id,
+  50 │         courseId
+  51 │       },
+  52 │       select: {
+  53 │         status: true
+  54 │       },
+  55 │       orderBy: { createdAt: 'desc' }
+  56 │     });
+  57 │ 
+  58 │     let paymentStatus: 'none' | 'pending' | 'completed' | 'failed' = 'none';
+  59 │     if (payment) {
+  60 │       switch (payment.status) {
+  61 │         case 'PENDING':
+  62 │           paymentStatus = 'pending';
+  63 │           break;
+  64 │         case 'COMPLETED':
+  65 │           paymentStatus = 'completed';
+  66 │           break;
+  67 │         case 'FAILED':
+  68 │           paymentStatus = 'failed';
+  69 │           break;
+  70 │       }
+  71 │     }
+  72 │ 
+  73 │     return NextResponse.json({
+  74 │       isEnrolled: false,
+  75 │       paymentStatus
+  76 │     });
+  77 │ 
+  78 │   } catch (error) {
+  79 │     console.error('Enrollment status API error:', error);
+  80 │     return NextResponse.json({ isEnrolled: false }, { status: 500 });
+  81 │   }
+  82 │ }
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: route.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: route.ts
+📂 PATH: src/app/api/courses/[id]/access/route.ts
+📊 STATS: 25 lines | 724 Bytes
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/app/api/courses/[id]/access/route.ts
+   2 │ import { NextRequest, NextResponse } from 'next/server';
+   3 │ import { checkCourseAccess } from '@/lib/services/course-access.service';
+   4 │ 
+   5 │ interface RouteParams {
+   6 │   params: { id: string }
+   7 │ }
+   8 │ 
+   9 │ // GET /api/courses/[id]/access - Check course access
+  10 │ export async function GET(request: NextRequest, { params }: RouteParams) {
+  11 │   try {
+  12 │     const { id: courseId } = await params;
+  13 │ 
+  14 │     const accessResult = await checkCourseAccess(courseId);
+  15 │ 
+  16 │     return NextResponse.json(accessResult);
+  17 │ 
+  18 │   } catch (error) {
+  19 │     console.error('Course access API error:', error);
+  20 │     return NextResponse.json({
+  21 │       hasAccess: false,
+  22 │       reason: 'not_found'
+  23 │     }, { status: 500 });
+  24 │   }
+  25 │ }
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: route.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+████████████████████████████████████████████████████████████
+📚 CORE ENROLLMENT SERVICES
+████████████████████████████████████████████████████████████
+
+▼ Enrollment Data & Queries
+────────────────────────────────────────
+
+📄 FILE: query.service.ts
+📂 PATH: src/lib/services/enrollment/query.service.ts
+📊 STATS: 81 lines | 2.3 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/lib/services/enrollment/query.service.ts
+   2 │ 
+   3 │ import prisma from '@/lib/prisma';
+   4 │ 
+   5 │ /**
+   6 │  * The return type for a user's enrollment details for a single course.
+   7 │  */
+   8 │ export type UserEnrollment = {
+   9 │   enrollmentId: string;
+  10 │   enrolledAt: Date;
+  11 │   progress: number;
+  12 │   lastAccessedAt: Date | null;
+  13 │ };
+  14 │ 
+  15 │ /**
+  16 │  * A map of course IDs to their corresponding enrollment details for a user.
+  17 │  */
+  18 │ export type UserEnrollmentsMap = {
+  19 │   [courseId: string]: UserEnrollment;
+  20 │ };
+  21 │ 
+  22 │ /**
+  23 │  * Get a user's enrollment status for all their courses.
+  24 │  * @param userId - The ID of the user.
+  25 │  * @returns A promise that resolves to a map of course IDs to enrollment details.
+  26 │  */
+  27 │ export async function getUserEnrollments(
+  28 │   userId: string
+  29 │ ): Promise<UserEnrollmentsMap> {
+  30 │   try {
+  31 │     const enrollments = await prisma.enrollment.findMany({
+  32 │       where: { userId },
+  33 │       include: {
+  34 │         course: {
+  35 │           include: {
+  36 │             _count: {
+  37 │               select: { lessons: true },
+  38 │             },
+  39 │           },
+  40 │         },
+  41 │         user: {
+  42 │           include: {
+  43 │             viewingHistory: true, // This is not ideal, but matches original logic
+  44 │           },
+  45 │         },
+  46 │       },
+  47 │     });
+  48 │ 
+  49 │     const result: UserEnrollmentsMap = {};
+  50 │ 
+  51 │     for (const enrollment of enrollments) {
+  52 │       const totalLessons = enrollment.course._count.lessons;
+  53 │       // Note: The original logic to filter viewingHistory by course was flawed.
+  54 │       // A proper implementation would need to add a where clause to the viewingHistory include.
+  55 │       // To preserve original behavior, we filter here.
+  56 │       const courseViewingHistory = enrollment.user.viewingHistory.filter((vh) =>
+  57 │         // This is an approximation and might not be fully correct without lesson data
+  58 │         true
+  59 │       );
+  60 │       const completedLessons = courseViewingHistory.filter(
+  61 │         (vh) => vh.completed
+  62 │       ).length;
+  63 │       const progress =
+  64 │         totalLessons > 0
+  65 │           ? Math.round((completedLessons / totalLessons) * 100)
+  66 │           : 0;
+  67 │ 
+  68 │       result[enrollment.courseId] = {
+  69 │         enrollmentId: enrollment.id,
+  70 │         enrolledAt: enrollment.enrolledAt,
+  71 │         progress,
+  72 │         lastAccessedAt: enrollment.lastAccessedAt,
+  73 │       };
+  74 │     }
+  75 │ 
+  76 │     return result;
+  77 │   } catch (error) {
+  78 │     console.error('Error getting user enrollments:', error);
+  79 │     return {};
+  80 │   }
+  81 │ }
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: query.service.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: types.ts
+📂 PATH: src/lib/services/enrollment/types.ts
+📊 STATS: 26 lines | 592 Bytes
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/lib/services/enrollment/types.ts
+   2 │ 
+   3 │ import { UserRole } from '@prisma/client';
+   4 │ 
+   5 │ export interface EnrollmentResult {
+   6 │   success: boolean;
+   7 │   message: string;
+   8 │   enrollmentId?: string;
+   9 │   requiresPayment?: boolean;
+  10 │   paymentUrl?: string;
+  11 │   error?: string;
+  12 │ }
+  13 │ 
+  14 │ export interface CourseAccessResult {
+  15 │   hasAccess: boolean;
+  16 │   accessType: 'free' | 'paid' | 'enrolled' | 'owner' | 'admin';
+  17 │   message: string;
+  18 │   canEnroll: boolean;
+  19 │   requiresPayment: boolean;
+  20 │   enrollment?: {
+  21 │     id: string;
+  22 │     enrolledAt: Date;
+  23 │     progress: number;
+  24 │     lastAccessedAt: Date | null;
+  25 │   };
+  26 │ }
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: types.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+████████████████████████████████████████████████████████████
+🔗 INTEGRATION LAYER
+████████████████████████████████████████████████████████████
+
+▼ Course Access Control
+────────────────────────────────────────
+
+📄 FILE: course-access.service.ts
+📂 PATH: src/lib/services/course-access.service.ts
+📊 STATS: 147 lines | 4.42 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/lib/services/course-access.service.ts
+   2 │ 
+   3 │ import { auth } from '@/lib/auth';
+   4 │ import prisma from '@/lib/prisma';
+   5 │ 
+   6 │ export interface CourseAccessResult {
+   7 │   hasAccess: boolean;
+   8 │   reason:
+   9 │     | 'enrolled'
+  10 │     | 'free_course'
+  11 │     | 'admin_access'
+  12 │     | 'professor_owns'
+  13 │     | 'payment_required'
+  14 │     | 'not_published'
+  15 │     | 'not_found'
+  16 │     | 'not_authenticated';
+  17 │   course?: {
+  18 │     id: string;
+  19 │     title: string;
+  20 │     price: any;
+  21 │     currency: string;
+  22 │     isPublished: boolean;
+  23 │     professorId: string;
+  24 │   };
+  25 │   enrollment?: {
+  26 │     id: string;
+  27 │     progressPercent: number;
+  28 │     enrolledAt: Date;
+  29 │   };
+  30 │   payment?: {
+  31 │     id: string;
+  32 │     status: string;
+  33 │     amount: any;
+  34 │   };
+  35 │ }
+  36 │ 
+  37 │ /**
+  38 │  * Checks if a user has access to a specific course. This is a read-only operation.
+  39 │  */
+  40 │ export async function checkCourseAccess(
+  41 │   courseId: string
+  42 │ ): Promise<CourseAccessResult> {
+  43 │   try {
+  44 │     const session = await auth();
+  45 │     if (!session?.user) {
+  46 │       return { hasAccess: false, reason: 'not_authenticated' };
+  47 │     }
+  48 │ 
+  49 │     const course = await prisma.course.findUnique({
+  50 │       where: { id: courseId },
+  51 │       select: {
+  52 │         id: true,
+  53 │         title: true,
+  54 │         price: true,
+  55 │         currency: true,
+  56 │         isPublished: true,
+  57 │         professorId: true,
+  58 │       },
+  59 │     });
+  60 │ 
+  61 │     if (!course) {
+  62 │       return { hasAccess: false, reason: 'not_found' };
+  63 │     }
+  64 │ 
+  65 │     // Admins and course owners can access unpublished courses
+  66 │     if (!course.isPublished && session.user.role !== 'ADMIN' && course.professorId !== session.user.id) {
+  67 │         return { hasAccess: false, reason: 'not_published', course };
+  68 │     }
+  69 │ 
+  70 │     if (session.user.role === 'ADMIN') {
+  71 │       return { hasAccess: true, reason: 'admin_access', course };
+  72 │     }
+  73 │     
+  74 │     if (course.professorId === session.user.id) {
+  75 │       return { hasAccess: true, reason: 'professor_owns', course };
+  76 │     }
+  77 │ 
+  78 │     // Check for enrollment for students
+  79 │     if (session.user.role === 'STUDENT') {
+  80 │       const enrollment = await prisma.enrollment.findUnique({
+  81 │         where: { userId_courseId: { userId: session.user.id, courseId } },
+  82 │         select: { id: true, progressPercent: true, enrolledAt: true },
+  83 │       });
+  84 │ 
+  85 │       if (enrollment) {
+  86 │         return { hasAccess: true, reason: 'enrolled', course, enrollment };
+  87 │       }
+  88 │     }
+  89 │     
+  90 │     // If not enrolled, check if the course is free
+  91 │     if (!course.price || Number(course.price) <= 0) {
+  92 │       return { hasAccess: true, reason: 'free_course', course };
+  93 │     }
+  94 │ 
+  95 │     // If it's a paid course and the student is not enrolled, they need to pay
+  96 │     return { hasAccess: false, reason: 'payment_required', course };
+  97 │ 
+  98 │   } catch (error) {
+  99 │     console.error('Course access check error:', error);
+ 100 │     // Default to a secure state
+ 101 │     return { hasAccess: false, reason: 'not_found' };
+ 102 │   }
+ 103 │ }
+ 104 │ 
+ 105 │ /**
+ 106 │  * Middleware-style function to protect routes by requiring course access.
+ 107 │  * Throws an error if the user does not have access.
+ 108 │  */
+ 109 │ export async function requireCourseAccess(courseId: string): Promise<CourseAccessResult> {
+ 110 │   const accessResult = await checkCourseAccess(courseId);
+ 111 │ 
+ 112 │   if (!accessResult.hasAccess) {
+ 113 │     // This error can be caught in API routes or server components to trigger a redirect or an error page.
+ 114 │     throw new Error(`Course access denied: ${accessResult.reason}`);
+ 115 │   }
+ 116 │ 
+ 117 │   return accessResult;
+ 118 │ }
+ 119 │ 
+ 120 │ /**
+ 121 │  * Get access message based on course access result
+ 122 │  */
+ 123 │ export function getAccessMessage(reason: CourseAccessResult['reason']): string {
+ 124 │   switch (reason) {
+ 125 │     case 'enrolled':
+ 126 │       return 'لديك وصول كامل لهذه الدورة';
+ 127 │     case 'free_course':
+ 128 │       return 'هذه دورة مجانية، يمكنك الوصول إليها';
+ 129 │     case 'admin_access':
+ 130 │       return 'لديك وصول إداري لهذه الدورة';
+ 131 │     case 'professor_owns':
+ 132 │       return 'هذه دورتك الخاصة';
+ 133 │     case 'payment_required':
+ 134 │       return 'يتطلب دفع رسوم للوصول لهذه الدورة';
+ 135 │     case 'not_published':
+ 136 │       return 'هذه الدورة غير منشورة حالياً';
+ 137 │     case 'not_found':
+ 138 │       return 'الدورة غير موجودة';
+ 139 │     case 'not_authenticated':
+ 140 │       return 'يجب تسجيل الدخول للوصول لهذه الدورة';
+ 141 │     default:
+ 142 │       return 'غير مصرح بالوصول لهذه الدورة';
+ 143 │   }
+ 144 │ }
+ 145 │ 
+ 146 │ // Export enrollInFreeCourse function for backward compatibility
+ 147 │ export { enrollInFreeCourse } from './enrollment/core.service';
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: course-access.service.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+📄 FILE: CourseAccessGuard.tsx
+📂 PATH: src/components/course/CourseAccessGuard.tsx
+📊 STATS: 358 lines | 10.86 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/components/course/CourseAccessGuard.tsx
+   2 │ "use client";
+   3 │ 
+   4 │ import { useState, useEffect, ReactNode } from "react";
+   5 │ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+   6 │ import { Button } from "@/components/ui/button";
+   7 │ import { Skeleton } from "@/components/ui/skeleton";
+   8 │ import { PaymentButton } from "@/components/payment/PaymentButton";
+   9 │ import { CourseAccessResult } from "@/lib/services/course-access.service";
+  10 │ import { getAccessMessage } from "@/lib/access-messages";
+  11 │ import { checkCourseAccess, enrollInFreeCourse } from "@/lib/api/course-access";
+  12 │ import { 
+  13 │   Lock, 
+  14 │   CheckCircle, 
+  15 │   CreditCard, 
+  16 │   UserPlus, 
+  17 │   AlertCircle,
+  18 │   Shield,
+  19 │   Crown,
+  20 │   GraduationCap,
+  21 │   ExternalLink
+  22 │ } from "lucide-react";
+  23 │ import { toast } from "sonner";
+  24 │ import { useRouter } from "next/navigation";
+  25 │ import Link from "next/link";
+  26 │ 
+  27 │ interface Course {
+  28 │   id: string;
+  29 │   title: string;
+  30 │   description: string;
+  31 │   price: number | null;
+  32 │   currency: string;
+  33 │   thumbnailUrl: string;
+  34 │   isPublished: boolean;
+  35 │   bunnyLibraryId: string;
+  36 │   categoryId: string;
+  37 │   professorId: string;
+  38 │   createdAt: string;
+  39 │   updatedAt: string;
+  40 │   category: {
+  41 │     id: string;
+  42 │     name: string;
+  43 │     slug: string;
+  44 │     description?: string;
+  45 │   };
+  46 │   professor: {
+  47 │     id: string;
+  48 │     name: string;
+  49 │     bio: string | null;
+  50 │     expertise?: string[];
+  51 │   };
+  52 │   _count: {
+  53 │     lessons: number;
+  54 │     enrollments: number;
+  55 │   };
+  56 │ }
+  57 │ 
+  58 │ interface CourseAccessGuardProps {
+  59 │   courseId: string;
+  60 │   course?: Course; // Optional course data to avoid extra API calls
+  61 │   children: ReactNode;
+  62 │   fallback?: ReactNode;
+  63 │   showAccessInfo?: boolean;
+  64 │ }
+  65 │ 
+  66 │ export function CourseAccessGuard({ 
+  67 │   courseId, 
+  68 │   course, 
+  69 │   children, 
+  70 │   fallback,
+  71 │   showAccessInfo = true 
+  72 │ }: CourseAccessGuardProps) {
+  73 │   const [accessResult, setAccessResult] = useState<CourseAccessResult | null>(null);
+  74 │   const [loading, setLoading] = useState(true);
+  75 │   const [enrolling, setEnrolling] = useState(false);
+  76 │   // const router = useRouter(); // Unused for now
+  77 │ 
+  78 │   // Check course access on mount
+  79 │   useEffect(() => {
+  80 │     async function checkAccess() {
+  81 │       try {
+  82 │         setLoading(true);
+  83 │         const result = await checkCourseAccess(courseId);
+  84 │         setAccessResult(result);
+  85 │       } catch (error) {
+  86 │         console.error('Access check error:', error);
+  87 │         setAccessResult({
+  88 │           hasAccess: false,
+  89 │           reason: 'not_found'
+  90 │         });
+  91 │       } finally {
+  92 │         setLoading(false);
+  93 │       }
+  94 │     }
+  95 │ 
+  96 │     checkAccess();
+  97 │   }, [courseId]);
+  98 │ 
+  99 │   // Handle free course enrollment
+ 100 │   const handleFreeEnrollment = async () => {
+ 101 │     try {
+ 102 │       setEnrolling(true);
+ 103 │       const result = await enrollInFreeCourse(courseId);
+ 104 │       
+ 105 │       if (result.success) {
+ 106 │         toast.success(result.message);
+ 107 │         // Refresh access check
+ 108 │         const newAccessResult = await checkCourseAccess(courseId);
+ 109 │         setAccessResult(newAccessResult);
+ 110 │       } else {
+ 111 │         toast.error(result.message);
+ 112 │       }
+ 113 │     } catch (error) {
+ 114 │       console.error('Enrollment error:', error);
+ 115 │       toast.error('حدث خطأ أثناء التسجيل');
+ 116 │     } finally {
+ 117 │       setEnrolling(false);
+ 118 │     }
+ 119 │   };
+ 120 │ 
+ 121 │   // Handle payment success
+ 122 │   const handlePaymentSuccess = async () => {
+ 123 │     // Refresh access check after successful payment
+ 124 │     const newAccessResult = await checkCourseAccess(courseId);
+ 125 │     setAccessResult(newAccessResult);
+ 126 │   };
+ 127 │ 
+ 128 │   // Get access icon
+ 129 │   const getAccessIcon = (reason: CourseAccessResult['reason']) => {
+ 130 │     switch (reason) {
+ 131 │       case 'enrolled':
+ 132 │         return <CheckCircle className="w-8 h-8 text-green-600" />;
+ 133 │       case 'free_course':
+ 134 │         return <GraduationCap className="w-8 h-8 text-blue-600" />;
+ 135 │       case 'admin_access':
+ 136 │         return <Crown className="w-8 h-8 text-purple-600" />;
+ 137 │       case 'professor_owns':
+ 138 │         return <Shield className="w-8 h-8 text-indigo-600" />;
+ 139 │       case 'payment_required':
+ 140 │         return <CreditCard className="w-8 h-8 text-orange-600" />;
+ 141 │       case 'not_authenticated':
+ 142 │         return <Lock className="w-8 h-8 text-gray-600" />;
+ 143 │       default:
+ 144 │         return <AlertCircle className="w-8 h-8 text-red-600" />;
+ 145 │     }
+ 146 │   };
+ 147 │ 
+ 148 │   // Loading state
+ 149 │   if (loading) {
+ 150 │     return (
+ 151 │       <div className="space-y-4">
+ 152 │         <Card>
+ 153 │           <CardHeader>
+ 154 │             <div className="flex items-center gap-3">
+ 155 │               <Skeleton className="w-8 h-8 rounded-full" />
+ 156 │               <div className="space-y-2">
+ 157 │                 <Skeleton className="h-5 w-32" />
+ 158 │                 <Skeleton className="h-4 w-48" />
+ 159 │               </div>
+ 160 │             </div>
+ 161 │           </CardHeader>
+ 162 │           <CardContent>
+ 163 │             <Skeleton className="h-10 w-full" />
+ 164 │           </CardContent>
+ 165 │         </Card>
+ 166 │         {fallback || (
+ 167 │           <div className="space-y-4">
+ 168 │             <Skeleton className="h-64 w-full" />
+ 169 │             <Skeleton className="h-32 w-full" />
+ 170 │           </div>
+ 171 │         )}
+ 172 │       </div>
+ 173 │     );
+ 174 │   }
+ 175 │ 
+ 176 │   // No access result
+ 177 │   if (!accessResult) {
+ 178 │     return (
+ 179 │       <Card>
+ 180 │         <CardContent className="text-center py-8">
+ 181 │           <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-600" />
+ 182 │           <h3 className="text-lg font-semibold mb-2">خطأ في التحقق من الوصول</h3>
+ 183 │           <p className="text-muted-foreground">حدث خطأ أثناء التحقق من صلاحية الوصول للدورة</p>
+ 184 │         </CardContent>
+ 185 │       </Card>
+ 186 │     );
+ 187 │   }
+ 188 │ 
+ 189 │   // User has access - show content
+ 190 │   if (accessResult.hasAccess) {
+ 191 │     return (
+ 192 │       <div className="space-y-4">
+ 193 │         {/* Access Info (optional) */}
+ 194 │         {showAccessInfo && (
+ 195 │           <Card className="border-green-200 bg-green-50">
+ 196 │             <CardContent className="flex items-center gap-3 py-4">
+ 197 │               {getAccessIcon(accessResult.reason)}
+ 198 │               <div>
+ 199 │                 <h4 className="font-semibold text-green-800">
+ 200 │                   {getAccessMessage(accessResult).title}
+ 201 │                 </h4>
+ 202 │                 <p className="text-sm text-green-700">
+ 203 │                   {getAccessMessage(accessResult).description}
+ 204 │                 </p>
+ 205 │               </div>
+ 206 │             </CardContent>
+ 207 │           </Card>
+ 208 │         )}
+ 209 │         
+ 210 │         {/* Course Content */}
+ 211 │         {children}
+ 212 │       </div>
+ 213 │     );
+ 214 │   }
+ 215 │ 
+ 216 │   // User doesn't have access - show access gate
+ 217 │   const accessMessage = getAccessMessage(accessResult);
+ 218 │   
+ 219 │   return (
+ 220 │     <div className="space-y-4">
+ 221 │       <Card>
+ 222 │         <CardHeader className="text-center">
+ 223 │           <div className="flex justify-center mb-4">
+ 224 │             {getAccessIcon(accessResult.reason)}
+ 225 │           </div>
+ 226 │           <CardTitle className="text-xl">{accessMessage.title}</CardTitle>
+ 227 │           <CardDescription className="text-base">
+ 228 │             {accessMessage.description}
+ 229 │           </CardDescription>
+ 230 │         </CardHeader>
+ 231 │         
+ 232 │         <CardContent className="space-y-4">
+ 233 │           {/* Course Information */}
+ 234 │           {accessResult.course && (
+ 235 │             <div className="p-4 bg-muted/50 rounded-lg">
+ 236 │               <h4 className="font-semibold mb-2">معلومات الدورة</h4>
+ 237 │               <p className="text-sm text-muted-foreground">
+ 238 │                 {accessResult.course.title}
+ 239 │               </p>
+ 240 │               {accessResult.course.price && (
+ 241 │                 <p className="text-sm font-medium mt-1">
+ 242 │                   السعر: {new Intl.NumberFormat('ar-EG', {
+ 243 │                     style: 'currency',
+ 244 │                     currency: accessResult.course.currency || 'EGP',
+ 245 │                     minimumFractionDigits: 0
+ 246 │                   }).format(Number(accessResult.course.price))}
+ 247 │                 </p>
+ 248 │               )}
+ 249 │             </div>
+ 250 │           )}
+ 251 │ 
+ 252 │           {/* Action Buttons */}
+ 253 │           <div className="flex gap-3">
+ 254 │             {accessMessage.actionType === 'login' && (
+ 255 │               <Button asChild className="flex-1">
+ 256 │                 <Link href="/login">
+ 257 │                   <Lock className="w-4 h-4" />
+ 258 │                   {accessMessage.actionText}
+ 259 │                 </Link>
+ 260 │               </Button>
+ 261 │             )}
+ 262 │ 
+ 263 │             {accessMessage.actionType === 'payment' && course && (
+ 264 │               <PaymentButton
+ 265 │                 course={course}
+ 266 │                 className="flex-1"
+ 267 │                 size="lg"
+ 268 │                 onPaymentSuccess={handlePaymentSuccess}
+ 269 │               />
+ 270 │             )}
+ 271 │ 
+ 272 │             {accessMessage.actionType === 'enrollment' && (
+ 273 │               <Button 
+ 274 │                 onClick={handleFreeEnrollment}
+ 275 │                 disabled={enrolling}
+ 276 │                 className="flex-1"
+ 277 │                 size="lg"
+ 278 │               >
+ 279 │                 {enrolling ? (
+ 280 │                   <>
+ 281 │                     <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+ 282 │                     جاري التسجيل...
+ 283 │                   </>
+ 284 │                 ) : (
+ 285 │                   <>
+ 286 │                     <UserPlus className="w-4 h-4" />
+ 287 │                     {accessMessage.actionText}
+ 288 │                   </>
+ 289 │                 )}
+ 290 │               </Button>
+ 291 │             )}
+ 292 │ 
+ 293 │             {accessMessage.actionType === 'contact' && (
+ 294 │               <Button variant="outline" className="flex-1" size="lg">
+ 295 │                 <ExternalLink className="w-4 h-4" />
+ 296 │                 {accessMessage.actionText}
+ 297 │               </Button>
+ 298 │             )}
+ 299 │           </div>
+ 300 │ 
+ 301 │           {/* Additional Actions */}
+ 302 │           <div className="flex justify-center">
+ 303 │             <Button variant="ghost" asChild>
+ 304 │               <Link href="/courses">
+ 305 │                 العودة إلى الدورات
+ 306 │               </Link>
+ 307 │             </Button>
+ 308 │           </div>
+ 309 │         </CardContent>
+ 310 │       </Card>
+ 311 │ 
+ 312 │       {/* Fallback Content */}
+ 313 │       {fallback && (
+ 314 │         <div className="opacity-50 pointer-events-none">
+ 315 │           {fallback}
+ 316 │         </div>
+ 317 │       )}
+ 318 │     </div>
+ 319 │   );
+ 320 │ }
+ 321 │ 
+ 322 │ // Higher-order component for protecting entire pages
+ 323 │ export function withCourseAccess<P extends object>(
+ 324 │   Component: React.ComponentType<P>,
+ 325 │   options: {
+ 326 │     courseIdProp?: keyof P;
+ 327 │     fallback?: ReactNode;
+ 328 │     showAccessInfo?: boolean;
+ 329 │   } = {}
+ 330 │ ) {
+ 331 │   const { courseIdProp = 'courseId', fallback, showAccessInfo = true } = options;
+ 332 │ 
+ 333 │   return function ProtectedComponent(props: P) {
+ 334 │     const courseId = (props as any)[courseIdProp] as string;
+ 335 │ 
+ 336 │     if (!courseId) {
+ 337 │       return (
+ 338 │         <Card>
+ 339 │           <CardContent className="text-center py-8">
+ 340 │             <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-600" />
+ 341 │             <h3 className="text-lg font-semibold mb-2">معرف الدورة مفقود</h3>
+ 342 │             <p className="text-muted-foreground">لم يتم تحديد معرف الدورة</p>
+ 343 │           </CardContent>
+ 344 │         </Card>
+ 345 │       );
+ 346 │     }
+ 347 │ 
+ 348 │     return (
+ 349 │       <CourseAccessGuard
+ 350 │         courseId={courseId}
+ 351 │         fallback={fallback}
+ 352 │         showAccessInfo={showAccessInfo}
+ 353 │       >
+ 354 │         <Component {...props} />
+ 355 │       </CourseAccessGuard>
+ 356 │     );
+ 357 │   };
+ 358 │ }
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: CourseAccessGuard.tsx
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+████████████████████████████████████████████████████████████
+🔗 INTEGRATION LAYER
+████████████████████████████████████████████████████████████
+
+▼ Free Enrollment
+────────────────────────────────────────
+
+📄 FILE: route.ts
+📂 PATH: src/app/api/courses/[id]/enroll-free/route.ts
+📊 STATS: 46 lines | 1.31 KB
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ FILE CONTENT:                                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+   1 │ // src/app/api/courses/[id]/enroll-free/route.ts
+   2 │ import { NextRequest, NextResponse } from 'next/server';
+   3 │ import { auth } from '@/lib/auth';
+   4 │ import { enrollInFreeCourse } from '@/lib/services/enrollment/core.service';
+   5 │ 
+   6 │ interface RouteParams {
+   7 │   params: { id: string }
+   8 │ }
+   9 │ 
+  10 │ // POST /api/courses/[id]/enroll-free - Enroll in free course
+  11 │ export async function POST(_request: NextRequest, { params }: RouteParams) {
+  12 │   try {
+  13 │     const session = await auth();
+  14 │     
+  15 │     if (!session?.user?.id) {
+  16 │       return NextResponse.json({
+  17 │         success: false,
+  18 │         message: 'يجب تسجيل الدخول أولاً'
+  19 │       }, { status: 401 });
+  20 │     }
+  21 │ 
+  22 │     const { id: courseId } = await params;
+  23 │ 
+  24 │     const result = await enrollInFreeCourse(courseId, session.user.id);
+  25 │ 
+  26 │     if (result.success) {
+  27 │       return NextResponse.json({
+  28 │         success: true,
+  29 │         message: result.message,
+  30 │         enrollmentId: result.enrollmentId
+  31 │       });
+  32 │     } else {
+  33 │       return NextResponse.json({
+  34 │         success: false,
+  35 │         message: result.message
+  36 │       }, { status: 400 });
+  37 │     }
+  38 │ 
+  39 │   } catch (error) {
+  40 │     console.error('Free enrollment API error:', error);
+  41 │     return NextResponse.json({
+  42 │       success: false,
+  43 │       message: 'حدث خطأ أثناء التسجيل في الدورة'
+  44 │     }, { status: 500 });
+  45 │   }
+  46 │ }
+
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+END OF FILE: route.ts
+▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+════════════════════════════════════════════════════════════════════════════════
+                              SUMMARY REPORT
+════════════════════════════════════════════════════════════════════════════════
+📊 Total Files Analyzed: 20
+✅ Successfully Processed: 20
+❌ Missing Files: 0
+📈 Total Lines of Code: 3,632
+🏗️  Architecture: Payment & Enrollment Core Services
+🌍 Project Location: Egypt
+
+════════════════════════════════════════════════════════════════════════════════
+Report generated by Payment & Enrollment Services Analyzer
+Timestamp: 2025-08-08T16:07:05.202Z
+════════════════════════════════════════════════════════════════════════════════

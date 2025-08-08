@@ -1,22 +1,33 @@
 // src/app/api/payments/initiate/route.ts
-import { NextRequest} from 'next/server';
-import { auth } from '@/lib/auth';
-import prisma from '@/lib/prisma';
-import { payMobService } from '@/lib/paymob/client';
-import { createSuccessResponse, createErrorResponse, ApiErrors } from '@/lib/api-utils';
-import { z } from 'zod';
+import { NextRequest } from "next/server";
+import { auth } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import { payMobService } from "@/lib/paymob/client";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  ApiErrors,
+} from "@/lib/api-utils";
+import { z } from "zod";
+import {
+  createStandardErrorResponse,
+  API_ERROR_CODES,
+  getErrorMessage,
+} from "@/lib/api-error-handler";
+import { paymobConfig } from '@/lib/paymob/config';
+
 
 // Validation schema for payment initiation
 const paymentInitiateSchema = z.object({
-  courseId: z.string().min(1, 'معرف الدورة مطلوب'),
-  paymentMethod: z.enum(['credit-card', 'e-wallet']).default('credit-card'),
+  courseId: z.string().min(1, "معرف الدورة مطلوب"),
+  paymentMethod: z.enum(["credit-card", "e-wallet"]).default("credit-card"),
 });
 
 // POST /api/payments/initiate - Initiate payment for a course
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
-    
+
     // Check authentication
     if (!session?.user) {
       return createErrorResponse(
@@ -27,10 +38,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Only students can make payments (admins can for testing)
-    if (!['STUDENT', 'ADMIN'].includes(session.user.role)) {
+    if (!["STUDENT", "ADMIN"].includes(session.user.role)) {
       return createErrorResponse(
         ApiErrors.FORBIDDEN.code,
-        'غير مصرح لك بإجراء عمليات الدفع',
+        "غير مصرح لك بإجراء عمليات الدفع",
         ApiErrors.FORBIDDEN.status
       );
     }
@@ -52,29 +63,29 @@ export async function POST(request: NextRequest) {
 
     // Check if course exists and is published
     const course = await prisma.course.findFirst({
-      where: { 
-        id: courseId, 
-        isPublished: true 
+      where: {
+        id: courseId,
+        isPublished: true,
       },
       include: {
         professor: {
           select: {
             id: true,
-            name: true
-          }
+            name: true,
+          },
         },
         category: {
           select: {
-            name: true
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
 
     if (!course) {
       return createErrorResponse(
         ApiErrors.NOT_FOUND.code,
-        'الدورة غير موجودة أو غير منشورة',
+        "الدورة غير موجودة أو غير منشورة",
         ApiErrors.NOT_FOUND.status
       );
     }
@@ -82,8 +93,8 @@ export async function POST(request: NextRequest) {
     // Check if course is paid
     if (!course.price || Number(course.price) <= 0) {
       return createErrorResponse(
-        'FREE_COURSE',
-        'هذه الدورة مجانية ولا تحتاج لدفع',
+        "FREE_COURSE",
+        "هذه الدورة مجانية ولا تحتاج لدفع",
         400
       );
     }
@@ -93,15 +104,15 @@ export async function POST(request: NextRequest) {
       where: {
         userId_courseId: {
           userId: session.user.id,
-          courseId
-        }
-      }
+          courseId,
+        },
+      },
     });
 
     if (existingEnrollment) {
       return createErrorResponse(
         ApiErrors.DUPLICATE_ERROR.code,
-        'أنت مسجل في هذه الدورة بالفعل',
+        "أنت مسجل في هذه الدورة بالفعل",
         ApiErrors.DUPLICATE_ERROR.status
       );
     }
@@ -111,38 +122,49 @@ export async function POST(request: NextRequest) {
       where: {
         userId: session.user.id,
         courseId,
-        status: 'PENDING'
+        status: "PENDING",
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     if (existingPayment) {
-      // Check if the payment is old (more than 30 minutes) - consider it abandoned
-      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
-      
-      if (existingPayment.createdAt < thirtyMinutesAgo) {
+      const { isPaymentExpired, getPaymentTimeRemaining } = await import(
+        "@/lib/services/payment-timeout.service"
+      );
+
+      if (isPaymentExpired(existingPayment.createdAt)) {
         // Cancel the old payment and allow new one
         await prisma.payment.update({
           where: { id: existingPayment.id },
           data: {
-            status: 'CANCELLED',
-            failureReason: 'Payment abandoned - exceeded time limit'
-          }
+            status: "CANCELLED",
+            failureReason: `Payment abandoned - exceeded ${paymobConfig.abandonedPaymentCleanupMinutes} minute limit`,
+            updatedAt: new Date(),
+          },
         });
-        
-        console.log('Cancelled abandoned payment:', existingPayment.id);
+
+        console.log("Cancelled abandoned payment:", existingPayment.id);
       } else {
-        // Payment is recent, return error with option to cancel
+        // Payment is recent, return error with remaining time info
+        const timeRemaining = getPaymentTimeRemaining(
+          existingPayment.createdAt
+        );
+
         return createErrorResponse(
-          'PENDING_PAYMENT',
-          'لديك عملية دفع معلقة لهذه الدورة بالفعل',
+          "PENDING_PAYMENT",
+          `لديك عملية دفع معلقة لهذه الدورة بالفعل. الوقت المتبقي: ${timeRemaining.minutes} دقيقة و ${timeRemaining.seconds} ثانية`,
           409,
           {
             paymentId: existingPayment.id,
             createdAt: existingPayment.createdAt,
-            canCancel: true
+            expiresAt: new Date(
+              existingPayment.createdAt.getTime() +
+                paymobConfig.paymentTimeoutMinutes * 60 * 1000
+            ),
+            timeRemaining: timeRemaining,
+            canCancel: true,
           }
         );
       }
@@ -151,8 +173,8 @@ export async function POST(request: NextRequest) {
     // Prevent professors from buying their own courses
     if (course.professorId === session.user.id) {
       return createErrorResponse(
-        'INVALID_PURCHASE',
-        'لا يمكنك شراء دورتك الخاصة',
+        "INVALID_PURCHASE",
+        "لا يمكنك شراء دورتك الخاصة",
         400
       );
     }
@@ -163,20 +185,23 @@ export async function POST(request: NextRequest) {
       select: {
         name: true,
         email: true,
-        phone: true
-      }
+        phone: true,
+      },
     });
 
     if (!user) {
       return createErrorResponse(
         ApiErrors.NOT_FOUND.code,
-        'بيانات المستخدم غير موجودة',
+        "بيانات المستخدم غير موجودة",
         ApiErrors.NOT_FOUND.status
       );
     }
 
     // Create payment record in database
-    const merchantOrderId = payMobService.generateMerchantOrderId(courseId, session.user.id);
+    const merchantOrderId = payMobService.generateMerchantOrderId(
+      courseId,
+      session.user.id
+    );
     const amountCents = payMobService.formatAmount(Number(course.price));
 
     const payment = await prisma.payment.create({
@@ -185,16 +210,16 @@ export async function POST(request: NextRequest) {
         courseId,
         amount: course.price,
         currency: course.currency,
-        status: 'PENDING',
-        paymobOrderId: merchantOrderId
-      }
+        status: "PENDING",
+        paymobOrderId: merchantOrderId,
+      },
     });
 
     // Prepare PayMob order data
     const billingData = payMobService.createBillingData({
       name: user.name,
       email: user.email || undefined,
-      phone: user.phone
+      phone: user.phone,
     });
     const orderData = {
       amount_cents: amountCents,
@@ -205,14 +230,18 @@ export async function POST(request: NextRequest) {
           name: course.title,
           amount_cents: amountCents,
           description: `دورة ${course.title} - ${course.category.name}`,
-          quantity: 1
-        }
+          quantity: 1,
+        },
       ],
-      billing_data: billingData
+      billing_data: billingData,
     };
 
     // Initiate payment with PayMob
-    const paymentResult = await payMobService.initiatePayment(orderData, courseId, paymentMethod);
+    const paymentResult = await payMobService.initiatePayment(
+      orderData,
+      courseId,
+      paymentMethod
+    );
 
     // Update payment record with PayMob order ID
     await prisma.payment.update({
@@ -223,35 +252,43 @@ export async function POST(request: NextRequest) {
           paymentKey: paymentResult.paymentKey,
           orderId: paymentResult.orderId,
           iframeUrl: paymentResult.iframeUrl,
-          initiatedAt: new Date().toISOString()
-        }
-      }
+          initiatedAt: new Date().toISOString(),
+        },
+      },
     });
 
-    return createSuccessResponse({
-      paymentId: payment.id,
-      paymentKey: paymentResult.paymentKey,
-      iframeUrl: paymentResult.iframeUrl,
-      orderId: paymentResult.orderId,
-      amount: Number(course.price),
-      currency: course.currency,
-      course: {
-        id: course.id,
-        title: course.title,
-        thumbnailUrl: course.thumbnailUrl,
-        professor: course.professor.name
-      }
-    }, 201);
-
+    return createSuccessResponse(
+      {
+        paymentId: payment.id,
+        paymentKey: paymentResult.paymentKey,
+        iframeUrl: paymentResult.iframeUrl,
+        orderId: paymentResult.orderId,
+        amount: Number(course.price),
+        currency: course.currency,
+        course: {
+          id: course.id,
+          title: course.title,
+          thumbnailUrl: course.thumbnailUrl,
+          professor: course.professor.name,
+        },
+      },
+      201
+    );
   } catch (error) {
-    console.error('Payment initiation error:', error);
-    
+    console.error("Payment initiation error:", error);
+
     // Handle PayMob specific errors
-    if (error instanceof Error && error.message.includes('PayMob')) {
-      return createErrorResponse(
-        'PAYMENT_GATEWAY_ERROR',
-        'حدث خطأ في نظام الدفع. يرجى المحاولة مرة أخرى.',
-        502
+    // Handle PayMob specific errors
+    if (error instanceof Error && error.message.includes("PayMob")) {
+      return createStandardErrorResponse(
+        API_ERROR_CODES.PAYMENT_GATEWAY_ERROR,
+        getErrorMessage(API_ERROR_CODES.PAYMENT_GATEWAY_ERROR),
+        502,
+        {
+          originalError: error.message,
+          gateway: "PayMob",
+          timestamp: new Date().toISOString(),
+        }
       );
     }
 
