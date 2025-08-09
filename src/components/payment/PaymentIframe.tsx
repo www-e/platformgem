@@ -1,4 +1,3 @@
-// src/components/payment/PaymentIframe.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -34,20 +33,33 @@ export function PaymentIframe({
   const [iframeError, setIframeError] = useState(false);
 
   useEffect(() => {
+    // ✅ Enhanced debugging
+    console.log('PaymentIframe mounted with data:', {
+      paymentId: paymentData.paymentId,
+      iframeUrl: paymentData.iframeUrl,
+      paymentMethod
+    });
+
     // Listen for payment completion messages
     const messageHandler = (event: MessageEvent) => {
-      // Verify origin for security
-      if (!event.origin.includes('paymob.com')) {
+      console.log('Message received from iframe:', {
+        origin: event.origin,
+        data: event.data
+      });
+
+      // Verify origin for security - more flexible check
+      if (!event.origin.includes('paymob.com') && !event.origin.includes('accept.paymob.com')) {
+        console.warn('Message from unauthorized origin:', event.origin);
         return;
       }
       
       try {
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         
-        if (data.type === 'payment_success') {
+        if (data.type === 'payment_success' || data.success === true) {
           console.log('Payment success message received:', data);
           onComplete(paymentData.paymentId);
-        } else if (data.type === 'payment_error') {
+        } else if (data.type === 'payment_error' || data.error === true) {
           console.log('Payment error message received:', data);
           onError('فشل في إتمام عملية الدفع');
         }
@@ -58,41 +70,62 @@ export function PaymentIframe({
     
     window.addEventListener('message', messageHandler);
     
-    // Set timeout for iframe loading
+    // ✅ Reduced timeout for faster fallback
     const timeout = setTimeout(() => {
       if (!iframeLoaded && !iframeError) {
-        console.warn('PayMob iframe taking longer than expected to load');
+        console.warn('PayMob iframe loading timeout reached');
         setShowFallback(true);
       }
-    }, 15000); // 15 seconds timeout
+    }, 10000); // 10 seconds timeout
     
     return () => {
       window.removeEventListener('message', messageHandler);
       clearTimeout(timeout);
     };
-  }, [paymentData.paymentId, iframeLoaded, iframeError, onComplete, onError]);
+  }, [paymentData.paymentId, paymentData.iframeUrl, iframeLoaded, iframeError, onComplete, onError, paymentMethod]);
 
   const handleIframeLoad = () => {
-    console.log('PayMob iframe loaded successfully');
+    console.log('✅ PayMob iframe loaded successfully');
     setIframeLoaded(true);
     setShowFallback(false);
   };
 
-  const handleIframeError = () => {
-    console.error('PayMob iframe failed to load');
+  const handleIframeError = (error: any) => {
+    console.error('❌ PayMob iframe failed to load:', error);
     setIframeError(true);
     setShowFallback(true);
   };
 
   const retryIframe = () => {
+    console.log('🔄 Retrying iframe load...');
     setIframeLoaded(false);
     setIframeError(false);
     setShowFallback(false);
   };
 
   const openInNewTab = () => {
+    console.log('🔗 Opening PayMob in new tab:', paymentData.iframeUrl);
     window.open(paymentData.iframeUrl, '_blank', 'width=800,height=700,scrollbars=yes,resizable=yes');
   };
+
+  // ✅ Add validation for iframe URL
+  if (!paymentData.iframeUrl) {
+    console.error('❌ Missing iframe URL in payment data');
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">خطأ في إعداد الدفع</h3>
+          <p className="text-muted-foreground mb-4">
+            لم يتم إنشاء رابط نموذج الدفع بشكل صحيح
+          </p>
+          <Button onClick={() => window.location.reload()}>
+            إعادة المحاولة
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -126,13 +159,15 @@ export function PaymentIframe({
                   <p className="text-muted-foreground mb-4">
                     يمكنك فتح نموذج الدفع في نافذة جديدة للمتابعة
                   </p>
-                  <Button onClick={openInNewTab} className="mb-2">
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    فتح في نافذة جديدة
-                  </Button>
-                  <Button variant="outline" onClick={retryIframe}>
-                    إعادة المحاولة
-                  </Button>
+                  <div className="space-x-2 space-x-reverse">
+                    <Button onClick={openInNewTab} className="mb-2">
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      فتح في نافذة جديدة
+                    </Button>
+                    <Button variant="outline" onClick={retryIframe}>
+                      إعادة المحاولة
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <>
@@ -145,7 +180,7 @@ export function PaymentIframe({
                   )}
                   
                   <iframe
-                    key={paymentData.iframeUrl} // Force re-render when URL changes
+                    key={`iframe-${paymentData.paymentId}`}
                     src={paymentData.iframeUrl}
                     width="100%"
                     height="700"
@@ -158,7 +193,7 @@ export function PaymentIframe({
                     allowTransparency={true}
                     allowFullScreen={true}
                     allow="payment"
-                    sandbox="allow-same-origin allow-scripts allow-forms allow-top-navigation allow-popups"
+                    sandbox="allow-same-origin allow-scripts allow-forms allow-top-navigation allow-popups allow-popups-to-escape-sandbox"
                     onLoad={handleIframeLoad}
                     onError={handleIframeError}
                   />
@@ -195,6 +230,7 @@ export function PaymentIframe({
             <p>رقم العملية: {paymentData.paymentId}</p>
             <p>المبلغ: {paymentData.amount} {paymentData.currency}</p>
             <p>الطريقة: {paymentMethod === 'credit-card' ? 'بطاقة ائتمانية' : 'محفظة إلكترونية'}</p>
+            <p className="text-green-600">✅ تم إنشاء رابط الدفع بنجاح</p>
           </div>
         </CardContent>
       </Card>

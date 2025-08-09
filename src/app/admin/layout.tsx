@@ -3,14 +3,16 @@
 
 import { redirect, usePathname } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Book, Users, GraduationCap, Menu, CreditCard, Activity } from "lucide-react";
+import { useState } from "react";
+import { LayoutDashboard, Book, Users, GraduationCap, Menu, CreditCard, Activity, Settings, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SessionProvider, useSession } from "next-auth/react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
-// A new, reusable component for the navigation links to avoid repetition
-function AdminNavLinks() {
+// Enhanced navigation component with hover animations
+function AdminNavLinks({ isCollapsed = false, onItemClick }: { isCollapsed?: boolean; onItemClick?: () => void }) {
   const pathname = usePathname();
   const navLinks = [
     { href: "/admin", label: "لوحة التحكم", icon: LayoutDashboard },
@@ -19,23 +21,138 @@ function AdminNavLinks() {
     { href: "/admin/professors", label: "المدربين", icon: Users },
     { href: "/admin/payments", label: "المدفوعات", icon: CreditCard },
     { href: "/admin/logs", label: "سجلات النظام", icon: Activity },
+    { href: "/admin/settings", label: "الإعدادات", icon: Settings },
   ];
 
   return (
-    <nav className="flex flex-col space-y-3">
-      {navLinks.map(link => {
+    <nav className="flex flex-col space-y-2">
+      {navLinks.map((link, index) => {
         const isActive = pathname === link.href || (link.href !== "/admin" && pathname.startsWith(link.href));
         return (
-          <Link key={link.href} href={link.href} className={cn(
-            "flex items-center gap-3 p-3 rounded-lg transition-colors",
-            isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent hover:text-foreground"
-          )}>
-            <link.icon className="w-5 h-5" />
-            <span>{link.label}</span>
-          </Link>
-        )
+          <motion.div
+            key={link.href}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <Link 
+              href={link.href} 
+              onClick={onItemClick}
+              className={cn(
+                "flex items-center gap-3 p-3 rounded-xl transition-all duration-300 group relative overflow-hidden",
+                isActive 
+                  ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg" 
+                  : "text-muted-foreground hover:bg-accent/50 hover:text-foreground hover:shadow-md"
+              )}
+            >
+              <link.icon className={cn(
+                "w-5 h-5 transition-transform duration-300",
+                isActive ? "scale-110" : "group-hover:scale-110"
+              )} />
+              <AnimatePresence>
+                {!isCollapsed && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: "auto" }}
+                    exit={{ opacity: 0, width: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="font-medium whitespace-nowrap"
+                  >
+                    {link.label}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+              {isActive && (
+                <motion.div
+                  layoutId="activeIndicator"
+                  className="absolute left-0 top-0 bottom-0 w-1 bg-primary-foreground rounded-r-full"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )}
+            </Link>
+          </motion.div>
+        );
       })}
     </nav>
+  );
+}
+
+// Enhanced sidebar component with auto-hide functionality
+function EnhancedSidebar({ children }: { children: React.ReactNode }) {
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const shouldExpand = isHovered || !isCollapsed;
+
+  return (
+    <div className="relative">
+      {/* Desktop Sidebar */}
+      <motion.aside
+        initial={{ width: 80 }}
+        animate={{ width: shouldExpand ? 280 : 80 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="fixed left-0 top-0 h-full bg-card/95 backdrop-blur-sm border-r border-border/50 z-50 hidden md:flex flex-col shadow-xl"
+      >
+        {/* Header */}
+        <div className="p-6 border-b border-border/50">
+          <div className="flex items-center gap-3">
+            <motion.div
+              animate={{ rotate: shouldExpand ? 0 : 180 }}
+              transition={{ duration: 0.3 }}
+            >
+              <GraduationCap className="h-8 w-8 text-primary" />
+            </motion.div>
+            <AnimatePresence>
+              {shouldExpand && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <h2 className="text-xl font-bold text-foreground">لوحة التحكم</h2>
+                  <p className="text-sm text-muted-foreground">نظام إدارة التعلم</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex-1 p-4 overflow-y-auto">
+          <AdminNavLinks isCollapsed={!shouldExpand} />
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-border/50">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="w-full justify-center"
+          >
+            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </Button>
+        </div>
+      </motion.aside>
+
+      {/* Main Content with dynamic margin */}
+      <motion.div
+        initial={{ marginLeft: 80 }}
+        animate={{ marginLeft: shouldExpand ? 280 : 80 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="min-h-screen hidden md:block"
+      >
+        {children}
+      </motion.div>
+
+      {/* Mobile Layout */}
+      <div className="md:hidden min-h-screen">
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -49,7 +166,16 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   });
 
   if (status === 'loading') {
-    return <div className="flex items-center justify-center min-h-screen bg-background text-foreground">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background text-foreground">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        >
+          <GraduationCap className="w-8 h-8 text-primary" />
+        </motion.div>
+      </div>
+    );
   }
 
   // This check is now secondary to the middleware, but a good safeguard
@@ -58,23 +184,13 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground md:grid md:grid-cols-[250px_1fr]">
-      {/* Desktop Sidebar */}
-      <aside className="h-full bg-card p-6 border-l border-border hidden md:flex flex-col">
-        <div className="flex items-center gap-2 mb-10">
-          <GraduationCap className="h-8 w-8 text-primary" />
-          <h2 className="text-xl font-bold text-foreground">Admin Panel</h2>
-        </div>
-        <AdminNavLinks />
-      </aside>
-
-      {/* Main Content Area */}
-      <div className="flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+      <EnhancedSidebar>
         {/* Mobile Header */}
-        <header className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card sticky top-0 z-40">
+        <header className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card/95 backdrop-blur-sm sticky top-0 z-40">
           <Link href="/admin" className="flex items-center gap-2">
             <GraduationCap className="h-6 w-6 text-primary" />
-            <span className="font-bold">Admin</span>
+            <span className="font-bold">لوحة التحكم</span>
           </Link>
           <Sheet>
             <SheetTrigger asChild>
@@ -82,16 +198,31 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="p-6">
+            <SheetContent side="right" className="p-6 w-80">
+              <div className="mb-6">
+                <div className="flex items-center gap-3">
+                  <GraduationCap className="h-8 w-8 text-primary" />
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground">لوحة التحكم</h2>
+                    <p className="text-sm text-muted-foreground">نظام إدارة التعلم</p>
+                  </div>
+                </div>
+              </div>
               <AdminNavLinks />
             </SheetContent>
           </Sheet>
         </header>
         
         <main className="flex-grow p-4 sm:p-8 overflow-auto">
-          {children}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {children}
+          </motion.div>
         </main>
-      </div>
+      </EnhancedSidebar>
     </div>
   );
 }

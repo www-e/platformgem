@@ -145,9 +145,25 @@ export function useCreateCourseForm() {
         }),
       });
 
+      // Check if response is ok first
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Server error:', errorText);
+        toast.error(`خطأ في الخادم: ${response.status}`);
+        return;
+      }
+
+      // Check if response has content
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        console.error('Invalid response type:', contentType);
+        toast.error('استجابة غير صحيحة من الخادم');
+        return;
+      }
+
       const result = await response.json();
 
-      if (response.ok) {
+      if (result.success) {
         toast.success('تم إنشاء الدورة بنجاح');
         router.push(`/admin/courses/${result.course.id}`);
       } else {
@@ -155,7 +171,11 @@ export function useCreateCourseForm() {
       }
     } catch (error) {
       console.error('Course creation error:', error);
-      toast.error('حدث خطأ في إنشاء الدورة');
+      if (error instanceof SyntaxError) {
+        toast.error('خطأ في تحليل استجابة الخادم');
+      } else {
+        toast.error('حدث خطأ في إنشاء الدورة');
+      }
     } finally {
       setIsLoading(false);
     }

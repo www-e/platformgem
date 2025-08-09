@@ -6,352 +6,265 @@ import prisma from '@/lib/prisma';
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    
+    if (!session?.user?.id || session.user.role !== 'ADMIN') {
+      return NextResponse.json(
+        { success: false, error: 'غير مصرح' },
+        { status: 401 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '50');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const search = searchParams.get('search');
     const type = searchParams.get('type');
     const severity = searchParams.get('severity');
-    const search = searchParams.get('search');
-    const dateFilter = searchParams.get('dateFilter') || 'today';
+    const dateFrom = searchParams.get('dateFrom');
+    const dateTo = searchParams.get('dateTo');
 
-    // Calculate date range
-    const now = new Date();
-    let startDate: Date;
+    // Since we don't have a logs table yet, let's create mock data based on actual system activities
+    // In a real implementation, you would have a proper logs table
     
-    switch (dateFilter) {
-      case 'today':
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        break;
-      case 'yesterday':
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
-        break;
-      case 'week':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case 'month':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
-      default:
-        startDate = new Date(0); // All time
-    }
-
-    // Since we don't have a logs table yet, let's create mock data from existing tables
-    const logs = await generateSystemLogs(startDate, type, severity, search, page, limit);
-    const totalLogs = await countSystemLogs(startDate, type, severity, search);
-    
-    const totalPages = Math.ceil(totalLogs / limit);
+    // For now, let's generate logs from existing data
+    const logs = await generateSystemLogs({
+      page,
+      limit,
+      search,
+      type,
+      severity,
+      dateFrom,
+      dateTo
+    });
 
     return NextResponse.json({
       success: true,
       data: {
-        logs,
+        logs: logs.data,
         pagination: {
           page,
           limit,
-          total: totalLogs,
-          pages: totalPages
+          total: logs.total,
+          pages: Math.ceil(logs.total / limit)
         }
       }
     });
 
   } catch (error) {
     console.error('Logs fetch error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: 'خطأ في الخادم' },
+      { status: 500 }
+    );
   }
 }
 
-async function generateSystemLogs(
-  startDate: Date, 
-  type?: string | null, 
-  severity?: string | null, 
-  search?: string | null,
-  page: number = 1,
-  limit: number = 50
-) {
-  const logs: any[] = [];
+async function generateSystemLogs(params: {
+  page: number;
+  limit: number;
+  search?: string | null;
+  type?: string | null;
+  severity?: string | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+}) {
+  const { page, limit } = params;
   const skip = (page - 1) * limit;
 
-  // Get user activities
-  if (!type || type === 'USER') {
-    const users = await prisma.user.findMany({
-      where: {
-        createdAt: { gte: startDate },
-        ...(search && {
-          OR: [
-            { name: { contains: search, mode: 'insensitive' } },
-            { email: { contains: search, mode: 'insensitive' } }
-          ]
-        })
+  // Generate logs from various system activities
+  const logs: any[] = [];
+
+  // User registration logs
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      role: true,
+      createdAt: true,
+      isActive: true
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 50
+  });
+
+  users.forEach(user => {
+    logs.push({
+      id: `user_${user.id}_created`,
+      type: 'USER',
+      action: 'USER_REGISTERED',
+      description: `تم تسجيل مستخدم جديد: ${user.name} (${user.role})`,
+      userId: user.id,
+      userName: user.name,
+      metadata: { role: user.role, isActive: user.isActive },
+      timestamp: user.createdAt.toISOString(),
+      severity: 'SUCCESS',
+      ipAddress: '192.168.1.' + Math.floor(Math.random() * 255),
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    });
+  });
+
+  // Enrollment logs
+  const enrollments = await prisma.enrollment.findMany({
+    include: {
+      user: { select: { id: true, name: true } },
+      course: { select: { id: true, title: true } }
+    },
+    orderBy: { enrolledAt: 'desc' },
+    take: 50
+  });
+
+  enrollments.forEach(enrollment => {
+    logs.push({
+      id: `enrollment_${enrollment.id}`,
+      type: 'ENROLLMENT',
+      action: 'STUDENT_ENROLLED',
+      description: `تم تسجيل الطالب ${enrollment.user.name} في دورة: ${enrollment.course.title}`,
+      userId: enrollment.user.id,
+      userName: enrollment.user.name,
+      metadata: { 
+        courseTitle: enrollment.course.title,
+        progressPercent: enrollment.progressPercent
       },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-      skip
+      timestamp: enrollment.enrolledAt.toISOString(),
+      severity: 'SUCCESS',
+      ipAddress: '192.168.1.' + Math.floor(Math.random() * 255),
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
     });
+  });
 
-    users.forEach(user => {
-      logs.push({
-        id: `user-${user.id}`,
-        type: 'USER',
-        action: 'USER_REGISTERED',
-        description: `تم تسجيل مستخدم جديد: ${user.name}`,
-        userId: user.id,
-        userName: user.name,
-        timestamp: user.createdAt.toISOString(),
-        severity: 'SUCCESS',
-        metadata: {
-          role: user.role,
-          email: user.email,
-          phone: user.phone
-        }
-      });
-    });
-  }
+  // Payment logs
+  const payments = await prisma.payment.findMany({
+    include: {
+      user: { select: { id: true, name: true } },
+      course: { select: { id: true, title: true } }
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 50
+  });
 
-  // Get payment activities
-  if (!type || type === 'PAYMENT') {
-    const payments = await prisma.payment.findMany({
-      where: {
-        createdAt: { gte: startDate },
-        ...(search && {
-          OR: [
-            { user: { name: { contains: search, mode: 'insensitive' } } },
-            { course: { title: { contains: search, mode: 'insensitive' } } }
-          ]
-        })
+  payments.forEach(payment => {
+    const severity = payment.status === 'COMPLETED' ? 'SUCCESS' : 
+                    payment.status === 'FAILED' ? 'ERROR' : 'INFO';
+    
+    logs.push({
+      id: `payment_${payment.id}`,
+      type: 'PAYMENT',
+      action: `PAYMENT_${payment.status}`,
+      description: `${payment.status === 'COMPLETED' ? 'تم' : payment.status === 'FAILED' ? 'فشل' : 'جاري'} دفع ${Number(payment.amount)} ${payment.currency} للدورة: ${payment.course.title}`,
+      userId: payment.user.id,
+      userName: payment.user.name,
+      metadata: { 
+        amount: Number(payment.amount),
+        currency: payment.currency,
+        courseTitle: payment.course.title,
+        paymobTransactionId: payment.paymobTransactionId
       },
-      include: {
-        user: { select: { name: true } },
-        course: { select: { title: true } }
+      timestamp: payment.createdAt.toISOString(),
+      severity,
+      ipAddress: '192.168.1.' + Math.floor(Math.random() * 255),
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    });
+  });
+
+  // Course creation logs
+  const courses = await prisma.course.findMany({
+    include: {
+      professor: { select: { id: true, name: true } },
+      category: { select: { name: true } }
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 30
+  });
+
+  courses.forEach(course => {
+    logs.push({
+      id: `course_${course.id}_created`,
+      type: 'COURSE',
+      action: 'COURSE_CREATED',
+      description: `تم إنشاء دورة جديدة: ${course.title} بواسطة ${course.professor.name}`,
+      userId: course.professor.id,
+      userName: course.professor.name,
+      metadata: { 
+        courseTitle: course.title,
+        category: course.category.name,
+        isPublished: course.isPublished,
+        price: course.price ? Number(course.price) : null
       },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-      skip
+      timestamp: course.createdAt.toISOString(),
+      severity: 'INFO',
+      ipAddress: '192.168.1.' + Math.floor(Math.random() * 255),
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
     });
+  });
 
-    payments.forEach(payment => {
-      const severity = payment.status === 'COMPLETED' ? 'SUCCESS' : 
-                      payment.status === 'FAILED' ? 'ERROR' : 'INFO';
-      
-      logs.push({
-        id: `payment-${payment.id}`,
-        type: 'PAYMENT',
-        action: `PAYMENT_${payment.status}`,
-        description: `دفعة ${payment.status === 'COMPLETED' ? 'مكتملة' : payment.status === 'FAILED' ? 'فاشلة' : 'معلقة'} للدورة: ${payment.course.title}`,
-        userId: payment.userId,
-        userName: payment.user.name,
-        timestamp: payment.createdAt.toISOString(),
-        severity,
-        metadata: {
-          amount: Number(payment.amount),
-          currency: payment.currency,
-          courseTitle: payment.course.title,
-          paymobOrderId: payment.paymobOrderId
-        }
-      });
-    });
-  }
+  // Certificate logs
+  const certificates = await prisma.certificate.findMany({
+    include: {
+      user: { select: { id: true, name: true } }
+    },
+    orderBy: { issuedAt: 'desc' },
+    take: 30
+  });
 
-  // Get course activities
-  if (!type || type === 'COURSE') {
-    const courses = await prisma.course.findMany({
-      where: {
-        createdAt: { gte: startDate },
-        ...(search && {
-          title: { contains: search, mode: 'insensitive' }
-        })
+  certificates.forEach(certificate => {
+    logs.push({
+      id: `certificate_${certificate.id}`,
+      type: 'CERTIFICATE',
+      action: 'CERTIFICATE_ISSUED',
+      description: `تم إصدار شهادة للطالب ${certificate.user.name} في دورة: ${certificate.courseName}`,
+      userId: certificate.user.id,
+      userName: certificate.user.name,
+      metadata: { 
+        courseName: certificate.courseName,
+        certificateCode: certificate.certificateCode,
+        grade: certificate.grade
       },
-      include: {
-        professor: { select: { name: true } }
-      },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-      skip
+      timestamp: certificate.issuedAt.toISOString(),
+      severity: 'SUCCESS',
+      ipAddress: '192.168.1.' + Math.floor(Math.random() * 255),
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
     });
-
-    courses.forEach(course => {
-      logs.push({
-        id: `course-${course.id}`,
-        type: 'COURSE',
-        action: 'COURSE_CREATED',
-        description: `تم إنشاء دورة جديدة: ${course.title}`,
-        userId: course.professorId,
-        userName: course.professor.name,
-        timestamp: course.createdAt.toISOString(),
-        severity: 'SUCCESS',
-        metadata: {
-          courseTitle: course.title,
-          price: course.price ? Number(course.price) : null,
-          isPublished: course.isPublished
-        }
-      });
-    });
-  }
-
-  // Get enrollment activities
-  if (!type || type === 'ENROLLMENT') {
-    const enrollments = await prisma.enrollment.findMany({
-      where: {
-        enrolledAt: { gte: startDate },
-        ...(search && {
-          OR: [
-            { user: { name: { contains: search, mode: 'insensitive' } } },
-            { course: { title: { contains: search, mode: 'insensitive' } } }
-          ]
-        })
-      },
-      include: {
-        user: { select: { name: true } },
-        course: { select: { title: true } }
-      },
-      orderBy: { enrolledAt: 'desc' },
-      take: limit,
-      skip
-    });
-
-    enrollments.forEach(enrollment => {
-      logs.push({
-        id: `enrollment-${enrollment.id}`,
-        type: 'ENROLLMENT',
-        action: 'STUDENT_ENROLLED',
-        description: `تم تسجيل الطالب ${enrollment.user.name} في دورة: ${enrollment.course.title}`,
-        userId: enrollment.userId,
-        userName: enrollment.user.name,
-        timestamp: enrollment.enrolledAt.toISOString(),
-        severity: 'SUCCESS',
-        metadata: {
-          courseTitle: enrollment.course.title,
-          progressPercent: enrollment.progressPercent
-        }
-      });
-    });
-  }
-
-  // Get certificate activities
-  if (!type || type === 'CERTIFICATE') {
-    const certificates = await prisma.certificate.findMany({
-      where: {
-        issuedAt: { gte: startDate },
-        ...(search && {
-          OR: [
-            { studentName: { contains: search, mode: 'insensitive' } },
-            { courseName: { contains: search, mode: 'insensitive' } }
-          ]
-        })
-      },
-      orderBy: { issuedAt: 'desc' },
-      take: limit,
-      skip
-    });
-
-    certificates.forEach(certificate => {
-      logs.push({
-        id: `certificate-${certificate.id}`,
-        type: 'CERTIFICATE',
-        action: 'CERTIFICATE_ISSUED',
-        description: `تم إصدار شهادة للطالب ${certificate.studentName} في دورة: ${certificate.courseName}`,
-        userId: certificate.userId,
-        userName: certificate.studentName,
-        timestamp: certificate.issuedAt.toISOString(),
-        severity: 'SUCCESS',
-        metadata: {
-          certificateCode: certificate.certificateCode,
-          courseName: certificate.courseName,
-          professorName: certificate.professorName,
-          grade: certificate.grade
-        }
-      });
-    });
-  }
+  });
 
   // Sort all logs by timestamp
   logs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
-  // Apply severity filter
-  const filteredLogs = severity && severity !== 'all' 
-    ? logs.filter(log => log.severity.toLowerCase() === severity.toLowerCase())
-    : logs;
+  // Apply filters
+  let filteredLogs = logs;
 
-  return filteredLogs.slice(0, limit);
-}
-
-async function countSystemLogs(
-  startDate: Date, 
-  type?: string | null, 
-  severity?: string | null, 
-  search?: string | null
-): Promise<number> {
-  let count = 0;
-
-  if (!type || type === 'USER') {
-    count += await prisma.user.count({
-      where: {
-        createdAt: { gte: startDate },
-        ...(search && {
-          OR: [
-            { name: { contains: search, mode: 'insensitive' } },
-            { email: { contains: search, mode: 'insensitive' } }
-          ]
-        })
-      }
-    });
+  if (params.search) {
+    const searchLower = params.search.toLowerCase();
+    filteredLogs = filteredLogs.filter(log => 
+      log.description.toLowerCase().includes(searchLower) ||
+      log.userName?.toLowerCase().includes(searchLower) ||
+      log.action.toLowerCase().includes(searchLower)
+    );
   }
 
-  if (!type || type === 'PAYMENT') {
-    count += await prisma.payment.count({
-      where: {
-        createdAt: { gte: startDate },
-        ...(search && {
-          OR: [
-            { user: { name: { contains: search, mode: 'insensitive' } } },
-            { course: { title: { contains: search, mode: 'insensitive' } } }
-          ]
-        })
-      }
-    });
+  if (params.type) {
+    filteredLogs = filteredLogs.filter(log => log.type === params.type);
   }
 
-  if (!type || type === 'COURSE') {
-    count += await prisma.course.count({
-      where: {
-        createdAt: { gte: startDate },
-        ...(search && {
-          title: { contains: search, mode: 'insensitive' }
-        })
-      }
-    });
+  if (params.severity) {
+    filteredLogs = filteredLogs.filter(log => log.severity === params.severity);
   }
 
-  if (!type || type === 'ENROLLMENT') {
-    count += await prisma.enrollment.count({
-      where: {
-        enrolledAt: { gte: startDate },
-        ...(search && {
-          OR: [
-            { user: { name: { contains: search, mode: 'insensitive' } } },
-            { course: { title: { contains: search, mode: 'insensitive' } } }
-          ]
-        })
-      }
-    });
+  if (params.dateFrom) {
+    const fromDate = new Date(params.dateFrom);
+    filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) >= fromDate);
   }
 
-  if (!type || type === 'CERTIFICATE') {
-    count += await prisma.certificate.count({
-      where: {
-        issuedAt: { gte: startDate },
-        ...(search && {
-          OR: [
-            { studentName: { contains: search, mode: 'insensitive' } },
-            { courseName: { contains: search, mode: 'insensitive' } }
-          ]
-        })
-      }
-    });
+  if (params.dateTo) {
+    const toDate = new Date(params.dateTo);
+    toDate.setHours(23, 59, 59, 999);
+    filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) <= toDate);
   }
 
-  return count;
+  const total = filteredLogs.length;
+  const paginatedLogs = filteredLogs.slice(skip, skip + limit);
+
+  return {
+    data: paginatedLogs,
+    total
+  };
 }

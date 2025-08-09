@@ -84,12 +84,21 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
         course.id,
         selectedMethod
       );
+
       setPaymentData(response);
       setCurrentStep("complete");
+
+      setProcessingState("idle");
+
+      console.log("Payment initiated successfully:", {
+        paymentId: response.paymentId,
+        iframeUrl: response.iframeUrl,
+      });
     } catch (error: any) {
       const errorMessage = paymentsApi.handlePaymentError(error);
       setError(errorMessage);
       setProcessingState("error");
+      console.error("Payment initiation failed:", error);
     } finally {
       setIsLoading(false);
     }

@@ -61,7 +61,12 @@ export function PaymentListItem({
             </div>
             <div className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
-              <span>{new Date(payment.createdAt).toLocaleDateString('ar-SA')}</span>
+              <span>{new Date(payment.createdAt).toLocaleDateString('ar-EG', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                calendar: 'gregory'
+              })}</span>
             </div>
           </div>
 
@@ -100,22 +105,41 @@ export function PaymentListItem({
             التفاصيل
           </Button>
 
-          <DropdownMenu>
+          <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 w-8 p-0 hover:bg-accent/50 focus:bg-accent/50"
+                onMouseDown={(e) => e.preventDefault()}
+              >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent 
+              align="end" 
+              className="w-48 bg-background/95 backdrop-blur-sm border shadow-lg"
+              sideOffset={5}
+              onCloseAutoFocus={(e) => e.preventDefault()}
+            >
               {payment.status === 'PENDING' && (
                 <>
-                  <DropdownMenuItem onClick={() => onAction(payment.id, 'manual_complete')}>
+                  <DropdownMenuItem 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onAction(payment.id, 'manual_complete');
+                    }}
+                    className="cursor-pointer"
+                  >
                     <CheckCircle className="h-4 w-4 ml-2" />
                     <span>إكمال يدوياً</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    className="text-red-500 focus:text-red-500"
-                    onClick={() => onAction(payment.id, 'update_status', { status: 'failed', reason: 'Cancelled by admin' })}
+                    className="text-red-500 focus:text-red-500 cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onAction(payment.id, 'update_status', { status: 'failed', reason: 'Cancelled by admin' });
+                    }}
                   >
                     <XCircle className="h-4 w-4 ml-2" />
                     <span>إلغاء</span>
@@ -123,13 +147,25 @@ export function PaymentListItem({
                 </>
               )}
               {payment.status === 'COMPLETED' && payment.lastWebhook?.lastError && (
-                <DropdownMenuItem onClick={() => onAction(payment.id, 'retry_enrollment')}>
+                <DropdownMenuItem 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onAction(payment.id, 'retry_enrollment');
+                  }}
+                  className="cursor-pointer"
+                >
                   <RefreshCw className="h-4 w-4 ml-2" />
                   <span>إعادة محاولة التسجيل</span>
                 </DropdownMenuItem>
               )}
               {payment.status === 'FAILED' && (
-                <DropdownMenuItem onClick={() => onAction(payment.id, 'manual_complete')}>
+                <DropdownMenuItem 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onAction(payment.id, 'manual_complete');
+                  }}
+                  className="cursor-pointer"
+                >
                   <CheckCircle className="h-4 w-4 ml-2" />
                   <span>إكمال يدوياً</span>
                 </DropdownMenuItem>
