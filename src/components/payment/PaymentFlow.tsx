@@ -11,17 +11,14 @@ import { CourseInfo } from "./CourseInfo";
 import { paymentsApi, PaymentInitiationResponse } from "@/lib/api/payments";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
   ArrowLeft,
   Shield,
   Lock,
   CheckCircle,
-  Clock,
   CreditCard,
   Smartphone,
-  AlertTriangle,
   RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -95,10 +92,23 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
         iframeUrl: response.iframeUrl,
       });
     } catch (error: any) {
+      console.error("Payment initiation failed:", error);
+      
+      // Handle specific error cases
+      if (error.message.includes('عملية دفع معلقة')) {
+        // For pending payment errors, show a retry option
+        setError('لديك عملية دفع معلقة. سيتم إلغاؤها تلقائياً والمحاولة مرة أخرى.');
+        
+        // Automatically retry after a short delay
+        setTimeout(() => {
+          handleInitiatePayment();
+        }, 2000);
+        return;
+      }
+      
       const errorMessage = paymentsApi.handlePaymentError(error);
       setError(errorMessage);
       setProcessingState("error");
-      console.error("Payment initiation failed:", error);
     } finally {
       setIsLoading(false);
     }

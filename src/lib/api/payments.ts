@@ -23,9 +23,14 @@ export interface Payment {
 
 export interface PaymentInitiationResponse {
   paymentId: string;
-  paymentKey: string;
-  iframeUrl: string;
-  orderId: number;
+  paymentKey?: string;
+  iframeUrl?: string;
+  orderId?: number;
+  // E-wallet specific fields
+  intentionId?: string;
+  clientSecret?: string;
+  checkoutUrl?: string;
+  paymentMethod: 'credit-card' | 'e-wallet';
   amount: number;
   currency: string;
   course: {

@@ -3,58 +3,105 @@
 import * as paymob from './client';
 import { paymobConfig } from './config';
 import { PayMobOrderRequest } from './types';
+import { createPaymentIntention, buildUnifiedCheckoutUrl, extractPublicKey } from './intention.service';
 
 /**
  * The response structure for a successful payment initiation.
  */
 export interface PaymentInitiationResult {
-  paymentKey: string;
-  orderId: number;
-  iframeUrl: string;
+  paymentKey?: string;
+  orderId?: number;
+  iframeUrl?: string;
+  // E-wallet specific fields
+  intentionId?: string;
+  clientSecret?: string;
+  checkoutUrl?: string;
+  paymentMethod: 'credit-card' | 'e-wallet';
 }
 
 /**
  * Orchestrates the complete PayMob payment flow:
- * 1. Authenticates with PayMob.
- * 2. Creates an order.
- * 3. Generates a payment key for the iframe.
+ * For credit cards: Uses traditional iframe approach
+ * For e-wallets: Uses Intention API (unified checkout)
  * @param orderData - The data required to create the order.
  * @param courseId - The optional ID of the course for constructing the return URL.
  * @param paymentMethod - The payment method to use ('credit-card' or 'e-wallet').
- * @returns A promise that resolves to an object containing the payment key, order ID, and iframe URL.
+ * @returns A promise that resolves to an object containing the payment details.
  */
 export async function initiatePayment(
   orderData: PayMobOrderRequest,
   courseId?: string,
-  paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card'
+  paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card',
+  userId?: string
 ): Promise<PaymentInitiationResult> {
   try {
-    // Step 1: Authenticate
-    const authToken = await paymob.authenticate();
+    console.log(`Initiating ${paymentMethod} payment for course ${courseId}`);
 
-    // Step 2: Create order
-    const order = await paymob.createOrder(authToken, orderData);
+    if (paymentMethod === 'e-wallet') {
+      // Use Intention API for e-wallets (correct approach)
+      try {
+        const intention = await createPaymentIntention(orderData, courseId, userId);
+        
+        // Get public key for checkout URL
+        const publicKey = extractPublicKey(paymobConfig.apiKey);
+        const checkoutUrl = buildUnifiedCheckoutUrl(publicKey, intention.client_secret);
 
-    // Step 3: Get payment key
-    const paymentKey = await paymob.getPaymentKey(
-      authToken,
-      order.id,
-      orderData.amount_cents,
-      orderData.billing_data,
-      paymentMethod
-    );
+        console.log('E-wallet payment intention created:', {
+          intentionId: intention.id,
+          checkoutUrl: checkoutUrl,
+          intentionOrderId: intention.intention_order_id
+        });
 
-    // Step 4: Generate iframe URL
-    const iframeUrl = buildIframeUrl(paymentKey, courseId);
+        return {
+          intentionId: intention.id,
+          clientSecret: intention.client_secret,
+          checkoutUrl: checkoutUrl,
+          orderId: intention.intention_order_id ? parseInt(intention.intention_order_id) : undefined,
+          paymentMethod: 'e-wallet'
+        };
+      } catch (error) {
+        console.error('E-wallet payment intention failed:', error);
+        
+        // Provide more specific error messages
+        if (error instanceof Error) {
+          if (error.message.includes('API غير صحيح')) {
+            throw new Error('مفتاح API الخاص بـ PayMob غير صحيح. يرجى التحقق من الإعدادات.');
+          } else if (error.message.includes('PUBLIC_KEY')) {
+            throw new Error('مفتاح PayMob العام غير مُعرَّف. يرجى إضافة PAYMOB_PUBLIC_KEY في ملف البيئة.');
+          } else if (error.message.includes('بيانات الطلب')) {
+            throw new Error('بيانات الدفع غير صحيحة. يرجى المحاولة مرة أخرى.');
+          }
+        }
+        
+        throw error;
+      }
+    } else {
+      // Use traditional iframe approach for credit cards
+      const authToken = await paymob.authenticate();
+      const order = await paymob.createOrder(authToken, orderData);
+      const paymentKey = await paymob.getPaymentKey(
+        authToken,
+        order.id,
+        orderData.amount_cents,
+        orderData.billing_data,
+        paymentMethod
+      );
+      const iframeUrl = buildIframeUrl(paymentKey, courseId);
 
-    return {
-      paymentKey,
-      orderId: order.id,
-      iframeUrl,
-    };
+      console.log('Credit card payment initiated:', {
+        orderId: order.id,
+        paymentKey: paymentKey
+      });
+
+      return {
+        paymentKey,
+        orderId: order.id,
+        iframeUrl,
+        paymentMethod: 'credit-card'
+      };
+    }
   } catch (error) {
     console.error('PayMob payment initiation error:', error);
-    // Re-throw the original error to be handled by the calling function
     throw error;
   }
 }

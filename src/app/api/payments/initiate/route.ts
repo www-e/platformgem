@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { payMobService } from "@/lib/paymob/client";
+import { initiatePayment } from "@/lib/paymob/payment.service";
 import {
   createSuccessResponse,
   createErrorResponse,
@@ -147,26 +148,17 @@ export async function POST(request: NextRequest) {
 
         console.log("Cancelled abandoned payment:", existingPayment.id);
       } else {
-        // Payment is recent, return error with remaining time info
-        const timeRemaining = getPaymentTimeRemaining(
-          existingPayment.createdAt
-        );
-
-        return createErrorResponse(
-          "PENDING_PAYMENT",
-          `لديك عملية دفع معلقة لهذه الدورة بالفعل. الوقت المتبقي: ${timeRemaining.minutes} دقيقة و ${timeRemaining.seconds} ثانية`,
-          409,
-          {
-            paymentId: existingPayment.id,
-            createdAt: existingPayment.createdAt,
-            expiresAt: new Date(
-              existingPayment.createdAt.getTime() +
-                paymobConfig.paymentTimeoutMinutes * 60 * 1000
-            ),
-            timeRemaining: timeRemaining,
-            canCancel: true,
-          }
-        );
+        // Payment is recent, but allow user to retry by cancelling the old one
+        console.log("Cancelling existing pending payment to allow retry:", existingPayment.id);
+        
+        await prisma.payment.update({
+          where: { id: existingPayment.id },
+          data: {
+            status: "CANCELLED",
+            failureReason: "Cancelled by user to retry payment",
+            updatedAt: new Date(),
+          },
+        });
       }
     }
 
@@ -237,24 +229,40 @@ export async function POST(request: NextRequest) {
     };
 
     // Initiate payment with PayMob
-    const paymentResult = await payMobService.initiatePayment(
+    const paymentResult = await initiatePayment(
       orderData,
       courseId,
-      paymentMethod
+      paymentMethod,
+      session.user.id
     );
 
-    // Update payment record with PayMob order ID
+    // Update payment record with PayMob data
+    const updateData: any = {
+      paymobResponse: {
+        paymentMethod,
+        initiatedAt: new Date().toISOString(),
+      },
+    };
+
+    // Store payment data based on method
+    if (paymentMethod === 'e-wallet') {
+      // For e-wallets, store intention data
+      updateData.paymobOrderId = paymentResult.intentionId || merchantOrderId;
+      updateData.paymobResponse.intentionId = paymentResult.intentionId;
+      updateData.paymobResponse.clientSecret = paymentResult.clientSecret;
+      updateData.paymobResponse.checkoutUrl = paymentResult.checkoutUrl;
+      updateData.paymobResponse.orderId = paymentResult.orderId;
+    } else {
+      // For credit cards, store traditional data
+      updateData.paymobOrderId = paymentResult.orderId?.toString() || merchantOrderId;
+      updateData.paymobResponse.paymentKey = paymentResult.paymentKey;
+      updateData.paymobResponse.orderId = paymentResult.orderId;
+      updateData.paymobResponse.iframeUrl = paymentResult.iframeUrl;
+    }
+
     await prisma.payment.update({
       where: { id: payment.id },
-      data: {
-        paymobOrderId: paymentResult.orderId.toString(),
-        paymobResponse: {
-          paymentKey: paymentResult.paymentKey,
-          orderId: paymentResult.orderId,
-          iframeUrl: paymentResult.iframeUrl,
-          initiatedAt: new Date().toISOString(),
-        },
-      },
+      data: updateData,
     });
 
     return createSuccessResponse(
@@ -263,6 +271,11 @@ export async function POST(request: NextRequest) {
         paymentKey: paymentResult.paymentKey,
         iframeUrl: paymentResult.iframeUrl,
         orderId: paymentResult.orderId,
+        // E-wallet specific fields
+        intentionId: paymentResult.intentionId,
+        clientSecret: paymentResult.clientSecret,
+        checkoutUrl: paymentResult.checkoutUrl,
+        paymentMethod: paymentResult.paymentMethod,
         amount: Number(course.price),
         currency: course.currency,
         course: {

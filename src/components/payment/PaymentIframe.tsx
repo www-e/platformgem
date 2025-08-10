@@ -33,21 +33,29 @@ export function PaymentIframe({
   const [iframeError, setIframeError] = useState(false);
 
   useEffect(() => {
-    // ✅ Enhanced debugging
     console.log('PaymentIframe mounted with data:', {
       paymentId: paymentData.paymentId,
       iframeUrl: paymentData.iframeUrl,
+      checkoutUrl: paymentData.checkoutUrl,
       paymentMethod
     });
 
-    // Listen for payment completion messages
+    // For e-wallets, redirect immediately to external checkout
+    if (paymentMethod === 'e-wallet' && paymentData.checkoutUrl) {
+      console.log('E-wallet detected, redirecting to external checkout:', paymentData.checkoutUrl);
+      // Redirect to external UnifiedCheckout (no iframe needed for e-wallets)
+      window.location.href = paymentData.checkoutUrl;
+      return;
+    }
+
+    // Listen for payment completion messages (credit cards only)
     const messageHandler = (event: MessageEvent) => {
       console.log('Message received from iframe:', {
         origin: event.origin,
         data: event.data
       });
 
-      // Verify origin for security - more flexible check
+      // Verify origin for security
       if (!event.origin.includes('paymob.com') && !event.origin.includes('accept.paymob.com')) {
         console.warn('Message from unauthorized origin:', event.origin);
         return;
@@ -70,19 +78,18 @@ export function PaymentIframe({
     
     window.addEventListener('message', messageHandler);
     
-    // ✅ Reduced timeout for faster fallback
     const timeout = setTimeout(() => {
-      if (!iframeLoaded && !iframeError) {
+      if (!iframeLoaded && !iframeError && paymentMethod === 'credit-card') {
         console.warn('PayMob iframe loading timeout reached');
         setShowFallback(true);
       }
-    }, 10000); // 10 seconds timeout
+    }, 10000);
     
     return () => {
       window.removeEventListener('message', messageHandler);
       clearTimeout(timeout);
     };
-  }, [paymentData.paymentId, paymentData.iframeUrl, iframeLoaded, iframeError, onComplete, onError, paymentMethod]);
+  }, [paymentData.paymentId, paymentData.iframeUrl, paymentData.checkoutUrl, iframeLoaded, iframeError, onComplete, onError, paymentMethod]);
 
   const handleIframeLoad = () => {
     console.log('✅ PayMob iframe loaded successfully');
@@ -108,7 +115,85 @@ export function PaymentIframe({
     window.open(paymentData.iframeUrl, '_blank', 'width=800,height=700,scrollbars=yes,resizable=yes');
   };
 
-  // ✅ Add validation for iframe URL
+  // Handle e-wallet payments (external redirect)
+  if (paymentMethod === 'e-wallet') {
+    if (!paymentData.checkoutUrl) {
+      console.error('❌ Missing checkout URL for e-wallet payment');
+      return (
+        <Card>
+          <CardContent className="p-8 text-center">
+            <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">خطأ في إعداد المحفظة الإلكترونية</h3>
+            <p className="text-muted-foreground mb-4">
+              لم يتم إنشاء رابط الدفع للمحفظة الإلكترونية بشكل صحيح
+            </p>
+            <Button onClick={() => window.location.reload()}>
+              إعادة المحاولة
+            </Button>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Show redirect message for e-wallets
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Smartphone className="w-5 h-5" />
+            دفع بالمحفظة الإلكترونية
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-8 text-center">
+          <div className="space-y-6">
+            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+              <Smartphone className="w-12 h-12 text-green-600" />
+            </div>
+            
+            <div>
+              <h3 className="text-xl font-semibold mb-2">جاري التوجيه للدفع</h3>
+              <p className="text-muted-foreground mb-4">
+                سيتم توجيهك إلى صفحة الدفع الآمنة لإتمام عملية الدفع بالمحفظة الإلكترونية
+              </p>
+              <p className="text-sm text-muted-foreground mb-6">
+                اختر محفظتك الإلكترونية (فودافون كاش، أورانج موني، إتصالات كاش) وأدخل رقم هاتفك
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Button 
+                onClick={() => window.location.href = paymentData.checkoutUrl!}
+                className="w-full"
+                size="lg"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                متابعة الدفع
+              </Button>
+              
+              <p className="text-xs text-muted-foreground">
+                إذا لم يتم التوجيه تلقائياً، اضغط على الزر أعلاه
+              </p>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="flex items-center gap-2 text-blue-700 mb-2">
+                <Shield className="w-4 h-4" />
+                <span className="font-medium text-sm">معلومات مهمة</span>
+              </div>
+              <ul className="text-xs text-blue-600 space-y-1 text-right">
+                <li>• تأكد من وجود رصيد كافي في محفظتك</li>
+                <li>• ستحتاج إلى رقم الهاتف المسجل بالمحفظة</li>
+                <li>• ستصلك رسالة تأكيد على هاتفك</li>
+                <li>• العملية آمنة ومحمية بالكامل</li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Validate iframe URL for credit cards
   if (!paymentData.iframeUrl) {
     console.error('❌ Missing iframe URL in payment data');
     return (

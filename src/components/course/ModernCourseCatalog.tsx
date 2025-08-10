@@ -10,27 +10,20 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   Search, 
-  Filter, 
   Grid3X3, 
   List, 
   Star,
   Users,
   BookOpen,
-  Clock,
   Play,
   Heart,
   Share2,
-  TrendingUp,
-  Award,
-  Zap,
-  Target,
   ChevronRight,
   ChevronDown,
   X,
   Sparkles,
   GraduationCap,
-  UserCheck,
-  DollarSign
+  UserCheck
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -87,7 +80,6 @@ const ITEMS_PER_PAGE = 12;
 export function ModernCourseCatalog({
   initialFilters,
   userRole,
-  userId,
   categories,
   featuredCourses,
   stats

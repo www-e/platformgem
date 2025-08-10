@@ -9,6 +9,7 @@ import { PayMobConfig } from "./types";
 function loadPayMobConfig(): PayMobConfig {
   const config: PayMobConfig = {
     apiKey: process.env.PAYMOB_API_KEY || "",
+    publicKey: process.env.PAYMOB_PUBLIC_KEY,
     integrationIdOnlineCard:
       process.env.PAYMOB_INTEGRATION_ID_ONLINE_CARD || "",
     integrationIdMobileWallet:

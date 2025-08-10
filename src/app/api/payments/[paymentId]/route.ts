@@ -104,7 +104,7 @@ export async function POST(
             items: [{
               name: payment.course.title,
               amount_cents: payMobService.formatAmount(Number(payment.amount)),
-              description: payment.course.description,
+              description: payment.course.description || payment.course.title,
               quantity: 1
             }],
             billing_data: payMobService.createBillingData({
@@ -113,7 +113,8 @@ export async function POST(
               phone: payment.user.phone
             })
           },
-          payment.courseId
+          payment.courseId,
+          'credit-card' // Default to credit card for retry
         );
 
         await prisma.payment.update({
@@ -121,11 +122,12 @@ export async function POST(
           data: {
             status: 'PENDING',
             failureReason: null,
-            paymobOrderId: paymentIntent.orderId.toString(),
+            paymobOrderId: paymentIntent.orderId?.toString() || payment.id,
             paymobResponse: { 
               ...payment.paymobResponse as object, 
               iframeUrl: paymentIntent.iframeUrl,
-              paymentKey: paymentIntent.paymentKey
+              paymentKey: paymentIntent.paymentKey,
+              paymentMethod: paymentIntent.paymentMethod
             }
           }
         });
