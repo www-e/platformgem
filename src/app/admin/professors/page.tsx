@@ -252,7 +252,7 @@ export default function ProfessorsPage() {
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">{professor.stats.totalEnrollments}</div>
-              <div className="text-xs text-muted-foreground">طالب</div>
+              <div className="text-xs text-muted-foreground">ملتحق</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-600">{professor.stats.totalCertificates}</div>
@@ -336,7 +336,7 @@ export default function ProfessorsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي الطلاب</p>
+                <p className="text-sm text-muted-foreground">إجمالي الملتحقين</p>
                 <p className="text-2xl font-bold text-purple-600">{totalEnrollments}</p>
               </div>
               <Target className="w-8 h-8 text-purple-500" />
@@ -382,7 +382,7 @@ export default function ProfessorsPage() {
                   <div className="flex-1">
                     <h4 className="font-semibold">{professor.name}</h4>
                     <div className="text-sm text-muted-foreground">
-                      {professor.stats.coursesCount} دورة • {professor.stats.totalEnrollments} طالب
+                      {professor.stats.coursesCount} دورة • {professor.stats.totalEnrollments} ملتحق
                     </div>
                     <div className="text-sm font-medium text-green-600">
                       {new Intl.NumberFormat('ar-EG', {

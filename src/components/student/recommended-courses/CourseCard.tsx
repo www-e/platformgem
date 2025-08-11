@@ -46,7 +46,7 @@ const levelLabels = {
 
 const recommendationBadges = {
   category_match: { icon: Target, label: 'يناسب اهتماماتك', color: 'bg-blue-500' },
-  similar_students: { icon: Users, label: 'اختيار الطلاب', color: 'bg-green-500' },
+  similar_students: { icon: Users, label: 'اختيار الملتحقين', color: 'bg-green-500' },
   trending: { icon: TrendingUp, label: 'رائج الآن', color: 'bg-pink-500' },
   professor_match: { icon: Award, label: 'مدرس مميز', color: 'bg-purple-500' },
   completion_based: { icon: Sparkles, label: 'مقترح لك', color: 'bg-orange-500' }

@@ -23,7 +23,7 @@ export function UserFilters({
 }: UserFiltersProps) {
   const roleOptions = [
     { value: 'all', label: 'جميع الأدوار' },
-    { value: 'STUDENT', label: 'طلاب' },
+    { value: 'STUDENT', label: 'ملتحقين' },
     { value: 'PROFESSOR', label: 'مدرسين' },
     { value: 'ADMIN', label: 'مديرين' }
   ];

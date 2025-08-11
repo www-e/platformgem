@@ -15,7 +15,7 @@ export default function UserChart({ data }: UserChartProps) {
   return (
     <Card className="bg-card">
       <CardHeader>
-        <CardTitle>تحليلات الطلاب</CardTitle>
+        <CardTitle>تحليلات الملتحقين</CardTitle>
       </CardHeader>
       <CardContent className="pl-2">
         {/* We need a parent with a defined height for the chart to be responsive */}
@@ -45,7 +45,7 @@ export default function UserChart({ data }: UserChartProps) {
                 labelStyle={{ color: 'hsl(var(--primary))' }}
               />
               <Legend wrapperStyle={{fontSize: "14px"}}/>
-              <Bar dataKey="total" name="طلاب جدد" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="total" name="ملتحقين جدد" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

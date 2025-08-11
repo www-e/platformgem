@@ -184,7 +184,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground flex items-center gap-1">
                   <Users className="w-4 h-4" />
-                  الطلاب
+                  الملتحقين
                 </span>
                 <span className="font-semibold">{course._count.enrollments}</span>
               </div>

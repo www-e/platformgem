@@ -28,7 +28,7 @@ export function MonthlyBreakdown({ monthlyData }: MonthlyBreakdownProps) {
                 <div>
                   <p className="font-semibold">{month.month}</p>
                   <p className="text-sm text-muted-foreground">
-                    {month.students} طالب جديد • {month.courses} دورة
+                    {month.students} ملتحق جديد • {month.courses} دورة
                   </p>
                 </div>
               </div>

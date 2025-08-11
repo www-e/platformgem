@@ -33,11 +33,11 @@ export function OverviewTab({ analytics }: OverviewTabProps) {
             <Badge variant="outline">{formatTime(analytics.overview.totalDuration)}</Badge>
           </div>
           <div className="flex justify-between items-center">
-            <span>إجمالي الطلاب</span>
+            <span>إجمالي الملتحقين</span>
             <Badge variant="outline">{analytics.overview.totalStudents}</Badge>
           </div>
           <div className="flex justify-between items-center">
-            <span>الطلاب النشطون</span>
+            <span>الملتحقين النشطون</span>
             <Badge variant="outline">{analytics.metrics.activeStudentsLast7Days}</Badge>
           </div>
         </CardContent>
@@ -84,7 +84,7 @@ export function OverviewTab({ analytics }: OverviewTabProps) {
           
           <div className="pt-2 border-t">
             <div className="text-sm text-muted-foreground mb-1">
-              متوسط وقت المشاهدة لكل طالب
+              متوسط وقت المشاهدة لكل ملتحق
             </div>
             <div className="text-lg font-semibold">
               {formatTime(analytics.metrics.averageWatchTimePerStudent)}

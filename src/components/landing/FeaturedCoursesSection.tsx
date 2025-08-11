@@ -124,7 +124,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
               <Users className="w-4 h-4 text-secondary-500" />
             </div>
             <div className="text-sm font-semibold text-neutral-800">{course.enrollmentCount}</div>
-            <div className="text-xs text-neutral-500">طالب</div>
+            <div className="text-xs text-neutral-500">ملتحق</div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center mb-1">

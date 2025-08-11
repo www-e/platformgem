@@ -22,7 +22,7 @@ const testimonials: Testimonial[] = [
   {
     quote: "الشرح كان ممتازًا ومباشرًا. قدرت أفهم أجزاء كانت صعبة عليّ جدًا بفضل أسلوب المعلم المبسط والواضح. النتيجة كانت فوق التوقعات!",
     name: "أحمد خالد",
-    role: "طالب ثانوية عامة",
+    role: "ملتحق ثانوية عامة",
     grade: "الصف الثالث الثانوي",
     rating: 5,
     achievement: "تحسن بنسبة 25%",
@@ -31,7 +31,7 @@ const testimonials: Testimonial[] = [
   {
     quote: "المنصة سهلة الاستخدام ومكنتني من المذاكرة في أي وقت. متابعة الواجبات والتقدم ساعدتني أنظم وقتي بشكل أفضل وأحقق نتائج ممتازة.",
     name: "سارة محمود",
-    role: "طالبة ثانوية عامة",
+    role: "ملتحقة ثانوية عامة",
     grade: "الصف الثاني الثانوي",
     rating: 5,
     achievement: "درجات متفوقة",
@@ -40,7 +40,7 @@ const testimonials: Testimonial[] = [
   {
     quote: "أسلوب التدريس التفاعلي والأمثلة العملية جعلت الفيزياء مادة ممتعة بالنسبة لي. الآن أفهم المفاهيم بعمق أكبر وأحل المسائل بثقة أكبر.",
     name: "محمد أحمد",
-    role: "طالب ثانوية عامة",
+    role: "ملتحق ثانوية عامة",
     grade: "الصف الثالث الثانوي",
     rating: 5,
     achievement: "95% في الامتحان",
@@ -49,7 +49,7 @@ const testimonials: Testimonial[] = [
   {
     quote: "الدعم المستمر والمتابعة الشخصية من المعلم كانت الفرق الحقيقي. شعرت بالثقة والاستعداد الكامل للامتحانات النهائية.",
     name: "فاطمة علي",
-    role: "طالبة ثانوية عامة", 
+    role: "ملتحقة ثانوية عامة", 
     grade: "الصف الثالث الثانوي",
     rating: 5,
     achievement: "تأهلت للجامعة",
@@ -199,12 +199,12 @@ export default function TestimonialsSection() {
             <span className="text-neutral-800">ماذا يقول</span>
             <br />
             <span className="bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 bg-clip-text text-transparent">
-              طلابنا المتفوقون؟
+              ملتحقيننا المتفوقون؟
             </span>
           </h2>
           
           <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-arabic-relaxed">
-            اكتشف كيف ساعدت منصتنا مئات الطلاب على تحقيق أحلامهم الأكاديمية والوصول إلى أعلى الدرجات
+            اكتشف كيف ساعدت منصتنا مئات الملتحقين على تحقيق أحلامهم الأكاديمية والوصول إلى أعلى الدرجات
           </p>
         </div>
 
@@ -263,7 +263,7 @@ export default function TestimonialsSection() {
                 <div className="text-3xl font-bold text-primary-600 font-display">
                   500+
                 </div>
-                <div className="text-neutral-600 font-medium">طالب متخرج</div>
+                <div className="text-neutral-600 font-medium">ملتحق متخرج</div>
               </div>
               <div className="space-y-2">
                 <div className="text-3xl font-bold text-secondary-600 font-display">

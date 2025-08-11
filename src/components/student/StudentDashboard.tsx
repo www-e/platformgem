@@ -321,7 +321,7 @@ export function StudentDashboard() {
               <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
                 <Zap className="w-6 h-6 text-black" />
               </div>
-              لوحة تحكم الطالب
+              لوحة تحكم الملتحق
             </h1>
             <div className="flex items-center gap-4 mt-2">
               <p className="text-neutral-600 font-primary">

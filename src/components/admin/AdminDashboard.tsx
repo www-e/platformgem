@@ -405,7 +405,7 @@ export function AdminDashboard() {
                       }).format(stats.totalRevenue)}
                     </div>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400 font-primary mt-1">
-                      {widget.id === 'users' && `${stats.totalStudents} طالب • ${stats.totalProfessors} مدرس`}
+                      {widget.id === 'users' && `${stats.totalStudents} ملتحق • ${stats.totalProfessors} مدرس`}
                       {widget.id === 'courses' && `${stats.activeCourses} دورة نشطة`}
                       {widget.id === 'revenue' && `${new Intl.NumberFormat('ar-EG', {
                         style: 'currency',

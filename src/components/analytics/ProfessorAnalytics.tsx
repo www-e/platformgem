@@ -34,7 +34,7 @@ export function ProfessorAnalytics({ courseId }: ProfessorAnalyticsProps) {
 
       <Tabs defaultValue="students" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="students">الطلاب</TabsTrigger>
+          <TabsTrigger value="students">الملتحقين</TabsTrigger>
           <TabsTrigger value="lessons">الدروس</TabsTrigger>
           <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
         </TabsList>

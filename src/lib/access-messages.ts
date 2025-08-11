@@ -35,7 +35,7 @@ export function getAccessMessage(result: CourseAccessResult): {
     case 'professor_owns':
       return {
         title: 'دورتك التعليمية',
-        description: 'هذه دورتك الخاصة. يمكنك إدارة المحتوى ومتابعة الطلاب.',
+        description: 'هذه دورتك الخاصة. يمكنك إدارة المحتوى ومتابعة الملتحقين.',
       };
     case 'payment_required':
       const price = result.course?.price

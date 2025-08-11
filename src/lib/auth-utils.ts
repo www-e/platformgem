@@ -70,7 +70,7 @@ export function getRoleDisplayName(role: UserRole): string {
     case 'PROFESSOR':
       return 'أستاذ';
     case 'STUDENT':
-      return 'طالب';
+      return 'ملتحق';
     default:
       return 'مستخدم';
   }

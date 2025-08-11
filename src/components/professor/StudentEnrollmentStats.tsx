@@ -130,7 +130,7 @@ export function StudentEnrollmentStats() {
   if (!stats) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">فشل في تحميل إحصائيات الطلاب</p>
+        <p className="text-muted-foreground">فشل في تحميل إحصائيات الملتحقين</p>
       </div>
     );
   }
@@ -139,9 +139,9 @@ export function StudentEnrollmentStats() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold">إحصائيات الطلاب</h2>
+        <h2 className="text-2xl font-bold">إحصائيات الملتحقين</h2>
         <p className="text-muted-foreground">
-          تتبع أداء وتقدم طلابك في دوراتك
+          تتبع أداء وتقدم ملتحقينك في دوراتك
         </p>
       </div>
 
@@ -184,7 +184,7 @@ export function StudentEnrollmentStats() {
           <CardContent>
             <div className="text-2xl font-bold">{formatWatchTime(stats.averageWatchTime)}</div>
             <p className="text-xs text-muted-foreground">
-              لكل طالب
+              لكل ملتحق
             </p>
           </CardContent>
         </Card>
@@ -213,7 +213,7 @@ export function StudentEnrollmentStats() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Award className="h-5 w-5" />
-              أفضل الطلاب
+              أفضل الملتحقين
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -247,7 +247,7 @@ export function StudentEnrollmentStats() {
         {/* Course Breakdown */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>توزيع الطلاب حسب الدورة</CardTitle>
+            <CardTitle>توزيع الملتحقين حسب الدورة</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -256,7 +256,7 @@ export function StudentEnrollmentStats() {
                   <div className="flex items-center justify-between">
                     <span className="font-medium">{course.courseName}</span>
                     <span className="text-sm text-muted-foreground">
-                      {course.enrollments} طالب
+                      {course.enrollments} ملتحق
                     </span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
@@ -335,7 +335,7 @@ export function StudentEnrollmentStats() {
       {/* Students List */}
       <Card>
         <CardHeader>
-          <CardTitle>قائمة الطلاب ({filteredEnrollments.length})</CardTitle>
+          <CardTitle>قائمة الملتحقين ({filteredEnrollments.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">

@@ -52,7 +52,7 @@ export function LessonsTab({ analytics }: LessonsTabProps) {
                     <span>أكمل الدرس</span>
                   </div>
                   <div className="font-medium">
-                    {lessonData.completedCount} طالب
+                    {lessonData.completedCount} ملتحق
                   </div>
                 </div>
                 

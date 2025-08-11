@@ -20,7 +20,7 @@ export function AnalyticsHeader({ analytics, selectedCourse, onCourseChange }: A
       <div>
         <h2 className="text-2xl font-bold">تحليلات الدورات</h2>
         <p className="text-muted-foreground">
-          تحليل مفصل لأداء دوراتك وتفاعل الطلاب
+          تحليل مفصل لأداء دوراتك وتفاعل الملتحقين
         </p>
       </div>
       <Select value={selectedCourse} onValueChange={onCourseChange}>

@@ -58,7 +58,7 @@ export function DetailedAnalyticsTabs({ analytics }: DetailedAnalyticsTabsProps)
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-semibold">{course.enrollments} طالب</div>
+                      <div className="text-sm font-semibold">{course.enrollments} ملتحق</div>
                       <div className="text-xs text-muted-foreground">
                         {formatCurrency(course.revenue)}
                       </div>
@@ -93,7 +93,7 @@ export function DetailedAnalyticsTabs({ analytics }: DetailedAnalyticsTabsProps)
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-semibold">{professor.totalEnrollments} طالب</div>
+                      <div className="text-sm font-semibold">{professor.totalEnrollments} ملتحق</div>
                       <div className="text-xs text-muted-foreground">
                         {formatCurrency(professor.totalRevenue)}
                       </div>
@@ -115,7 +115,7 @@ export function DetailedAnalyticsTabs({ analytics }: DetailedAnalyticsTabsProps)
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
-                <span>الطلاب</span>
+                <span>الملتحقين</span>
                 <Badge variant="outline">{analytics.userStats.students}</Badge>
               </div>
               <div className="flex justify-between items-center">

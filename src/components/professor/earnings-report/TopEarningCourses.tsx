@@ -30,7 +30,7 @@ export function TopEarningCourses({ courses }: TopEarningCoursesProps) {
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Users className="h-3 w-3" />
-                      {course.students} طالب
+                      {course.students} ملتحق
                     </div>
                     <div className="flex items-center gap-1">
                       <Target className="h-3 w-3" />

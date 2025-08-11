@@ -48,7 +48,7 @@ export function OverviewCards({ courseData }: OverviewCardsProps) {
         <CardContent>
           <div className="text-2xl font-bold">{formatWatchTime(courseData.totalWatchTime)}</div>
           <p className="text-xs text-muted-foreground">
-            متوسط {formatWatchTime(courseData.averageWatchTime)} لكل طالب
+            متوسط {formatWatchTime(courseData.averageWatchTime)} لكل ملتحق
           </p>
         </CardContent>
       </Card>

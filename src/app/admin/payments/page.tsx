@@ -456,7 +456,7 @@ export default function AdminPaymentsPage() {
 
                         <div>
                           <label className="text-sm font-medium">
-                            بيانات الطالب
+                            بيانات الملتحق
                           </label>
                           <div className="mt-2 p-3 bg-muted/50 rounded-lg space-y-2">
                             <p>

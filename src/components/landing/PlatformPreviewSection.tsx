@@ -109,7 +109,7 @@ export default function PlatformPreviewSection() {
 
           <BentoCard 
             className="md:col-span-2" 
-            title="مجتمع تفاعلي للطلاب" 
+            title="مجتمع تفاعلي للملتحقين" 
             icon={Users}
           >
              <div className="w-full h-full bg-neutral-100 rounded-md p-4 flex items-center justify-center gap-4 border border-neutral-200">

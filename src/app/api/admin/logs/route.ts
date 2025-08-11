@@ -118,7 +118,7 @@ async function generateSystemLogs(params: {
       id: `enrollment_${enrollment.id}`,
       type: 'ENROLLMENT',
       action: 'STUDENT_ENROLLED',
-      description: `تم تسجيل الطالب ${enrollment.user.name} في دورة: ${enrollment.course.title}`,
+      description: `تم تسجيل الملتحق ${enrollment.user.name} في دورة: ${enrollment.course.title}`,
       userId: enrollment.user.id,
       userName: enrollment.user.name,
       metadata: { 
@@ -211,7 +211,7 @@ async function generateSystemLogs(params: {
       id: `certificate_${certificate.id}`,
       type: 'CERTIFICATE',
       action: 'CERTIFICATE_ISSUED',
-      description: `تم إصدار شهادة للطالب ${certificate.user.name} في دورة: ${certificate.courseName}`,
+      description: `تم إصدار شهادة للملتحق ${certificate.user.name} في دورة: ${certificate.courseName}`,
       userId: certificate.user.id,
       userName: certificate.user.name,
       metadata: { 

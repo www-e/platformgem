@@ -444,7 +444,7 @@ export function CertificateGenerator({
                   <User className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-neutral-600 font-primary">الطالب</p>
+                  <p className="text-sm text-neutral-600 font-primary">الملتحق</p>
                   <p className="font-semibold font-display">{studentName}</p>
                 </div>
               </div>

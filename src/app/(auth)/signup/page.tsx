@@ -77,7 +77,7 @@ export default function SignupPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="studentId">معرف الطالب (اختياري)</Label>
+                    <Label htmlFor="studentId">معرف الملتحق (اختياري)</Label>
                     <Input id="studentId" name="studentId" placeholder="123456" className="h-11 bg-input/80 border-border/60" dir="ltr" />
                   </div>
                   <div className="space-y-2">

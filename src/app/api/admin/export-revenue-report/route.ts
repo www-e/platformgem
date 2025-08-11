@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     // Generate CSV content
     const csvHeaders = [
       'التاريخ',
-      'اسم الطالب',
+      'اسم الملتحق',
       'البريد الإلكتروني',
       'اسم الدورة',
       'المبلغ',

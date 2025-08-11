@@ -17,8 +17,8 @@ export async function generateMetadata({ params }: StudentDetailPageProps): Prom
   });
 
   return {
-    title: student ? `${student.name} - إدارة الطلاب` : 'طالب غير موجود',
-    description: student ? `إدارة بيانات الطالب ${student.name}` : 'الطالب المطلوب غير موجود',
+    title: student ? `${student.name} - إدارة الملتحقين` : 'ملتحق غير موجود',
+    description: student ? `إدارة بيانات الملتحق ${student.name}` : 'الملتحق المطلوب غير موجود',
   };
 }
 

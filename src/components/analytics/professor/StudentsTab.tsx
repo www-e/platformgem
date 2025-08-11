@@ -21,19 +21,19 @@ export function StudentsTab({ analytics }: StudentsTabProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Users className="w-5 h-5" />
-          تقدم الطلاب
+          تقدم الملتحقين
         </CardTitle>
         <CardDescription>
-          تفاصيل تقدم كل طالب في الدورة
+          تفاصيل تقدم كل ملتحق في الدورة
         </CardDescription>
       </CardHeader>
       <CardContent>
         {analytics.students.length === 0 ? (
           <div className="text-center py-8">
             <Users className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">لا يوجد طلاب مسجلون</h3>
+            <h3 className="text-lg font-semibold mb-2">لا يوجد ملتحقين مسجلون</h3>
             <p className="text-muted-foreground">
-              لم يسجل أي طالب في هذه الدورة بعد
+              لم يسجل أي ملتحق في هذه الدورة بعد
             </p>
           </div>
         ) : (

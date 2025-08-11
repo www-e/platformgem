@@ -109,7 +109,7 @@ export function PlatformOverview({ stats }: PlatformOverviewProps) {
                 </div>
                 <p className="text-sm text-muted-foreground">معدل التسجيل</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  متوسط التسجيلات لكل طالب
+                  متوسط التسجيلات لكل ملتحق
                 </p>
               </div>
 

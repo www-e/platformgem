@@ -22,7 +22,7 @@ export function CourseStats({ course, viewMode }: CourseStatsProps) {
         </div>
         <div className="flex items-center gap-1">
           <Users className="w-4 h-4" />
-          <span>{course.enrollmentCount} طالب</span>
+          <span>{course.enrollmentCount} ملتحق</span>
         </div>
         <div className="flex items-center gap-1">
           <Star className="w-4 h-4 text-yellow-400 fill-current" />
@@ -44,7 +44,7 @@ export function CourseStats({ course, viewMode }: CourseStatsProps) {
       </div>
       <div className="flex items-center gap-1">
         <Users className="w-4 h-4" />
-        <span>{course.enrollmentCount} طالب</span>
+        <span>{course.enrollmentCount} ملتحق</span>
       </div>
       <div className="flex items-center gap-1">
         <Star className="w-4 h-4 text-yellow-400 fill-current" />

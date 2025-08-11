@@ -157,7 +157,7 @@ export function ProfessorCourseManagement({ courses: initialCourses }: Professor
           <SelectContent>
             <SelectItem value="created">الأحدث</SelectItem>
             <SelectItem value="title">الاسم</SelectItem>
-            <SelectItem value="enrollments">عدد الطلاب</SelectItem>
+            <SelectItem value="enrollments">عدد الملتحقين</SelectItem>
             <SelectItem value="lessons">عدد الدروس</SelectItem>
           </SelectContent>
         </Select>
@@ -275,7 +275,7 @@ export function ProfessorCourseManagement({ courses: initialCourses }: Professor
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
                       <Users className="w-3 h-3" />
-                      <span>طلاب</span>
+                      <span>ملتحقين</span>
                     </div>
                     <div className="text-sm font-semibold">{course._count.enrollments}</div>
                   </div>

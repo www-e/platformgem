@@ -144,7 +144,7 @@ export function StudentProgress({ studentId, courseId }: StudentProgressProps) {
           <Activity className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h3 className="text-lg font-semibold mb-2">خطأ في تحميل البيانات</h3>
           <p className="text-muted-foreground mb-4">
-            {error || 'حدث خطأ أثناء تحميل بيانات تقدم الطالب'}
+            {error || 'حدث خطأ أثناء تحميل بيانات تقدم الملتحق'}
           </p>
           <Button onClick={() => window.location.reload()}>
             إعادة المحاولة
@@ -303,7 +303,7 @@ export function StudentProgress({ studentId, courseId }: StudentProgressProps) {
             تقدم الدروس
           </CardTitle>
           <CardDescription>
-            تفاصيل تقدم الطالب في كل درس
+            تفاصيل تقدم الملتحق في كل درس
           </CardDescription>
         </CardHeader>
         <CardContent>

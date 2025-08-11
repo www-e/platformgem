@@ -14,7 +14,7 @@ export function TopStudentsCard({ topStudents }: TopStudentsCardProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Star className="h-5 w-5" />
-          أكثر الطلاب تفاعلاً
+          أكثر الملتحقين تفاعلاً
         </CardTitle>
       </CardHeader>
       <CardContent>

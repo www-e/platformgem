@@ -82,12 +82,12 @@ useEffect(() => {
           <Textarea
             id="course-description"
             name="description"
-            placeholder="اكتب وصفاً شاملاً عن محتوى الدورة، الأهداف التعليمية، والمهارات التي سيكتسبها الطلاب..."
+            placeholder="اكتب وصفاً شاملاً عن محتوى الدورة، الأهداف التعليمية، والمهارات التي سيكتسبها الملتحقين..."
             required
             className="min-h-[120px]"
           />
           <p className="text-sm text-muted-foreground">
-            وصف مفصل يساعد الطلاب على فهم ما ستقدمه الدورة
+            وصف مفصل يساعد الملتحقين على فهم ما ستقدمه الدورة
           </p>
         </div>
       </div>
@@ -212,7 +212,7 @@ useEffect(() => {
           {!isPaid && (
             <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
               <p className="text-sm text-green-800">
-                ✅ ستكون هذه الدورة مجانية ومتاحة لجميع الطلاب
+                ✅ ستكون هذه الدورة مجانية ومتاحة لجميع الملتحقين
               </p>
             </div>
           )}

@@ -92,7 +92,7 @@ export function ProfessorOverview({ stats }: ProfessorOverviewProps) {
                 <div className="text-3xl font-bold text-blue-600 mb-2">
                   {((stats.totalStudents / stats.totalCourses) || 0).toFixed(0)}
                 </div>
-                <p className="text-sm font-medium text-blue-800">متوسط الطلاب لكل دورة</p>
+                <p className="text-sm font-medium text-blue-800">متوسط الملتحقين لكل دورة</p>
                 <p className="text-xs text-blue-600 mt-1">
                   {stats.totalStudents > 50 ? 'أداء ممتاز!' : 'يمكن تحسينه'}
                 </p>
@@ -144,7 +144,7 @@ export function ProfessorOverview({ stats }: ProfessorOverviewProps) {
                     <div>
                       <p className="font-semibold">{month.month}</p>
                       <p className="text-sm text-muted-foreground">
-                        {month.students} طالب جديد • {month.courses} دورة
+                        {month.students} ملتحق جديد • {month.courses} دورة
                       </p>
                     </div>
                   </div>
@@ -287,7 +287,7 @@ export function ProfessorOverview({ stats }: ProfessorOverviewProps) {
               
               <Button className="w-full justify-start" variant="outline">
                 <Users className="h-4 w-4 mr-2" />
-                رسائل الطلاب
+                رسائل الملتحقين
               </Button>
             </div>
           </CardContent>

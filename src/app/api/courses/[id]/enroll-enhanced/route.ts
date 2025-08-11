@@ -27,7 +27,7 @@ export async function POST(
 
     if (session.user.role !== 'STUDENT') {
       return NextResponse.json(
-        { error: 'التسجيل متاح للطلاب فقط', code: 'FORBIDDEN' },
+        { error: 'التسجيل متاح للملتحقين فقط', code: 'FORBIDDEN' },
         { status: 403 }
       );
     }

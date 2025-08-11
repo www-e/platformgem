@@ -266,7 +266,7 @@ export default function PaymentResultPage({
                   <div className="flex items-center gap-4 text-sm text-gray-500">
                     <span>الأستاذ: {course.professor.name}</span>
                     <span>{course.lessonCount} درس</span>
-                    <span>{course.enrollmentCount} طالب</span>
+                    <span>{course.enrollmentCount} ملتحق</span>
                   </div>
                 </div>
               </div>

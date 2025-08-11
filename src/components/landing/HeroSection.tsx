@@ -41,7 +41,7 @@ export default async function HeroSection() {
               </span>
               <br />
               <span className="text-primary-600 font-extrabold relative">
-                للتميز الدراسي
+                للتدريب و التعليم الاكاديمي
               </span>
             </h1>
             
@@ -53,11 +53,11 @@ export default async function HeroSection() {
                     <Star key={star} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                   ))}
                 </div>
-                <span className="text-sm font-bold text-neutral-700">4.9/5 تقييم الطلاب</span>
+                <span className="text-sm font-bold text-neutral-700">4.9/5 تقييم الملتحقين</span>
               </div>
               <div className="flex items-center gap-3 bg-gradient-to-r from-primary-500/10 to-primary-600/10 backdrop-blur-md rounded-2xl px-6 py-3 shadow-xl border border-primary-200/50">
                 <Users className="w-5 h-5 text-primary-600" />
-                <span className="text-sm font-bold text-primary-700">+500 طالب</span>
+                <span className="text-sm font-bold text-primary-700">+500 ملتحق</span>
               </div>
             </div>
           </div>
@@ -67,10 +67,10 @@ export default async function HeroSection() {
           {/* Enhanced Description */}
           <div className="animate-slide-in-right max-w-4xl">
             <p className="text-xl md:text-2xl lg:text-3xl text-neutral-700 leading-arabic-relaxed font-medium mb-6 text-shadow-sm">
-              نقدم شرحًا متخصصًا ومتابعة دقيقة لطلاب المرحلة الثانوية
+              نقدم شرحًا متخصصًا ومتابعة دقيقة لملتحقين المرحلة للمتدربين الملتحقين
             </p>
             <p className="text-lg md:text-xl text-neutral-600 leading-arabic-normal font-normal bg-white/40 backdrop-blur-sm rounded-2xl px-8 py-4 shadow-lg border border-white/50">
-              بإشراف مباشر من خبير واحد لضمان أعلى مستويات الفهم والتفوق
+              بإشراف مباشر من عدد كبير من الخبراء لضمان أعلى مستويات الفهم والتفوق
             </p>
           </div>
 
@@ -109,7 +109,7 @@ export default async function HeroSection() {
           {/* Trust Indicators */}
           <div className="animate-fade-in-up mt-16 pt-8 border-t border-primary-200/40">
             <p className="text-sm text-neutral-600 mb-8 font-medium">
-              موثوق به من قبل طلاب مدارس مميزة
+              موثوق به من قبل...
             </p>
             <div className="flex flex-wrap items-center justify-center gap-8">
               {/* Enhanced School indicators */}
@@ -118,7 +118,7 @@ export default async function HeroSection() {
                   <span className="text-sm font-bold text-primary-700">م1</span>
                 </div>
                 <span className="text-sm font-semibold">
-                  المدرسة الثانوية الأولى
+                  منصات تعليمية
                 </span>
               </div>
               <div className="flex items-center gap-3 text-neutral-500 hover-lift cursor-pointer">
@@ -128,14 +128,14 @@ export default async function HeroSection() {
                   </span>
                 </div>
                 <span className="text-sm font-semibold">
-                  مدرسة النور الثانوية
+                  اكادمية الدكتور
                 </span>
               </div>
               <div className="flex items-center gap-3 text-neutral-500 hover-lift cursor-pointer">
                 <div className="w-10 h-10 bg-gradient-to-br from-primary-300 to-secondary-300 rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-sm font-bold text-primary-800">م</span>
                 </div>
-                <span className="text-sm font-semibold">مدرسة المستقبل</span>
+                <span className="text-sm font-semibold">الكثير من المتدربين الشخصيين</span>
               </div>
             </div>
           </div>

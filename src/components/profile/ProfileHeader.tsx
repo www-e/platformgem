@@ -44,7 +44,7 @@ export default function ProfileHeader({ name, role, enrollmentCount }: ProfileHe
         <div className="bg-muted/50 p-3 rounded-lg">
           <p className="text-sm text-muted-foreground">مرحلتك الدراسية</p>
           <p className="font-semibold text-foreground flex items-center justify-center gap-2 pt-1">
-          <Award className="w-5 h-5 text-yellow-400" /> {role === 'STUDENT' ? 'طالب' : role}
+          <Award className="w-5 h-5 text-yellow-400" /> {role === 'STUDENT' ? 'ملتحق' : role}
           </p>
         </div>
         <div className="bg-muted/50 p-3 rounded-lg">

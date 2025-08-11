@@ -36,7 +36,7 @@ export function getRoleNavigation(role: UserRole) {
         { href: '/admin/categories', label: 'الفئات' },
         { href: '/admin/courses', label: 'الدورات' },
         { href: '/admin/professors', label: 'المدرسين' },
-        { href: '/admin/students', label: 'الطلاب' },
+        { href: '/admin/students', label: 'الملتحقين' },
       ];
     case 'PROFESSOR':
       return [

@@ -386,7 +386,7 @@ export default function CoursesPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي الطلاب</p>
+                <p className="text-sm text-muted-foreground">إجمالي الملتحقين</p>
                 <p className="text-2xl font-bold text-purple-600">
                   {courses.reduce((sum, c) => sum + c._count.enrollments, 0)}
                 </p>

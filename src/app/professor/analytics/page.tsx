@@ -159,13 +159,13 @@ export default async function ProfessorAnalyticsPage({
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">إجمالي الطلاب</CardTitle>
+                <CardTitle className="text-sm font-medium">إجمالي الملتحقين</CardTitle>
                 <Users className="h-4 w-4 text-green-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{totalStudents}</div>
                 <p className="text-xs text-muted-foreground">
-                  طالب مسجل
+                  ملتحق مسجل
                 </p>
               </CardContent>
             </Card>
@@ -178,7 +178,7 @@ export default async function ProfessorAnalyticsPage({
               <CardContent>
                 <div className="text-2xl font-bold">{formatTime(totalWatchTime)}</div>
                 <p className="text-xs text-muted-foreground">
-                  {totalStudents > 0 ? formatTime(totalWatchTime / totalStudents) : '0 دقيقة'} متوسط لكل طالب
+                  {totalStudents > 0 ? formatTime(totalWatchTime / totalStudents) : '0 دقيقة'} متوسط لكل ملتحق
                 </p>
               </CardContent>
             </Card>
@@ -202,7 +202,7 @@ export default async function ProfessorAnalyticsPage({
             <CardHeader>
               <CardTitle>اختر دورة لعرض الإحصائيات المفصلة</CardTitle>
               <CardDescription>
-                انقر على أي دورة لعرض إحصائيات مفصلة عن أداء الطلاب والدروس
+                انقر على أي دورة لعرض إحصائيات مفصلة عن أداء الملتحقين والدروس
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -248,7 +248,7 @@ export default async function ProfessorAnalyticsPage({
                             <div className="text-center">
                               <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
                                 <Users className="w-3 h-3" />
-                                <span>الطلاب</span>
+                                <span>الملتحقين</span>
                               </div>
                               <div className="font-semibold">{course._count.enrollments}</div>
                             </div>

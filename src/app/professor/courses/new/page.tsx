@@ -26,7 +26,7 @@ export default async function NewCoursePage() {
         </Button>
         <div>
           <h1 className="text-3xl font-bold">إنشاء دورة جديدة</h1>
-          <p className="text-muted-foreground">أنشئ دورة تعليمية جديدة وشاركها مع الطلاب</p>
+          <p className="text-muted-foreground">أنشئ دورة تعليمية جديدة وشاركها مع الملتحقين</p>
         </div>
       </div>
 

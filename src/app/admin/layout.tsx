@@ -17,7 +17,7 @@ function AdminNavLinks({ isCollapsed = false, onItemClick }: { isCollapsed?: boo
   const navLinks = [
     { href: "/admin", label: "لوحة التحكم", icon: LayoutDashboard },
     { href: "/admin/courses", label: "الدورات", icon: Book },
-    { href: "/admin/students", label: "الطلاب", icon: Users },
+    { href: "/admin/students", label: "الملتحقين", icon: Users },
     { href: "/admin/professors", label: "المدربين", icon: Users },
     { href: "/admin/payments", label: "المدفوعات", icon: CreditCard },
     { href: "/admin/logs", label: "سجلات النظام", icon: Activity },

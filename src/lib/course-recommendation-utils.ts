@@ -8,7 +8,7 @@ export function getRecommendationBadgeText(reason: string): string {
     case 'category_match':
       return 'مشابه لاهتماماتك';
     case 'similar_students':
-      return 'اختيار الطلاب';
+      return 'اختيار الملتحقين';
     case 'trending':
       return 'رائج الآن';
     case 'professor_match':

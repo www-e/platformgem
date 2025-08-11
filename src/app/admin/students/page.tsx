@@ -272,10 +272,10 @@ export default function StudentsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-            إدارة الطلاب
+            إدارة الملتحقين
           </h1>
           <p className="text-muted-foreground mt-1">
-            إدارة ومتابعة الطلاب المسجلين في المنصة
+            إدارة ومتابعة الملتحقين المسجلين في المنصة
           </p>
         </div>
       </div>
@@ -286,7 +286,7 @@ export default function StudentsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي الطلاب</p>
+                <p className="text-sm text-muted-foreground">إجمالي الملتحقين</p>
                 <p className="text-2xl font-bold text-blue-600">{totalCount}</p>
               </div>
               <Users className="w-8 h-8 text-blue-500" />
@@ -298,7 +298,7 @@ export default function StudentsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">الطلاب النشطين</p>
+                <p className="text-sm text-muted-foreground">الملتحقين النشطين</p>
                 <p className="text-2xl font-bold text-green-600">
                   {students.filter(s => s.isActive).length}
                 </p>
@@ -418,11 +418,11 @@ export default function StudentsPage() {
         <Card className="border-0 bg-card/50">
           <CardContent className="p-12 text-center">
             <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">لا يوجد طلاب</h3>
+            <h3 className="text-lg font-semibold mb-2">لا يوجد ملتحقين</h3>
             <p className="text-muted-foreground">
               {Object.keys(filters).length > 0 
-                ? "لم يتم العثور على طلاب مطابقين للفلاتر المحددة"
-                : "لم يقم أي طالب بالتسجيل بعد"
+                ? "لم يتم العثور على ملتحقين مطابقين للفلاتر المحددة"
+                : "لم يقم أي ملتحق بالتسجيل بعد"
               }
             </p>
           </CardContent>

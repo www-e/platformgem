@@ -179,7 +179,7 @@ Total files found: 53
  108 |           <CardContent>
  109 |             <div className="text-2xl font-bold">{totalEnrollments}</div>
  110 |             <p className="text-xs text-muted-foreground">
- 111 |               طالب مسجل
+ 111 |               ملتحق مسجل
  112 |             </p>
  113 |           </CardContent>
  114 |         </Card>
@@ -260,7 +260,7 @@ Total files found: 53
   17 |   const navLinks = [
   18 |     { href: "/admin", label: "لوحة التحكم", icon: LayoutDashboard },
   19 |     { href: "/admin/courses", label: "الدورات", icon: Book },
-  20 |     { href: "/admin/students", label: "الطلاب", icon: Users },
+  20 |     { href: "/admin/students", label: "الملتحقين", icon: Users },
   21 |     { href: "/admin/professors", label: "المدربين", icon: Users },
   22 |     { href: "/admin/payments", label: "المدفوعات", icon: CreditCard },
   23 |     { href: "/admin/logs", label: "سجلات النظام", icon: Activity },
@@ -951,7 +951,7 @@ Total files found: 53
  456 | 
  457 |                         <div>
  458 |                           <label className="text-sm font-medium">
- 459 |                             بيانات الطالب
+ 459 |                             بيانات الملتحق
  460 |                           </label>
  461 |                           <div className="mt-2 p-3 bg-muted/50 rounded-lg space-y-2">
  462 |                             <p>
@@ -1340,8 +1340,8 @@ Total files found: 53
   17 |   });
   18 | 
   19 |   return {
-  20 |     title: student ? `${student.name} - إدارة الطلاب` : 'طالب غير موجود',
-  21 |     description: student ? `إدارة بيانات الطالب ${student.name}` : 'الطالب المطلوب غير موجود',
+  20 |     title: student ? `${student.name} - إدارة الملتحقين` : 'ملتحق غير موجود',
+  21 |     description: student ? `إدارة بيانات الملتحق ${student.name}` : 'الملتحق المطلوب غير موجود',
   22 |   };
   23 | }
   24 | 
@@ -2131,13 +2131,13 @@ Total files found: 53
  159 | 
  160 |             <Card>
  161 |               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
- 162 |                 <CardTitle className="text-sm font-medium">إجمالي الطلاب</CardTitle>
+ 162 |                 <CardTitle className="text-sm font-medium">إجمالي الملتحقين</CardTitle>
  163 |                 <Users className="h-4 w-4 text-green-600" />
  164 |               </CardHeader>
  165 |               <CardContent>
  166 |                 <div className="text-2xl font-bold">{totalStudents}</div>
  167 |                 <p className="text-xs text-muted-foreground">
- 168 |                   طالب مسجل
+ 168 |                   ملتحق مسجل
  169 |                 </p>
  170 |               </CardContent>
  171 |             </Card>
@@ -2150,7 +2150,7 @@ Total files found: 53
  178 |               <CardContent>
  179 |                 <div className="text-2xl font-bold">{formatTime(totalWatchTime)}</div>
  180 |                 <p className="text-xs text-muted-foreground">
- 181 |                   {totalStudents > 0 ? formatTime(totalWatchTime / totalStudents) : '0 دقيقة'} متوسط لكل طالب
+ 181 |                   {totalStudents > 0 ? formatTime(totalWatchTime / totalStudents) : '0 دقيقة'} متوسط لكل ملتحق
  182 |                 </p>
  183 |               </CardContent>
  184 |             </Card>
@@ -2174,7 +2174,7 @@ Total files found: 53
  202 |             <CardHeader>
  203 |               <CardTitle>اختر دورة لعرض الإحصائيات المفصلة</CardTitle>
  204 |               <CardDescription>
- 205 |                 انقر على أي دورة لعرض إحصائيات مفصلة عن أداء الطلاب والدروس
+ 205 |                 انقر على أي دورة لعرض إحصائيات مفصلة عن أداء الملتحقين والدروس
  206 |               </CardDescription>
  207 |             </CardHeader>
  208 |             <CardContent>
@@ -2220,7 +2220,7 @@ Total files found: 53
  248 |                             <div className="text-center">
  249 |                               <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
  250 |                                 <Users className="w-3 h-3" />
- 251 |                                 <span>الطلاب</span>
+ 251 |                                 <span>الملتحقين</span>
  252 |                               </div>
  253 |                               <div className="font-semibold">{course._count.enrollments}</div>
  254 |                             </div>
@@ -2390,7 +2390,7 @@ Total files found: 53
   99 | 
  100 |         <Card>
  101 |           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
- 102 |             <CardTitle className="text-sm font-medium">الطلاب المسجلون</CardTitle>
+ 102 |             <CardTitle className="text-sm font-medium">الملتحقين المسجلون</CardTitle>
  103 |             <Users className="h-4 w-4 text-muted-foreground" />
  104 |           </CardHeader>
  105 |           <CardContent>
@@ -2416,7 +2416,7 @@ Total files found: 53
  125 | 
  126 |         <Card>
  127 |           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
- 128 |             <CardTitle className="text-sm font-medium">متوسط الطلاب</CardTitle>
+ 128 |             <CardTitle className="text-sm font-medium">متوسط الملتحقين</CardTitle>
  129 |             <Users className="h-4 w-4 text-muted-foreground" />
  130 |           </CardHeader>
  131 |           <CardContent>
@@ -2424,7 +2424,7 @@ Total files found: 53
  133 |               {totalCourses > 0 ? Math.round(totalEnrollments / totalCourses * 10) / 10 : 0}
  134 |             </div>
  135 |             <p className="text-xs text-muted-foreground">
- 136 |               طالب لكل دورة
+ 136 |               ملتحق لكل دورة
  137 |             </p>
  138 |           </CardContent>
  139 |         </Card>
@@ -2885,7 +2885,7 @@ Total files found: 53
  405 |                       }).format(stats.totalRevenue)}
  406 |                     </div>
  407 |                     <p className="text-xs text-neutral-500 dark:text-neutral-400 font-primary mt-1">
- 408 |                       {widget.id === 'users' && `${stats.totalStudents} طالب • ${stats.totalProfessors} مدرس`}
+ 408 |                       {widget.id === 'users' && `${stats.totalStudents} ملتحق • ${stats.totalProfessors} مدرس`}
  409 |                       {widget.id === 'courses' && `${stats.activeCourses} دورة نشطة`}
  410 |                       {widget.id === 'revenue' && `${new Intl.NumberFormat('ar-EG', {
  411 |                         style: 'currency',
@@ -3274,15 +3274,15 @@ Total files found: 53
   43 |       const result = await response.json();
   44 | 
   45 |       if (result.success) {
-  46 |         toast.success('تم حذف الطالب بنجاح');
+  46 |         toast.success('تم حذف الملتحق بنجاح');
   47 |         // Redirect after successful deletion
   48 |         window.location.href = '/admin/students';
   49 |       } else {
-  50 |         toast.error(result.error?.message || 'فشل في حذف الطالب');
+  50 |         toast.error(result.error?.message || 'فشل في حذف الملتحق');
   51 |       }
   52 |     } catch (error) {
   53 |       console.error('Delete student failed:', error);
-  54 |       toast.error('حدث خطأ في حذف الطالب');
+  54 |       toast.error('حدث خطأ في حذف الملتحق');
   55 |     }
   56 |   };
   57 | 
@@ -3297,11 +3297,11 @@ Total files found: 53
   66 | 
   67 |       if (result.success) {
   68 |         toast.success(
-  69 |           `تم ${student.isActive ? 'إلغاء تفعيل' : 'تفعيل'} الطالب بنجاح`
+  69 |           `تم ${student.isActive ? 'إلغاء تفعيل' : 'تفعيل'} الملتحق بنجاح`
   70 |         );
   71 |         window.location.reload(); // Reload to reflect status change
   72 |       } else {
-  73 |         toast.error(result.error?.message || 'فشل في تحديث حالة الطالب');
+  73 |         toast.error(result.error?.message || 'فشل في تحديث حالة الملتحق');
   74 |       }
   75 |     } catch (error) {
   76 |       console.error('Toggle status failed:', error);
@@ -3473,7 +3473,7 @@ Total files found: 53
  109 |                 </div>
  110 |                 <p className="text-sm text-muted-foreground">معدل التسجيل</p>
  111 |                 <p className="text-xs text-muted-foreground mt-1">
- 112 |                   متوسط التسجيلات لكل طالب
+ 112 |                   متوسط التسجيلات لكل ملتحق
  113 |                 </p>
  114 |               </div>
  115 | 
@@ -4366,7 +4366,7 @@ Total files found: 53
   42 |             <div className="relative">
   43 |               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
   44 |               <Input
-  45 |                 placeholder="البحث بالطالب، الدورة، أو رقم المعاملة..."
+  45 |                 placeholder="البحث بالملتحق، الدورة، أو رقم المعاملة..."
   46 |                 value={filters.searchTerm}
   47 |                 onChange={(e) => filters.setSearchTerm(e.target.value)}
   48 |                 className="pl-10"
@@ -5530,7 +5530,7 @@ Total files found: 53
   58 |                       </div>
   59 |                     </div>
   60 |                     <div className="text-right">
-  61 |                       <div className="text-sm font-semibold">{course.enrollments} طالب</div>
+  61 |                       <div className="text-sm font-semibold">{course.enrollments} ملتحق</div>
   62 |                       <div className="text-xs text-muted-foreground">
   63 |                         {formatCurrency(course.revenue)}
   64 |                       </div>
@@ -5565,7 +5565,7 @@ Total files found: 53
   93 |                       </div>
   94 |                     </div>
   95 |                     <div className="text-right">
-  96 |                       <div className="text-sm font-semibold">{professor.totalEnrollments} طالب</div>
+  96 |                       <div className="text-sm font-semibold">{professor.totalEnrollments} ملتحق</div>
   97 |                       <div className="text-xs text-muted-foreground">
   98 |                         {formatCurrency(professor.totalRevenue)}
   99 |                       </div>
@@ -5587,7 +5587,7 @@ Total files found: 53
  115 |             </CardHeader>
  116 |             <CardContent className="space-y-4">
  117 |               <div className="flex justify-between items-center">
- 118 |                 <span>الطلاب</span>
+ 118 |                 <span>الملتحقين</span>
  119 |                 <Badge variant="outline">{analytics.userStats.students}</Badge>
  120 |               </div>
  121 |               <div className="flex justify-between items-center">
@@ -6218,7 +6218,7 @@ Total files found: 53
   44 |   },
   45 |   {
   46 |     question: "ما هي طرق الدفع المتاحة؟",
-  47 |     answer: "نقبل جميع وسائل الدفع الرئيسية بما في ذلك: الدفع بالبطاقات الائتمانية (فيزا، ماستركارد)، التحويل البنكي المباشر، فوري، وإنستاباي. جميع المعاملات آمنة ومشفرة. كما نوفر خطط دفع مرنة وخصومات للطلاب.",
+  47 |     answer: "نقبل جميع وسائل الدفع الرئيسية بما في ذلك: الدفع بالبطاقات الائتمانية (فيزا، ماستركارد)، التحويل البنكي المباشر، فوري، وإنستاباي. جميع المعاملات آمنة ومشفرة. كما نوفر خطط دفع مرنة وخصومات للملتحقين.",
   48 |     category: "billing"
   49 |   },
   50 |   {
@@ -6229,7 +6229,7 @@ Total files found: 53
   55 |   },
   56 |   {
   57 |     question: "هل المحتوى محدث باستمرار؟",
-  58 |     answer: "نعم، نحرص على تحديث المحتوى بشكل دوري ومستمر ليتوافق مع أحدث المناهج الدراسية وأي تغييرات قد تطرأ عليها. نضيف محاضرات جديدة شهرياً ونطور المحتوى بناءً على ملاحظات الطلاب واحتياجات السوق، لضمان حصولك على أفضل وأحدث المواد التعليمية.",
+  58 |     answer: "نعم، نحرص على تحديث المحتوى بشكل دوري ومستمر ليتوافق مع أحدث المناهج الدراسية وأي تغييرات قد تطرأ عليها. نضيف محاضرات جديدة شهرياً ونطور المحتوى بناءً على ملاحظات الملتحقين واحتياجات السوق، لضمان حصولك على أفضل وأحدث المواد التعليمية.",
   59 |     category: "courses"
   60 |   },
   61 |   {
@@ -10033,7 +10033,7 @@ Total files found: 53
  266 |                   <div className="flex items-center gap-4 text-sm text-gray-500">
  267 |                     <span>الأستاذ: {course.professor.name}</span>
  268 |                     <span>{course.lessonCount} درس</span>
- 269 |                     <span>{course.enrollmentCount} طالب</span>
+ 269 |                     <span>{course.enrollmentCount} ملتحق</span>
  270 |                   </div>
  271 |                 </div>
  272 |               </div>
@@ -10942,7 +10942,7 @@ Total files found: 53
  321 |               <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
  322 |                 <Zap className="w-6 h-6 text-black" />
  323 |               </div>
- 324 |               لوحة تحكم الطالب
+ 324 |               لوحة تحكم الملتحق
  325 |             </h1>
  326 |             <div className="flex items-center gap-4 mt-2">
  327 |               <p className="text-neutral-600 font-primary">

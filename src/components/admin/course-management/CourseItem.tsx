@@ -53,7 +53,7 @@ export function CourseItem({ course, onAction }: CourseItemProps) {
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Users className="h-3 w-3" />
-              {course._count.enrollments} طالب
+              {course._count.enrollments} ملتحق
             </div>
             <div className="flex items-center gap-1">
               <BookOpen className="h-3 w-3" />

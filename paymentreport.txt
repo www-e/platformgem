@@ -456,7 +456,7 @@ Total files found: 93
  105 |     }
  106 | 
  107 |     // 3. Create Test Students
- 108 |     console.log('👨‍🎓 إنشاء الطلاب...');
+ 108 |     console.log('👨‍🎓 إنشاء الملتحقين...');
  109 |     const students = [];
  110 |     for (let i = 1; i <= 10; i++) {
  111 |       const studentPassword = await bcrypt.hash('student123', 12);
@@ -464,7 +464,7 @@ Total files found: 93
  113 |         where: { phone: `+20100000001${i}` },
  114 |         update: {},
  115 |         create: {
- 116 |           name: `طالب تجريبي ${i}`,
+ 116 |           name: `ملتحق تجريبي ${i}`,
  117 |           phone: `+20100000001${i}`,
  118 |           email: `student${i}@platform.com`,
  119 |           password: studentPassword,
@@ -661,7 +661,7 @@ Total files found: 93
  310 |     console.log('\n🔑 بيانات تسجيل الدخول:');
  311 |     console.log('المدير: admin@platform.com / admin123');
  312 |     console.log('المدرس: professor1@platform.com / professor123');
- 313 |     console.log('الطالب: student1@platform.com / student123');
+ 313 |     console.log('الملتحق: student1@platform.com / student123');
  314 | 
  315 |   } catch (error) {
  316 |     console.error('❌ خطأ في إنشاء بيانات الاختبار:', error);
@@ -7712,7 +7712,7 @@ Total files found: 93
   52 |     // Generate CSV content
   53 |     const csvHeaders = [
   54 |       'التاريخ',
-  55 |       'اسم الطالب',
+  55 |       'اسم الملتحق',
   56 |       'البريد الإلكتروني',
   57 |       'اسم الدورة',
   58 |       'المبلغ',
@@ -7883,7 +7883,7 @@ Total files found: 93
  118 |       id: `enrollment_${enrollment.id}`,
  119 |       type: 'ENROLLMENT',
  120 |       action: 'STUDENT_ENROLLED',
- 121 |       description: `تم تسجيل الطالب ${enrollment.user.name} في دورة: ${enrollment.course.title}`,
+ 121 |       description: `تم تسجيل الملتحق ${enrollment.user.name} في دورة: ${enrollment.course.title}`,
  122 |       userId: enrollment.user.id,
  123 |       userName: enrollment.user.name,
  124 |       metadata: { 
@@ -7976,7 +7976,7 @@ Total files found: 93
  211 |       id: `certificate_${certificate.id}`,
  212 |       type: 'CERTIFICATE',
  213 |       action: 'CERTIFICATE_ISSUED',
- 214 |       description: `تم إصدار شهادة للطالب ${certificate.user.name} في دورة: ${certificate.courseName}`,
+ 214 |       description: `تم إصدار شهادة للملتحق ${certificate.user.name} في دورة: ${certificate.courseName}`,
  215 |       userId: certificate.user.id,
  216 |       userName: certificate.user.name,
  217 |       metadata: { 
@@ -9643,7 +9643,7 @@ Total files found: 93
   27 | 
   28 |     if (session.user.role !== 'STUDENT') {
   29 |       return NextResponse.json(
-  30 |         { error: 'التسجيل متاح للطلاب فقط', code: 'FORBIDDEN' },
+  30 |         { error: 'التسجيل متاح للملتحقين فقط', code: 'FORBIDDEN' },
   31 |         { status: 403 }
   32 |       );
   33 |     }
@@ -13550,7 +13550,7 @@ Total files found: 93
   35 |     case 'professor_owns':
   36 |       return {
   37 |         title: 'دورتك التعليمية',
-  38 |         description: 'هذه دورتك الخاصة. يمكنك إدارة المحتوى ومتابعة الطلاب.',
+  38 |         description: 'هذه دورتك الخاصة. يمكنك إدارة المحتوى ومتابعة الملتحقين.',
   39 |       };
   40 |     case 'payment_required':
   41 |       const price = result.course?.price
@@ -14308,7 +14308,7 @@ Total files found: 93
   70 |     case 'PROFESSOR':
   71 |       return 'أستاذ';
   72 |     case 'STUDENT':
-  73 |       return 'طالب';
+  73 |       return 'ملتحق';
   74 |     default:
   75 |       return 'مستخدم';
   76 |   }
@@ -18275,7 +18275,7 @@ Total files found: 93
  246 | <head>
  247 |     <meta charset="UTF-8">
  248 |     <meta name="viewport" content="width=device-width, initial-scale=1.0">
- 249 |     <title>تقرير اختبارات رحلة الطالب الشاملة</title>
+ 249 |     <title>تقرير اختبارات رحلة الملتحق الشاملة</title>
  250 |     <style>
  251 |         body {
  252 |             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18421,7 +18421,7 @@ Total files found: 93
  392 | <body>
  393 |     <div class="container">
  394 |         <div class="header">
- 395 |             <h1>تقرير اختبارات رحلة الطالب الشاملة</h1>
+ 395 |             <h1>تقرير اختبارات رحلة الملتحق الشاملة</h1>
  396 |             <p>تم إنشاؤه في ${new Date().toLocaleString('ar-SA')}</p>
  397 |         </div>
  398 |         
@@ -18485,7 +18485,7 @@ Total files found: 93
  456 |         </div>
  457 |         
  458 |         <div class="footer">
- 459 |             <p>تم إنشاء هذا التقرير بواسطة نظام اختبار رحلة الطالب الشاملة</p>
+ 459 |             <p>تم إنشاء هذا التقرير بواسطة نظام اختبار رحلة الملتحق الشاملة</p>
  460 |             <p>وقت التشغيل الإجمالي: ${(totalDuration / 1000 / 60).toFixed(2)} دقيقة</p>
  461 |         </div>
  462 |     </div>
@@ -18538,7 +18538,7 @@ Total files found: 93
  509 |     const totalSkipped = this.testSuites.reduce((sum, suite) => sum + suite.skippedTests, 0);
  510 |     const totalDuration = this.endTime - this.startTime;
  511 | 
- 512 |     const markdown = `# تقرير اختبارات رحلة الطالب الشاملة
+ 512 |     const markdown = `# تقرير اختبارات رحلة الملتحق الشاملة
  513 | 
  514 | **تاريخ التشغيل:** ${new Date().toLocaleString('ar-SA')}
  515 | 
@@ -18601,7 +18601,7 @@ Total files found: 93
  572 | 4. مراجعة الأداء وتحسين سرعة الاختبارات
  573 | 
  574 | ---
- 575 | *تم إنشاء هذا التقرير بواسطة نظام اختبار رحلة الطالب الشاملة*`;
+ 575 | *تم إنشاء هذا التقرير بواسطة نظام اختبار رحلة الملتحق الشاملة*`;
  576 | 
  577 |     writeFileSync(join(this.reportDir, 'student-journey-report.md'), markdown);
  578 |   }
@@ -19165,8 +19165,8 @@ Total files found: 93
   16 |       await helpers.waitForLoadingComplete();
   17 |       
   18 |       // Verify page title and main heading
-  19 |       await expect(page).toHaveTitle(/لوحة تحكم الطالب/);
-  20 |       await expect(page.locator('h1')).toContainText('لوحة تحكم الطالب');
+  19 |       await expect(page).toHaveTitle(/لوحة تحكم الملتحق/);
+  20 |       await expect(page.locator('h1')).toContainText('لوحة تحكم الملتحق');
   21 |       
   22 |       // Verify main dashboard sections are visible
   23 |       await expect(page.locator('[data-testid="dashboard-stats"]')).toBeVisible();
@@ -20659,7 +20659,7 @@ Total files found: 93
    2 | 
    3 | export const TEST_USERS = {
    4 |   STUDENT: {
-   5 |     name: 'أحمد محمد الطالب',
+   5 |     name: 'أحمد محمد الملتحق',
    6 |     phone: '01012345678',
    7 |     email: 'student@test.com',
    8 |     password: 'TestPassword123!',
@@ -20786,7 +20786,7 @@ Total files found: 93
  129 | };
  130 | 
  131 | export const ERROR_MESSAGES = {
- 132 |   INVALID_LOGIN: 'معرف الطالب أو رقم الهاتف أو كلمة المرور غير صحيحة',
+ 132 |   INVALID_LOGIN: 'معرف الملتحق أو رقم الهاتف أو كلمة المرور غير صحيحة',
  133 |   REQUIRED_FIELD: 'هذا الحقل مطلوب',
  134 |   INVALID_EMAIL: 'البريد الإلكتروني غير صحيح',
  135 |   WEAK_PASSWORD: 'كلمة المرور ضعيفة',

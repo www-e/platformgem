@@ -322,7 +322,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     if (existingCourse._count.enrollments > 0) {
       return createErrorResponse(
         'CONSTRAINT_ERROR',
-        `لا يمكن حذف الدورة لأنها تحتوي على ${existingCourse._count.enrollments} طالب مسجل. يجب إلغاء التسجيلات أولاً.`,
+        `لا يمكن حذف الدورة لأنها تحتوي على ${existingCourse._count.enrollments} ملتحق مسجل. يجب إلغاء التسجيلات أولاً.`,
         409
       );
     }

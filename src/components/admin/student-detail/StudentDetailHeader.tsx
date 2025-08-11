@@ -51,7 +51,7 @@ export function StudentDetailHeader({
           )}
         </h1>
         <p className="text-muted-foreground mt-1">
-          معرف الطالب: {student.studentId || 'غير محدد'} | تاريخ التسجيل:{' '}
+          معرف الملتحق: {student.studentId || 'غير محدد'} | تاريخ التسجيل:{' '}
           {new Date(student.createdAt).toLocaleDateString('ar-SA')}
         </p>
       </div>
@@ -85,14 +85,14 @@ export function StudentDetailHeader({
                 onSelect={(e) => e.preventDefault()}
               >
                 <Trash2 className="h-4 w-4 ml-2" />
-                <span>حذف الطالب</span>
+                <span>حذف الملتحق</span>
               </DropdownMenuItem>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>هل أنت متأكد؟</AlertDialogTitle>
                 <AlertDialogDescription>
-                  سيتم حذف الطالب وجميع بياناته بشكل نهائي. هذا الإجراء لا يمكن
+                  سيتم حذف الملتحق وجميع بياناته بشكل نهائي. هذا الإجراء لا يمكن
                   التراجع عنه.
                 </AlertDialogDescription>
               </AlertDialogHeader>

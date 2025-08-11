@@ -155,7 +155,7 @@ export default function CertificateVerificationPage() {
                 <div className="flex items-start gap-3">
                   <User className="h-5 w-5 text-muted-foreground mt-0.5" />
                   <div>
-                    <p className="font-medium">اسم الطالب</p>
+                    <p className="font-medium">اسم الملتحق</p>
                     <p className="text-lg font-bold text-green-800">
                       {certificate.studentName}
                     </p>

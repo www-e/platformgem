@@ -29,10 +29,10 @@ export function EngagementHeader({
       <div>
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <Activity className="h-6 w-6 text-blue-600" />
-          تفاعل الطلاب
+          تفاعل الملتحقين
         </h2>
         <p className="text-muted-foreground">
-          تتبع نشاط وتفاعل طلابك مع المحتوى
+          تتبع نشاط وتفاعل ملتحقينك مع المحتوى
         </p>
       </div>
       <div className="flex items-center gap-2">

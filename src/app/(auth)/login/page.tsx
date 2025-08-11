@@ -19,7 +19,7 @@ function ErrorDisplay() {
 
   useEffect(() => {
     if (error === "CredentialsSignin") {
-      setErrorMessage("معرف الطالب أو رقم الهاتف أو كلمة المرور غير صحيحة.");
+      setErrorMessage("معرف الملتحق أو رقم الهاتف أو كلمة المرور غير صحيحة.");
     } else if (error) {
       setErrorMessage("حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.");
     }
@@ -96,7 +96,7 @@ export default function LoginPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <ErrorDisplay />
                 <div className="space-y-2">
-                  <Label htmlFor="login">معرف الطالب أو رقم الهاتف</Label>
+                  <Label htmlFor="login">معرف الملتحق أو رقم الهاتف</Label>
                   <Input id="login" name="login" type="text" placeholder="مثال: 12345 أو 010..." required className="h-12 bg-input/80 border-border/60 text-lg text-center" dir="ltr" />
                 </div>
                 <div className="space-y-2">

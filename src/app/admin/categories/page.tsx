@@ -108,7 +108,7 @@ export default async function CategoriesPage() {
           <CardContent>
             <div className="text-2xl font-bold">{totalEnrollments}</div>
             <p className="text-xs text-muted-foreground">
-              طالب مسجل
+              ملتحق مسجل
             </p>
           </CardContent>
         </Card>

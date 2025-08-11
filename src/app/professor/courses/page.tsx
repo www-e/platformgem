@@ -99,7 +99,7 @@ export default async function ProfessorCoursesPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">الطلاب المسجلون</CardTitle>
+            <CardTitle className="text-sm font-medium">الملتحقين المسجلون</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -125,7 +125,7 @@ export default async function ProfessorCoursesPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">متوسط الطلاب</CardTitle>
+            <CardTitle className="text-sm font-medium">متوسط الملتحقين</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -133,7 +133,7 @@ export default async function ProfessorCoursesPage() {
               {totalCourses > 0 ? Math.round(totalEnrollments / totalCourses * 10) / 10 : 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              طالب لكل دورة
+              ملتحق لكل دورة
             </p>
           </CardContent>
         </Card>

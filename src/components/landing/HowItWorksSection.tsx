@@ -255,7 +255,7 @@ export default function HowItWorksSection() {
                 هل أنت مستعد للبدء؟
               </h3>
               <p className="text-neutral-600 text-lg max-w-2xl mx-auto leading-arabic-relaxed">
-                انضم إلى مئات الطلاب الذين بدأوا رحلتهم معنا وحققوا نتائج استثنائية في دراستهم
+                انضم إلى مئات الملتحقين الذين بدأوا رحلتهم معنا وحققوا نتائج استثنائية في دراستهم
               </p>
             </div>
 
@@ -281,7 +281,7 @@ export default function HowItWorksSection() {
                   <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full border-2 border-white flex items-center justify-center text-black text-sm font-bold">M</div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium">انضم إلى +500 طالب</p>
+                  <p className="text-sm font-medium">انضم إلى +500 ملتحق</p>
                   <p className="text-xs text-neutral-500">بدأوا بالفعل</p>
                 </div>
               </div>

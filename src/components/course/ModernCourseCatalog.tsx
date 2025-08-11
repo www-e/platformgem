@@ -296,7 +296,7 @@ export function ModernCourseCatalog({
                 </h1>
               </div>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                انضم إلى آلاف الطلاب واكتسب مهارات جديدة من خلال دوراتنا التعليمية المتميزة
+                انضم إلى آلاف الملتحقين واكتسب مهارات جديدة من خلال دوراتنا التعليمية المتميزة
               </p>
               
               {/* Stats */}
@@ -324,7 +324,7 @@ export function ModernCourseCatalog({
                     <UserCheck className="w-8 h-8 text-green-600" />
                   </div>
                   <div className="text-3xl font-bold text-green-600 mb-1">{stats.totalStudents}+</div>
-                  <div className="text-muted-foreground">طالب نشط</div>
+                  <div className="text-muted-foreground">ملتحق نشط</div>
                 </motion.div>
                 
                 <motion.div

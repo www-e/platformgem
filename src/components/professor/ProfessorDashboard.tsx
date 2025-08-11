@@ -102,7 +102,7 @@ export function ProfessorDashboard() {
         <div>
           <h1 className="text-3xl font-bold">لوحة تحكم الأستاذ</h1>
           <p className="text-muted-foreground">
-            إدارة شاملة لدوراتك وطلابك
+            إدارة شاملة لدوراتك وملتحقينك
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -148,13 +148,13 @@ export function ProfessorDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي الطلاب</CardTitle>
+            <CardTitle className="text-sm font-medium">إجمالي الملتحقين</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalStudents}</div>
             <p className="text-xs text-muted-foreground">
-              طالب مسجل في دوراتك
+              ملتحق مسجل في دوراتك
             </p>
             <div className="flex items-center gap-1 mt-1">
               {stats.monthlyGrowth.students > 0 && (
@@ -210,7 +210,7 @@ export function ProfessorDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{stats.completionRate.toFixed(1)}%</div>
             <p className="text-xs text-muted-foreground">
-              متوسط إكمال الطلاب
+              متوسط إكمال الملتحقين
             </p>
             <div className="w-full bg-muted rounded-full h-1 mt-2">
               <div 
@@ -269,7 +269,7 @@ export function ProfessorDashboard() {
               <>
                 <div className="text-sm font-medium truncate">{stats.topCourse.title}</div>
                 <p className="text-xs text-muted-foreground">
-                  {stats.topCourse.enrollments} طالب
+                  {stats.topCourse.enrollments} ملتحق
                 </p>
                 <p className="text-xs text-green-600 font-medium">
                   {new Intl.NumberFormat('ar-EG', {
@@ -303,7 +303,7 @@ export function ProfessorDashboard() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
-          <TabsTrigger value="students">الطلاب</TabsTrigger>
+          <TabsTrigger value="students">الملتحقين</TabsTrigger>
           <TabsTrigger value="earnings">الإيرادات</TabsTrigger>
           <TabsTrigger value="analytics">التحليلات</TabsTrigger>
           <TabsTrigger value="engagement">التفاعل</TabsTrigger>

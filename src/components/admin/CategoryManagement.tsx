@@ -268,7 +268,7 @@ export function CategoryManagement({
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
                     <Users className="w-4 h-4" />
-                    <span>الطلاب</span>
+                    <span>الملتحقين</span>
                   </div>
                   <div className="text-lg font-semibold">
                     {category.totalEnrollments}

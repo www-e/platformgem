@@ -34,7 +34,7 @@ export function getRoleDisplayName(role: string): string {
     case "PROFESSOR":
       return "مدرس";
     case "STUDENT":
-      return "طالب";
+      return "ملتحق";
     default:
       return role;
   }

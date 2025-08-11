@@ -18,7 +18,7 @@ export function UserStatsCards({ stats }: UserStatsCardsProps) {
     },
     {
       id: 'students',
-      title: 'الطلاب',
+      title: 'الملتحقين',
       value: stats.totalStudents,
       subtitle: `${((stats.totalStudents / stats.totalUsers) * 100).toFixed(1)}% من المجموع`,
       icon: User

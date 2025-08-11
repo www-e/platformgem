@@ -2483,7 +2483,7 @@ END OF FILE: route.ts
   27 │ 
   28 │     if (session.user.role !== 'STUDENT') {
   29 │       return NextResponse.json(
-  30 │         { error: 'التسجيل متاح للطلاب فقط', code: 'FORBIDDEN' },
+  30 │         { error: 'التسجيل متاح للملتحقين فقط', code: 'FORBIDDEN' },
   31 │         { status: 403 }
   32 │       );
   33 │     }

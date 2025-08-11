@@ -89,7 +89,7 @@ export default function InstructorSection() {
         "شرح تفصيلي للمفاهيم المعقدة",
         "حل المسائل خطوة بخطوة",
         "تدريب مكثف على أسئلة الامتحانات",
-        "متابعة فردية لكل طالب"
+        "متابعة فردية لكل ملتحق"
       ]
     }
   ];
@@ -122,7 +122,7 @@ export default function InstructorSection() {
           </h2>
           
           <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-arabic-relaxed">
-            معلم متخصص مع سنوات من الخبرة في تبسيط المفاهيم المعقدة وإعداد الطلاب للتفوق في الامتحانات
+            معلم متخصص مع سنوات من الخبرة في تبسيط المفاهيم المعقدة وإعداد الملتحقين للتفوق في الامتحانات
           </p>
         </div>
 
@@ -159,7 +159,7 @@ export default function InstructorSection() {
               <StatCard 
                 icon={Users} 
                 value="500+" 
-                label="طالب متخرج"
+                label="ملتحق متخرج"
                 accent="primary"
               />
               <StatCard 
@@ -171,7 +171,7 @@ export default function InstructorSection() {
               <StatCard 
                 icon={Star} 
                 value="4.9" 
-                label="تقييم الطلاب"
+                label="تقييم الملتحقين"
                 accent="success"
               />
               <StatCard 
@@ -269,7 +269,7 @@ export default function InstructorSection() {
                 هل تريد تحقيق التفوق في الفيزياء؟
               </h3>
               <p className="text-neutral-600 text-lg max-w-2xl mx-auto leading-arabic-relaxed">
-                انضم إلى مئات الطلاب الذين حققوا نتائج استثنائية وحصلوا على أعلى الدرجات تحت إشرافي المباشر
+                انضم إلى مئات الملتحقين الذين حققوا نتائج استثنائية وحصلوا على أعلى الدرجات تحت إشرافي المباشر
               </p>
             </div>
 
@@ -291,7 +291,7 @@ export default function InstructorSection() {
                   <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full border-2 border-white flex items-center justify-center text-black text-sm font-bold">M</div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium">طلاب متفوقون</p>
+                  <p className="text-sm font-medium">ملتحقين متفوقون</p>
                   <p className="text-xs text-neutral-500">حققوا التميز</p>
                 </div>
               </div>
@@ -306,7 +306,7 @@ export default function InstructorSection() {
                 </div>
                 <div className="space-y-1">
                   <div className="text-2xl font-bold text-secondary-600 font-display">متابعة شخصية</div>
-                  <div className="text-sm text-neutral-600">لكل طالب على حدة</div>
+                  <div className="text-sm text-neutral-600">لكل ملتحق على حدة</div>
                 </div>
                 <div className="space-y-1">
                   <div className="text-2xl font-bold text-primary-600 font-display">نتائج مضمونة</div>
