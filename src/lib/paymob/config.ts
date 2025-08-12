@@ -14,6 +14,7 @@ function loadPayMobConfig(): PayMobConfig {
     integrationIdMobileWallet:
       process.env.PAYMOB_INTEGRATION_ID_MOBILE_WALLET || "",
     iframeId: process.env.PAYMOB_IFRAME_ID || "",
+    iframeIdMobileWallet: process.env.PAYMOB_IFRAME_ID_MOBILE_WALLET, // Optional separate iframe for mobile wallets
     hmacSecret: process.env.PAYMOB_HMAC_SECRET || "",
     baseUrl: process.env.PAYMOB_BASE_URL || "https://accept.paymob.com/api",
     webhookUrl: process.env.PAYMOB_WEBHOOK_URL || "",

@@ -59,68 +59,37 @@ export async function initiatePayment(
         // Get wallet provider name
         const walletProvider = getMobileWalletProvider(phoneNumber);
 
-        try {
-          // Try direct mobile wallet payment first
-          const walletResponse = await initiateMobileWalletPayment(
-            authToken,
-            order.id,
-            orderData.amount_cents,
-            phoneNumber,
-            orderData.billing_data
-          );
+        // Direct mobile wallet payment with proper Bearer authentication
+        const walletResponse = await initiateMobileWalletPayment(
+          authToken,
+          order.id,
+          orderData.amount_cents,
+          phoneNumber,
+          orderData.billing_data
+        );
 
-          // Validate the response
-          const validation = validateMobileWalletResponse(walletResponse);
-          if (!validation.isValid) {
-            throw new Error(validation.error || 'فشل في بدء دفع المحفظة الإلكترونية');
-          }
-
-          console.log('Mobile wallet payment initiated (direct):', {
-            transactionId: walletResponse.id,
-            orderId: order.id,
-            requiresOTP: validation.requiresOTP,
-            walletProvider: walletProvider,
-            redirectUrl: validation.redirectUrl
-          });
-
-          return {
-            transactionId: walletResponse.id,
-            orderId: order.id,
-            otpUrl: validation.redirectUrl,
-            walletProvider: walletProvider,
-            requiresOTP: validation.requiresOTP,
-            paymentMethod: 'e-wallet'
-          };
-        } catch (directError) {
-          console.warn('Direct mobile wallet payment failed, trying iframe approach:', directError);
-          
-          // Fallback: Use iframe approach with mobile wallet integration ID
-          const paymentKey = await paymob.getPaymentKey(
-            authToken,
-            order.id,
-            orderData.amount_cents,
-            orderData.billing_data,
-            'e-wallet'
-          );
-          
-          const iframeUrl = buildIframeUrl(paymentKey, courseId);
-
-          console.log('Mobile wallet payment initiated (iframe fallback):', {
-            orderId: order.id,
-            paymentKey: paymentKey,
-            walletProvider: walletProvider,
-            iframeUrl: iframeUrl
-          });
-
-          return {
-            paymentKey,
-            orderId: order.id,
-            iframeUrl,
-            walletProvider: walletProvider,
-            requiresOTP: true, // Iframe will handle OTP
-            paymentMethod: 'e-wallet'
-          };
+        // Validate the response
+        const validation = validateMobileWalletResponse(walletResponse);
+        if (!validation.isValid) {
+          throw new Error(validation.error || 'فشل في بدء دفع المحفظة الإلكترونية');
         }
+
+        console.log('Mobile wallet payment initiated successfully:', {
+          transactionId: walletResponse.id,
+          orderId: order.id,
+          requiresOTP: validation.requiresOTP,
+          walletProvider: walletProvider,
+          redirectUrl: validation.redirectUrl
+        });
+
+        return {
+          transactionId: walletResponse.id,
+          orderId: order.id,
+          otpUrl: validation.redirectUrl,
+          walletProvider: walletProvider,
+          requiresOTP: validation.requiresOTP,
+          paymentMethod: 'e-wallet'
+        };
       } catch (error) {
         console.error('Mobile wallet payment initiation failed:', error);
         

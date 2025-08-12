@@ -5,6 +5,7 @@ export interface PayMobConfig {
   integrationIdOnlineCard: string;
   integrationIdMobileWallet: string;
   iframeId: string;
+  iframeIdMobileWallet?: string; // Optional separate iframe ID for mobile wallets
   hmacSecret: string;
   baseUrl: string;
   webhookUrl: string;
