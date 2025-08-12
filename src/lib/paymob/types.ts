@@ -2,7 +2,6 @@
 
 export interface PayMobConfig {
   apiKey: string;
-  publicKey?: string;
   integrationIdOnlineCard: string;
   integrationIdMobileWallet: string;
   iframeId: string;

@@ -9,7 +9,6 @@ import { PayMobConfig } from "./types";
 function loadPayMobConfig(): PayMobConfig {
   const config: PayMobConfig = {
     apiKey: process.env.PAYMOB_API_KEY || "",
-    publicKey: process.env.PAYMOB_PUBLIC_KEY,
     integrationIdOnlineCard:
       process.env.PAYMOB_INTEGRATION_ID_ONLINE_CARD || "",
     integrationIdMobileWallet:
@@ -18,7 +17,7 @@ function loadPayMobConfig(): PayMobConfig {
     hmacSecret: process.env.PAYMOB_HMAC_SECRET || "",
     baseUrl: process.env.PAYMOB_BASE_URL || "https://accept.paymob.com/api",
     webhookUrl: process.env.PAYMOB_WEBHOOK_URL || "",
-    returnUrl: process.env.PAYMOB_RETURN_URL || "", // ← This line was missing
+    returnUrl: process.env.PAYMOB_RETURN_URL || "",
     // Payment session configuration
     paymentTimeoutMinutes: parseInt(
       process.env.PAYMOB_PAYMENT_TIMEOUT_MINUTES || "60"

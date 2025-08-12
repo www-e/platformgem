@@ -22,6 +22,7 @@ import { paymobConfig } from '@/lib/paymob/config';
 const paymentInitiateSchema = z.object({
   courseId: z.string().min(1, "معرف الدورة مطلوب"),
   paymentMethod: z.enum(["credit-card", "e-wallet"]).default("credit-card"),
+  phoneNumber: z.string().optional(), // Required for e-wallet payments
 });
 
 // POST /api/payments/initiate - Initiate payment for a course
@@ -60,7 +61,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { courseId, paymentMethod } = validationResult.data;
+    const { courseId, paymentMethod, phoneNumber } = validationResult.data;
+
+    // Validate phone number for e-wallet payments
+    if (paymentMethod === 'e-wallet' && !phoneNumber) {
+      return createErrorResponse(
+        ApiErrors.VALIDATION_ERROR.code,
+        "رقم الهاتف مطلوب للدفع بالمحفظة الإلكترونية",
+        ApiErrors.VALIDATION_ERROR.status
+      );
+    }
 
     // Check if course exists and is published
     const course = await prisma.course.findFirst({
@@ -211,7 +221,7 @@ export async function POST(request: NextRequest) {
     const billingData = payMobService.createBillingData({
       name: user.name,
       email: user.email || undefined,
-      phone: user.phone,
+      phone: phoneNumber || user.phone, // Use provided phone number for e-wallets
     });
     const orderData = {
       amount_cents: amountCents,
@@ -246,11 +256,13 @@ export async function POST(request: NextRequest) {
 
     // Store payment data based on method
     if (paymentMethod === 'e-wallet') {
-      // For e-wallets, store intention data
-      updateData.paymobOrderId = paymentResult.intentionId || merchantOrderId;
-      updateData.paymobResponse.intentionId = paymentResult.intentionId;
-      updateData.paymobResponse.clientSecret = paymentResult.clientSecret;
-      updateData.paymobResponse.checkoutUrl = paymentResult.checkoutUrl;
+      // For mobile wallets, store transaction and OTP data
+      updateData.paymobOrderId = paymentResult.orderId?.toString() || merchantOrderId;
+      updateData.paymobTransactionId = paymentResult.transactionId ? BigInt(paymentResult.transactionId) : null;
+      updateData.paymobResponse.transactionId = paymentResult.transactionId;
+      updateData.paymobResponse.otpUrl = paymentResult.otpUrl;
+      updateData.paymobResponse.walletProvider = paymentResult.walletProvider;
+      updateData.paymobResponse.requiresOTP = paymentResult.requiresOTP;
       updateData.paymobResponse.orderId = paymentResult.orderId;
     } else {
       // For credit cards, store traditional data
@@ -271,10 +283,11 @@ export async function POST(request: NextRequest) {
         paymentKey: paymentResult.paymentKey,
         iframeUrl: paymentResult.iframeUrl,
         orderId: paymentResult.orderId,
-        // E-wallet specific fields
-        intentionId: paymentResult.intentionId,
-        clientSecret: paymentResult.clientSecret,
-        checkoutUrl: paymentResult.checkoutUrl,
+        // Mobile wallet specific fields
+        transactionId: paymentResult.transactionId,
+        otpUrl: paymentResult.otpUrl,
+        walletProvider: paymentResult.walletProvider,
+        requiresOTP: paymentResult.requiresOTP,
         paymentMethod: paymentResult.paymentMethod,
         amount: Number(course.price),
         currency: course.currency,

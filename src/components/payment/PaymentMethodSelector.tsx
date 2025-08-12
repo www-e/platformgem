@@ -2,9 +2,12 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Course } from "@/lib/api/courses";
 import { 
   CreditCard, 
@@ -16,7 +19,9 @@ import {
   Lock,
   Zap,
   Award,
-  RefreshCw
+  RefreshCw,
+  Phone,
+  AlertCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,7 +30,7 @@ type PaymentMethod = 'credit-card' | 'e-wallet';
 interface PaymentMethodSelectorProps {
   selectedMethod: PaymentMethod;
   onMethodSelect: (method: PaymentMethod) => void;
-  onProceed: () => void;
+  onProceed: (phoneNumber?: string) => void;
   isLoading: boolean;
   course: Course;
 }
@@ -37,6 +42,52 @@ export function PaymentMethodSelector({
   isLoading,
   course
 }: PaymentMethodSelectorProps) {
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+
+  // Validate Egyptian phone number
+  const validatePhoneNumber = (phone: string): boolean => {
+    const cleanPhone = phone.replace(/\D/g, '');
+    
+    // Check if it's 11 digits and starts with 01
+    if (cleanPhone.length === 11 && cleanPhone.startsWith('01')) {
+      return true;
+    }
+    
+    // Check if it's 10 digits starting with 1 (missing leading 0)
+    if (cleanPhone.length === 10 && cleanPhone.startsWith('1')) {
+      return true;
+    }
+    
+    return false;
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setPhoneNumber(value);
+    setPhoneError('');
+    
+    if (value && !validatePhoneNumber(value)) {
+      setPhoneError('رقم الهاتف يجب أن يكون 11 رقم ويبدأ بـ 01');
+    }
+  };
+
+  const handleProceed = () => {
+    if (selectedMethod === 'e-wallet') {
+      if (!phoneNumber) {
+        setPhoneError('رقم الهاتف مطلوب للدفع بالمحفظة الإلكترونية');
+        return;
+      }
+      
+      if (!validatePhoneNumber(phoneNumber)) {
+        setPhoneError('رقم الهاتف يجب أن يكون 11 رقم ويبدأ بـ 01');
+        return;
+      }
+      
+      onProceed(phoneNumber);
+    } else {
+      onProceed();
+    }
+  };
   
   const formatPrice = () => {
     if (!course.price) return 'مجاني';
@@ -213,9 +264,42 @@ export function PaymentMethodSelector({
             </div>
           </div>
           
+          {/* Phone number input for mobile wallets */}
+          {selectedMethod === 'e-wallet' && (
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-center gap-2 mb-3">
+                <Phone className="w-4 h-4 text-blue-600" />
+                <Label htmlFor="phone" className="text-sm font-medium text-blue-800">
+                  رقم الهاتف المسجل في المحفظة الإلكترونية
+                </Label>
+              </div>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="01xxxxxxxxx"
+                value={phoneNumber}
+                onChange={(e) => handlePhoneChange(e.target.value)}
+                className={cn(
+                  "text-left",
+                  phoneError && "border-red-500 focus:border-red-500"
+                )}
+                dir="ltr"
+              />
+              {phoneError && (
+                <div className="flex items-center gap-2 mt-2 text-red-600">
+                  <AlertCircle className="w-4 h-4" />
+                  <span className="text-sm">{phoneError}</span>
+                </div>
+              )}
+              <p className="text-xs text-blue-600 mt-2">
+                تأكد من أن رقم الهاتف مسجل في محفظتك الإلكترونية (فودافون كاش، أورانج موني، إتصالات كاش)
+              </p>
+            </div>
+          )}
+
           <Button 
-            onClick={onProceed}
-            disabled={isLoading}
+            onClick={handleProceed}
+            disabled={isLoading || (selectedMethod === 'e-wallet' && (!phoneNumber || !!phoneError))}
             className="w-full h-14 text-lg font-semibold"
             size="lg"
           >

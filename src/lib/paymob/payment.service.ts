@@ -3,7 +3,12 @@
 import * as paymob from './client';
 import { paymobConfig } from './config';
 import { PayMobOrderRequest } from './types';
-import { createPaymentIntention, buildUnifiedCheckoutUrl, extractPublicKey } from './intention.service';
+import { 
+  initiateMobileWalletPayment, 
+  buildMobileWalletOTPUrl, 
+  validateMobileWalletResponse,
+  getMobileWalletProvider 
+} from './mobile-wallet.service';
 
 /**
  * The response structure for a successful payment initiation.
@@ -12,10 +17,11 @@ export interface PaymentInitiationResult {
   paymentKey?: string;
   orderId?: number;
   iframeUrl?: string;
-  // E-wallet specific fields
-  intentionId?: string;
-  clientSecret?: string;
-  checkoutUrl?: string;
+  // Mobile wallet specific fields
+  transactionId?: number;
+  otpUrl?: string;
+  walletProvider?: string;
+  requiresOTP?: boolean;
   paymentMethod: 'credit-card' | 'e-wallet';
 }
 
@@ -38,38 +44,96 @@ export async function initiatePayment(
     console.log(`Initiating ${paymentMethod} payment for course ${courseId}`);
 
     if (paymentMethod === 'e-wallet') {
-      // Use Intention API for e-wallets (correct approach)
+      // Try mobile wallet payment with fallback to iframe approach
       try {
-        const intention = await createPaymentIntention(orderData, courseId, userId);
+        // First, authenticate and create order (same as credit cards)
+        const authToken = await paymob.authenticate();
+        const order = await paymob.createOrder(authToken, orderData);
         
-        // Get public key for checkout URL
-        const publicKey = extractPublicKey(paymobConfig.apiKey);
-        const checkoutUrl = buildUnifiedCheckoutUrl(publicKey, intention.client_secret);
+        // Extract phone number from billing data for mobile wallet
+        const phoneNumber = orderData.billing_data.phone_number;
+        if (!phoneNumber) {
+          throw new Error('رقم الهاتف مطلوب للدفع بالمحفظة الإلكترونية');
+        }
 
-        console.log('E-wallet payment intention created:', {
-          intentionId: intention.id,
-          checkoutUrl: checkoutUrl,
-          intentionOrderId: intention.intention_order_id
-        });
+        // Get wallet provider name
+        const walletProvider = getMobileWalletProvider(phoneNumber);
 
-        return {
-          intentionId: intention.id,
-          clientSecret: intention.client_secret,
-          checkoutUrl: checkoutUrl,
-          orderId: intention.intention_order_id ? parseInt(intention.intention_order_id) : undefined,
-          paymentMethod: 'e-wallet'
-        };
+        try {
+          // Try direct mobile wallet payment first
+          const walletResponse = await initiateMobileWalletPayment(
+            authToken,
+            order.id,
+            orderData.amount_cents,
+            phoneNumber,
+            orderData.billing_data
+          );
+
+          // Validate the response
+          const validation = validateMobileWalletResponse(walletResponse);
+          if (!validation.isValid) {
+            throw new Error(validation.error || 'فشل في بدء دفع المحفظة الإلكترونية');
+          }
+
+          console.log('Mobile wallet payment initiated (direct):', {
+            transactionId: walletResponse.id,
+            orderId: order.id,
+            requiresOTP: validation.requiresOTP,
+            walletProvider: walletProvider,
+            redirectUrl: validation.redirectUrl
+          });
+
+          return {
+            transactionId: walletResponse.id,
+            orderId: order.id,
+            otpUrl: validation.redirectUrl,
+            walletProvider: walletProvider,
+            requiresOTP: validation.requiresOTP,
+            paymentMethod: 'e-wallet'
+          };
+        } catch (directError) {
+          console.warn('Direct mobile wallet payment failed, trying iframe approach:', directError);
+          
+          // Fallback: Use iframe approach with mobile wallet integration ID
+          const paymentKey = await paymob.getPaymentKey(
+            authToken,
+            order.id,
+            orderData.amount_cents,
+            orderData.billing_data,
+            'e-wallet'
+          );
+          
+          const iframeUrl = buildIframeUrl(paymentKey, courseId);
+
+          console.log('Mobile wallet payment initiated (iframe fallback):', {
+            orderId: order.id,
+            paymentKey: paymentKey,
+            walletProvider: walletProvider,
+            iframeUrl: iframeUrl
+          });
+
+          return {
+            paymentKey,
+            orderId: order.id,
+            iframeUrl,
+            walletProvider: walletProvider,
+            requiresOTP: true, // Iframe will handle OTP
+            paymentMethod: 'e-wallet'
+          };
+        }
       } catch (error) {
-        console.error('E-wallet payment intention failed:', error);
+        console.error('Mobile wallet payment initiation failed:', error);
         
         // Provide more specific error messages
         if (error instanceof Error) {
-          if (error.message.includes('API غير صحيح')) {
-            throw new Error('مفتاح API الخاص بـ PayMob غير صحيح. يرجى التحقق من الإعدادات.');
-          } else if (error.message.includes('PUBLIC_KEY')) {
-            throw new Error('مفتاح PayMob العام غير مُعرَّف. يرجى إضافة PAYMOB_PUBLIC_KEY في ملف البيئة.');
-          } else if (error.message.includes('بيانات الطلب')) {
-            throw new Error('بيانات الدفع غير صحيحة. يرجى المحاولة مرة أخرى.');
+          if (error.message.includes('رقم الهاتف')) {
+            throw new Error('رقم الهاتف غير صحيح أو غير مسجل في أي محفظة إلكترونية');
+          } else if (error.message.includes('معرف تكامل')) {
+            throw new Error('إعدادات المحفظة الإلكترونية غير صحيحة. يرجى التواصل مع الدعم الفني.');
+          } else if (error.message.includes('غير متاحة')) {
+            throw new Error('خدمة المحفظة الإلكترونية غير متاحة حالياً. يرجى المحاولة لاحقاً.');
+          } else if (error.message.includes('مفتاح المصادقة')) {
+            throw new Error('خطأ في إعدادات PayMob. يرجى التحقق من API Key ومعرف التكامل.');
           }
         }
         

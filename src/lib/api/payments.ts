@@ -26,10 +26,11 @@ export interface PaymentInitiationResponse {
   paymentKey?: string;
   iframeUrl?: string;
   orderId?: number;
-  // E-wallet specific fields
-  intentionId?: string;
-  clientSecret?: string;
-  checkoutUrl?: string;
+  // Mobile wallet specific fields
+  transactionId?: number;
+  otpUrl?: string;
+  walletProvider?: string;
+  requiresOTP?: boolean;
   paymentMethod: 'credit-card' | 'e-wallet';
   amount: number;
   currency: string;
@@ -47,7 +48,11 @@ class PaymentsApi {
   /**
    * Initiate payment for a course
    */
-  async initiatePayment(courseId: string, paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card'): Promise<PaymentInitiationResponse> {
+  async initiatePayment(
+    courseId: string, 
+    paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card',
+    phoneNumber?: string
+  ): Promise<PaymentInitiationResponse> {
     const response = await fetch(`${this.baseUrl}/initiate`, {
       method: 'POST',
       headers: {
@@ -55,7 +60,8 @@ class PaymentsApi {
       },
       body: JSON.stringify({ 
         courseId,
-        paymentMethod 
+        paymentMethod,
+        phoneNumber 
       }),
     });
     

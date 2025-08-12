@@ -47,6 +47,7 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
     useState<PaymentInitiationResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [processingState, setProcessingState] = useState<
     "idle" | "processing" | "verifying" | "success" | "error"
   >("idle");
@@ -67,7 +68,10 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
     setSelectedMethod(method);
   };
 
-  const handleProceedToDetails = () => {
+  const handleProceedToDetails = (phone?: string) => {
+    if (phone) {
+      setPhoneNumber(phone);
+    }
     setCurrentStep("details");
   };
 
@@ -79,7 +83,8 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
 
       const response = await paymentsApi.initiatePayment(
         course.id,
-        selectedMethod
+        selectedMethod,
+        phoneNumber
       );
 
       setPaymentData(response);
