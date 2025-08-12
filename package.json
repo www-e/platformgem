@@ -12,7 +12,7 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "generate-test-data": "tsx scripts/generate-test-data.ts",
-    "test:mobile-wallet": "tsx scripts/test-mobile-wallet-simple.ts"
+    "test:mobile-wallet": "tsx --require dotenv/config scripts/test-mobile-wallet-simple.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.13.0",

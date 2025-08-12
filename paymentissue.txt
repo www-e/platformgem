@@ -1,0 +1,49 @@
+# Mobile Wallet Payment Issue - Related Files
+
+## Core PayMob Integration Files
+src/lib/paymob/mobile-wallet.service.ts
+src/lib/paymob/payment.service.ts
+src/lib/paymob/client.ts
+src/lib/paymob/config.ts
+src/lib/paymob/types.ts
+src/lib/paymob/utils.ts
+src/lib/paymob/webhook.service.ts
+
+## API Endpoints
+src/app/api/payments/initiate/route.ts
+src/app/api/payments/webhook/route.ts
+src/app/api/debug/paymob-auth/route.ts
+
+## Frontend Components
+src/components/payment/PaymentFlow.tsx
+src/components/payment/PaymentMethodSelector.tsx
+src/components/payment/PaymentIframe.tsx
+src/components/payment/PaymentStatus.tsx
+src/components/payment/CourseInfo.tsx
+
+## API Client & Utils
+src/lib/api/payments.ts
+src/lib/payment-utils.ts
+
+## Configuration Files
+.env
+.env.example
+package.json
+
+## Test Scripts
+scripts/test-mobile-wallet-simple.ts
+scripts/test-mobile-wallet-payment.ts
+
+## Documentation Files
+MOBILE_WALLET_FINAL_SOLUTION.md
+MOBILE_WALLET_FIX_SUMMARY.md
+MOBILE_WALLET_FIXES_SUMMARY.md
+AUTHENTICATION_DEBUG_GUIDE.md
+docs/MOBILE_WALLET_INTEGRATION_GUIDE.md
+
+## Database Schema
+prisma/schema.prisma
+
+## Issue Analysis Files
+paymentissue.txt
+paymentissueoutput.txt

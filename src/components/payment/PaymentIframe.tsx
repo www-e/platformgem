@@ -30,307 +30,141 @@ export function PaymentIframe({
 }: PaymentIframeProps) {
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
-  const [iframeError, setIframeError] = useState(false);
 
   useEffect(() => {
-    console.log('PaymentIframe mounted with data:', {
-      paymentId: paymentData.paymentId,
-      iframeUrl: paymentData.iframeUrl,
-      otpUrl: paymentData.otpUrl,
-      walletProvider: paymentData.walletProvider,
-      requiresOTP: paymentData.requiresOTP,
-      paymentMethod
-    });
-
-    // For mobile wallets, redirect to OTP verification page
-    if (paymentMethod === 'e-wallet' && paymentData.otpUrl && paymentData.requiresOTP) {
-      console.log('Mobile wallet OTP detected, redirecting to OTP verification:', paymentData.otpUrl);
-      // Redirect to Paymob OTP verification page
+    // --- E-WALLET: IMMEDIATE REDIRECT ---
+    // If this is an e-wallet payment and we have the OTP URL, redirect immediately.
+    if (paymentMethod === 'e-wallet' && paymentData.otpUrl) {
+      console.log('E-wallet payment detected. Redirecting to PayMob for OTP:', paymentData.otpUrl);
       window.location.href = paymentData.otpUrl;
+      // The component will unmount, so no further action is needed here.
       return;
     }
 
-    // Listen for payment completion messages (credit cards only)
+    // --- CREDIT CARD: IFRAME LOGIC ---
+    // The rest of this effect is for credit card iframes only.
+    
+    // Listen for payment completion messages from the iframe
     const messageHandler = (event: MessageEvent) => {
-      console.log('Message received from iframe:', {
-        origin: event.origin,
-        data: event.data
-      });
-
-      // Verify origin for security
-      if (!event.origin.includes('paymob.com') && !event.origin.includes('accept.paymob.com')) {
-        console.warn('Message from unauthorized origin:', event.origin);
+      // Security check: ensure the message is from a trusted PayMob domain
+      if (!event.origin.includes('accept.paymob.com')) {
         return;
       }
       
-      try {
-        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-        
-        if (data.type === 'payment_success' || data.success === true) {
-          console.log('Payment success message received:', data);
+      // The 'transaction_processed' callback is a common pattern for iframe communication
+      if (event.data?.message === 'transaction_processed') {
+        const success = event.data?.success;
+        if (success) {
+          console.log('Payment success message received from iframe.');
           onComplete(paymentData.paymentId);
-        } else if (data.type === 'payment_error' || data.error === true) {
-          console.log('Payment error message received:', data);
-          onError('فشل في إتمام عملية الدفع');
+        } else {
+          console.error('Payment failure message received from iframe.');
+          onError('فشل في إتمام عملية الدفع عبر النموذج.');
         }
-      } catch (error) {
-        console.error('Error parsing payment message:', error);
       }
     };
     
     window.addEventListener('message', messageHandler);
     
+    // Set a timeout to show a fallback option if the iframe is slow to load
     const timeout = setTimeout(() => {
-      if (!iframeLoaded && !iframeError && paymentMethod === 'credit-card') {
-        console.warn('PayMob iframe loading timeout reached');
+      if (!iframeLoaded) {
+        console.warn('PayMob iframe loading timeout reached. Showing fallback.');
         setShowFallback(true);
       }
-    }, 10000);
+    }, 15000); // 15-second timeout
     
     return () => {
       window.removeEventListener('message', messageHandler);
       clearTimeout(timeout);
     };
-  }, [paymentData.paymentId, paymentData.iframeUrl, paymentData.checkoutUrl, iframeLoaded, iframeError, onComplete, onError, paymentMethod]);
+  }, [paymentData, paymentMethod, onComplete, onError, iframeLoaded]);
 
-  const handleIframeLoad = () => {
-    console.log('✅ PayMob iframe loaded successfully');
-    setIframeLoaded(true);
-    setShowFallback(false);
-  };
+  // --- RENDER LOGIC ---
 
-  const handleIframeError = (error: any) => {
-    console.error('❌ PayMob iframe failed to load:', error);
-    setIframeError(true);
-    setShowFallback(true);
-  };
-
-  const retryIframe = () => {
-    console.log('🔄 Retrying iframe load...');
-    setIframeLoaded(false);
-    setIframeError(false);
-    setShowFallback(false);
-  };
-
-  const openInNewTab = () => {
-    console.log('🔗 Opening PayMob in new tab:', paymentData.iframeUrl);
-    window.open(paymentData.iframeUrl, '_blank', 'width=800,height=700,scrollbars=yes,resizable=yes');
-  };
-
-  // Handle mobile wallet payments (OTP verification or iframe)
+  // For e-wallets, show a "Redirecting..." message while the browser processes the redirect.
   if (paymentMethod === 'e-wallet') {
-    // If we have an OTP URL, use direct OTP approach
-    if (paymentData.otpUrl && paymentData.requiresOTP) {
-      // Direct OTP approach - redirect to PayMob OTP page
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Smartphone className="w-5 h-5" />
-              دفع بالمحفظة الإلكترونية - {paymentData.walletProvider || 'محفظة إلكترونية'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-8 text-center">
-            <div className="space-y-6">
-              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                <Smartphone className="w-12 h-12 text-green-600" />
-              </div>
-              
-              <div>
-                <h3 className="text-xl font-semibold mb-2">جاري التوجيه للتحقق من OTP</h3>
-                <p className="text-muted-foreground mb-4">
-                  سيتم توجيهك إلى صفحة التحقق من رمز OTP لإتمام عملية الدفع
-                </p>
-                <p className="text-sm text-muted-foreground mb-6">
-                  ستحتاج إلى إدخال رمز التحقق الذي سيصلك على هاتفك المسجل في {paymentData.walletProvider || 'المحفظة الإلكترونية'}
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <Button 
-                  onClick={() => window.location.href = paymentData.otpUrl!}
-                  className="w-full"
-                  size="lg"
-                >
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  متابعة للتحقق من OTP
-                </Button>
-                
-                <p className="text-xs text-muted-foreground">
-                  إذا لم يتم التوجيه تلقائياً، اضغط على الزر أعلاه
-                </p>
-              </div>
-
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <div className="flex items-center gap-2 text-blue-700 mb-2">
-                  <Shield className="w-4 h-4" />
-                  <span className="font-medium text-sm">خطوات إتمام الدفع</span>
-                </div>
-                <ul className="text-xs text-blue-600 space-y-1 text-right">
-                  <li>• تأكد من وجود رصيد كافي في محفظتك</li>
-                  <li>• أدخل رقم الهاتف المسجل في المحفظة</li>
-                  <li>• أدخل الرقم السري (MPIN) الخاص بمحفظتك</li>
-                  <li>• أدخل رمز OTP الذي سيصلك على هاتفك</li>
-                  <li>• انتظر تأكيد إتمام العملية</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      );
-    }
-    
-    // If we have an iframe URL, use iframe approach (fallback)
-    if (paymentData.iframeUrl) {
-      console.log('Using iframe approach for mobile wallet payment');
-      // Continue to iframe rendering below
-    } else {
-      // No OTP URL and no iframe URL - error
-      console.error('❌ Missing both OTP URL and iframe URL for mobile wallet payment');
-      return (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">خطأ في إعداد المحفظة الإلكترونية</h3>
-            <p className="text-muted-foreground mb-4">
-              لم يتم إنشاء رابط الدفع للمحفظة الإلكترونية بشكل صحيح
-            </p>
-            <Button onClick={() => window.location.reload()}>
-              إعادة المحاولة
-            </Button>
-          </CardContent>
-        </Card>
-      );
-    }
-
-  }
-
-  // Validate iframe URL for credit cards
-  if (!paymentData.iframeUrl) {
-    console.error('❌ Missing iframe URL in payment data');
     return (
       <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Smartphone className="w-5 h-5 text-green-600" />
+            الدفع بالمحفظة الإلكترونية
+          </CardTitle>
+        </CardHeader>
         <CardContent className="p-8 text-center">
-          <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold mb-2">خطأ في إعداد الدفع</h3>
-          <p className="text-muted-foreground mb-4">
-            لم يتم إنشاء رابط نموذج الدفع بشكل صحيح
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+          <h3 className="text-xl font-semibold mb-2">جاري توجيهك إلى صفحة الدفع الآمنة</h3>
+          <p className="text-muted-foreground">
+            ستحتاج إلى إدخال رمز OTP لتأكيد الدفع.
           </p>
-          <Button onClick={() => window.location.reload()}>
-            إعادة المحاولة
-          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+  
+  // For credit cards, render the iframe.
+  if (paymentMethod === 'credit-card' && paymentData.iframeUrl) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard className="w-5 h-5 text-blue-600" />
+            الدفع بالبطاقة الائتمانية
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="border rounded-lg overflow-hidden bg-white relative" style={{ height: '700px' }}>
+            {!iframeLoaded && !showFallback && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-10">
+                <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
+                <p className="text-sm text-muted-foreground">جاري تحميل نموذج الدفع الآمن...</p>
+              </div>
+            )}
+            
+            {showFallback && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-8 text-center z-20">
+                <AlertCircle className="w-12 h-12 text-yellow-600 mb-4" />
+                <h3 className="text-lg font-semibold mb-2">هل تواجه مشكلة في تحميل النموذج؟</h3>
+                <p className="text-muted-foreground mb-4">
+                  يمكنك فتح صفحة الدفع في نافذة جديدة لإتمام العملية.
+                </p>
+                <Button onClick={() => window.open(paymentData.iframeUrl, '_blank')}>
+                  <ExternalLink className="w-4 h-4 ml-2" />
+                  فتح في نافذة جديدة
+                </Button>
+              </div>
+            )}
+
+            <iframe
+              src={paymentData.iframeUrl}
+              width="100%"
+              height="100%"
+              style={{ border: 'none', visibility: iframeLoaded ? 'visible' : 'hidden' }}
+              onLoad={() => setIframeLoaded(true)}
+              onError={() => setShowFallback(true)}
+              allow="payment"
+            />
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center mt-4">
+            <Shield className="w-4 h-4" />
+            <span>هذا النموذج محمي ومشفر بواسطة PayMob</span>
+          </div>
         </CardContent>
       </Card>
     );
   }
 
+  // Fallback error case if something goes wrong (e.g., no iframeUrl for credit card)
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            {paymentMethod === 'credit-card' ? (
-              <CreditCard className="w-5 h-5" />
-            ) : (
-              <Smartphone className="w-5 h-5" />
-            )}
-            {paymentMethod === 'credit-card' ? 'دفع بالبطاقة الائتمانية' : 'دفع بالمحفظة الإلكترونية'}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="text-center">
-              <p className="text-muted-foreground">
-                {paymentMethod === 'credit-card' 
-                  ? 'أدخل بيانات بطاقتك الائتمانية في النموذج أدناه'
-                  : 'اختر محفظتك الإلكترونية وأدخل رقم هاتفك'
-                }
-              </p>
-            </div>
-            
-            <div className="border rounded-lg overflow-hidden bg-white relative" style={{ minHeight: '700px', height: '700px' }}>
-              {showFallback ? (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white p-8 text-center">
-                  <AlertCircle className="w-12 h-12 text-yellow-600 mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">تأخر في تحميل نموذج الدفع</h3>
-                  <p className="text-muted-foreground mb-4">
-                    يمكنك فتح نموذج الدفع في نافذة جديدة للمتابعة
-                  </p>
-                  <div className="space-x-2 space-x-reverse">
-                    <Button onClick={openInNewTab} className="mb-2">
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      فتح في نافذة جديدة
-                    </Button>
-                    <Button variant="outline" onClick={retryIframe}>
-                      إعادة المحاولة
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {!iframeLoaded && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-10">
-                      <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
-                      <p className="text-sm text-muted-foreground mb-2">جاري تحميل نموذج الدفع...</p>
-                      <p className="text-xs text-muted-foreground">قد يستغرق هذا بضع ثوانٍ</p>
-                    </div>
-                  )}
-                  
-                  <iframe
-                    key={`iframe-${paymentData.paymentId}`}
-                    src={paymentData.iframeUrl}
-                    width="100%"
-                    height="700"
-                    style={{ 
-                      border: 'none', 
-                      borderRadius: '8px', 
-                      minHeight: '700px',
-                      display: iframeLoaded ? 'block' : 'none'
-                    }}
-                    allowTransparency={true}
-                    allowFullScreen={true}
-                    allow="payment"
-                    sandbox="allow-same-origin allow-scripts allow-forms allow-top-navigation allow-popups allow-popups-to-escape-sandbox"
-                    onLoad={handleIframeLoad}
-                    onError={handleIframeError}
-                  />
-                </>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
-                <Shield className="w-4 h-4" />
-                <span>هذا النموذج محمي ومشفر بواسطة PayMob</span>
-              </div>
-              
-              <div className="text-center">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={openInNewTab}
-                  className="text-xs"
-                >
-                  <ExternalLink className="w-3 h-3 mr-1" />
-                  فتح في نافذة جديدة
-                </Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Payment Information */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="text-xs text-muted-foreground text-center space-y-1">
-            <p>رقم العملية: {paymentData.paymentId}</p>
-            <p>المبلغ: {paymentData.amount} {paymentData.currency}</p>
-            <p>الطريقة: {paymentMethod === 'credit-card' ? 'بطاقة ائتمانية' : 'محفظة إلكترونية'}</p>
-            <p className="text-green-600">✅ تم إنشاء رابط الدفع بنجاح</p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <Card>
+      <CardContent className="p-8 text-center">
+        <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
+        <h3 className="text-lg font-semibold mb-2">خطأ في عرض طريقة الدفع</h3>
+        <p className="text-muted-foreground">
+          لم نتمكن من تحميل واجهة الدفع. يرجى المحاولة مرة أخرى.
+        </p>
+      </CardContent>
+    </Card>
   );
 }
