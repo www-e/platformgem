@@ -119,7 +119,7 @@ export function PaymentForm({ onSubmit, isLoading = false, error }: PaymentFormP
     if (!type) return number;
     
     let formatted = '';
-    let index = 0;
+    const index = 0;
     
     for (let i = 0; i < number.length; i++) {
       if (type.gaps.includes(i)) {
@@ -201,7 +201,7 @@ export function PaymentForm({ onSubmit, isLoading = false, error }: PaymentFormP
       setFormData(prev => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof PaymentFormData] as any,
+          ...(prev[parent as keyof PaymentFormData] as Record<string, unknown>),
           [child]: formattedValue
         }
       }));

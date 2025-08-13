@@ -96,11 +96,11 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
         paymentId: response.paymentId,
         iframeUrl: response.iframeUrl,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Payment initiation failed:", error);
       
       // Handle specific error cases
-      if (error.message.includes('عملية دفع معلقة')) {
+      if ((error as Error).message?.includes('عملية دفع معلقة')) {
         // For pending payment errors, show a retry option
         setError('لديك عملية دفع معلقة. سيتم إلغاؤها تلقائياً والمحاولة مرة أخرى.');
         

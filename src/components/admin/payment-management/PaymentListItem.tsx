@@ -27,7 +27,7 @@ interface PaymentListItemProps {
   onAction: (
     paymentId: string,
     action: string,
-    additionalData?: any
+    additionalData?: Record<string, unknown>
   ) => void;
 }
 

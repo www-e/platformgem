@@ -214,7 +214,7 @@ export function CategoryManagement({
                         <AlertDialogHeader>
                           <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
                           <AlertDialogDescription>
-                            هل أنت متأكد من حذف فئة "{category.name}"؟ هذا
+                            هل أنت متأكد من حذف فئة &ldquo;{category.name}&rdquo;؟ هذا
                             الإجراء لا يمكن التراجع عنه.
                           </AlertDialogDescription>
                         </AlertDialogHeader>

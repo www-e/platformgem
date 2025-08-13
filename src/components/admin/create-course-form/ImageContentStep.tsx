@@ -1,14 +1,14 @@
 // src/components/admin/create-course-form/ImageContentStep.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { FileUploader } from '@/components/upload/FileUploader';
+import { FileUploader, type UploadedFile } from '@/components/upload/FileUploader';
 import { Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import type { CourseFormData } from '@/hooks/useCreateCourseForm';
 
 interface ImageContentStepProps {
   formData: CourseFormData;
-  onThumbnailUpload: (files: any[]) => void;
+  onThumbnailUpload: (files: UploadedFile[]) => void;
 }
 
 export function ImageContentStep({ formData, onThumbnailUpload }: ImageContentStepProps) {

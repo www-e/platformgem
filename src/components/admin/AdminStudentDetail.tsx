@@ -19,9 +19,23 @@ interface StudentDetailProps {
     studentId: string | null;
     isActive: boolean;
     createdAt: Date;
-    enrollments: Array<any>; // Using 'any' to match original, but should be typed
-    payments: Array<any>;
-    certificates: Array<any>;
+    enrollments: Array<{
+      id: string;
+      courseId: string;
+      enrolledAt: Date;
+      progressPercent: number;
+    }>;
+    payments: Array<{
+      id: string;
+      amount: number;
+      status: string;
+      createdAt: Date;
+    }>;
+    certificates: Array<{
+      id: string;
+      courseTitle: string;
+      issuedAt: Date;
+    }>;
   };
 }
 

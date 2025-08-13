@@ -318,7 +318,7 @@ export function PaymentResult({
                     <Heart className="w-5 h-5 text-pink-500" />
                   </div>
                   <p className="text-neutral-700 font-primary">
-                    "كل خطوة في التعلم هي استثمار في مستقبلك. أحسنت الاختيار!"
+                    "                    &ldquo;كل خطوة في التعلم هي استثمار في مستقبلك. أحسنت الاختيار!&rdquo;"
                   </p>
                 </motion.div>
               </CardContent>

@@ -12,7 +12,7 @@ import { coursesApi, Course } from "@/lib/api/courses";
 export default function PaymentSuccessPage() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const router = useRouter();
+  // const router = useRouter(); // Unused for now
   
   const courseId = params.courseId as string;
   const paymentId = searchParams.get('paymentId');

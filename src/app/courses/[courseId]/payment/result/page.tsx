@@ -9,19 +9,20 @@ import PaymentResultPage from '@/components/payment/PaymentResultPage';
 import prisma from '@/lib/prisma';
 
 interface PaymentResultPageProps {
-  params: {
+  params: Promise<{
     courseId: string;
-  };
-  searchParams: {
+  }>;
+  searchParams: Promise<{
     payment_id?: string;
     transaction_id?: string;
     success?: string;
     pending?: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: PaymentResultPageProps): Promise<Metadata> {
-  const course = await CourseService.getCourseById(params.courseId);
+  const { courseId } = await params;
+  const course = await CourseService.getCourseById(courseId);
   
   if (!course) {
     return {
@@ -50,8 +51,8 @@ export default async function CoursePaymentResultPage({
     redirect('/login');
   }
 
-  const courseId = params.courseId;
-  const { payment_id, transaction_id, success, pending } = searchParams;
+  const { courseId } = await params;
+  const { payment_id, transaction_id, success, pending } = await searchParams;
 
   // Get course details
   const course = await CourseService.getCourseById(courseId, session.user.id, session.user.role);

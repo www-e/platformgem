@@ -7,9 +7,9 @@ import { CertificateList } from './CertificateList';
 
 // Define a more specific type for the props based on the original component's data structure
 type StudentData = {
-  enrollments: any[]; // Replace 'any' with the specific type from EnrollmentList if available
-  payments: any[]; // Replace 'any' with the specific type from PaymentList
-  certificates: any[]; // Replace 'any' with the specific type from CertificateList
+  enrollments: Record<string, unknown>[];
+  payments: Record<string, unknown>[];
+  certificates: Record<string, unknown>[];
 };
 
 interface StudentDataTabsProps {

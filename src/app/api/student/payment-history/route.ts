@@ -31,7 +31,7 @@ export async function GET(_request: NextRequest) {
     });
 
     // Transform payments data
-    const transactions = payments.map((payment: any) => ({
+    const transactions = payments.map((payment) => ({
       id: payment.id,
       courseName: payment.course.title,
       amount: Number(payment.amount),

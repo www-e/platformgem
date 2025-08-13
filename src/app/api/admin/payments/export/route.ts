@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     const format = searchParams.get('format') || 'csv';
 
     // Build where clause
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     
     if (status && status !== 'all') {
       where.status = status;
