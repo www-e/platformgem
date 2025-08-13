@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
 interface RouteParams {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {

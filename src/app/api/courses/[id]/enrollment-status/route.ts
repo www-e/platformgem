@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
 interface RouteParams {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 // GET /api/courses/[id]/enrollment-status - Get enrollment status

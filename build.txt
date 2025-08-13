@@ -1,0 +1,748 @@
+
+> e-learning-platform@0.1.0 build
+> next build
+
+   ▲ Next.js 15.4.5
+   - Environments: .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 5.0s
+   Linting and checking validity of types ...
+
+Failed to compile.
+
+./src/app/admin/courses/page.tsx
+6:29  Warning: 'CardHeader' is defined but never used.  @typescript-eslint/no-unused-vars
+6:41  Warning: 'CardTitle' is defined but never used.  @typescript-eslint/no-unused-vars
+9:34  Warning: 'AvatarImage' is defined but never used.  @typescript-eslint/no-unused-vars
+27:3  Warning: 'Clock' is defined but never used.  @typescript-eslint/no-unused-vars
+30:10  Warning: 'cn' is defined but never used.  @typescript-eslint/no-unused-vars
+127:6  Warning: React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+137:15  Warning: '_' is defined but never used.  @typescript-eslint/no-unused-vars
+199:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/app/admin/courses/_components/create-course-form.tsx
+13:10  Warning: 'SubmitButton' is defined but never used.  @typescript-eslint/no-unused-vars
+101:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/admin/payments/page.tsx
+6:29  Warning: 'CardHeader' is defined but never used.  @typescript-eslint/no-unused-vars
+6:41  Warning: 'CardTitle' is defined but never used.  @typescript-eslint/no-unused-vars
+9:10  Warning: 'Avatar' is defined but never used.  @typescript-eslint/no-unused-vars
+9:18  Warning: 'AvatarFallback' is defined but never used.  @typescript-eslint/no-unused-vars
+9:34  Warning: 'AvatarImage' is defined but never used.  @typescript-eslint/no-unused-vars
+18:3  Warning: 'TrendingUp' is defined but never used.  @typescript-eslint/no-unused-vars
+31:3  Warning: 'BookOpen' is defined but never used.  @typescript-eslint/no-unused-vars
+145:6  Warning: React Hook useEffect has a missing dependency: 'fetchPayments'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+155:15  Warning: '_' is defined but never used.  @typescript-eslint/no-unused-vars
+190:22  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+225:15  Warning: '_' is defined but never used.  @typescript-eslint/no-unused-vars
+313:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+439:33  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/app/admin/professors/page.tsx
+9:34  Warning: 'AvatarImage' is defined but never used.  @typescript-eslint/no-unused-vars
+23:3  Warning: 'Award' is defined but never used.  @typescript-eslint/no-unused-vars
+27:10  Warning: 'cn' is defined but never used.  @typescript-eslint/no-unused-vars
+120:6  Warning: React Hook useEffect has a missing dependency: 'fetchProfessors'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+129:44  Warning: '_' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/admin/students/page.tsx
+6:29  Warning: 'CardHeader' is defined but never used.  @typescript-eslint/no-unused-vars
+6:41  Warning: 'CardTitle' is defined but never used.  @typescript-eslint/no-unused-vars
+9:34  Warning: 'AvatarImage' is defined but never used.  @typescript-eslint/no-unused-vars
+20:3  Warning: 'Clock' is defined but never used.  @typescript-eslint/no-unused-vars
+22:3  Warning: 'TrendingUp' is defined but never used.  @typescript-eslint/no-unused-vars
+25:10  Warning: 'cn' is defined but never used.  @typescript-eslint/no-unused-vars
+117:6  Warning: React Hook useEffect has a missing dependency: 'fetchStudents'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+126:44  Warning: '_' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/admin/course-stats/route.ts
+6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/admin/courses/route.ts
+29:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/admin/dashboard-stats/route.ts
+6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/admin/logs/export/route.ts
+43:36  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/admin/logs/route.ts
+75:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/admin/logs/stats/route.ts
+6:27  Warning: 'request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/admin/payments/export/route.ts
+26:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/admin/payments/route.ts
+31:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/admin/payments/stats/route.ts
+7:27  Warning: 'request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/admin/payments/[paymentId]/route.ts
+35:9  Error: 'updateData' is never reassigned. Use 'const' instead.  prefer-const
+35:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+106:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/admin/professors/route.ts
+28:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/admin/revenue-analytics/route.ts
+22:9  Error: 'startDate' is never reassigned. Use 'const' instead.  prefer-const
+
+./src/app/api/admin/students/route.ts
+28:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/admin/user-stats/route.ts
+6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/admin/users/route.ts
+6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/certificates/my-certificates/route.ts
+6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/courses/[id]/route.ts
+33:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+120:35  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/debug/paymob-auth/route.ts
+6:27  Warning: 'request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/lessons/[id]/analytics/route.ts
+94:29  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+97:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+101:17  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+101:25  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/payments/initiate/route.ts
+144:33  Warning: 'getPaymentTimeRemaining' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+250:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/payments/webhook/route.ts
+20:16  Warning: 'processWebhookWithRetry' is defined but never used.  @typescript-eslint/no-unused-vars
+21:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+22:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+23:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+25:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+27:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+78:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+171:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+238:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+510:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+602:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/payments/[paymentId]/status/route.ts
+2:23  Warning: 'NextResponse' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/professor/dashboard-stats/route.ts
+6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+94:14  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+116:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+141:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/professor/enrollment-stats/route.ts
+6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+53:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+63:14  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+72:14  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+89:77  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+111:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+148:14  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+155:29  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/professor/student-engagement/route.ts
+71:50  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+80:22  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+81:47  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+92:75  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+111:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+112:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+114:82  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+135:50  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+140:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+141:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+148:77  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+156:77  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+188:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+197:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+201:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+206:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+251:75  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+255:91  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+264:51  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/professor/student-enrollments/route.ts
+6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+47:75  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+51:83  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+65:72  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/student/dashboard-stats/route.ts
+6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/student/enrolled-courses/route.ts
+6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/student/payment-history/route.ts
+6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+34:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/student/payment-stats/route.ts
+6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+28:11  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+31:11  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+34:11  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+37:11  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+40:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+41:38  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+54:55  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+64:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+80:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/student/payments/route.ts
+27:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/student/recommended-courses/route.ts
+20:11  Warning: 'priceRangeFilter' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+21:11  Warning: 'levelFilter' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+22:11  Warning: 'durationFilter' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+23:11  Warning: 'ratingFilter' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+45:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/api/users/route.ts
+2:23  Warning: 'NextResponse' is defined but never used.  @typescript-eslint/no-unused-vars
+26:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/app/courses/[courseId]/payment/success/page.tsx
+15:9  Warning: 'router' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/professor/analytics/page.tsx
+93:47  Warning: 'completedLessons' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/admin/AdminDashboard.tsx
+99:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/admin/AdminStudentDetail.tsx
+22:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+23:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+24:25  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/admin/analytics/AnalyticsDashboard.tsx
+53:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+177:66  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/admin/analytics/InteractiveCharts.tsx
+29:16  Warning: 'LineChartIcon' is defined but never used.  @typescript-eslint/no-unused-vars
+57:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+86:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+93:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+119:9  Warning: 'getTrendColor' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+177:58  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/admin/CategoryDialog.tsx
+205:15  Warning: Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images.  jsx-a11y/alt-text
+
+./src/components/admin/CategoryManagement.tsx
+110:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+137:34  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+149:55  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+217:53  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+217:69  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./src/components/admin/create-course-form/ImageContentStep.tsx
+10:30  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+35:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/admin/create-course-form/ReviewPublishStep.tsx
+32:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/admin/ModernFilters.tsx
+45:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+80:51  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/admin/payment-management/PaymentList.tsx
+16:22  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/admin/payment-management/PaymentListItem.tsx
+30:22  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+42:9  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/admin/student-detail/EnrollmentList.tsx
+43:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/admin/student-detail/PaymentList.tsx
+44:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/admin/student-detail/StudentDataTabs.tsx
+10:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+11:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+12:17  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/admin/SystemLogs.tsx
+6:29  Warning: 'CardHeader' is defined but never used.  @typescript-eslint/no-unused-vars
+6:41  Warning: 'CardTitle' is defined but never used.  @typescript-eslint/no-unused-vars
+46:14  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+73:10  Warning: 'selectedLog' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+119:6  Warning: React Hook useEffect has a missing dependency: 'fetchLogs'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+128:44  Warning: '_' is defined but never used.  @typescript-eslint/no-unused-vars
+173:44  Warning: '_' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/admin/UserChart.tsx
+37:40  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/analytics/VideoAnalytics.tsx
+9:3  Warning: 'Play' is defined but never used.  @typescript-eslint/no-unused-vars
+16:3  Warning: 'Calendar' is defined but never used.  @typescript-eslint/no-unused-vars
+49:3  Warning: 'bunnyVideoId' is defined but never used.  @typescript-eslint/no-unused-vars
+50:3  Warning: 'bunnyLibraryId' is defined but never used.  @typescript-eslint/no-unused-vars
+60:6  Warning: React Hook useEffect has a missing dependency: 'fetchAnalytics'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+127:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/certificates/CertificateGenerator.tsx
+34:3  Warning: 'courseName' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/course/CertificateGenerator.tsx
+61:3  Warning: 'courseId' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/course/course-catalog/CatalogFilters.tsx
+33:3  Warning: 'levelFilter' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/course/course-content/CourseProgressCard.tsx
+31:9  Warning: 'timeProgress' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/course/course-content/VideoPlayer.tsx
+31:3  Warning: 'title' is defined but never used.  @typescript-eslint/no-unused-vars
+39:10  Warning: 'volume' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+39:18  Warning: 'setVolume' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+71:9  Warning: 'handleSeek' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/course/course-content/VideoPlayerSection.tsx
+13:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/course/CourseAccessGuard.tsx
+24:10  Warning: 'useRouter' is defined but never used.  @typescript-eslint/no-unused-vars
+334:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/course/CourseCard.tsx
+8:29  Warning: 'CardHeader' is defined but never used.  @typescript-eslint/no-unused-vars
+13:10  Warning: 'HoverLift' is defined but never used.  @typescript-eslint/no-unused-vars
+13:21  Warning: 'PressScale' is defined but never used.  @typescript-eslint/no-unused-vars
+13:33  Warning: 'GlowHover' is defined but never used.  @typescript-eslint/no-unused-vars
+26:3  Warning: 'Eye' is defined but never used.  @typescript-eslint/no-unused-vars
+28:3  Warning: 'Bookmark' is defined but never used.  @typescript-eslint/no-unused-vars
+29:3  Warning: 'TrendingUp' is defined but never used.  @typescript-eslint/no-unused-vars
+30:3  Warning: 'Zap' is defined but never used.  @typescript-eslint/no-unused-vars
+58:10  Warning: 'showQuickPreview' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/course/CourseCatalog.tsx
+5:20  Warning: 'useEffect' is defined but never used.  @typescript-eslint/no-unused-vars
+13:16  Warning: 'CardContent' is defined but never used.  @typescript-eslint/no-unused-vars
+17:3  Warning: 'Filter' is defined but never used.  @typescript-eslint/no-unused-vars
+23:3  Warning: 'Clock' is defined but never used.  @typescript-eslint/no-unused-vars
+24:3  Warning: 'Users' is defined but never used.  @typescript-eslint/no-unused-vars
+25:3  Warning: 'Star' is defined but never used.  @typescript-eslint/no-unused-vars
+26:3  Warning: 'Zap' is defined but never used.  @typescript-eslint/no-unused-vars
+30:3  Warning: 'ChevronDown' is defined but never used.  @typescript-eslint/no-unused-vars
+54:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+81:11  Warning: 'shouldReduceMotion' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+243:29  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+522:33  Warning: 'index' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/course/CourseContent.tsx
+4:20  Warning: 'useEffect' is defined but never used.  @typescript-eslint/no-unused-vars
+64:11  Warning: 'shouldReduceMotion' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+86:19  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/course/CoursePlayerClient.tsx
+37:9  Warning: 'handleVideoProgress' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+44:9  Warning: 'secureVideoUrl' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/course/CourseProgress.tsx
+12:11  Warning: 'Star' is defined but never used.  @typescript-eslint/no-unused-vars
+86:25  Warning: 'overallProgress' is defined but never used.  @typescript-eslint/no-unused-vars
+91:11  Warning: 'shouldReduceMotion' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+94:10  Warning: 'newAchievements' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+94:27  Warning: 'setNewAchievements' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+98:9  Warning: 'avgSessionTime' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+150:64  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+275:51  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/course/lecture-sidebar.tsx
+33:38  Warning: 'index' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/course/MaterialManager.tsx
+8:10  Warning: 'Label' is defined but never used.  @typescript-eslint/no-unused-vars
+41:3  Warning: 'lessonId' is defined but never used.  @typescript-eslint/no-unused-vars
+53:26  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+54:26  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+68:45  Warning: Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images.  jsx-a11y/alt-text
+74:14  Warning: Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images.  jsx-a11y/alt-text
+82:50  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+98:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+147:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/course/ModernCourseCatalog.tsx
+10:34  Warning: 'AvatarImage' is defined but never used.  @typescript-eslint/no-unused-vars
+102:6  Warning: React Hook useEffect has a missing dependency: 'fetchCourses'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+163:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/course/StudyScheduler.tsx
+9:10  Warning: 'Input' is defined but never used.  @typescript-eslint/no-unused-vars
+10:10  Warning: 'Textarea' is defined but never used.  @typescript-eslint/no-unused-vars
+22:3  Warning: 'Zap' is defined but never used.  @typescript-eslint/no-unused-vars
+26:3  Warning: 'Sun' is defined but never used.  @typescript-eslint/no-unused-vars
+27:3  Warning: 'Smartphone' is defined but never used.  @typescript-eslint/no-unused-vars
+28:3  Warning: 'Mail' is defined but never used.  @typescript-eslint/no-unused-vars
+34:3  Warning: 'AlertCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+35:3  Warning: 'TrendingUp' is defined but never used.  @typescript-eslint/no-unused-vars
+37:3  Warning: 'Users' is defined but never used.  @typescript-eslint/no-unused-vars
+40:3  Warning: 'Pause' is defined but never used.  @typescript-eslint/no-unused-vars
+41:3  Warning: 'RotateCcw' is defined but never used.  @typescript-eslint/no-unused-vars
+146:3  Warning: 'onScheduleUpdate' is defined but never used.  @typescript-eslint/no-unused-vars
+147:3  Warning: 'onReminderCreate' is defined but never used.  @typescript-eslint/no-unused-vars
+156:10  Warning: 'sessions' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+156:20  Warning: 'setSessions' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+157:10  Warning: 'isCreatingSchedule' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+157:30  Warning: 'setIsCreatingSchedule' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+280:51  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+370:43  Warning: 'checked' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/landing/FAQSection.tsx
+93:9  Warning: 'categories' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/landing/FeaturedCoursesSection.tsx
+13:3  Warning: 'Clock' is defined but never used.  @typescript-eslint/no-unused-vars
+18:3  Warning: 'Award' is defined but never used.  @typescript-eslint/no-unused-vars
+24:29  Warning: 'formatCourseDuration' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/landing/FeaturesSection.tsx
+2:59  Warning: 'BookOpen' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/landing/HeroVisual.tsx
+5:10  Warning: 'cn' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/landing/PlatformPreviewSection.tsx
+3:37  Warning: 'CheckCircle2' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/landing/TestimonialsSection.tsx
+91:9  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+91:29  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+116:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/layout/animated-layout.tsx
+106:33  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+115:33  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/layout/intelligent-sidebar.tsx
+16:3  Warning: 'ChevronRight' is defined but never used.  @typescript-eslint/no-unused-vars
+26:3  Warning: 'Bell' is defined but never used.  @typescript-eslint/no-unused-vars
+28:3  Warning: 'X' is defined but never used.  @typescript-eslint/no-unused-vars
+35:20  Warning: 'slideInRight' is defined but never used.  @typescript-eslint/no-unused-vars
+196:6  Warning: React Hook React.useEffect has a missing dependency: 'navigationItems'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+205:9  Warning: 'recommendedItems' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/navigation/MobileNavigation.tsx
+197:25  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/payment/CourseInfo.tsx
+9:3  Warning: 'Clock' is defined but never used.  @typescript-eslint/no-unused-vars
+11:3  Warning: 'Star' is defined but never used.  @typescript-eslint/no-unused-vars
+40:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/payment/PaymentButton.tsx
+85:9  Warning: 'handlePaymentSuccess' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/payment/PaymentDetailsModal.tsx
+75:6  Warning: React Hook useEffect has a missing dependency: 'fetchPaymentDetails'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+246:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/payment/PaymentFlow.tsx
+99:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+142:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/payment/PaymentForm.tsx
+15:3  Warning: 'Eye' is defined but never used.  @typescript-eslint/no-unused-vars
+16:3  Warning: 'EyeOff' is defined but never used.  @typescript-eslint/no-unused-vars
+122:9  Error: 'index' is never reassigned. Use 'const' instead.  prefer-const
+122:9  Warning: 'index' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+204:55  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/payment/PaymentMethodSelector.tsx
+18:3  Warning: 'Loader2' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/payment/PaymentResult.tsx
+8:10  Warning: 'Badge' is defined but never used.  @typescript-eslint/no-unused-vars
+28:3  Warning: 'Mail' is defined but never used.  @typescript-eslint/no-unused-vars
+81:3  Warning: 'paymentId' is defined but never used.  @typescript-eslint/no-unused-vars
+203:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+321:21  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+321:78  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+452:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/payment/PaymentResultPage.tsx
+55:3  Warning: 'user' is defined but never used.  @typescript-eslint/no-unused-vars
+70:6  Warning: React Hook useEffect has a missing dependency: 'checkPaymentStatus'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/professor/CreateCourseForm.tsx
+60:21  Warning: Expected an assignment or function call and instead saw an expression.  @typescript-eslint/no-unused-expressions
+123:13  Warning: Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images.  jsx-a11y/alt-text
+
+./src/components/professor/earnings-report/EarningsSummaryCards.tsx
+4:3  Warning: 'TrendingUp' is defined but never used.  @typescript-eslint/no-unused-vars
+5:3  Warning: 'TrendingDown' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/professor/LessonEditor.tsx
+9:10  Warning: 'Textarea' is defined but never used.  @typescript-eslint/no-unused-vars
+26:58  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+37:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+44:51  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/professor/ProfessorCourseManagement.tsx
+34:3  Warning: 'BookOpen' is defined but never used.  @typescript-eslint/no-unused-vars
+39:3  Warning: 'Plus' is defined but never used.  @typescript-eslint/no-unused-vars
+51:10  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+110:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+142:61  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+153:55  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+181:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+240:56  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+240:71  Error: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./src/components/professor/ProfessorDashboard.tsx
+14:3  Warning: 'Eye' is defined but never used.  @typescript-eslint/no-unused-vars
+19:3  Warning: 'Calendar' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/professor/ProfessorOverview.tsx
+12:3  Warning: 'Clock' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/profile/ExamHistory.tsx
+24:30  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/components/profile/MyCertificates.tsx
+11:3  Warning: 'Download' is defined but never used.  @typescript-eslint/no-unused-vars
+12:3  Warning: 'Share2' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/profile/ProfileHeader.tsx
+7:7  Warning: 'gradeMap' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/shared/footer.tsx
+4:8  Warning: 'Link' is defined but never used.  @typescript-eslint/no-unused-vars
+23:3  Warning: 'ExternalLink' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/shared/navbar.tsx
+14:3  Warning: 'LayoutDashboard' is defined but never used.  @typescript-eslint/no-unused-vars
+19:3  Warning: 'Award' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/student/EnrolledCourses.tsx
+167:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/student/recommended-courses/CourseCard.tsx
+5:29  Warning: 'CardHeader' is defined but never used.  @typescript-eslint/no-unused-vars
+5:41  Warning: 'CardTitle' is defined but never used.  @typescript-eslint/no-unused-vars
+16:3  Warning: 'ShoppingCart' is defined but never used.  @typescript-eslint/no-unused-vars
+92:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/student/StudentDashboard.tsx
+126:11  Warning: 'shouldReduceMotion' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+169:6  Warning: React Hook useEffect has a missing dependency: 'fetchStudentStats'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+177:9  Warning: 'getRarityColor' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+192:9  Warning: 'getPriorityColor' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/animated-card.tsx
+33:9  Warning: 'combinedRef' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/calendar.tsx
+25:3  Warning: 'initialFocus' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/instant-navigation.tsx
+63:10  Warning: 'isHovered' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/mobile-interactions.tsx
+79:33  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+141:29  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+147:31  Warning: 'event' is defined but never used.  @typescript-eslint/no-unused-vars
+147:38  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+147:43  Warning: 'info' is defined but never used.  @typescript-eslint/no-unused-vars
+515:6  Warning: React Hook useEffect has a missing dependency: 'elementRef'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/upload/FileUploader.tsx
+76:43  Warning: Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images.  jsx-a11y/alt-text
+198:6  Warning: React Hook useCallback has a missing dependency: 'validateFile'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/hooks/useAdminPayments.ts
+71:22  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+128:6  Warning: React Hook useCallback has an unnecessary dependency: 'refetchTrigger'. Either exclude it or remove the dependency array.  react-hooks/exhaustive-deps
+137:22  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/useAnimations.ts
+65:36  Warning: 'threshold' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+111:17  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+111:28  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/useCourseCatalog.ts
+6:10  Warning: 'UserRole' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/hooks/useCreateCourseForm.ts
+94:41  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/useEarningsReport.ts
+69:6  Warning: React Hook useEffect has a missing dependency: 'fetchEarningsData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/hooks/useProgressTracking.ts
+25:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/hooks/useRecommendedCourses.ts
+61:6  Warning: React Hook useEffect has a missing dependency: 'fetchRecommendedCourses'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/hooks/useRevenueAnalytics.ts
+54:6  Warning: React Hook useEffect has a missing dependency: 'fetchRevenueData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/hooks/useStudentEngagement.ts
+75:6  Warning: React Hook useEffect has a missing dependency: 'fetchEngagementData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/hooks/useSystemLogs.ts
+14:14  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+46:6  Warning: React Hook useEffect has a missing dependency: 'fetchLogs'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/hooks/useViewingHistory.ts
+84:13  Warning: 'errorMessage' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+95:37  Warning: React Hook useCallback received a function whose dependencies are unknown. Pass an inline function instead.  react-hooks/exhaustive-deps
+
+./src/lib/animations.ts
+250:48  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/api/courses.ts
+37:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+188:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/api/payments.ts
+229:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+230:22  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+275:29  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/api-error-handler.ts
+10:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+16:41  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+23:37  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+32:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/api-utils.ts
+4:34  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+10:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+29:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+53:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/auth-utils.ts
+83:26  Warning: 'allowedRoles' is defined but never used.  @typescript-eslint/no-unused-vars
+84:20  Warning: 'handler' is defined but never used.  @typescript-eslint/no-unused-vars
+84:29  Error: The `Function` type accepts any function-like value.
+Prefer explicitly defining any function parameters and return type.  @typescript-eslint/no-unsafe-function-type
+85:28  Warning: 'req' is defined but never used.  @typescript-eslint/no-unused-vars
+85:33  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+85:38  Warning: 'res' is defined but never used.  @typescript-eslint/no-unused-vars
+85:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+85:51  Warning: 'args' is defined but never used.  @typescript-eslint/no-unused-vars
+85:57  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/catalog-utils.ts
+31:7  Error: 'end' is never reassigned. Use 'const' instead.  prefer-const
+
+./src/lib/certificate.ts
+206:45  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+390:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+391:14  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/course-utils.ts
+92:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+184:48  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/date-utils.ts
+11:55  Warning: 'formatStr' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/middleware/error-handler.ts
+3:10  Warning: 'NextRequest' is defined but never used.  @typescript-eslint/no-unused-vars
+9:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+11:78  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+23:45  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+92:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+100:65  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+112:63  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/paymob/client.ts
+196:38  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+200:47  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+204:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+209:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/paymob/mobile-wallet.service.ts
+28:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/paymob/payment.service.ts
+39:3  Warning: 'userId' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/paymob/types.ts
+68:14  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+70:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+78:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+92:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+94:9  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+119:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+126:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+140:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+141:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/paymob/utils.ts
+51:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+78:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/paymob/webhook.service.ts
+100:9  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/services/course/index.service.ts
+9:76  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+21:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/services/course/public.service.ts
+3:10  Warning: 'UserRole' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/services/course-access.service.ts
+20:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+33:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/services/course-service.ts
+20:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/services/enrollment/core.service.ts
+179:80  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/services/enrollment/query.service.ts
+56:75  Warning: 'vh' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/services/enrollment/types.ts
+3:10  Warning: 'UserRole' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/services/enrollment/webhook.service.ts
+164:63  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+205:65  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/services/logging.service.ts
+9:31  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/shared-utils.ts
+59:47  Warning: 'type' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/lib/webhook-processor.ts
+25:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+90:9  Warning: 'updatedPayment' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+93:28  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/types/course.ts
+79:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

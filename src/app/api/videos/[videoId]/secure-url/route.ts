@@ -5,7 +5,7 @@ import prisma from '@/lib/prisma';
 import { bunnyService } from '@/lib/bunny';
 
 interface RouteParams {
-  params: { videoId: string }
+  params: Promise<{ videoId: string }>
 }
 
 export async function POST(

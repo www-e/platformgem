@@ -18,7 +18,7 @@ const courseUpdateSchema = z.object({
 });
 
 interface RouteParams {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 // GET /api/courses/[id] - Get single course with details

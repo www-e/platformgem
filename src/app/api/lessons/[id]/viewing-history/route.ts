@@ -5,7 +5,7 @@ import prisma from '@/lib/prisma';
 import { z } from 'zod';
 
 interface RouteParams {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 // Schema for viewing history updates

@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 interface CoursePageProps {
-  params: { courseId: string };
+  params: Promise<{ courseId: string }>;
 }
 
 export default async function CoursePage({ params }: CoursePageProps) {

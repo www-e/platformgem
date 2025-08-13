@@ -13,7 +13,7 @@ const enrollmentSchema = z.object({
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -32,7 +32,7 @@ export async function POST(
       );
     }
 
-    const courseId = params.id;
+    const { id: courseId } = await params;
     const body = await request.json();
     const { paymentId, enrollmentType } = enrollmentSchema.parse(body);
 
@@ -133,11 +133,11 @@ export async function POST(
 // GET endpoint to check enrollment status
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
-    const courseId = params.id;
+    const { id: courseId } = await params;
 
     // Check course access
     const accessResult = await EnrollmentService.checkCourseAccess(

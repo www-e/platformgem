@@ -5,7 +5,7 @@ import prisma from '@/lib/prisma';
 import { createSuccessResponse, createErrorResponse, ApiErrors } from '@/lib/api-utils';
 
 interface RouteParams {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 // POST /api/courses/[id]/enroll - Enroll in course

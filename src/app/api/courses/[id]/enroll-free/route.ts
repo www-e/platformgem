@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth';
 import { enrollInFreeCourse } from '@/lib/services/enrollment/core.service';
 
 interface RouteParams {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 // POST /api/courses/[id]/enroll-free - Enroll in free course

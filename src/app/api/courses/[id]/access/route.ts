@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkCourseAccess } from '@/lib/services/course-access.service';
 
 interface RouteParams {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 // GET /api/courses/[id]/access - Check course access
