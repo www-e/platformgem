@@ -17,10 +17,6 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const categoryFilter = searchParams.get('category') || 'all';
-    const priceRangeFilter = searchParams.get('priceRange') || 'all';
-    const levelFilter = searchParams.get('level') || 'all';
-    const durationFilter = searchParams.get('duration') || 'all';
-    const ratingFilter = searchParams.get('rating') || 'all';
 
     const studentId = session.user.id;
 

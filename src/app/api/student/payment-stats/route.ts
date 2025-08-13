@@ -25,20 +25,20 @@ export async function GET(_request: NextRequest) {
     // Calculate basic stats
     const totalTransactions = payments.length;
     const successfulPayments = payments.filter(
-      (p: any) => p.status === "COMPLETED"
+      (p) => p.status === "COMPLETED"
     ).length;
     const failedPayments = payments.filter(
-      (p: any) => p.status === "FAILED"
+      (p) => p.status === "FAILED"
     ).length;
     const cancelledPayments = payments.filter(
-      (p: any) => p.status === "CANCELLED"
+      (p) => p.status === "CANCELLED"
     ).length;
     const pendingPayments = payments.filter(
-      (p: any) => p.status === "PENDING"
+      (p) => p.status === "PENDING"
     ).length;
     const totalSpent = payments
-      .filter((p: any) => p.status === "COMPLETED")
-      .reduce((sum: number, payment: any) => sum + Number(payment.amount), 0);
+      .filter((p) => p.status === "COMPLETED")
+      .reduce((sum: number, payment) => sum + Number(payment.amount), 0);
 
     const averageOrderValue =
       successfulPayments > 0 ? totalSpent / successfulPayments : 0;
@@ -51,7 +51,7 @@ export async function GET(_request: NextRequest) {
       const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
       const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-      const monthPayments = payments.filter((payment: any) => {
+      const monthPayments = payments.filter((payment) => {
         const paymentDate = new Date(payment.createdAt);
         return (
           paymentDate >= monthStart &&
@@ -61,7 +61,7 @@ export async function GET(_request: NextRequest) {
       });
 
       const monthAmount = monthPayments.reduce(
-        (sum: number, payment: any) => sum + Number(payment.amount),
+        (sum: number, payment) => sum + Number(payment.amount),
         0
       );
 
@@ -76,14 +76,14 @@ export async function GET(_request: NextRequest) {
     }
 
     // Payment methods statistics
-    const paymentMethodsMap = new Map();
-    payments.forEach((payment: any) => {
+    const paymentMethodsMap = new Map<string, { count: number; totalAmount: number }>();
+    payments.forEach((payment) => {
       if (payment.status === "COMPLETED") {
         const method = payment.paymentMethod || "credit_card";
         if (!paymentMethodsMap.has(method)) {
           paymentMethodsMap.set(method, { count: 0, totalAmount: 0 });
         }
-        const methodData = paymentMethodsMap.get(method);
+        const methodData = paymentMethodsMap.get(method)!;
         methodData.count++;
         methodData.totalAmount += Number(payment.amount);
       }

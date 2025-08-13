@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { FileUploader } from '@/components/upload/FileUploader';
 import { Image as ImageIcon } from 'lucide-react';
+import Image from 'next/image';
 import type { CourseFormData } from '@/hooks/useCreateCourseForm';
 
 interface ImageContentStepProps {
@@ -32,9 +33,11 @@ export function ImageContentStep({ formData, onThumbnailUpload }: ImageContentSt
           </div>
           {formData.thumbnailUrl && (
             <div className="mt-4">
-              <img
+              <Image
                 src={formData.thumbnailUrl}
                 alt="صورة الدورة"
+                width={128}
+                height={96}
                 className="w-32 h-24 object-cover rounded-lg border"
               />
             </div>

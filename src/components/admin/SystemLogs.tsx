@@ -1,7 +1,7 @@
 // src/components/admin/SystemLogs.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -113,12 +113,7 @@ export function SystemLogs() {
     }
   ];
 
-  useEffect(() => {
-    fetchLogs();
-    fetchStats();
-  }, [currentPage, filters]);
-
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     setIsLoading(true);
     try {
       const queryParams = new URLSearchParams({
@@ -141,7 +136,14 @@ export function SystemLogs() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentPage, filters]);
+
+  useEffect(() => {
+    fetchLogs();
+    fetchStats();
+  }, [fetchLogs]);
+
+
 
   const fetchStats = async () => {
     try {
