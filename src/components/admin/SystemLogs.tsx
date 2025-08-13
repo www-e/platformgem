@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ModernFilters, FilterOption, FilterValue } from "@/components/admin/ModernFilters";
@@ -35,20 +35,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import{ LogEntry } from "@/app/api/admin/logs/route";
 
-interface LogEntry {
-  id: string;
-  type: 'USER' | 'PAYMENT' | 'COURSE' | 'ENROLLMENT' | 'CERTIFICATE' | 'SYSTEM';
-  action: string;
-  description: string;
-  userId?: string;
-  userName?: string;
-  metadata?: any;
-  ipAddress?: string;
-  userAgent?: string;
-  timestamp: string;
-  severity: 'INFO' | 'WARNING' | 'ERROR' | 'SUCCESS';
-}
 
 interface LogStats {
   totalLogs: number;

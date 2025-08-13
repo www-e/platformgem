@@ -2,7 +2,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-
+export interface LogEntry {
+  id: string;
+  type:
+    | "USER"
+    | "PAYMENT"
+    | "COURSE"
+    | "ENROLLMENT"
+    | "CERTIFICATE"
+    | "SYSTEM";
+  action: string;
+  description: string;
+  userId?: string;
+  userName?: string;
+  metadata?: any;
+  ipAddress?: string;
+  userAgent?: string;
+  timestamp: string;
+  severity: "INFO" | "WARNING" | "ERROR" | "SUCCESS";
+}
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
@@ -72,7 +90,7 @@ async function generateSystemLogs(params: {
   const skip = (page - 1) * limit;
 
   // Generate logs from various system activities
-  const logs: any[] = [];
+  const logs: LogEntry[] = [];
 
   // User registration logs
   const users = await prisma.user.findMany({

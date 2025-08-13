@@ -3,20 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-
-interface LogEntry {
-  id: string;
-  type: 'USER' | 'PAYMENT' | 'COURSE' | 'ENROLLMENT' | 'CERTIFICATE' | 'SYSTEM';
-  action: string;
-  description: string;
-  userId?: string;
-  userName?: string;
-  metadata?: any;
-  ipAddress?: string;
-  userAgent?: string;
-  timestamp: string;
-  severity: 'INFO' | 'WARNING' | 'ERROR' | 'SUCCESS';
-}
+import{ LogEntry } from "@/app/api/admin/logs/route";
 
 interface LogStats {
   totalLogs: number;

@@ -6,7 +6,7 @@
    - Environments: .env
 
    Creating an optimized production build ...
- ✓ Compiled successfully in 5.0s
+ ✓ Compiled successfully in 6.0s
    Linting and checking validity of types ...
 
 Failed to compile.
@@ -59,9 +59,6 @@ Failed to compile.
 
 ./src/app/api/admin/course-stats/route.ts
 6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
-
-./src/app/api/admin/courses/route.ts
-29:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
 ./src/app/api/admin/dashboard-stats/route.ts
 6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
