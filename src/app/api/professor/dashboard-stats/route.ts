@@ -1,21 +1,21 @@
 // src/app/api/professor/dashboard-stats/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
+import { 
+  createSuccessResponse,
+  authenticateProfessor,
+  isAuthError,
+  withErrorHandling
+} from '@/lib/api';
 
-export async function GET(_request: NextRequest) {
-  try {
-    const session = await auth();
+export const GET = withErrorHandling(async (_request: NextRequest) => {
+  // Authenticate professor
+  const authResult = await authenticateProfessor();
+  if (isAuthError(authResult)) {
+    return authResult;
+  }
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    if (session.user.role !== "PROFESSOR") {
-      return NextResponse.json({ error: "Access denied" }, { status: 403 });
-    }
-
-    const professorId = session.user.id;
+  const professorId = authResult.user.id;
 
     const courses = await prisma.course.findMany({
       where: { professorId },
@@ -214,12 +214,5 @@ export async function GET(_request: NextRequest) {
       monthlyStats,
     };
 
-    return NextResponse.json(dashboardStats);
-  } catch (error) {
-    console.error("Dashboard stats error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch dashboard statistics" },
-      { status: 500 }
-    );
-  }
-}
+    return createSuccessResponse(dashboardStats);
+});

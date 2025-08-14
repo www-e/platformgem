@@ -1,18 +1,19 @@
 // src/app/api/admin/dashboard-stats/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
+import { 
+  createSuccessResponse,
+  authenticateAdmin,
+  isAuthError,
+  withErrorHandling
+} from '@/lib/api';
 
-export async function GET(_request: NextRequest) {
-  try {
-    const session = await auth();
-    
-    if (!session?.user?.id || session.user.role !== 'ADMIN') {
-      return NextResponse.json(
-        { error: 'غير مصرح' },
-        { status: 401 }
-      );
-    }
+export const GET = withErrorHandling(async (_request: NextRequest) => {
+  // Authenticate admin
+  const authResult = await authenticateAdmin();
+  if (isAuthError(authResult)) {
+    return authResult;
+  }
 
     // Get all stats in parallel
     const [
@@ -83,13 +84,5 @@ export async function GET(_request: NextRequest) {
       recentActivity: formattedActivity
     };
 
-    return NextResponse.json(stats);
-
-  } catch (error) {
-    console.error('Dashboard stats error:', error);
-    return NextResponse.json(
-      { error: 'خطأ في الخادم' },
-      { status: 500 }
-    );
-  }
-}
+    return createSuccessResponse(stats);
+});

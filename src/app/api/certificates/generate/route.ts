@@ -1,102 +1,93 @@
 // src/app/api/certificates/generate/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { NextRequest } from 'next/server';
 import { generateCertificate, checkCertificateEligibility } from '@/lib/certificate';
+import { z } from 'zod';
+import { 
+  createSuccessResponse,
+  createErrorResponse,
+  authenticateApiUser,
+  isAuthError,
+  validateRequestBody,
+  isValidationError,
+  withErrorHandling,
+  ApiErrors
+} from '@/lib/api';
 
-export async function POST(request: NextRequest) {
-  try {
-    const session = await auth();
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'غير مصرح' },
-        { status: 401 }
-      );
-    }
+const certificateRequestSchema = z.object({
+  courseId: z.string().min(1, 'معرف الدورة مطلوب')
+});
 
-    const { courseId } = await request.json();
+export const POST = withErrorHandling(async (request: NextRequest) => {
+  // Authenticate user (any authenticated user can request certificates)
+  const authResult = await authenticateApiUser();
+  if (isAuthError(authResult)) {
+    return authResult;
+  }
 
-    if (!courseId) {
-      return NextResponse.json(
-        { error: 'معرف الدورة مطلوب' },
-        { status: 400 }
-      );
-    }
+  // Validate request body
+  const validationResult = await validateRequestBody(request, certificateRequestSchema);
+  if (isValidationError(validationResult)) {
+    return validationResult;
+  }
 
-    // Check eligibility first
-    const eligibility = await checkCertificateEligibility(session.user.id, courseId);
-    
-    if (!eligibility.eligible) {
-      return NextResponse.json(
-        { 
-          error: eligibility.reason || 'غير مؤهل للحصول على الشهادة',
-          completionRate: eligibility.completionRate,
-          requiredRate: eligibility.requiredRate
-        },
-        { status: 400 }
-      );
-    }
+  const { courseId } = validationResult;
 
-    // Generate certificate
-    const result = await generateCertificate(session.user.id, courseId);
-
-    if (!result.success) {
-      return NextResponse.json(
-        { error: result.error || 'فشل في إنشاء الشهادة' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      certificate: result.certificate
-    });
-
-  } catch (error) {
-    console.error('Certificate generation error:', error);
-    return NextResponse.json(
-      { error: 'خطأ في الخادم' },
-      { status: 500 }
+  // Check eligibility first
+  const eligibility = await checkCertificateEligibility(authResult.user.id, courseId);
+  
+  if (!eligibility.eligible) {
+    return createErrorResponse(
+      'CERTIFICATE_NOT_ELIGIBLE',
+      eligibility.reason || 'غير مؤهل للحصول على الشهادة',
+      400,
+      {
+        completionRate: eligibility.completionRate,
+        requiredRate: eligibility.requiredRate
+      }
     );
   }
-}
 
-export async function GET(_request: NextRequest) {
-  try {
-    const session = await auth();
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'غير مصرح' },
-        { status: 401 }
-      );
-    }
+  // Generate certificate
+  const result = await generateCertificate(authResult.user.id, courseId);
 
-    const { searchParams } = new URL(_request.url);
-    const courseId = searchParams.get('courseId');
-
-    if (!courseId) {
-      return NextResponse.json(
-        { error: 'معرف الدورة مطلوب' },
-        { status: 400 }
-      );
-    }
-
-    // Check eligibility
-    const eligibility = await checkCertificateEligibility(session.user.id, courseId);
-
-    return NextResponse.json({
-      eligible: eligibility.eligible,
-      reason: eligibility.reason,
-      completionRate: eligibility.completionRate,
-      requiredRate: eligibility.requiredRate
-    });
-
-  } catch (error) {
-    console.error('Certificate eligibility check error:', error);
-    return NextResponse.json(
-      { error: 'خطأ في الخادم' },
-      { status: 500 }
+  if (!result.success) {
+    return createErrorResponse(
+      ApiErrors.INTERNAL_ERROR.code,
+      result.error || 'فشل في إنشاء الشهادة',
+      ApiErrors.INTERNAL_ERROR.status
     );
   }
-}
+
+  return createSuccessResponse({
+    certificate: result.certificate
+  }, 'تم إنشاء الشهادة بنجاح', 201);
+});
+
+export const GET = withErrorHandling(async (request: NextRequest) => {
+  // Authenticate user
+  const authResult = await authenticateApiUser();
+  if (isAuthError(authResult)) {
+    return authResult;
+  }
+
+  const { searchParams } = new URL(request.url);
+  const courseId = searchParams.get('courseId');
+
+  if (!courseId) {
+    return createErrorResponse(
+      ApiErrors.VALIDATION_ERROR.code,
+      'معرف الدورة مطلوب',
+      ApiErrors.VALIDATION_ERROR.status
+    );
+  }
+
+  // Check eligibility
+  const eligibility = await checkCertificateEligibility(authResult.user.id, courseId);
+
+  return createSuccessResponse({
+    eligible: eligibility.eligible,
+    reason: eligibility.reason,
+    completionRate: eligibility.completionRate,
+    requiredRate: eligibility.requiredRate
+  });
+});
