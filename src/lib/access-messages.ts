@@ -1,6 +1,7 @@
 // src/lib/access-messages.ts
 
-import { CourseAccessResult } from './services/course-access.service';
+import { CourseAccessResult, AccessMessage } from './types/course-access';
+import { formatCurrency } from './core-utils';
 
 /**
  * Generates a user-friendly title, description, and action text
@@ -8,12 +9,7 @@ import { CourseAccessResult } from './services/course-access.service';
  * @param result - The CourseAccessResult object from the check.
  * @returns An object with strings ready for display in the UI.
  */
-export function getAccessMessage(result: CourseAccessResult): {
-  title: string;
-  description: string;
-  actionText?: string;
-  actionType?: 'login' | 'payment' | 'enrollment' | 'contact';
-} {
+export function getAccessMessage(result: CourseAccessResult): AccessMessage {
   switch (result.reason) {
     case 'enrolled':
       return {
@@ -39,11 +35,7 @@ export function getAccessMessage(result: CourseAccessResult): {
       };
     case 'payment_required':
       const price = result.course?.price
-        ? new Intl.NumberFormat('ar-EG', {
-            style: 'currency',
-            currency: result.course.currency || 'EGP',
-            minimumFractionDigits: 0,
-          }).format(Number(result.course.price))
+        ? formatCurrency(Number(result.course.price), result.course.currency || 'EGP')
         : '';
 
       return {

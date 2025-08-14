@@ -131,7 +131,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return createSuccessResponse({
       enrollment,
       message: 'تم التسجيل في الدورة بنجاح!'
-    }, 201);
+    }, 'تم التسجيل في الدورة بنجاح!', 201);
 
   } catch (error) {
     console.error('Course enrollment error:', error);

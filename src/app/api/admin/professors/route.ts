@@ -51,16 +51,16 @@ export async function GET(request: NextRequest) {
 
     // Handle courses filter
     if (hasCourses === "yes") {
-      whereClause.courses = { some: {} };
+      whereClause.ownedCourses = { some: {} };
     } else if (hasCourses === "no") {
-      whereClause.courses = { none: {} };
+      whereClause.ownedCourses = { none: {} };
     }
 
     const [professorsRaw, totalCount] = await prisma.$transaction([
       prisma.user.findMany({
         where: whereClause,
         include: {
-          courses: {
+          ownedCourses: {
             include: {
               enrollments: {
                 select: { id: true, userId: true },
@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate enhanced statistics for each professor
     const professors = professorsRaw.map((professor) => {
-      const totalRevenue = professor.courses.reduce(
+      const totalRevenue = professor.ownedCourses.reduce(
         (sum: number, course: any) => {
           return (
             sum +
@@ -107,17 +107,17 @@ export async function GET(request: NextRequest) {
         0
       );
 
-      const totalEnrollments = professor.courses.reduce(
+      const totalEnrollments = professor.ownedCourses.reduce(
         (sum: number, course: any) => sum + course._count.enrollments,
         0
       );
-      const totalCertificates = professor.courses.reduce(
+      const totalCertificates = professor.ownedCourses.reduce(
         (sum: number, course: any) => sum + course._count.certificates,
         0
       );
 
       // Calculate completion rate
-      const totalCompletions = professor.courses.reduce(
+      const totalCompletions = professor.ownedCourses.reduce(
         (sum: number, course: any) => {
           const uniqueCompletions = new Set(
             course.progressMilestones.map((p: any) => p.userId)
@@ -144,9 +144,9 @@ export async function GET(request: NextRequest) {
           totalEnrollments,
           totalCertificates,
           completionRate: Math.round(completionRate),
-          coursesCount: professor.courses.length,
+          coursesCount: professor.ownedCourses.length,
         },
-        courses: professor.courses.map((course: any) => ({
+        courses: professor.ownedCourses.map((course: any) => ({
           id: course.id,
           title: course.title,
           _count: course._count,

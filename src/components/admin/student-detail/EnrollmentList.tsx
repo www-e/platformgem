@@ -1,29 +1,12 @@
 // src/components/admin/student-detail/EnrollmentList.tsx
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { BookOpen } from 'lucide-react';
-import { formatCurrency } from '@/lib/formatters';
-
-type Enrollment = {
-  id: string;
-  enrolledAt: Date;
-  progressPercent: number;
-  totalWatchTime: number;
-  course: {
-    id: string;
-    title: string;
-    thumbnailUrl: string;
-    price: number | null;
-    currency: string;
-    professor: {
-      name: string;
-    };
-  };
-};
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { BookOpen } from "lucide-react";
+import { formatCurrency } from "@/lib/formatters";
 
 interface EnrollmentListProps {
-  enrollments: Enrollment[];
+  enrollments: any[];
 }
 
 export function EnrollmentList({ enrollments }: EnrollmentListProps) {
@@ -53,12 +36,14 @@ export function EnrollmentList({ enrollments }: EnrollmentListProps) {
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
                     <span>التقدم: {enrollment.progressPercent}%</span>
                     <span>
-                      وقت المشاهدة: {Math.round(enrollment.totalWatchTime / 60)}{' '}
+                      وقت المشاهدة: {Math.round(enrollment.totalWatchTime / 60)}{" "}
                       دقيقة
                     </span>
                     <span>
-                      تاريخ التسجيل:{' '}
-                      {new Date(enrollment.enrolledAt).toLocaleDateString('ar-SA')}
+                      تاريخ التسجيل:{" "}
+                      {new Date(enrollment.enrolledAt).toLocaleDateString(
+                        "ar-SA"
+                      )}
                     </span>
                   </div>
                 </div>

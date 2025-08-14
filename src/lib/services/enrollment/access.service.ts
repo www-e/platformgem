@@ -2,7 +2,7 @@
 
 import { UserRole } from '@prisma/client';
 import prisma from '@/lib/prisma';
-import { CourseAccessResult } from './types';
+import { CourseAccessResult } from '@/lib/types/course-access';
 
 /**
  * Check if a user can access a course and determine their access level.
@@ -31,6 +31,7 @@ export async function checkCourseAccess(
     if (!course) {
       return {
         hasAccess: false,
+        reason: 'not_found',
         accessType: 'free',
         message: 'الدورة غير موجودة',
         canEnroll: false,
@@ -44,6 +45,7 @@ export async function checkCourseAccess(
       if (userId === course.professor.id || userRole === 'ADMIN') {
         return {
           hasAccess: true,
+          reason: userRole === 'ADMIN' ? 'admin_access' : 'professor_owns',
           accessType: userRole === 'ADMIN' ? 'admin' : 'owner',
           message: 'وصول كامل كمالك/مدير',
           canEnroll: false,
@@ -53,6 +55,7 @@ export async function checkCourseAccess(
 
       return {
         hasAccess: false,
+        reason: 'not_published',
         accessType: 'free',
         message: 'الدورة غير متاحة حالياً',
         canEnroll: false,
@@ -64,6 +67,7 @@ export async function checkCourseAccess(
     if (userRole === 'ADMIN') {
       return {
         hasAccess: true,
+        reason: 'admin_access',
         accessType: 'admin',
         message: 'وصول كامل كمدير',
         canEnroll: false,
@@ -75,6 +79,7 @@ export async function checkCourseAccess(
     if (userId === course.professor.id) {
       return {
         hasAccess: true,
+        reason: 'professor_owns',
         accessType: 'owner',
         message: 'وصول كامل كمالك الدورة',
         canEnroll: false,
@@ -119,6 +124,7 @@ export async function checkCourseAccess(
 
         return {
           hasAccess: true,
+          reason: 'enrolled',
           accessType: 'enrolled',
           message: 'مسجل في الدورة',
           canEnroll: false,
@@ -126,7 +132,7 @@ export async function checkCourseAccess(
           enrollment: {
             id: enrollment.id,
             enrolledAt: enrollment.enrolledAt,
-            progress,
+            progressPercent: progress,
             lastAccessedAt: enrollment.lastAccessedAt,
           },
         };
@@ -139,6 +145,7 @@ export async function checkCourseAccess(
     if (isFree) {
       return {
         hasAccess: false,
+        reason: 'free_course',
         accessType: 'free',
         message: 'دورة مجانية - يمكن التسجيل',
         canEnroll: true,
@@ -149,6 +156,7 @@ export async function checkCourseAccess(
     // Paid course - requires payment
     return {
       hasAccess: false,
+      reason: 'payment_required',
       accessType: 'paid',
       message: `دورة مدفوعة - ${course.price} ${course.currency}`,
       canEnroll: true,
@@ -158,6 +166,7 @@ export async function checkCourseAccess(
     console.error('Error checking course access:', error);
     return {
       hasAccess: false,
+      reason: 'not_found',
       accessType: 'free',
       message: 'حدث خطأ في التحقق من الوصول',
       canEnroll: false,

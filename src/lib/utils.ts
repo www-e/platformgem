@@ -1,15 +1,4 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+// src/lib/utils.ts
+// Backward compatibility layer - use core-utils.ts for new code
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
-
-export function formatDate(date: Date | string): string {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return dateObj.toLocaleDateString('ar-SA', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-}
+export { cn, formatDate } from './core-utils';

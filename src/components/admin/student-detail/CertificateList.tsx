@@ -5,18 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Award, Eye } from 'lucide-react';
 
-type Certificate = {
-  id: string;
-  certificateCode: string;
-  issuedAt: Date;
-  status: string;
-  course: {
-    title: string;
-  };
-};
-
 interface CertificateListProps {
-  certificates: Certificate[];
+  certificates: any[];
 }
 
 export function CertificateList({ certificates }: CertificateListProps) {

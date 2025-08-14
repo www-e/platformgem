@@ -1,6 +1,7 @@
 // src/lib/services/enrollment/types.ts
 
-import { UserRole } from '@prisma/client';
+// Re-export unified types to maintain backward compatibility
+export type { CourseAccessResult } from '@/lib/types/course-access';
 
 export interface EnrollmentResult {
   success: boolean;
@@ -9,18 +10,4 @@ export interface EnrollmentResult {
   requiresPayment?: boolean;
   paymentUrl?: string;
   error?: string;
-}
-
-export interface CourseAccessResult {
-  hasAccess: boolean;
-  accessType: 'free' | 'paid' | 'enrolled' | 'owner' | 'admin';
-  message: string;
-  canEnroll: boolean;
-  requiresPayment: boolean;
-  enrollment?: {
-    id: string;
-    enrolledAt: Date;
-    progress: number;
-    lastAccessedAt: Date | null;
-  };
 }

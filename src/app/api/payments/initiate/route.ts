@@ -8,13 +8,10 @@ import {
   createSuccessResponse,
   createErrorResponse,
   ApiErrors,
-} from "@/lib/api-utils";
-import { z } from "zod";
-import {
-  createStandardErrorResponse,
   API_ERROR_CODES,
   getErrorMessage,
-} from "@/lib/api-error-handler";
+} from "@/lib/api-response";
+import { z } from "zod";
 import { paymobConfig } from '@/lib/paymob/config';
 
 
@@ -298,6 +295,7 @@ export async function POST(request: NextRequest) {
           professor: course.professor.name,
         },
       },
+      "Payment initiated successfully",
       201
     );
   } catch (error) {
@@ -306,7 +304,7 @@ export async function POST(request: NextRequest) {
     // Handle PayMob specific errors
     // Handle PayMob specific errors
     if (error instanceof Error && error.message.includes("PayMob")) {
-      return createStandardErrorResponse(
+      return createErrorResponse(
         API_ERROR_CODES.PAYMENT_GATEWAY_ERROR,
         getErrorMessage(API_ERROR_CODES.PAYMENT_GATEWAY_ERROR),
         502,

@@ -4,12 +4,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EnrollmentList } from './EnrollmentList';
 import { PaymentList } from './PaymentList';
 import { CertificateList } from './CertificateList';
+import { Enrollment, Payment, Certificate } from '@prisma/client';
 
-// Define a more specific type for the props based on the original component's data structure
+// Define flexible types that match the actual data structure
 type StudentData = {
-  enrollments: Record<string, unknown>[];
-  payments: Record<string, unknown>[];
-  certificates: Record<string, unknown>[];
+  enrollments: any[];
+  payments: any[];
+  certificates: any[];
 };
 
 interface StudentDataTabsProps {

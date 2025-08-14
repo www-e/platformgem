@@ -2,37 +2,10 @@
 
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { CourseAccessResult } from '@/lib/types/course-access';
 
-export interface CourseAccessResult {
-  hasAccess: boolean;
-  reason:
-    | 'enrolled'
-    | 'free_course'
-    | 'admin_access'
-    | 'professor_owns'
-    | 'payment_required'
-    | 'not_published'
-    | 'not_found'
-    | 'not_authenticated';
-  course?: {
-    id: string;
-    title: string;
-    price: any;
-    currency: string;
-    isPublished: boolean;
-    professorId: string;
-  };
-  enrollment?: {
-    id: string;
-    progressPercent: number;
-    enrolledAt: Date;
-  };
-  payment?: {
-    id: string;
-    status: string;
-    amount: any;
-  };
-}
+// Re-export for backward compatibility
+export type { CourseAccessResult };
 
 /**
  * Checks if a user has access to a specific course. This is a read-only operation.
@@ -119,28 +92,13 @@ export async function requireCourseAccess(courseId: string): Promise<CourseAcces
 
 /**
  * Get access message based on course access result
+ * @deprecated Use getAccessMessage from access-messages.ts instead
  */
 export function getAccessMessage(reason: CourseAccessResult['reason']): string {
-  switch (reason) {
-    case 'enrolled':
-      return 'لديك وصول كامل لهذه الدورة';
-    case 'free_course':
-      return 'هذه دورة مجانية، يمكنك الوصول إليها';
-    case 'admin_access':
-      return 'لديك وصول إداري لهذه الدورة';
-    case 'professor_owns':
-      return 'هذه دورتك الخاصة';
-    case 'payment_required':
-      return 'يتطلب دفع رسوم للوصول لهذه الدورة';
-    case 'not_published':
-      return 'هذه الدورة غير منشورة حالياً';
-    case 'not_found':
-      return 'الدورة غير موجودة';
-    case 'not_authenticated':
-      return 'يجب تسجيل الدخول للوصول لهذه الدورة';
-    default:
-      return 'غير مصرح بالوصول لهذه الدورة';
-  }
+  // Import the function from access-messages.ts to avoid duplication
+  const { getAccessMessage: getDetailedAccessMessage } = require('../access-messages');
+  const result = { reason } as CourseAccessResult;
+  return getDetailedAccessMessage(result).description;
 }
 
 // Export enrollInFreeCourse function for backward compatibility

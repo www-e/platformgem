@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: Record<string, unknown> = {};
+    const where: any = {};
 
     if (status && status !== 'all') {
       where.status = status.toUpperCase();

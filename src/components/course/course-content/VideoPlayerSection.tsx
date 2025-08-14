@@ -10,7 +10,7 @@ interface VideoPlayerSectionProps {
   selectedLesson: Lesson | null;
   course: Course;
   completedLessons: Set<string>;
-  viewingHistory: Record<string, unknown>;
+  viewingHistory: { lastPosition?: number; watchedDuration?: number; totalDuration?: number; completed?: boolean } | null;
   onProgressUpdate: (progress: {
     watchedDuration: number;
     totalDuration: number;
@@ -87,8 +87,8 @@ export function VideoPlayerSection({
               {viewingHistory && (
                 <span>
                   التقدم: {calculateProgressPercentage(
-                    viewingHistory.lastPosition, 
-                    viewingHistory.totalDuration
+                    viewingHistory.lastPosition || 0, 
+                    viewingHistory.totalDuration || 0
                   )}%
                 </span>
               )}

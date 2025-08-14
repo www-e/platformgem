@@ -2,12 +2,11 @@
 import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { payMobService } from "@/lib/paymob/client";
-import { createSuccessResponse, createErrorResponse } from "@/lib/api-utils";
 import { 
-  createStandardErrorResponse, 
-  createStandardSuccessResponse,
+  createSuccessResponse,
+  createErrorResponse,
   API_ERROR_CODES 
-} from "@/lib/api-error-handler";
+} from "@/lib/api-response";
 // Webhook retry configuration
 const WEBHOOK_RETRY_CONFIG = {
   maxRetries: 3,
@@ -257,7 +256,7 @@ export async function POST(request: NextRequest) {
     // Validate webhook payload structure
     if (!payMobService.validateWebhookPayload(webhookObject)) {
       console.error("Invalid webhook payload structure:", webhookObject);
-      return createStandardErrorResponse(
+      return createErrorResponse(
         API_ERROR_CODES.WEBHOOK_PAYLOAD_INVALID,
         "Invalid webhook payload structure",
         400,
@@ -275,7 +274,7 @@ export async function POST(request: NextRequest) {
         "Invalid PayMob webhook signature for transaction:",
         transactionId
       );
-      return createStandardErrorResponse(
+      return createErrorResponse(
         API_ERROR_CODES.WEBHOOK_SIGNATURE_INVALID,
         "Invalid webhook signature",
         401,
@@ -641,7 +640,7 @@ export async function POST(request: NextRequest) {
         transactionResult.enrollment?.requiresManualReview || false,
     });
 
-    return createStandardSuccessResponse({
+    return createSuccessResponse({
       paymentId: payment.id,
       status: newStatus,
       transactionId: validatedTransactionId,

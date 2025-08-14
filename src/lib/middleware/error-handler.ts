@@ -1,7 +1,7 @@
 // src/lib/middleware/error-handler.ts
 
 import { NextRequest, NextResponse } from 'next/server';
-import { API_ERROR_CODES, createStandardErrorResponse } from '@/lib/api-error-handler';
+import { API_ERROR_CODES, createErrorResponse } from '@/lib/api-response';
 
 export class ApiError extends Error {
   public statusCode?: number;
@@ -31,7 +31,7 @@ export function withErrorHandling<T extends any[]>(
 
       // Type guard for ApiError
       if (error instanceof ApiError) {
-        return createStandardErrorResponse(
+        return createErrorResponse(
           error.code || API_ERROR_CODES.INTERNAL_ERROR,
           error.message,
           error.statusCode || 500,
@@ -43,7 +43,7 @@ export function withErrorHandling<T extends any[]>(
       if (error instanceof Error) {
         // Handle specific error types
         if (error.message.includes('PayMob')) {
-          return createStandardErrorResponse(
+          return createErrorResponse(
             API_ERROR_CODES.PAYMENT_GATEWAY_ERROR,
             'حدث خطأ في نظام الدفع. يرجى المحاولة مرة أخرى.',
             502,
@@ -52,7 +52,7 @@ export function withErrorHandling<T extends any[]>(
         }
 
         if (error.message.includes('Prisma') || error.message.includes('database')) {
-          return createStandardErrorResponse(
+          return createErrorResponse(
             API_ERROR_CODES.DATABASE_ERROR,
             'حدث خطأ في قاعدة البيانات. يرجى المحاولة لاحقاً.',
             500,
@@ -61,7 +61,7 @@ export function withErrorHandling<T extends any[]>(
         }
 
         if (error.message.includes('timeout')) {
-          return createStandardErrorResponse(
+          return createErrorResponse(
             API_ERROR_CODES.INTERNAL_ERROR,
             'انتهت مهلة معالجة الطلب. يرجى المحاولة مرة أخرى.',
             504,
@@ -72,7 +72,7 @@ export function withErrorHandling<T extends any[]>(
 
       // Generic error fallback
       const errorMessage = error instanceof Error ? error.message : String(error);
-      return createStandardErrorResponse(
+      return createErrorResponse(
         API_ERROR_CODES.INTERNAL_ERROR,
         'حدث خطأ داخلي غير متوقع',
         500,

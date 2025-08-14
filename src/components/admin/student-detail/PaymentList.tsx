@@ -6,24 +6,8 @@ import { CreditCard, Eye } from 'lucide-react';
 import { PaymentStatusBadge } from '@/components/shared/PaymentStatusBadge';
 import { formatCurrency } from '@/lib/formatters';
 
-type Payment = {
-  id: string;
-  amount: number;
-  currency: string;
-  status: string;
-  createdAt: Date;
-  completedAt: Date | null;
-  failureReason: string | null;
-  paymobTransactionId: number | null;
-  course: {
-    id: string;
-    title: string;
-    thumbnailUrl: string;
-  };
-};
-
 interface PaymentListProps {
-  payments: Payment[];
+  payments: any[];
   onViewDetails: (paymentId: string) => void;
 }
 
