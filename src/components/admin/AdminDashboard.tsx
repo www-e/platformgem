@@ -96,7 +96,12 @@ export function AdminDashboard() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [widgets, setWidgets] = useState<DashboardWidget[]>([]);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<Array<{
+    id: string;
+    type: string;
+    message: string;
+    timestamp: Date;
+  }>>([]);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
   // Real-time data fetching

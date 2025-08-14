@@ -96,6 +96,11 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
       ...payment,
       amount: Number(payment.amount),
       paymobTransactionId: payment.paymobTransactionId ? Number(payment.paymobTransactionId) : null
+    })),
+    certificates: student.certificates.map(certificate => ({
+      id: certificate.id,
+      courseTitle: certificate.course.title,
+      issuedAt: certificate.issuedAt
     }))
   };
 

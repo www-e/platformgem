@@ -38,7 +38,13 @@ export async function GET(request: NextRequest) {
     const studentCategoryIds = studentCategories.map(c => c.categoryId);
 
     // Build where clause for filtering
-    const whereClause: any = {
+    interface CourseWhereClause {
+      isPublished: boolean;
+      id: { notIn: string[] };
+      categoryId?: string;
+    }
+    
+    const whereClause: CourseWhereClause = {
       isPublished: true,
       id: { notIn: enrolledCourseIds } // Exclude already enrolled courses
     };

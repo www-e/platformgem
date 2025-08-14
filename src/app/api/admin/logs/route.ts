@@ -15,7 +15,7 @@ export interface LogEntry {
   description: string;
   userId?: string;
   userName?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   timestamp: string;

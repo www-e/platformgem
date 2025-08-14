@@ -237,7 +237,7 @@ export function ProfessorCourseManagement({ courses: initialCourses }: Professor
                           <AlertDialogHeader>
                             <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
                             <AlertDialogDescription>
-                              هل أنت متأكد من حذف دورة "{course.title}"؟ 
+                              هل أنت متأكد من حذف دورة &ldquo;{course.title}&rdquo;؟ 
                               هذا الإجراء لا يمكن التراجع عنه.
                             </AlertDialogDescription>
                           </AlertDialogHeader>

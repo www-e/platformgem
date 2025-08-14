@@ -24,7 +24,7 @@ interface SearchParams {
 export default async function ProfessorAnalyticsPage({
   searchParams
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
   const session = await auth();
   
@@ -90,7 +90,7 @@ export default async function ProfessorAnalyticsPage({
     })
   ]);
 
-  const [totalStudents, totalWatchTimeResult, completedLessons, recentActivity] = overallStats;
+  const [totalStudents, totalWatchTimeResult, /* completedLessons */, recentActivity] = overallStats;
   const totalWatchTime = totalWatchTimeResult._sum.watchedDuration || 0;
 
   // Format time display
@@ -104,7 +104,8 @@ export default async function ProfessorAnalyticsPage({
     return `${minutes} دقيقة`;
   };
 
-  const selectedCourseId = searchParams.courseId;
+  const resolvedSearchParams = await searchParams;
+  const selectedCourseId = resolvedSearchParams.courseId;
   const selectedCourse = selectedCourseId 
     ? courses.find(c => c.id === selectedCourseId)
     : null;

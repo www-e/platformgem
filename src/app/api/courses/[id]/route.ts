@@ -30,7 +30,16 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const includeUnpublished = searchParams.get('includeUnpublished') === 'true';
 
     // Build where clause based on user permissions
-    const whereClause: any = { id };
+    interface CourseWhereClause {
+      id: string;
+      isPublished?: boolean;
+      OR?: Array<{
+        isPublished?: boolean;
+        professorId?: string;
+      }>;
+    }
+    
+    const whereClause: CourseWhereClause = { id };
     
     // Only show unpublished courses to the owner or admin
     if (!includeUnpublished) {
@@ -117,9 +126,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     };
 
     // Remove enrollments array from response (we have isEnrolled and userProgress instead)
-    delete (courseWithUserData as any).enrollments;
+    const { enrollments: _, ...courseResponse } = courseWithUserData;
 
-    return createSuccessResponse(courseWithUserData);
+    return createSuccessResponse(courseResponse);
 
   } catch (error) {
     console.error('Course GET error:', error);

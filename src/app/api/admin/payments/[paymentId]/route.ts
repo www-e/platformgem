@@ -32,7 +32,7 @@ export async function PATCH(
     const body = await request.json();
     const { action, status, reason } = body;
 
-    let updateData: any = { updatedAt: new Date() };
+    const updateData: Record<string, unknown> = { updatedAt: new Date() };
 
     if (action === 'manual_complete') {
       updateData.status = 'COMPLETED';
@@ -103,7 +103,7 @@ export async function PATCH(
   } catch (error) {
     console.error('Admin Payment PATCH error:', error);
     // Check for specific Prisma error for not found
-    if ((error as any).code === 'P2025') {
+    if ((error as { code?: string }).code === 'P2025') {
        return createErrorResponse(
         ApiErrors.NOT_FOUND.code,
         'Payment not found.',

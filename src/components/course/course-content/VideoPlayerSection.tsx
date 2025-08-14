@@ -10,7 +10,7 @@ interface VideoPlayerSectionProps {
   selectedLesson: Lesson | null;
   course: Course;
   completedLessons: Set<string>;
-  viewingHistory: any;
+  viewingHistory: Record<string, unknown>;
   onProgressUpdate: (progress: {
     watchedDuration: number;
     totalDuration: number;

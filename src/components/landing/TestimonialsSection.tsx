@@ -88,7 +88,7 @@ const TestimonialCard = ({
 
       {/* Quote text */}
       <blockquote className="text-lg text-neutral-700 leading-arabic-relaxed mb-6 font-medium">
-        "{testimonial.quote}"
+        "        &ldquo;{testimonial.quote}&rdquo;"
       </blockquote>
 
       {/* Rating */}
