@@ -75,7 +75,7 @@ export class IntegrationAnalyzer {
       issues.push({
         type: 'INCONSISTENT_INTERFACE',
         file: 'IntegrationAnalyzer',
-        description: `Analysis failed: ${error.message}`,
+        description: `Analysis failed: ${error instanceof Error ? error.message : String(error)}`,
         severity: 'HIGH'
       });
 
@@ -188,7 +188,7 @@ export class IntegrationAnalyzer {
           file: 'TypeScript Compiler',
           line: 0,
           column: 0,
-          message: `Compilation validation failed: ${error.message}`,
+          message: `Compilation validation failed: ${error instanceof Error ? error.message : String(error)}`,
           code: 0
         }]
       };
@@ -266,7 +266,7 @@ export class IntegrationAnalyzer {
           line: 0,
           importPath: '',
           issue: 'INCONSISTENT_PATTERN',
-          recommendation: `Import analysis failed: ${error.message}`
+          recommendation: `Import analysis failed: ${error instanceof Error ? error.message : String(error)}`
         }]
       };
     }
@@ -316,7 +316,7 @@ export class IntegrationAnalyzer {
       return [{
         type: 'MISSING_INTEGRATION',
         file: 'CrossLayerValidator',
-        description: `Cross-layer validation failed: ${error.message}`,
+        description: `Cross-layer validation failed: ${error instanceof Error ? error.message : String(error)}`,
         severity: 'HIGH'
       }];
     }
@@ -371,7 +371,7 @@ export class IntegrationAnalyzer {
       return [{
         type: 'INCONSISTENT_INTERFACE',
         file: 'InterfaceValidator',
-        description: `Interface validation failed: ${error.message}`,
+        description: `Interface validation failed: ${error instanceof Error ? error.message : String(error)}`,
         severity: 'HIGH'
       }];
     }

@@ -144,7 +144,7 @@ export class CompatibilityAnalyzer {
       
       findings.push({
         category: 'Compatibility Analysis Error',
-        description: `Compatibility analysis failed: ${error.message}`,
+        description: `Compatibility analysis failed: ${error instanceof Error ? error.message : String(error)}`,
         impact: 'NEGATIVE',
         evidence: error,
         recommendation: 'Check project structure and compatibility analyzer setup'

@@ -106,7 +106,7 @@ export class PerformanceAnalyzer {
       
       findings.push({
         category: 'Performance Analysis Error',
-        description: `Performance analysis failed: ${error.message}`,
+        description: `Performance analysis failed: ${error instanceof Error ? error.message : String(error)}`,
         impact: 'NEGATIVE',
         evidence: error,
         recommendation: 'Check build configuration and project setup'
@@ -186,7 +186,7 @@ export class PerformanceAnalyzer {
           successfulRequests++;
         } catch (error) {
           errorCount++;
-          console.log(`    ⚠️ Endpoint ${endpoint} failed: ${error.message}`);
+          console.log(`    ⚠️ Endpoint ${endpoint} failed: ${error instanceof Error ? error.message : String(error)}`);
         }
       }
 
@@ -259,7 +259,7 @@ export class PerformanceAnalyzer {
       console.log('    ✅ Build completed');
     } catch (error) {
       console.log('    ⚠️ Build failed, using estimated metrics');
-      throw new Error(`Build failed: ${error.message}`);
+      throw new Error(`Build failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 

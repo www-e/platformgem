@@ -111,7 +111,7 @@ export class ProductionReadinessValidator {
       
       findings.push({
         category: 'Production Readiness Error',
-        description: `Production readiness validation failed: ${error.message}`,
+        description: `Production readiness validation failed: ${error instanceof Error ? error.message : String(error)}`,
         impact: 'NEGATIVE',
         evidence: error,
         recommendation: 'Check production readiness validator setup'
@@ -172,7 +172,7 @@ export class ProductionReadinessValidator {
         });
         console.log('    ✅ TypeScript compilation successful');
       } catch (error) {
-        const errorOutput = error.stdout?.toString() || error.stderr?.toString() || '';
+        const errorOutput = (error as any).stdout?.toString() || (error as any).stderr?.toString() || '';
         typeScriptErrors = (errorOutput.match(/error TS\d+:/g) || []).length;
         console.log(`    ⚠️ TypeScript compilation has ${typeScriptErrors} errors`);
       }
@@ -185,7 +185,7 @@ export class ProductionReadinessValidator {
         });
         console.log('    ✅ ESLint validation passed');
       } catch (error) {
-        const errorOutput = error.stdout?.toString() || '';
+        const errorOutput = (error as any).stdout?.toString() || '';
         try {
           const eslintResults = JSON.parse(errorOutput);
           eslintWarnings = eslintResults.reduce((total: number, file: any) => 
@@ -271,7 +271,7 @@ export class ProductionReadinessValidator {
         });
         console.log('    ✅ No high-severity vulnerabilities found');
       } catch (error) {
-        const auditOutput = error.stdout?.toString() || '';
+        const auditOutput = (error as any).stdout?.toString() || '';
         try {
           const auditResult = JSON.parse(auditOutput);
           vulnerabilities = auditResult.metadata?.vulnerabilities?.high || 0;

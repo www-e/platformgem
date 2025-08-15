@@ -93,6 +93,7 @@ export class AuditController {
       return phaseResult;
 
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       console.error(`❌ Phase ${phase} failed:`, error);
       
       const failureResult: PhaseResult = {
@@ -109,7 +110,7 @@ export class AuditController {
       this.addIssue({
         type: AuditErrorType.CONFIGURATION_ERROR,
         severity: 'CRITICAL',
-        message: `Phase ${phase} execution failed: ${error.message}`,
+        message: `Phase ${phase} execution failed: ${errorMessage}`,
         location: 'AuditController.executePhase',
         evidence: error,
         recommendation: 'Check audit configuration and system dependencies',
@@ -189,7 +190,7 @@ export class AuditController {
         },
         findings: [{
           category: 'Static Analysis Error',
-          description: `Analysis failed: ${error.message}`,
+          description: `Analysis failed: ${error instanceof Error ? error.message : String(error)}`,
           impact: 'NEGATIVE',
           evidence: error,
           recommendation: 'Check analyzer implementation and project structure'
@@ -272,7 +273,7 @@ export class AuditController {
         },
         findings: [{
           category: 'Performance Analysis Error',
-          description: `Performance analysis failed: ${error.message}`,
+          description: `Performance analysis failed: ${error instanceof Error ? error.message : String(error)}`,
           impact: 'NEGATIVE',
           evidence: error,
           recommendation: 'Check build configuration and performance analyzer setup'
@@ -334,7 +335,7 @@ export class AuditController {
         },
         findings: [{
           category: 'Compatibility Analysis Error',
-          description: `Compatibility analysis failed: ${error.message}`,
+          description: `Compatibility analysis failed: ${error instanceof Error ? error.message : String(error)}`,
           impact: 'NEGATIVE',
           evidence: error,
           recommendation: 'Check compatibility analyzer setup and project structure'
@@ -376,9 +377,10 @@ export class AuditController {
   /**
    * Generate failure result when audit execution fails
    */
-  private generateFailureResult(error: any): AuditResult {
+  private generateFailureResult(error: unknown): AuditResult {
     const endTime = new Date();
     const duration = endTime.getTime() - this.startTime.getTime();
+    const errorMessage = error instanceof Error ? error.message : String(error);
 
     return {
       overall: AuditStatus.FAIL,
@@ -395,7 +397,7 @@ export class AuditController {
       issues: [{
         type: AuditErrorType.CONFIGURATION_ERROR,
         severity: 'CRITICAL',
-        message: `Audit execution failed: ${error.message}`,
+        message: `Audit execution failed: ${errorMessage}`,
         location: 'AuditController.executeAudit',
         evidence: error,
         recommendation: 'Check audit configuration and system setup',
@@ -548,7 +550,7 @@ export class AuditController {
       this.addIssue({
         type: AuditErrorType.CONFIGURATION_ERROR,
         severity: 'HIGH',
-        message: `Production readiness validation failed: ${error.message}`,
+        message: `Production readiness validation failed: ${error instanceof Error ? error.message : String(error)}`,
         location: 'ProductionReadinessValidator',
         evidence: error,
         recommendation: 'Check production readiness validator configuration',
