@@ -1,74 +1,76 @@
 // src/app/(student)/profile/page.tsx
-
+import { Suspense } from 'react';
 import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import EnrolledCourses from "@/components/profile/EnrolledCourses";
-import ExamHistory from "@/components/profile/ExamHistory";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileActions from "@/components/profile/ProfileActions";
 import QuickAccessCard from "@/components/profile/QuickAccessCard";
+import EnrolledCourses from "@/components/profile/EnrolledCourses";
+import ExamHistory from "@/components/profile/ExamHistory";
 import MyCertificates from "@/components/profile/MyCertificates";
+import { 
+  QuickAccessCardSkeleton, 
+  EnrolledCoursesSkeleton,
+  MyCertificatesSkeleton,
+  ExamHistorySkeleton
+} from '@/components/skeletons/ProfileSkeletons';
+import prisma from '@/lib/prisma';
 
+// This is now the main layout component for the profile page
 export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user?.id) {
     redirect("/login");
   }
 
-  // Fetch all student data in one go, with a new sort order
-  const student = await prisma.user.findUnique({
+  // Fetch only the minimal data needed for the header instantly
+  const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    include: {
-      enrollments: {
-        // THIS IS THE KEY CHANGE: Sort by updatedAt to find the most recent course
-        orderBy: {
-          enrolledAt: 'desc' 
-        },
-        include: {
-          course: {
-            include: {
-              lessons: {
-                orderBy: { order: 'asc' } // Ensure lessons within the course are ordered correctly
-              },
-              _count: {
-                select: { lessons: true }
-              }
-            }
-          }
-        },
-      },
-    },
+    select: {
+        name: true,
+        role: true,
+        _count: {
+            select: { enrollments: true }
+        }
+    }
   });
 
-  if (!student) {
+  if (!user) {
     redirect("/login");
   }
-  
-  // The most recently active enrollment will be the first in the array, if it exists.
-  const mostRecentEnrollment = student.enrollments.length > 0 ? student.enrollments[0] : null;
 
   return (
     <div className="min-h-[calc(100vh-5rem)] bg-background p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">
+        {/* ProfileHeader renders instantly with minimal data */}
         <ProfileHeader 
-          name={student.name}
-          role={student.role}
-          enrollmentCount={student.enrollments.length}
+          name={user.name}
+          role={user.role}
+          enrollmentCount={user._count.enrollments}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-2 space-y-8">
-            {/* The new Quick Access card gets the most prominent spot */}
-            <QuickAccessCard mostRecentEnrollment={mostRecentEnrollment} />
+            {/* Each data-heavy component is wrapped in Suspense */}
+            <Suspense fallback={<QuickAccessCardSkeleton />}>
+              <QuickAccessCard />
+            </Suspense>
             
-            {/* The full list of courses is now secondary */}
-            <EnrolledCourses enrollments={student.enrollments} />
+            <Suspense fallback={<EnrolledCoursesSkeleton />}>
+              <EnrolledCourses />
+            </Suspense>
           </div>
 
           <div className="space-y-8">
-            <MyCertificates />
-            <ExamHistory examHistory={student.examHistory} />
+            <Suspense fallback={<MyCertificatesSkeleton />}>
+               <MyCertificates />
+            </Suspense>
+
+            <Suspense fallback={<ExamHistorySkeleton />}>
+              <ExamHistory />
+            </Suspense>
+            
+            {/* ProfileActions is static and doesn't need Suspense */}
             <ProfileActions />
           </div>
         </div>

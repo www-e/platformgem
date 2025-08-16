@@ -6,7 +6,7 @@
    - Environments: .env
 
    Creating an optimized production build ...
- ✓ Compiled successfully in 5.0s
+ ✓ Compiled successfully in 14.0s
    Linting and checking validity of types ...
 
 Failed to compile.
@@ -61,10 +61,13 @@ Failed to compile.
 6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
 
 ./src/app/api/admin/dashboard-stats/route.ts
-6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+11:45  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
 
 ./src/app/api/admin/logs/stats/route.ts
 6:27  Warning: 'request' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/admin/payments/export/route.ts
+26:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
 ./src/app/api/admin/payments/stats/route.ts
 7:27  Warning: 'request' is defined but never used.  @typescript-eslint/no-unused-vars
@@ -77,10 +80,7 @@ Failed to compile.
 115:31  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 121:31  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 123:47  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-149:49  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-
-./src/app/api/admin/students/route.ts
-28:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+149:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
 ./src/app/api/admin/user-stats/route.ts
 6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
@@ -104,24 +104,24 @@ Failed to compile.
 101:25  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
 ./src/app/api/payments/initiate/route.ts
-144:33  Warning: 'getPaymentTimeRemaining' is assigned a value but never used.  @typescript-eslint/no-unused-vars
-250:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+141:33  Warning: 'getPaymentTimeRemaining' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+247:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
 ./src/app/api/payments/webhook/route.ts
-20:16  Warning: 'processWebhookWithRetry' is defined but never used.  @typescript-eslint/no-unused-vars
-21:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-22:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-23:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-25:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-27:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-78:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-171:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-238:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-510:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-602:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+19:16  Warning: 'processWebhookWithRetry' is defined but never used.  @typescript-eslint/no-unused-vars
+20:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+21:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+22:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+24:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+26:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+77:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+170:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+237:20  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+509:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+601:54  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
 ./src/app/api/professor/dashboard-stats/route.ts
-6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+11:45  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
 94:14  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 116:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 141:18  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
@@ -167,7 +167,7 @@ Failed to compile.
 6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
 
 ./src/app/api/student/enrolled-courses/route.ts
-6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
+11:45  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
 
 ./src/app/api/student/payment-history/route.ts
 6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
@@ -175,8 +175,89 @@ Failed to compile.
 ./src/app/api/student/payment-stats/route.ts
 6:27  Warning: '_request' is defined but never used.  @typescript-eslint/no-unused-vars
 
+./src/app/api/users/route.ts
+29:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
 ./src/app/courses/[courseId]/payment/success/page.tsx
 5:38  Warning: 'useRouter' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/audit/analyzers/CompatibilityAnalyzer.ts
+319:11  Warning: 'sessionCount' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+366:11  Error: 'dataConsistency' is never reassigned. Use 'const' instead.  prefer-const
+390:11  Warning: 'crudCount' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+666:48  Warning: 'fromFile' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/audit/analyzers/IntegrationAnalyzer.ts
+14:3  Warning: 'Finding' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/audit/analyzers/PerformanceAnalyzer.ts
+301:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+386:45  Warning: 'endpoint' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/audit/cli/audit-cli.ts
+130:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+130:60  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+280:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+289:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/audit/reporters/AuditReporter.ts
+450:40  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+612:44  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/audit/run-compatibility-test.js
+4:12  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+5:14  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+76:11  Warning: 'libFiles' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./src/audit/run-integration-test.js
+4:22  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+5:12  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+6:14  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+74:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/audit/run-performance-test.js
+4:12  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+5:14  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+
+./src/audit/test-audit.ts
+4:49  Warning: 'AuditPhase' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/audit/test-compatibility.js
+4:12  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+5:14  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+
+./src/audit/test-complete-system.js
+4:12  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+5:7  Warning: 'path' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+5:14  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+
+./src/audit/test-integration-simple.js
+4:12  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+5:14  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+
+./src/audit/test-performance.js
+4:12  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+5:14  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+
+./src/audit/types/index.ts
+88:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+97:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+161:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+162:11  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/audit/validators/ProductionReadinessValidator.ts
+161:18  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+175:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+175:76  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+188:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+191:71  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+237:16  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+264:11  Error: 'dataValidation' is never reassigned. Use 'const' instead.  prefer-const
+274:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/audit/verify-structure.js
+4:12  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
+5:14  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
 
 ./src/components/admin/analytics/AnalyticsDashboard.tsx
 53:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
@@ -208,11 +289,24 @@ Failed to compile.
 ./src/components/admin/payment-management/PaymentListItem.tsx
 42:9  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
 
+./src/components/admin/student-detail/CertificateList.tsx
+9:17  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
 ./src/components/admin/student-detail/EnrollmentList.tsx
-43:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+9:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+26:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
 
 ./src/components/admin/student-detail/PaymentList.tsx
-44:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+10:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+28:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/admin/student-detail/StudentDataTabs.tsx
+7:10  Warning: 'Enrollment' is defined but never used.  @typescript-eslint/no-unused-vars
+7:22  Warning: 'Payment' is defined but never used.  @typescript-eslint/no-unused-vars
+7:31  Warning: 'Certificate' is defined but never used.  @typescript-eslint/no-unused-vars
+11:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+12:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+13:17  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
 ./src/components/admin/SystemLogs.tsx
 61:10  Warning: 'selectedLog' is assigned a value but never used.  @typescript-eslint/no-unused-vars
@@ -437,7 +531,7 @@ Failed to compile.
 12:3  Warning: 'Clock' is defined but never used.  @typescript-eslint/no-unused-vars
 
 ./src/components/profile/ExamHistory.tsx
-24:30  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+31:30  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
 ./src/components/profile/MyCertificates.tsx
 11:3  Warning: 'Download' is defined but never used.  @typescript-eslint/no-unused-vars
@@ -531,26 +625,39 @@ Failed to compile.
 ./src/lib/animations.ts
 250:48  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
+./src/lib/api/auth.ts
+94:41  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
 ./src/lib/api/courses.ts
 37:16  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 188:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/api/database.ts
+70:41  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+86:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
 ./src/lib/api/payments.ts
 229:23  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 230:22  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 275:29  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
-./src/lib/api-error-handler.ts
-10:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-16:41  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-23:37  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-32:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+./src/lib/api/query-builders.ts
+60:4  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+76:98  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+97:83  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+124:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
-./src/lib/api-utils.ts
-4:34  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-10:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-29:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-53:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+./src/lib/api/validation.ts
+78:12  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+90:43  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/lib/api-response.ts
+9:34  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+15:15  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+47:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+170:39  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+207:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+219:24  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
 ./src/lib/auth-utils.ts
 83:26  Warning: 'allowedRoles' is defined but never used.  @typescript-eslint/no-unused-vars
@@ -623,8 +730,7 @@ Prefer explicitly defining any function parameters and return type.  @typescript
 3:10  Warning: 'UserRole' is defined but never used.  @typescript-eslint/no-unused-vars
 
 ./src/lib/services/course-access.service.ts
-20:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
-33:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+99:58  Error: A `require()` style import is forbidden.  @typescript-eslint/no-require-imports
 
 ./src/lib/services/course-service.ts
 20:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
@@ -635,9 +741,6 @@ Prefer explicitly defining any function parameters and return type.  @typescript
 ./src/lib/services/enrollment/query.service.ts
 56:75  Warning: 'vh' is defined but never used.  @typescript-eslint/no-unused-vars
 
-./src/lib/services/enrollment/types.ts
-3:10  Warning: 'UserRole' is defined but never used.  @typescript-eslint/no-unused-vars
-
 ./src/lib/services/enrollment/webhook.service.ts
 164:63  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 205:65  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
@@ -645,8 +748,9 @@ Prefer explicitly defining any function parameters and return type.  @typescript
 ./src/lib/services/logging.service.ts
 9:31  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
-./src/lib/shared-utils.ts
-59:47  Warning: 'type' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+./src/lib/types/course-access.ts
+21:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+35:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
 
 ./src/lib/webhook-processor.ts
 25:12  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any

@@ -3,22 +3,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookMarked } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { auth } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 
-// Define a specific type for the enrollment data this component expects
-type EnrollmentWithCourse = {
-  course: {
-    id: string;
-    title: string;
-    _count: { lessons: number };
-  };
-  completedLessonIds: string[];
-};
+// This is now an async Server Component
+export default async function EnrolledCourses() {
+  const session = await auth();
+  if (!session?.user?.id) return null;
 
-interface EnrolledCoursesProps {
-  enrollments: EnrollmentWithCourse[];
-}
+  // Fetch only the enrollments data for THIS component
+  const enrollments = await prisma.enrollment.findMany({
+    where: { userId: session.user.id },
+    orderBy: { enrolledAt: 'desc' },
+    include: {
+      course: {
+        select: {
+          id: true,
+          title: true,
+          _count: { select: { lessons: true } },
+        },
+      },
+    },
+  });
 
-export default function EnrolledCourses({ enrollments }: EnrolledCoursesProps) {
   return (
     <Card className="bg-card">
       <CardHeader>

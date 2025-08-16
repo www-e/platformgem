@@ -1,14 +1,21 @@
 // src/components/profile/ExamHistory.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ClipboardCheck, Target } from "lucide-react";
-import { JsonValue } from "@prisma/client/runtime/library";
+import { auth } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 
-interface ExamHistoryProps {
-  examHistory: JsonValue;
-}
+// This is now an async Server Component
+export default async function ExamHistory() {
+  const session = await auth();
+  if (!session?.user?.id) return null;
 
-export default function ExamHistory({ examHistory }: ExamHistoryProps) {
-  const exams = Array.isArray(examHistory) ? examHistory : [];
+  // Fetch only the exam history for THIS component
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { examHistory: true }
+  });
+  
+  const exams = Array.isArray(user?.examHistory) ? user.examHistory : [];
 
   return (
     <Card className="bg-card">

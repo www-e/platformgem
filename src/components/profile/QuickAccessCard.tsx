@@ -3,46 +3,53 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { History, PlayCircle } from "lucide-react";
 import Link from "next/link";
-import { Lesson } from "@prisma/client";
+import { auth } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 
-// Define a more specific type for the prop this component expects
-type EnrollmentWithCourseAndLessons = {
-  course: {
-    id: string;
-    title: string;
-    lessons: Lesson[]; // We need the full lesson objects here
-    _count: { lessons: number };
-  };
-  completedLessonIds: string[];
-} | null;
+// This is now an async Server Component
+export default async function QuickAccessCard() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return null; // Should not happen if page is protected, but good practice
+  }
 
-interface QuickAccessCardProps {
-  mostRecentEnrollment: EnrollmentWithCourseAndLessons;
-}
+  // Fetch only the most recent enrollment for THIS component
+  const mostRecentEnrollment = await prisma.enrollment.findFirst({
+    where: { userId: session.user.id },
+    orderBy: { enrolledAt: 'desc' },
+    include: {
+      course: {
+        include: {
+          lessons: {
+            orderBy: { order: 'asc' },
+            select: { id: true, order: true } // Select only what's needed
+          },
+          _count: {
+            select: { lessons: true }
+          }
+        }
+      }
+    }
+  });
 
-export default function QuickAccessCard({ mostRecentEnrollment }: QuickAccessCardProps) {
   if (!mostRecentEnrollment) {
-    return null; // Don't render anything if the user has no enrollments
+    return null; // Don't render if no enrollments
   }
 
   const { course, completedLessonIds } = mostRecentEnrollment;
-  const totalLessons = course.lessons.length;
+  const totalLessons = course._count.lessons;
   const progress = totalLessons > 0 ? (completedLessonIds.length / totalLessons) * 100 : 0;
 
-  // --- Logic to find the next lesson ---
   let nextLesson = null;
-  // Find the first lesson in the ordered list that is NOT in the completed set
   for (const lesson of course.lessons) {
     if (!completedLessonIds.includes(lesson.id)) {
       nextLesson = lesson;
       break;
     }
   }
-  // If all lessons are complete, default to the last lesson
   if (!nextLesson && totalLessons > 0) {
     nextLesson = course.lessons[totalLessons - 1];
   }
-  // --- End of logic ---
 
   return (
     <Card className="bg-card border-primary/20 border-2 card-hover-effect">

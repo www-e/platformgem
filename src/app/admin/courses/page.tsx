@@ -3,10 +3,11 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback} from "@/components/ui/avatar";
+import Image from 'next/image';
 import {
   ModernFilters,
   FilterOption,
@@ -24,10 +25,8 @@ import {
   Calendar,
   TrendingUp,
   Star,
-  Clock,
 } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { formatAdminDate } from "@/lib/date-utils";
 import {
   DropdownMenu,
@@ -196,10 +195,12 @@ export default function CoursesPage() {
         <div className="relative">
           <div className="aspect-video bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
             {course.thumbnailUrl ? (
-              <img
+              <Image
                 src={course.thumbnailUrl}
                 alt={course.title}
                 className="w-full h-full object-cover"
+                width={300}
+                height={300}
               />
             ) : (
               <BookOpen className="w-12 h-12 text-primary/40" />
