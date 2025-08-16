@@ -83,10 +83,7 @@ export async function validateRequestBody<T>(
     );
   }
 }
-
-/**
- * Check if validation result is an error
- */
 export function isValidationError(result: unknown): result is ReturnType<typeof createErrorResponse> {
-  return result && typeof result.json === 'function';
+  // Check if result is a non-null object that has a 'json' property which is a function.
+  return typeof result === 'object' && result !== null && typeof (result as { json?: unknown }).json === 'function';
 }

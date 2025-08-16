@@ -1,5 +1,6 @@
 // src/lib/types/course-access.ts
 // Unified course access types to eliminate duplication
+import { Prisma } from '@prisma/client'; // Import Prisma
 
 /**
  * Unified course access result interface
@@ -18,7 +19,8 @@ export interface CourseAccessResult {
   course?: {
     id: string;
     title: string;
-    price: number | { toNumber(): number };
+    // FIX: Changed type to Prisma.Decimal | null to match the actual data type from the service.
+    price: Prisma.Decimal | null;
     currency: string;
     isPublished: boolean;
     professorId: string;
@@ -32,7 +34,8 @@ export interface CourseAccessResult {
   payment?: {
     id: string;
     status: string;
-    amount: number | { toNumber(): number };
+    // FIX: Changed type to Prisma.Decimal | null as well.
+    amount: Prisma.Decimal | null;
   };
   // Additional fields for enhanced access checking
   accessType?: 'free' | 'paid' | 'enrolled' | 'owner' | 'admin';

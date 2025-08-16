@@ -89,6 +89,10 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
     ...student,
     enrollments: student.enrollments.map(enrollment => ({
       ...enrollment,
+      user: { // Add this user object
+          id: student.id,
+          name: student.name
+      },
       course: {
         ...enrollment.course,
         price: enrollment.course.price ? Number(enrollment.course.price) : null

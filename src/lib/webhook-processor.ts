@@ -1,24 +1,40 @@
 // src/lib/webhook-processor.ts
 import prisma from "@/lib/prisma";
 import crypto from "crypto";
+import { PaymentStatus } from "@prisma/client"; // Import the enum
 
+// Define a precise type for the webhook payload object
+interface WebhookTransactionObject {
+  id: number;
+  amount_cents: number;
+  currency: string;
+  success: boolean;
+  pending?: boolean;
+  refunded?: boolean;
+  order?: {
+    merchant_order_id: string;
+  };
+  source_data?: {
+    type: string;
+    pan?: string;
+  };
+}
+
+// Define the overall payload structure
 export interface WebhookPayload {
   type: string;
-  obj: {
-    id: string;
-    amount_cents: number;
-    currency: string;
-    success: boolean;
-    pending?: boolean;
-    refunded?: boolean;
-    order?: {
-      merchant_order_id: string;
-    };
-    source_data?: {
-      type: string;
-      pan?: string;
-    };
-  };
+  obj: WebhookTransactionObject;
+}
+
+function isWebhookPayload(payload: unknown): payload is WebhookPayload {
+  return (
+    typeof payload === 'object' &&
+    payload !== null &&
+    'type' in payload &&
+    'obj' in payload &&
+    typeof (payload as { obj: unknown }).obj === 'object' &&
+    (payload as { obj: unknown }).obj !== null
+  );
 }
 
 export async function processWebhookPayload(
@@ -40,8 +56,8 @@ export async function processWebhookPayload(
     throw new Error("Invalid webhook signature");
   }
 
-  // Validate payload structure
-  if (!payload.type || !payload.obj) {
+  // Validate payload structure using the type guard
+  if (!isWebhookPayload(payload)) {
     throw new Error("Invalid webhook payload structure");
   }
 
@@ -72,17 +88,17 @@ export async function processWebhookPayload(
   }
 
   // Determine payment status based on transaction data
-  let newStatus: string;
+  let newStatus: PaymentStatus; // Use the PaymentStatus enum
   let failureReason: string | null = null;
 
   if (transaction.success && !transaction.pending && !transaction.refunded) {
-    newStatus = "COMPLETED";
+    newStatus = PaymentStatus.COMPLETED;
   } else if (transaction.pending) {
-    newStatus = "PROCESSING";
+    newStatus = PaymentStatus.PENDING; // or PaymentStatus.PROCESSING if you have it
   } else if (transaction.refunded) {
-    newStatus = "REFUNDED";
+    newStatus = PaymentStatus.REFUNDED;
   } else {
-    newStatus = "FAILED";
+    newStatus = PaymentStatus.FAILED;
     failureReason = "Payment failed at PayMob";
   }
 
@@ -91,7 +107,7 @@ export async function processWebhookPayload(
     where: { id: paymentId },
     data: {
       status: newStatus,
-      paymobTransactionId: transaction.id,
+      paymobTransactionId: BigInt(transaction.id), // Ensure it's BigInt
       paymentMethod: transaction.source_data?.type?.toUpperCase() || "CARD",
       failureReason,
       updatedAt: new Date(),
@@ -99,7 +115,7 @@ export async function processWebhookPayload(
   });
 
   // Handle enrollment creation for completed payments
-  if (newStatus === "COMPLETED" && payment.status !== "COMPLETED") {
+  if (newStatus === PaymentStatus.COMPLETED && payment.status !== PaymentStatus.COMPLETED) {
     try {
       // Check if enrollment already exists
       const existingEnrollment = await prisma.enrollment.findFirst({

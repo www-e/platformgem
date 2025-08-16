@@ -7,6 +7,7 @@ import {
   PayMobOrderResponse,
   PayMobPaymentKeyResponse,
   PayMobBillingData,
+  PayMobTransactionResponse
 } from "./types";
 // Import utility functions from utils file
 import {
@@ -197,7 +198,7 @@ export const payMobService = {
     const { validateWebhookPayload } = await import("./webhook.service");
     return validateWebhookPayload(data);
   },
-  async verifyWebhookSignature(webhookObject: unknown) {
+  async verifyWebhookSignature(webhookObject: PayMobTransactionResponse) {
     const { verifyWebhookSignature } = await import("./webhook.service");
     return verifyWebhookSignature(webhookObject);
   },

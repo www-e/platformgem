@@ -1,8 +1,24 @@
 // src/lib/paymob/webhook.service.ts
-
 import crypto from "crypto";
 import { paymobConfig } from "./config";
 import { PayMobTransactionResponse } from "./types";
+
+// Define a specific type for the webhook object to avoid 'any' or 'object'
+interface WebhookObjectWithOrder extends PayMobTransactionResponse {
+  order: {
+    id: number;
+    merchant_order_id: string;
+  };
+}
+
+function isValidWebhookObject(obj: unknown): obj is WebhookObjectWithOrder {
+  if (typeof obj !== 'object' || obj === null) return false;
+
+  const potentialOrder = (obj as { order?: unknown }).order;
+  if (typeof potentialOrder !== 'object' || potentialOrder === null) return false;
+
+  return 'id' in potentialOrder && typeof (potentialOrder as { id: unknown }).id === 'number';
+}
 
 /**
  * Constant-time string comparison to prevent timing attacks.
@@ -102,15 +118,8 @@ export function validateWebhookPayload(
   if (!data || typeof data !== "object") return false;
 
   const requiredFields = [
-    "id",
-    "amount_cents",
-    "success",
-    "pending",
-    "currency",
-    "integration_id",
-    "order",
-    "created_at",
-    "hmac",
+    "id", "amount_cents", "success", "pending",
+    "currency", "integration_id", "order", "created_at", "hmac",
   ];
 
   for (const field of requiredFields) {
@@ -122,7 +131,9 @@ export function validateWebhookPayload(
     }
   }
 
-  if (!data.order || typeof data.order !== "object" || !("id" in data.order)) {
+  // The isValidWebhookObject function already confirms the structure.
+  // No need for the second check.
+  if (!isValidWebhookObject(data)) {
     console.error(
       "Webhook validation failed: Invalid or missing order object/ID"
     );

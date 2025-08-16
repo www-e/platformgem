@@ -2,18 +2,27 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Course } from "@/lib/api/courses";
+import { Prisma } from '@prisma/client'; // Import Prisma to use Decimal type
 import { useAuth } from "@/hooks/useAuth";
 import {
   CreditCard,
   CheckCircle,
   UserCheck,
+  Play, // Added for enrolled state
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+// Define a more specific type for the course prop
+interface PaymentButtonCourseProps {
+  id: string;
+  title: string;
+  price: Prisma.Decimal | number | null; // Accept Decimal or number
+  currency: string;
+  isEnrolled?: boolean; // Prop for enrollment status
+}
 interface PaymentButtonProps {
-  course: Course;
+  course: PaymentButtonCourseProps;
   variant?: "primary" | "secondary" | "outline" | "ghost" | "destructive";
   size?: "default" | "sm" | "lg";
   className?: string;
@@ -34,9 +43,12 @@ export function PaymentButton({
   const isAdmin = session?.user?.isAdmin;
   const router = useRouter();
 
-  // Format price for display
+  // Convert Decimal to number for calculations and comparisons
+  const coursePriceNumber = typeof course.price === 'number' 
+  ? course.price ?? 0 
+  : course.price ? course.price.toNumber() : 0;
   const formatPrice = () => {
-    if (!course.price || course.price === 0) {
+    if (coursePriceNumber === 0) {
       return "مجاني";
     }
 
@@ -45,59 +57,46 @@ export function PaymentButton({
       currency: course.currency || "EGP",
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
-    }).format(Number(course.price));
+    }).format(coursePriceNumber);
   };
 
-  // Handle button click
   const handleClick = () => {
-    // Check authentication
     if (!isAuthenticated) {
       toast.error("يجب تسجيل الدخول أولاً");
       router.push("/login");
       return;
     }
 
-    // Check user role
     if (!isStudent && !isAdmin) {
       toast.error("غير مصرح لك بشراء الدورات");
       return;
     }
 
-    // Check if already enrolled
     if (course.isEnrolled) {
-      toast.info("أنت مسجل في هذه الدورة بالفعل");
       router.push(`/courses/${course.id}`);
       return;
     }
 
-    // Check if course is free
-    if (!course.price || course.price === 0) {
-      // Handle free enrollment (would need to implement this)
+    if (coursePriceNumber === 0) {
+      // Handle free enrollment logic here or in another function
       toast.info("هذه الدورة مجانية - سيتم تنفيذ التسجيل المباشر");
+      // Example: enrollInFreeCourse(course.id).then(...)
       return;
     }
 
-    // Navigate to payment page for paid courses
     router.push(`/courses/${course.id}/payment`);
   };
 
-  // Handle payment success (called from payment page)
-  const handlePaymentSuccess = () => {
-    toast.success("تم الدفع بنجاح! تم تسجيلك في الدورة.");
-    onPaymentSuccess?.();
-  };
-
-  // Determine button content based on course state
   const getButtonContent = () => {
     if (course.isEnrolled) {
       return {
-        icon: <CheckCircle className="w-4 h-4" />,
-        text: "مسجل بالفعل",
+        icon: <Play className="w-4 h-4" />,
+        text: "اذهب إلى الدورة",
         disabled: false,
       };
     }
 
-    if (!course.price || course.price === 0) {
+    if (coursePriceNumber === 0) {
       return {
         icon: <UserCheck className="w-4 h-4" />,
         text: "التسجيل مجاناً",
@@ -112,35 +111,29 @@ export function PaymentButton({
     };
   };
 
-  // Check if user can access the course
-  const canAccess = () => {
-    if (!isAuthenticated) return false;
-    if (!isStudent && !isAdmin) return false;
-    return true;
-  };
-
   const buttonContent = getButtonContent();
 
   return (
     <Button
-      variant={course.isEnrolled ? "outline" : variant}
+      variant={course.isEnrolled ? "secondary" : variant}
       size={size}
       className={className}
       onClick={handleClick}
-      disabled={buttonContent.disabled || !canAccess()}
+      disabled={buttonContent.disabled}
     >
       {buttonContent.icon}
-      {buttonContent.text}
+      <span className="mr-2">{buttonContent.text}</span>
     </Button>
   );
 }
 
-// Simplified version for quick use
+// Simplified versions can remain, but they need to pass the correct props.
+// We'll assume the parent components will provide the necessary `isEnrolled` property.
 export function BuyNowButton({
   course,
   onPaymentSuccess,
 }: {
-  course: Course;
+  course: PaymentButtonCourseProps;
   onPaymentSuccess?: () => void;
 }) {
   return (
@@ -150,25 +143,6 @@ export function BuyNowButton({
       size="lg"
       className="w-full"
       showPrice={true}
-      onPaymentSuccess={onPaymentSuccess}
-    />
-  );
-}
-
-// Compact version for course cards
-export function CompactPaymentButton({
-  course,
-  onPaymentSuccess,
-}: {
-  course: Course;
-  onPaymentSuccess?: () => void;
-}) {
-  return (
-    <PaymentButton
-      course={course}
-      variant="outline"
-      size="sm"
-      showPrice={false}
       onPaymentSuccess={onPaymentSuccess}
     />
   );

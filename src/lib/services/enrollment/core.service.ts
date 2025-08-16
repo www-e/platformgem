@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import { EnrollmentResult } from './types';
+import { UserRole } from '@prisma/client';
 // Import webhook service functions
 import { 
   createEnrollmentFromPayment as createEnrollmentFromPaymentWebhook,
@@ -179,8 +180,8 @@ export class EnrollmentService {
   static async checkCourseAccess(courseId: string, userId?: string, userRole?: string) {
     // Import and use the access service
     const { checkCourseAccess } = await import('../enrollment/access.service');
-    return checkCourseAccess(courseId, userId, userRole);
-  }
+    return checkCourseAccess(courseId, userId, userRole as UserRole | undefined);
+}
 
   static async createEnrollmentFromPayment(paymentData: {
     courseId: string;

@@ -8,12 +8,9 @@ import { StudentStats } from './student-detail/StudentStats';
 import { StudentContactInfo } from './student-detail/StudentContactInfo';
 import { StudentDataTabs } from './student-detail/StudentDataTabs';
 import PaymentDetailsModal from '@/components/payment/PaymentDetailsModal';
-// R.A.K.A.N's FIX: Importing enums for strong typing in our client models.
 import { PaymentStatus, UserRole, CertificateStatus } from '@prisma/client';
 
-// R.A.K.A.N's NOTE: These types are now perfected. They include every field
-// required by the child components, resolving all prop-drilling errors.
-
+// Define client-safe types for props
 export type ClientCertificate = {
   id: string;
   certificateCode: string;
@@ -39,10 +36,12 @@ export type ClientPayment = {
   };
 };
 
+// FIX: Added the 'user' property to match the expected type in EnrollmentList
 export type ClientEnrollment = {
   id: string;
   progressPercent: number;
   enrolledAt: Date;
+  totalWatchTime: number;
   course: {
     id: string;
     title: string;
@@ -52,6 +51,11 @@ export type ClientEnrollment = {
     professor: {
       name: string;
     };
+  };
+  // This user property is required by the EnrollmentWithCourseDetails type
+  user: {
+      id: string;
+      name: string;
   };
 };
 
@@ -73,13 +77,8 @@ interface StudentDetailProps {
   student: ClientStudent;
 }
 
-/**
- * Main container component for the student detail page.
- */
 export default function AdminStudentDetail({ student }: StudentDetailProps) {
-  const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(
-    null
-  );
+  const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   const handleDeleteStudent = async () => {
@@ -136,20 +135,16 @@ export default function AdminStudentDetail({ student }: StudentDetailProps) {
         onToggleStatus={handleToggleStatus}
         onDelete={handleDeleteStudent}
       />
-
       <StudentStats
         enrollmentsCount={student.enrollments.length}
         certificatesCount={student.certificates.length}
         payments={student.payments}
       />
-
       <StudentContactInfo student={student} />
-
       <StudentDataTabs
         studentData={student}
         onViewPaymentDetails={handleViewPaymentDetails}
       />
-
       <PaymentDetailsModal
         paymentId={selectedPaymentId}
         isOpen={isDetailsModalOpen}

@@ -115,7 +115,7 @@ export interface PayMobTransactionResponse {
   order: {
     id: number;
     merchant_order_id: string;
-    amount_cents: number;
+    amount_cents?: number;
     [key: string]: unknown;
   };
   created_at: string;

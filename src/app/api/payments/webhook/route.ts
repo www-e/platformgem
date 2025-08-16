@@ -10,6 +10,8 @@ import {
 import { Payment } from '@/lib/types/db';
 import type { PaymentWebhook } from '@prisma/client';
 import type { InputJsonValue } from '@prisma/client/runtime/library';
+import { PayMobTransactionResponse } from "@/lib/paymob/types";
+
 
 // R.A.K.A.N'S NOTE: Define the shape of the processed data from our webhook service.
 interface ProcessedWebhookData {
@@ -79,9 +81,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify webhook signature
-    const isValidSignature = await payMobService.verifyWebhookSignature(
-      webhookObject
-    );
+    const isValidSignature = await payMobService.verifyWebhookSignature(webhookObject as PayMobTransactionResponse);
     if (!isValidSignature) {
       console.error(
         "Invalid PayMob webhook signature for transaction:",

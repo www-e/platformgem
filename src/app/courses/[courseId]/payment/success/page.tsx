@@ -2,22 +2,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams, useRouter } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { CheckCircle, ArrowLeft, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import { coursesApi, Course } from "@/lib/api/courses";
+// FIX: Import the detailed API type instead of the base Prisma type
+import { coursesApi, ApiCourseWithTypedLessons } from "@/lib/api/courses";
 
 export default function PaymentSuccessPage() {
   const params = useParams();
   const searchParams = useSearchParams();
-  // const router = useRouter(); // Unused for now
   
   const courseId = params.courseId as string;
   const paymentId = searchParams.get('paymentId');
   
-  const [course, setCourse] = useState<Course | null>(null);
+  // FIX: Use the correct, detailed type for the state
+  const [course, setCourse] = useState<ApiCourseWithTypedLessons | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -63,6 +64,7 @@ export default function PaymentSuccessPage() {
             <div className="bg-muted/50 rounded-lg p-4 mb-6">
               <h3 className="font-semibold">{course.title}</h3>
               <p className="text-sm text-muted-foreground">
+                {/* This will now work correctly */}
                 بواسطة: {course.professor.name}
               </p>
             </div>

@@ -4,12 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen } from "lucide-react";
 import { formatCurrency } from "@/lib/formatters";
-import { EnrollmentWithCourseDetails } from "@/lib/types/db";
+import { ClientEnrollment } from '../AdminStudentDetail';
 
 interface EnrollmentListProps {
-  enrollments: EnrollmentWithCourseDetails[];
+  enrollments: ClientEnrollment[];
 }
-
 export function EnrollmentList({ enrollments }: EnrollmentListProps) {
   return (
     <Card>

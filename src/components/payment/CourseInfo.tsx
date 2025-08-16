@@ -3,17 +3,17 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Course } from "@/lib/api/courses";
+// FIX: Use the correct, detailed type
+import { ApiCourseWithTypedLessons } from "@/lib/api/courses";
 import { 
-  Play, 
-  Clock, 
+  BookOpen,
   Users, 
   Star,
-  BookOpen
 } from "lucide-react";
 
 interface CourseInfoProps {
-  course: Course;
+  // FIX: Update the prop type to include all necessary data
+  course: ApiCourseWithTypedLessons;
 }
 
 export function CourseInfo({ course }: CourseInfoProps) {
@@ -35,7 +35,6 @@ export function CourseInfo({ course }: CourseInfoProps) {
           <CardTitle className="text-lg">ملخص الطلب</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Course Image */}
           <div className="aspect-video rounded-lg overflow-hidden">
             <img 
               src={course.thumbnailUrl} 
@@ -46,46 +45,40 @@ export function CourseInfo({ course }: CourseInfoProps) {
               }}
             />
           </div>
-
-          {/* Course Details */}
           <div className="space-y-3">
             <h3 className="font-semibold text-lg leading-tight">
               {course.title}
             </h3>
-            
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              {/* This will now work */}
               <Users className="w-4 h-4" />
               <span>بواسطة: {course.professor.name}</span>
             </div>
-
             <Badge variant="outline" className="w-fit">
+              {/* This will now work */}
               {course.category.name}
             </Badge>
-
             {course.description && (
               <p className="text-sm text-muted-foreground line-clamp-3">
                 {course.description}
               </p>
             )}
           </div>
-
-          {/* Course Stats */}
           <div className="grid grid-cols-2 gap-4 pt-4 border-t">
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-                <Play className="w-4 h-4" />
+                <BookOpen className="w-4 h-4" />
+                 {/* This will now work */}
                 <span>{course._count.lessons} درس</span>
               </div>
             </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-                <BookOpen className="w-4 h-4" />
-                <span>شهادة إتمام</span>
-              </div>
-            </div>
+             <div className="text-center">
+               <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                 <Star className="w-4 h-4" />
+                 <span>شهادة إتمام</span>
+               </div>
+             </div>
           </div>
-
-          {/* Price */}
           <div className="pt-4 border-t">
             <div className="flex items-center justify-between">
               <span className="text-lg font-semibold">السعر:</span>
