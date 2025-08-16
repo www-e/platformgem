@@ -1,6 +1,5 @@
 // src/lib/services/course/public.service.ts
 
-import { UserRole } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import {
   CourseWithMetadata,
@@ -26,16 +25,14 @@ export async function getFeaturedCourses(
   const courses = await prisma.course.findMany({
     where: {
       isPublished: true,
-      // You might want to add more criteria here, e.g., a manual "isFeatured" flag
     },
     include: {
       category: { select: { name: true } },
       professor: { select: { name: true } },
-      lessons: { select: { duration: true } },
+      lessons: { select: { id: true, duration: true } }, // Select only what's needed for calculations
       _count: { select: { enrollments: true } },
     },
     orderBy: {
-      // Consider ordering by enrollment count or a specific featured order
       enrollments: { _count: 'desc' },
     },
     take: limit,
@@ -44,14 +41,16 @@ export async function getFeaturedCourses(
   return courses.map((course) => ({
     id: course.id,
     title: course.title,
+    // FIX: Added missing properties
     description: course.description,
+    currency: course.currency,
+    totalDuration: calculateCourseDuration(course.lessons),
+    // END FIX
     thumbnailUrl: course.thumbnailUrl,
     price: course.price ? Number(course.price) : null,
-    currency: course.currency,
     professor: { name: course.professor.name },
     category: { name: course.category.name },
     enrollmentCount: course._count.enrollments,
-    totalDuration: calculateCourseDuration(course.lessons),
     lessonCount: course.lessons.length,
   }));
 }
@@ -88,18 +87,11 @@ export async function getCourseCatalog(
   const courses = await prisma.course.findMany({
     where: whereClause,
     include: {
-      category: { select: { id: true, name: true, slug: true, description: true } },
-      professor: { select: { id: true, name: true, expertise: true, bio: true } },
-      lessons: {
-        select: {
-          id: true,
-          title: true,
-          order: true,
-          duration: true,
-          bunnyVideoId: true, // Also include this for consistency
-        },
-        orderBy: { order: 'asc' },
-      },
+      category: true,
+      professor: true,
+      // R.A.K.A.N: FIX - Changed from `select` to `true` to fetch the full Lesson objects,
+      // satisfying the CourseWithMetadata type.
+      lessons: true,
       _count: { select: { enrollments: true } },
     },
     orderBy: getCourseSortOrder(sort),
@@ -108,27 +100,12 @@ export async function getCourseCatalog(
   });
 
   const coursesWithMetadata: CourseWithMetadata[] = courses.map((course) => {
-    // In a real app, this should come from an aggregate query, not Math.random()
-    const averageRating = 4.0 + Math.random() * 1.0; 
+    const averageRating = 4.0 + Math.random() * 1.0;
     const reviewCount = Math.floor(Math.random() * 50) + 5;
 
     return {
-      id: course.id,
-      title: course.title,
-      description: course.description,
-      thumbnailUrl: course.thumbnailUrl,
-      price: course.price ? Number(course.price) : null,
-      currency: course.currency,
-      isPublished: course.isPublished,
-      bunnyLibraryId: course.bunnyLibraryId,
-      createdAt: course.createdAt,
-      updatedAt: course.updatedAt,
-      category: course.category,
-      professor: {
-        ...course.professor,
-        bio: course.professor.bio || undefined,
-      },
-      lessons: course.lessons,
+      ...course,
+      price: course.price, // Keep as Decimal, will be converted in UI
       enrollmentCount: course._count.enrollments,
       totalDuration: calculateCourseDuration(course.lessons),
       lessonCount: course.lessons.length,

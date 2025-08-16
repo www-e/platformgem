@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
+import { PaymentActionData } from '@/lib/types/db';
 
 // Define the types co-located with the hook for clarity
 export interface Payment {
@@ -134,7 +135,7 @@ export function useAdminPayments(): UseAdminPaymentsReturn {
   const handlePaymentAction = async (
     paymentId: string,
     action: string,
-    additionalData?: any
+    additionalData?: PaymentActionData 
   ) => {
     try {
       const response = await fetch(`/api/admin/payments/${paymentId}`, {

@@ -21,7 +21,7 @@ export function useCourseCard(course: CourseWithMetadata, userRole?: UserRole, u
     setIsLoading(true);
     try {
       // Check if course is free or paid
-      const isFree = !course.price || course.price <= 0;
+      const isFree = !course.price || Number(course.price) <= 0;
       
       if (isFree) {
         // Free enrollment

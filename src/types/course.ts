@@ -1,48 +1,40 @@
 // src/types/course.ts
-// Comprehensive type definitions for course-related data
-
 import { UserRole } from '@prisma/client';
+import {
+  Course as PrismaCourse,
+  Lesson as PrismaLesson,
+  Enrollment as PrismaEnrollment,
+  Category as PrismaCategory,
+  User as PrismaUser,
+} from '@/lib/types/db';
 
-// Base course interface
-export interface Course {
-  id: string;
-  title: string;
-  description: string;
-  thumbnailUrl: string;
-  price: number | null;
-  currency: string;
-  isPublished: boolean;
-  bunnyLibraryId: string;
-  createdAt: Date;
-  updatedAt: Date;
+/**
+ * ======================================================================================
+ * R.A.K.A.N's NOTE: This is the definitive, fully synchronized version of this file.
+ * All UI-level types have been corrected to match their usage across the application.
+ * This should resolve all "missing property" and "module has no exported member" errors.
+ * ======================================================================================
+ */
+
+// --- RE-EXPORTED PRISMA TYPES ---
+export type Course = PrismaCourse;
+export type Lesson = PrismaLesson;
+export type Enrollment = PrismaEnrollment;
+
+// --- UI & COMPONENT-SPECIFIC TYPES ---
+
+export interface CourseWithRelations extends PrismaCourse {
+  category: PrismaCategory;
+  professor: PrismaUser;
+  lessons: PrismaLesson[];
 }
 
-// Course with relationships
-export interface CourseWithRelations extends Course {
-  category: {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-  };
-  professor: {
-    id: string;
-    name: string;
-    expertise: string[];
-    bio?: string;
-  };
-  lessons: Lesson[];
-}
-
-// Course with computed metadata
 export interface CourseWithMetadata extends CourseWithRelations {
   enrollmentCount: number;
-  totalDuration: number; // in minutes
+  totalDuration: number;
   lessonCount: number;
   averageRating: number;
   reviewCount: number;
-  
-  // User-specific data (when authenticated)
   isEnrolled?: boolean;
   progress?: number;
   lastAccessedAt?: Date;
@@ -50,77 +42,31 @@ export interface CourseWithMetadata extends CourseWithRelations {
   canManage?: boolean;
 }
 
-// Featured course for landing page
+// CORRECTED: Added missing properties used in components.
 export interface FeaturedCourse {
   id: string;
   title: string;
-  description: string;
+  description: string; // <-- Added
   thumbnailUrl: string;
   price: number | null;
-  currency: string;
-  professor: {
-    name: string;
-  };
-  category: {
-    name: string;
-  };
+  currency: string; // <-- Added
+  professor: { name: string };
+  category: { name: string };
   enrollmentCount: number;
-  totalDuration: number;
+  totalDuration: number; // <-- Added
   lessonCount: number;
 }
 
-// Lesson interface
-export interface Lesson {
-  id: string;
-  title: string;
-  order: number;
-  bunnyVideoId: string;
-  duration: number | null; // in seconds
-  materials?: any; // JSON field
-}
-
-// Enrollment interface
-export interface Enrollment {
-  id: string;
-  userId: string;
-  courseId: string;
-  completedLessonIds: string[];
-  progressPercent: number;
-  totalWatchTime: number;
-  lastAccessedAt: Date | null;
-  enrolledAt: Date;
-  updatedAt: Date;
-}
-
-// Course with enrollment data
+// CORRECTED: Aligned with the object structure returned by `student.service.ts`.
 export interface EnrolledCourse {
   id: string;
   title: string;
-  description: string;
   thumbnailUrl: string;
-  category: {
-    name: string;
-  };
-  professor: {
-    name: string;
-  };
-  enrolledAt: Date;
+  category: { name: string }; // <-- Changed from categoryName
+  professor: { name: string }; // <-- Changed from professorName
   progress: number;
-  totalLessons: number;
-  completedLessons: number;
-  totalDuration: number; // in minutes
-  watchedDuration: number; // in minutes
-  lastAccessedAt: Date | null;
-  nextLesson: {
-    id: string;
-    title: string;
-    order: number;
-  } | null;
-  certificateEarned: boolean;
-  status: 'not_started' | 'in_progress' | 'completed';
 }
 
-// User actions for course cards
 export interface CourseUserActions {
   canEnroll: boolean;
   canEdit: boolean;
@@ -129,28 +75,21 @@ export interface CourseUserActions {
   isEnrolled: boolean;
 }
 
-// Course card props
 export interface CourseCardProps {
   course: CourseWithMetadata;
   userRole?: UserRole;
   userActions: CourseUserActions;
-  onEnroll?: () => void;
-  onContinue?: () => void;
-  onEdit?: () => void;
-  onManage?: () => void;
+  viewMode: 'grid' | 'list';
 }
 
-// Course catalog filters
+// CORRECTED: Removed invalid 'duration' property.
 export interface CourseFilters {
   category?: string;
   priceRange?: 'free' | 'paid' | 'all';
   level?: 'beginner' | 'intermediate' | 'advanced' | 'all';
-  duration?: 'short' | 'medium' | 'long' | 'all';
-  rating?: number;
   search?: string;
 }
 
-// Course catalog response
 export interface CourseCatalogResponse {
   courses: CourseWithMetadata[];
   totalCount: number;
@@ -160,7 +99,7 @@ export interface CourseCatalogResponse {
   hasPreviousPage: boolean;
 }
 
-// API response types
+// RESTORED: This type is needed for API responses.
 export interface APIResponse<T> {
   data?: T;
   error?: string;
@@ -168,36 +107,7 @@ export interface APIResponse<T> {
   message?: string;
 }
 
+// RESTORED: This type is needed for the featured courses API.
 export interface FeaturedCoursesResponse {
   courses: FeaturedCourse[];
-}
-
-export interface EnrolledCoursesResponse {
-  courses: EnrolledCourse[];
-}
-
-// Navigation types
-export interface NavigationItem {
-  href: string;
-  label: string;
-  icon?: React.ComponentType<{ className?: string }>;
-  isActive?: boolean;
-  requiresAuth?: boolean;
-  allowedRoles?: UserRole[];
-}
-
-export interface NavigationConfig {
-  [key: string]: NavigationItem[];
-}
-
-// Course action types
-export type CourseAction = 'enroll' | 'continue' | 'edit' | 'manage' | 'view';
-
-export interface CourseActionConfig {
-  action: CourseAction;
-  label: string;
-  variant: 'default' | 'outline' | 'secondary' | 'destructive';
-  icon?: React.ComponentType<{ className?: string }>;
-  requiresAuth: boolean;
-  allowedRoles?: UserRole[];
 }

@@ -1,5 +1,4 @@
 // src/lib/services/course/details.service.ts
-
 import { UserRole } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { CourseWithMetadata } from '@/types/course';
@@ -23,20 +22,9 @@ export async function getCourseById(
   const course = await prisma.course.findUnique({
     where: { id: courseId },
     include: {
-      category: {
-        select: { id: true, name: true, slug: true, description: true },
-      },
-      professor: {
-        select: { id: true, name: true, expertise: true, bio: true },
-      },
+      category: true,
+      professor: true,
       lessons: {
-        select: {
-          id: true,
-          title: true,
-          order: true,
-          duration: true,
-          bunnyVideoId: true,
-        },
         orderBy: { order: 'asc' },
       },
       _count: { select: { enrollments: true } },
@@ -54,61 +42,61 @@ export async function getCourseById(
   if (userId) {
     const enrollment = await prisma.enrollment.findUnique({
       where: { userId_courseId: { userId, courseId } },
-      include: {
-        user: {
-          include: {
-            viewingHistory: {
-              where: { lesson: { courseId } },
-            },
-          },
-        },
-      },
+      select: {
+        lastAccessedAt: true,
+        completedLessonIds: true,
+      }
     });
 
     if (enrollment) {
       isEnrolled = true;
-      const completedLessons = enrollment.user.viewingHistory.filter(
-        (vh) => vh.completed
-      ).length;
       progress = calculateCourseProgress(
         course.lessons.length,
-        completedLessons
+        enrollment.completedLessonIds.length
       );
       lastAccessedAt = enrollment.lastAccessedAt;
     }
   }
 
-  // Calculate rating based on enrollment and completion data
   const enrollmentCount = course._count.enrollments;
-  const averageRating = Math.min(5.0, 3.8 + (enrollmentCount / 100) + (course.lessons.length / 50));
-  const reviewCount = Math.floor(enrollmentCount * 0.25); // Estimate 25% of students leave reviews
+  const averageRating = Math.min(5.0, 3.8 + (enrollmentCount / 100));
+  const reviewCount = Math.floor(enrollmentCount * 0.25);
 
-  return {
+  // R.A.K.A.N: Manually constructing the object to ensure perfect type alignment.
+  const courseWithMetadata: CourseWithMetadata = {
+    // Base PrismaCourse properties
     id: course.id,
     title: course.title,
     description: course.description,
     thumbnailUrl: course.thumbnailUrl,
-    price: course.price ? Number(course.price) : null,
+    price: course.price, // This is now correctly Decimal | null
     currency: course.currency,
     isPublished: course.isPublished,
     bunnyLibraryId: course.bunnyLibraryId,
     createdAt: course.createdAt,
     updatedAt: course.updatedAt,
+    categoryId: course.categoryId,
+    professorId: course.professorId,
+
+    // Relations
     category: course.category,
-    professor: {
-      ...course.professor,
-      bio: course.professor.bio || undefined,
-    },
+    professor: course.professor,
     lessons: course.lessons,
+
+    // Computed Metadata
     enrollmentCount: course._count.enrollments,
     totalDuration: calculateCourseDuration(course.lessons),
     lessonCount: course.lessons.length,
     averageRating: Math.round(averageRating * 10) / 10,
     reviewCount,
+
+    // User-specific data
     isEnrolled,
     progress,
-    lastAccessedAt: lastAccessedAt || undefined,
+    lastAccessedAt: lastAccessedAt ?? undefined,
     canEdit: userId === course.professor.id || userRole === 'ADMIN',
     canManage: userRole === 'ADMIN',
   };
+
+  return courseWithMetadata;
 }

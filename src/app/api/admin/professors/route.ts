@@ -2,7 +2,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
+import { Course, Payment, ProgressMilestone } from "@/lib/types/db";
+// R.A.K.A.N: Define the shape of the data we query from Prisma.
+type CourseWithStats = Course & {
+  payments: Payment[];
+  progressMilestones: Pick<ProgressMilestone, "userId">[]; // Only need userId for unique count
+  _count: {
+    enrollments: number;
+    certificates: number;
+  };
+};
 
+type ProfessorWithCourses = Prisma.UserGetPayload<{
+  include: {
+    ownedCourses: {
+      include: {
+        payments: true;
+        progressMilestones: { select: { userId: true } };
+        _count: {
+          select: { enrollments: true; certificates: true };
+        };
+      };
+    };
+  };
+}>;
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
@@ -22,7 +46,7 @@ export async function GET(request: NextRequest) {
     const dateTo = searchParams.get("dateTo");
 
     // Build where clause
-    const whereClause: any = {
+    const whereClause: Prisma.UserWhereInput = {
       role: "PROFESSOR",
     };
 
@@ -56,50 +80,51 @@ export async function GET(request: NextRequest) {
       whereClause.ownedCourses = { none: {} };
     }
 
-    const [professorsRaw, totalCount] = await prisma.$transaction([
-      prisma.user.findMany({
-        where: whereClause,
-        include: {
-          ownedCourses: {
-            include: {
-              enrollments: {
-                select: { id: true, userId: true },
-              },
-              payments: {
-                where: { status: "COMPLETED" },
-                select: { amount: true, currency: true },
-              },
-              certificates: {
-                select: { id: true },
-              },
-              progressMilestones: {
-                where: { milestoneType: "COURSE_COMPLETE" },
-                select: { id: true, userId: true },
-              },
-              _count: {
-                select: {
-                  enrollments: true,
-                  lessons: true,
-                  certificates: true,
+    const [professorsRaw, totalCount]: [ProfessorWithCourses[], number] =
+      await prisma.$transaction([
+        prisma.user.findMany({
+          where: whereClause,
+          include: {
+            ownedCourses: {
+              include: {
+                enrollments: {
+                  select: { id: true, userId: true },
+                },
+                payments: {
+                  where: { status: "COMPLETED" },
+                  select: { amount: true, currency: true },
+                },
+                certificates: {
+                  select: { id: true },
+                },
+                progressMilestones: {
+                  where: { milestoneType: "COURSE_COMPLETE" },
+                  select: { id: true, userId: true },
+                },
+                _count: {
+                  select: {
+                    enrollments: true,
+                    lessons: true,
+                    certificates: true,
+                  },
                 },
               },
             },
           },
-        },
-        orderBy: { createdAt: "desc" },
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      prisma.user.count({ where: whereClause }),
-    ]);
+          orderBy: { createdAt: "desc" },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        prisma.user.count({ where: whereClause }),
+      ]);
 
     // Calculate enhanced statistics for each professor
     const professors = professorsRaw.map((professor) => {
       const totalRevenue = professor.ownedCourses.reduce(
-        (sum: number, course: any) => {
+        (sum: number, course: CourseWithStats) => {
           return (
             sum +
-            course.payments.reduce((courseSum: number, payment: any) => {
+            course.payments.reduce((courseSum: number, payment: Payment) => {
               return courseSum + Number(payment.amount);
             }, 0)
           );
@@ -108,19 +133,24 @@ export async function GET(request: NextRequest) {
       );
 
       const totalEnrollments = professor.ownedCourses.reduce(
-        (sum: number, course: any) => sum + course._count.enrollments,
+        (sum: number, course: CourseWithStats) =>
+          sum + course._count.enrollments,
         0
       );
       const totalCertificates = professor.ownedCourses.reduce(
-        (sum: number, course: any) => sum + course._count.certificates,
+        (sum: number, course: CourseWithStats) =>
+          sum + course._count.certificates,
         0
       );
 
       // Calculate completion rate
+      // Calculate completion rate
       const totalCompletions = professor.ownedCourses.reduce(
-        (sum: number, course: any) => {
+        (sum: number, course: CourseWithStats) => {
           const uniqueCompletions = new Set(
-            course.progressMilestones.map((p: any) => p.userId)
+            course.progressMilestones.map(
+              (p: Pick<ProgressMilestone, "userId">) => p.userId
+            )
           ).size;
           return sum + uniqueCompletions;
         },
@@ -146,7 +176,7 @@ export async function GET(request: NextRequest) {
           completionRate: Math.round(completionRate),
           coursesCount: professor.ownedCourses.length,
         },
-        courses: professor.ownedCourses.map((course: any) => ({
+        courses: professor.ownedCourses.map((course: CourseWithStats) => ({
           id: course.id,
           title: course.title,
           _count: course._count,
