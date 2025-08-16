@@ -161,7 +161,7 @@ export async function handleEnrollmentFailure(
     });
     
     // Ensure paymobResponse is treated as an object
-    const paymobResponse = (payment?.paymobResponse || {}) as any;
+    const paymobResponse = (payment?.paymobResponse && typeof payment.paymobResponse === 'object') ? payment.paymobResponse : {};
 
     // Update payment record to indicate enrollment failure
     await prisma.payment.update({
@@ -202,7 +202,7 @@ export async function retryFailedEnrollment(
       const payment = await prisma.payment.findUnique({
         where: { id: paymentId },
       });
-      const paymobResponse = (payment?.paymobResponse || {}) as any;
+      const paymobResponse = (payment?.paymobResponse && typeof payment.paymobResponse === 'object') ? payment.paymobResponse : {};
       
       // Clear the enrollment error flag
       await prisma.payment.update({

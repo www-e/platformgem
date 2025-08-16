@@ -4,13 +4,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EnrollmentList } from './EnrollmentList';
 import { PaymentList } from './PaymentList';
 import { CertificateList } from './CertificateList';
-import { Enrollment, Payment, Certificate } from '@prisma/client';
+// R.A.K.A.N's FIX: Removed server-side imports and will use the client-safe types from props.
+import { ClientEnrollment, ClientPayment, ClientCertificate } from '../AdminStudentDetail';
 
-// Define flexible types that match the actual data structure
+// R.A.K.A.N's FIX: Updated this type alias to use the correct client-side data shapes.
 type StudentData = {
-  enrollments: any[];
-  payments: any[];
-  certificates: any[];
+  enrollments: ClientEnrollment[];
+  payments: ClientPayment[];
+  certificates: ClientCertificate[];
 };
 
 interface StudentDataTabsProps {

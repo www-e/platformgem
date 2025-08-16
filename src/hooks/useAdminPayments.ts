@@ -69,7 +69,7 @@ export interface UseAdminPaymentsReturn {
   handlePaymentAction: (
     paymentId: string,
     action: string,
-    additionalData?: any
+    additionalData?: PaymentActionData
   ) => Promise<void>;
   exportPayments: () => Promise<void>;
   refresh: () => void;

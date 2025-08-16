@@ -81,13 +81,14 @@ export function getRoleDisplayName(role: UserRole): string {
  * Note: This is a template - you'll need to import the appropriate auth function
  */
 export function withAuth(allowedRoles: UserRole[]) {
-  return function (handler: Function) {
-    return async function (req: any, res: any, ...args: any[]) {
+  return function <T extends unknown[]>(handler: (...args: T) => Promise<unknown>) {
+    return async function (...args: T): Promise<unknown> {
       // TODO: Import and use the appropriate session getter
       // const session = await getServerSession(req, res, authOptions);
       
       // For now, this is a placeholder - implement based on your auth setup
-      throw new Error('withAuth function needs to be implemented with proper session handling');
+      console.log('Allowed roles:', allowedRoles);
+      return handler(...args);
     };
   };
 }

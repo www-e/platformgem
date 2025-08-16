@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Metadata } from 'next';
 import AdminStudentDetail from '@/components/admin/AdminStudentDetail';
 
+// R.A.K.A.N's FIX: Next.js 15 requires params to be a Promise
 interface StudentDetailPageProps {
   params: Promise<{ studentId: string }>;
 }
@@ -82,7 +83,8 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
     redirect('/admin/students');
   }
 
-  // Transform data to handle Decimal serialization
+  // R.A.K.A.N's FIX: The transformation logic is now complete. It provides every field
+  // required by the new, stricter client-side types, fixing the downstream prop errors.
   const transformedStudent = {
     ...student,
     enrollments: student.enrollments.map(enrollment => ({
@@ -95,12 +97,13 @@ export default async function StudentDetailPage({ params }: StudentDetailPagePro
     payments: student.payments.map(payment => ({
       ...payment,
       amount: Number(payment.amount),
-      paymobTransactionId: payment.paymobTransactionId ? Number(payment.paymobTransactionId) : null
+      paymobTransactionId: payment.paymobTransactionId ? Number(payment.paymobTransactionId) : null,
     })),
     certificates: student.certificates.map(certificate => ({
-      id: certificate.id,
-      courseTitle: certificate.course.title,
-      issuedAt: certificate.issuedAt
+      ...certificate,
+      course: {
+        title: certificate.course.title,
+      }
     }))
   };
 

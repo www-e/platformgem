@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Course } from "@/lib/api/courses";
 import { 
   CheckCircle, 
@@ -25,7 +24,6 @@ import {
   Twitter,
   Linkedin,
   Copy,
-  Mail,
   MessageSquare
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -318,7 +316,7 @@ export function PaymentResult({
                     <Heart className="w-5 h-5 text-pink-500" />
                   </div>
                   <p className="text-neutral-700 font-primary">
-                    "                    &ldquo;كل خطوة في التعلم هي استثمار في مستقبلك. أحسنت الاختيار!&rdquo;"
+                   &ldquo;كل خطوة في التعلم هي استثمار في مستقبلك. أحسنت الاختيار!&rdquo;
                   </p>
                 </motion.div>
               </CardContent>

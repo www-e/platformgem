@@ -1,7 +1,7 @@
 // src/components/course/CourseContent.tsx - Modular Course Content
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { CertificateGenerator } from "@/components/certificates/CertificateGenerator";
+import { LessonMaterial } from "@/lib/types/db";
 import { VideoPlayer } from "./course-content/VideoPlayer";
 import { LessonDiscussions } from "./course-content/LessonDiscussions";
 import { LessonMaterials } from "./course-content/LessonMaterials";
@@ -61,7 +62,7 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
     handleLessonComplete,
   } = useCourseContent(course, lessons);
 
-  const { shouldReduceMotion } = useOptimizedMotion();
+  useOptimizedMotion();
   const [activeTab, setActiveTab] = useState("lessons");
 
   const totalCount = lessons.length;
@@ -83,7 +84,7 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
     const materials = (selectedLesson as Lesson)?.materials;
     if (Array.isArray(materials)) {
       return materials.filter(
-        (m): m is any => // Using 'any' for now, should be a defined Material type
+        (m): m is LessonMaterial =>
           typeof m === 'object' && m !== null && 'title' in m && 'url' in m
       );
     }
@@ -326,7 +327,10 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
         {/* Materials Tab */}
         <TabsContent value="materials" className="space-y-6">
           <LessonMaterials 
-            materials={parsedMaterials}
+            materials={parsedMaterials.map((material, index) => ({
+              ...material,
+              id: `material-${index}`
+            }))}
           />
         </TabsContent>
 

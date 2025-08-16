@@ -89,6 +89,14 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       totalViews > 0 ? (completedViews / totalViews) * 100 : 0;
 
     // Get top viewers
+    interface ViewerStat {
+      userId: string;
+      userName: string;
+      watchTime: number;
+      totalDuration: number | null;
+      completed: boolean;
+    }
+
     const viewerStats = viewingHistory.reduce(
       (acc, vh: ViewingHistoryWithUser) => {
         if (!acc[vh.userId]) {
@@ -107,15 +115,15 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         if (vh.completed) acc[vh.userId].completed = true;
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, ViewerStat>
     );
 
     const topViewers = Object.values(viewerStats)
-      .map((viewer: { watchTime: number; totalDuration: number | null }) => ({
+      .map((viewer: ViewerStat) => ({
         ...viewer,
         completionRate:
-          viewer.totalDuration! > 0
-            ? (viewer.watchTime / viewer.totalDuration!) * 100
+          viewer.totalDuration && viewer.totalDuration > 0
+            ? (viewer.watchTime / viewer.totalDuration) * 100
             : 0,
       }))
       .sort((a, b) => b.watchTime - a.watchTime);

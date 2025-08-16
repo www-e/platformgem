@@ -3,7 +3,7 @@
 
 import { auth } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import { createErrorResponse, ApiErrors } from "@/lib/api-response";
+import { createErrorResponse, ApiErrors, ErrorResponse } from "@/lib/api-response";
 
 /**
  * Authentication result for API routes
@@ -23,7 +23,7 @@ export interface ApiAuthResult {
  */
 export async function authenticateApiUser(
   allowedRoles?: UserRole[]
-): Promise<ApiAuthResult | ReturnType<typeof createErrorResponse>> {
+): Promise<ApiAuthResult | ErrorResponse> {
   const session = await auth();
 
   if (!session?.user) {
@@ -53,7 +53,7 @@ export async function authenticateApiUser(
  * Admin-only API authentication
  */
 export async function authenticateAdmin(): Promise<
-  ApiAuthResult | ReturnType<typeof createErrorResponse>
+  ApiAuthResult | ErrorResponse
 > {
   return authenticateApiUser(["ADMIN"]);
 }
@@ -62,7 +62,7 @@ export async function authenticateAdmin(): Promise<
  * Student-only API authentication
  */
 export async function authenticateStudent(): Promise<
-  ApiAuthResult | ReturnType<typeof createErrorResponse>
+  ApiAuthResult | ErrorResponse
 > {
   return authenticateApiUser(["STUDENT"]);
 }
@@ -71,7 +71,7 @@ export async function authenticateStudent(): Promise<
  * Professor-only API authentication
  */
 export async function authenticateProfessor(): Promise<
-  ApiAuthResult | ReturnType<typeof createErrorResponse>
+  ApiAuthResult | ErrorResponse
 > {
   return authenticateApiUser(["PROFESSOR"]);
 }
@@ -80,7 +80,7 @@ export async function authenticateProfessor(): Promise<
  * Student or Admin API authentication (for testing/admin access)
  */
 export async function authenticateStudentOrAdmin(): Promise<
-  ApiAuthResult | ReturnType<typeof createErrorResponse>
+  ApiAuthResult | ErrorResponse
 > {
   return authenticateApiUser(["STUDENT", "ADMIN"]);
 }
@@ -90,6 +90,6 @@ export async function authenticateStudentOrAdmin(): Promise<
  */
 export function isAuthError(
   result: unknown
-): result is ReturnType<typeof createErrorResponse> {
-  return !!(result && typeof (result as any).json === "function");
+): result is ErrorResponse {
+  return result instanceof Response && result.headers.get('X-Error-Response') === 'true';
 }

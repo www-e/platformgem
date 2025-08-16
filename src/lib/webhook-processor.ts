@@ -22,7 +22,7 @@ export interface WebhookPayload {
 }
 
 export async function processWebhookPayload(
-  payload: any,
+  payload: unknown,
   signature: string
 ): Promise<void> {
   // Verify signature
@@ -90,7 +90,7 @@ export async function processWebhookPayload(
   const updatedPayment = await prisma.payment.update({
     where: { id: paymentId },
     data: {
-      status: newStatus as any,
+      status: newStatus,
       paymobTransactionId: transaction.id,
       paymentMethod: transaction.source_data?.type?.toUpperCase() || "CARD",
       failureReason,

@@ -4,9 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Award, Eye } from 'lucide-react';
+// R.A.K.A.N's FIX: Replaced the server-side Prisma type with our new, client-safe type.
+import { ClientCertificate } from '../AdminStudentDetail';
 
 interface CertificateListProps {
-  certificates: any[];
+  certificates: ClientCertificate[];
 }
 
 export function CertificateList({ certificates }: CertificateListProps) {

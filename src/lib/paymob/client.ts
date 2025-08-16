@@ -193,20 +193,20 @@ export const payMobService = {
   generateMerchantOrderId,
   createBillingData,
   // Import webhook methods
-  async validateWebhookPayload(data: any) {
+  async validateWebhookPayload(data: unknown) {
     const { validateWebhookPayload } = await import("./webhook.service");
     return validateWebhookPayload(data);
   },
-  async verifyWebhookSignature(webhookObject: any) {
+  async verifyWebhookSignature(webhookObject: unknown) {
     const { verifyWebhookSignature } = await import("./webhook.service");
     return verifyWebhookSignature(webhookObject);
   },
-  async processWebhook(webhookObject: any) {
+  async processWebhook(webhookObject: unknown) {
     const { processWebhook } = await import("./webhook.service");
     return processWebhook(webhookObject);
   },
   async initiatePayment(
-    orderData: any,
+    orderData: PayMobOrderRequest,
     courseId?: string,
     paymentMethod: "credit-card" | "e-wallet" = "credit-card"
   ) {

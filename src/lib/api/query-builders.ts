@@ -1,7 +1,7 @@
 // src/lib/api/query-builders.ts
 // Consolidated query building utilities for API routes
 
-import { Prisma } from '@prisma/client';
+import { Prisma, PaymentStatus } from '@prisma/client';
 import { NextRequest } from 'next/server';
 
 /**
@@ -57,7 +57,7 @@ export function buildDateRangeFilter(dateFrom?: string, dateTo?: string): Prisma
 export function buildTextSearchFilter(
   search: string,
   fields: string[]
-): any[] {
+): Prisma.JsonObject[] {
   return fields.map(field => ({
     [field]: {
       contains: search,
@@ -73,7 +73,7 @@ export function buildUserSearchWhere(filters: SearchFilters): Prisma.UserWhereIn
   const where: Prisma.UserWhereInput = {};
   
   if (filters.search) {
-    where.OR = buildTextSearchFilter(filters.search, ['name', 'email', 'phone', 'studentId']) as any;
+    where.OR = buildTextSearchFilter(filters.search, ['name', 'email', 'phone', 'studentId']);
   }
   
   if (!filters.includeInactive) {
@@ -94,7 +94,7 @@ export function buildCourseSearchWhere(filters: SearchFilters): Prisma.CourseWhe
   const where: Prisma.CourseWhereInput = {};
   
   if (filters.search) {
-    where.OR = buildTextSearchFilter(filters.search, ['title', 'description']) as any;
+    where.OR = buildTextSearchFilter(filters.search, ['title', 'description']);
   }
   
   if (filters.category) {
@@ -121,7 +121,7 @@ export function buildPaymentSearchWhere(filters: SearchFilters): Prisma.PaymentW
   const where: Prisma.PaymentWhereInput = {};
   
   if (filters.status && filters.status !== 'all') {
-    where.status = filters.status.toUpperCase() as any;
+    where.status = filters.status.toUpperCase() as PaymentStatus;
   }
   
   if (filters.search) {

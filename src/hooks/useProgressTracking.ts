@@ -22,7 +22,7 @@ export function useProgressTracking({
   
   const recordMilestone = useCallback(async (
     milestoneType: string, 
-    metadata?: any
+    metadata?: Record<string, unknown>
   ) => {
     try {
       const response = await fetch('/api/progress/milestone', {

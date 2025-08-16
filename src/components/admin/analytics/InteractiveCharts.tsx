@@ -26,7 +26,6 @@ import {
 import {
   TrendingUp,
   PieChart as PieChartIcon,
-  LineChart as LineChartIcon,
   Download,
   Maximize2,
   Filter,
@@ -54,7 +53,7 @@ interface InteractiveChartsProps {
   userGrowthData: ChartData[];
   courseEnrollmentData: ChartData[];
   categoryDistribution: ChartData[];
-  onDrillDown?: (category: string, data: any) => void;
+  onDrillDown?: (category: string, data: ChartData) => void;
 }
 
 const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4', '#84cc16', '#f97316'];
@@ -83,14 +82,22 @@ export function InteractiveCharts({
     return new Intl.NumberFormat('ar-EG').format(value);
   };
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: {
+    active?: boolean;
+    payload?: Array<{
+      name: string;
+      value: number;
+      color: string;
+    }>;
+    label?: string;
+  }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white dark:bg-neutral-800 p-3 border rounded-lg shadow-lg">
           <p className="font-semibold text-neutral-900 dark:text-black font-display mb-2">
             {label}
           </p>
-          {payload.map((entry: any, index: number) => (
+          {payload.map((entry, index: number) => (
             <div key={index} className="flex items-center gap-2 text-sm">
               <div 
                 className="w-3 h-3 rounded-full" 
@@ -116,11 +123,7 @@ export function InteractiveCharts({
     return <Minus className="w-4 h-4 text-neutral-600" />;
   };
 
-  const getTrendColor = (growth: number) => {
-    if (growth > 0) return "text-green-600 bg-green-100";
-    if (growth < 0) return "text-red-600 bg-red-100";
-    return "text-neutral-600 bg-neutral-100";
-  };
+
 
   return (
     <div className="space-y-6">
@@ -174,7 +177,7 @@ export function InteractiveCharts({
                 key={range.key}
                 variant={timeRange === range.key ? 'primary' : 'ghost'}
                 size="sm"
-                onClick={() => setTimeRange(range.key as any)}
+                onClick={() => setTimeRange(range.key as '7d' | '30d' | '90d' | '1y')}
                 className="rounded-none first:rounded-r-md last:rounded-l-md"
               >
                 {range.label}
@@ -372,7 +375,7 @@ export function InteractiveCharts({
                           label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
                           onClick={(data) => onDrillDown?.(data.name, data)}
                         >
-                          {categoryDistribution.map((entry, index) => (
+                          {categoryDistribution.map((_, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>

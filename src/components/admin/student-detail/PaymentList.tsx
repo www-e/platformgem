@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button';
 import { CreditCard, Eye } from 'lucide-react';
 import { PaymentStatusBadge } from '@/components/shared/PaymentStatusBadge';
 import { formatCurrency } from '@/lib/formatters';
+// R.A.K.A.N's FIX: Replaced the server-side Prisma type with our new, client-safe type.
+import { ClientPayment } from '../AdminStudentDetail';
 
 interface PaymentListProps {
-  payments: any[];
+  payments: ClientPayment[];
   onViewDetails: (paymentId: string) => void;
 }
 

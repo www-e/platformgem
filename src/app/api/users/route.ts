@@ -9,6 +9,7 @@ import {
   buildUserSearchWhere,
   withErrorHandling
 } from '@/lib/api';
+import { UserRole } from '@prisma/client';
 
 // GET /api/users - List users with optional role filter
 export const GET = withErrorHandling(async (request: NextRequest) => {
@@ -25,8 +26,8 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
   
   // Build where clause
   const whereClause = buildUserSearchWhere(filters);
-  if (role) {
-    whereClause.role = role as any;
+  if (role && Object.values(UserRole).includes(role as UserRole)) {
+    whereClause.role = role as UserRole;
   }
 
   const users = await prisma.user.findMany({

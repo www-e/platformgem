@@ -6,12 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+
 import { MaterialManager } from '@/components/course/MaterialManager';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Save, Video, FileText, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { Lesson } from '@prisma/client';
+import { LessonMaterial } from '@/lib/types/db';
 
 interface LessonEditorProps {
   lesson: Lesson;
@@ -23,7 +24,7 @@ export function LessonEditor({ lesson, onUpdate, onSave }: LessonEditorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [localLesson, setLocalLesson] = useState(lesson);
 
-  const handleFieldChange = (field: keyof Lesson, value: any) => {
+  const handleFieldChange = (field: keyof Lesson, value: string | number | LessonMaterial[] | null) => {
     const updated = { ...localLesson, [field]: value };
     setLocalLesson(updated);
     onUpdate({ [field]: value });
@@ -32,7 +33,7 @@ export function LessonEditor({ lesson, onUpdate, onSave }: LessonEditorProps) {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      await onSave();
+      onSave();
       toast.success('تم حفظ التغييرات بنجاح');
     } catch (error) {
       toast.error('حدث خطأ في حفظ التغييرات');
@@ -41,7 +42,7 @@ export function LessonEditor({ lesson, onUpdate, onSave }: LessonEditorProps) {
     }
   };
 
-  const handleMaterialsUpdate = async (materials: any[]) => {
+  const handleMaterialsUpdate = async (materials: LessonMaterial[]) => {
     try {
       const response = await fetch(`/api/lessons/${lesson.id}/materials`, {
         method: 'PUT',

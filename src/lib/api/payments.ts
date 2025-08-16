@@ -1,15 +1,17 @@
 // src/lib/api/payments.ts
 import { ApiResponse } from '@/lib/api-utils';
+import { PaymentStatus } from '@prisma/client';
 
-export interface Payment {
+// R.A.K.A.N's NOTE: This type now reflects the actual data used by the API client.
+export interface ApiPayment {
   id: string;
-  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED';
+  status: PaymentStatus;
   amount: number;
   currency: string;
   createdAt: string;
   updatedAt: string;
   paymobOrderId: string | null;
-  paymobTxnId: string | null;
+  paymobTxnId: string | null; // Note: Prisma schema uses BigInt, but it's serialized to string in JSON
   course: {
     id: string;
     title: string;
@@ -41,6 +43,12 @@ export interface PaymentInitiationResponse {
     professor: string;
   };
 }
+
+// R.A.K.A.N's NOTE: Specific type for PayMob iframe messages.
+export type PayMobMessageData = {
+  type: 'payment_success' | 'payment_error';
+  [key: string]: unknown; // Allow other properties from PayMob
+};
 
 class PaymentsApi {
   private baseUrl = '/api/payments';
@@ -77,9 +85,9 @@ class PaymentsApi {
   /**
    * Check payment status
    */
-  async getPaymentStatus(paymentId: string): Promise<Payment> {
+  async getPaymentStatus(paymentId: string): Promise<ApiPayment> {
     const response = await fetch(`${this.baseUrl}/${paymentId}/status`);
-    const data: ApiResponse<Payment> = await response.json();
+    const data: ApiResponse<ApiPayment> = await response.json();
     
     if (!data.success) {
       throw new Error(data.error?.message || 'فشل في جلب حالة الدفع');
@@ -100,7 +108,7 @@ class PaymentsApi {
       body: JSON.stringify({ action: 'cancel' }),
     });
     
-    const data: ApiResponse = await response.json();
+    const data: ApiResponse<unknown> = await response.json();
     
     if (!data.success) {
       throw new Error(data.error?.message || 'فشل في إلغاء عملية الدفع');
@@ -115,9 +123,9 @@ class PaymentsApi {
     options: {
       maxAttempts?: number;
       intervalMs?: number;
-      onStatusChange?: (status: Payment['status']) => void;
+      onStatusChange?: (status: PaymentStatus) => void;
     } = {}
-  ): Promise<Payment> {
+  ): Promise<ApiPayment> {
     const { maxAttempts = 30, intervalMs = 2000, onStatusChange } = options;
     
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
@@ -156,7 +164,7 @@ class PaymentsApi {
   /**
    * Format payment amount for display
    */
-  formatAmount(payment: Payment): string {
+  formatAmount(payment: ApiPayment): string {
     return new Intl.NumberFormat('ar-EG', {
       style: 'currency',
       currency: payment.currency,
@@ -168,7 +176,7 @@ class PaymentsApi {
   /**
    * Get payment status display text
    */
-  getStatusText(status: Payment['status']): string {
+  getStatusText(status: PaymentStatus): string {
     switch (status) {
       case 'PENDING':
         return 'في الانتظار';
@@ -186,7 +194,7 @@ class PaymentsApi {
   /**
    * Get payment status color for UI
    */
-  getStatusColor(status: Payment['status']): string {
+  getStatusColor(status: PaymentStatus): string {
     switch (status) {
       case 'PENDING':
         return 'text-yellow-600 bg-yellow-50 border-yellow-200';
@@ -226,8 +234,8 @@ class PaymentsApi {
    * Listen for payment completion messages from iframe
    */
   listenForPaymentCompletion(
-    onSuccess: (data: any) => void,
-    onError: (error: any) => void
+    onSuccess: (data: PayMobMessageData) => void,
+    onError: (error: PayMobMessageData) => void
   ): () => void {
     const messageHandler = (event: MessageEvent) => {
       // Verify origin for security
@@ -236,7 +244,7 @@ class PaymentsApi {
       }
       
       try {
-        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        const data = (typeof event.data === 'string' ? JSON.parse(event.data) : event.data) as PayMobMessageData;
         
         if (data.type === 'payment_success') {
           onSuccess(data);
@@ -272,7 +280,7 @@ class PaymentsApi {
   /**
    * Handle payment errors with user-friendly messages
    */
-  handlePaymentError(error: any): string {
+  handlePaymentError(error: unknown): string {
     if (error instanceof Error) {
       const message = error.message;
       

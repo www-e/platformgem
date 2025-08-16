@@ -1,42 +1,9 @@
 // src/lib/api/courses.ts
 import { ApiResponse } from '@/lib/api-utils';
+import { CourseWithDetails, Enrollment, LessonMaterial, Course as DbCourse } from '@/lib/types/db';
 
-export interface Course {
-  id: string;
-  title: string;
-  description: string;
-  thumbnailUrl: string;
-  price: number | null;
-  currency: string;
-  isPublished: boolean;
-  bunnyLibraryId: string;
-  categoryId: string;
-  professorId: string;
-  createdAt: string;
-  updatedAt: string;
-  
-  // Relations
-  category: {
-    id: string;
-    name: string;
-    slug: string;
-    description?: string;
-  };
-  professor: {
-    id: string;
-    name: string;
-    bio: string | null;
-    expertise?: string[];
-  };
-  lessons?: Array<{
-    id: string;
-    title: string;
-    order: number;
-    duration: number | null;
-    bunnyVideoId: string;
-    materials: any;
-  }>;
-  
+// R.A.K.A.N's NOTE: Replaced local interface with one derived from our Single Source of Truth.
+export type ApiCourse = CourseWithDetails & {
   // Counts
   _count: {
     enrollments: number;
@@ -47,14 +14,30 @@ export interface Course {
   isEnrolled?: boolean;
   userProgress?: {
     id: string;
-    enrolledAt: string;
+    enrolledAt: Date;
     progressPercent: number;
     completedLessonIds: string[];
     totalWatchTime: number;
-    lastAccessedAt: string | null;
+    lastAccessedAt: Date | null;
   };
   canEdit?: boolean;
-}
+};
+
+// R.A.K.A.N's NOTE: Re-typing lessons to be fully type-safe.
+export type ApiLesson = {
+  id: string;
+  title: string;
+  order: number;
+  duration: number | null;
+  bunnyVideoId: string;
+  materials: LessonMaterial[] | null;
+};
+
+// Ensure our ApiCourse uses the correctly typed lessons.
+export type ApiCourseWithTypedLessons = Omit<ApiCourse, 'lessons'> & {
+  lessons: ApiLesson[];
+};
+
 
 export interface CreateCourseData {
   title: string;
@@ -65,6 +48,9 @@ export interface CreateCourseData {
   price?: number;
   currency?: string;
 }
+
+// Export Course type for components that need it
+export type Course = DbCourse;
 
 export interface UpdateCourseData {
   title?: string;
@@ -90,7 +76,7 @@ export interface CourseFilters {
 }
 
 export interface CoursesResponse {
-  courses: Course[];
+  courses: ApiCourseWithTypedLessons[];
   pagination: {
     page: number;
     limit: number;
@@ -125,10 +111,10 @@ class CoursesApi {
     return data.data!;
   }
 
-  async getById(id: string, includeUnpublished: boolean = false): Promise<Course> {
+  async getById(id: string, includeUnpublished: boolean = false): Promise<ApiCourseWithTypedLessons> {
     const params = includeUnpublished ? '?includeUnpublished=true' : '';
     const response = await fetch(`${this.baseUrl}/${id}${params}`);
-    const data: ApiResponse<Course> = await response.json();
+    const data: ApiResponse<ApiCourseWithTypedLessons> = await response.json();
     
     if (!data.success) {
       throw new Error(data.error?.message || 'فشل في جلب الدورة');
@@ -137,7 +123,7 @@ class CoursesApi {
     return data.data!;
   }
 
-  async create(courseData: CreateCourseData): Promise<Course> {
+  async create(courseData: CreateCourseData): Promise<ApiCourseWithTypedLessons> {
     const response = await fetch(this.baseUrl, {
       method: 'POST',
       headers: {
@@ -146,7 +132,7 @@ class CoursesApi {
       body: JSON.stringify(courseData),
     });
     
-    const data: ApiResponse<Course> = await response.json();
+    const data: ApiResponse<ApiCourseWithTypedLessons> = await response.json();
     
     if (!data.success) {
       throw new Error(data.error?.message || 'فشل في إنشاء الدورة');
@@ -155,7 +141,7 @@ class CoursesApi {
     return data.data!;
   }
 
-  async update(id: string, courseData: UpdateCourseData): Promise<Course> {
+  async update(id: string, courseData: UpdateCourseData): Promise<ApiCourseWithTypedLessons> {
     const response = await fetch(`${this.baseUrl}/${id}`, {
       method: 'PUT',
       headers: {
@@ -164,7 +150,7 @@ class CoursesApi {
       body: JSON.stringify(courseData),
     });
     
-    const data: ApiResponse<Course> = await response.json();
+    const data: ApiResponse<ApiCourseWithTypedLessons> = await response.json();
     
     if (!data.success) {
       throw new Error(data.error?.message || 'فشل في تحديث الدورة');
@@ -178,25 +164,25 @@ class CoursesApi {
       method: 'DELETE',
     });
     
-    const data: ApiResponse = await response.json();
+    const data: ApiResponse<unknown> = await response.json();
     
     if (!data.success) {
       throw new Error(data.error?.message || 'فشل في حذف الدورة');
     }
   }
 
-  async enroll(courseId: string): Promise<any> {
+  async enroll(courseId: string): Promise<Enrollment> {
     const response = await fetch(`${this.baseUrl}/${courseId}/enroll`, {
       method: 'POST',
     });
     
-    const data: ApiResponse = await response.json();
+    const data: ApiResponse<Enrollment> = await response.json();
     
     if (!data.success) {
       throw new Error(data.error?.message || 'فشل في التسجيل في الدورة');
     }
     
-    return data.data;
+    return data.data!;
   }
 
   async unenroll(courseId: string): Promise<void> {
@@ -204,7 +190,7 @@ class CoursesApi {
       method: 'DELETE',
     });
     
-    const data: ApiResponse = await response.json();
+    const data: ApiResponse<unknown> = await response.json();
     
     if (!data.success) {
       throw new Error(data.error?.message || 'فشل في إلغاء التسجيل من الدورة');
@@ -212,9 +198,11 @@ class CoursesApi {
   }
 
   // Utility functions
-  formatPrice(course: Course): string {
-    if (!course.price || course.price === 0) {
-      return 'مجاني';
+  formatPrice(course: ApiCourse): string {
+    const price = typeof course.price === 'number' ? course.price : Number(course.price) || 0;
+
+    if (price === 0) {
+        return 'مجاني';
     }
     
     return new Intl.NumberFormat('ar-EG', {
@@ -222,10 +210,10 @@ class CoursesApi {
       currency: course.currency || 'EGP',
       minimumFractionDigits: 0,
       maximumFractionDigits: 2
-    }).format(course.price);
+    }).format(price);
   }
 
-  calculateProgress(course: Course): number {
+  calculateProgress(course: ApiCourseWithTypedLessons): number {
     if (!course.userProgress || !course.lessons) {
       return 0;
     }
@@ -236,7 +224,7 @@ class CoursesApi {
     return totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
   }
 
-  getEnrollmentStatus(course: Course): 'not_enrolled' | 'enrolled' | 'completed' {
+  getEnrollmentStatus(course: ApiCourseWithTypedLessons): 'not_enrolled' | 'enrolled' | 'completed' {
     if (!course.isEnrolled) {
       return 'not_enrolled';
     }

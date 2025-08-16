@@ -76,7 +76,7 @@ export function SwipeableCard({
   const rotateX = useTransform(y, [-100, 100], [5, -5]);
   const rotateY = useTransform(x, [-100, 100], [-5, 5]);
 
-  const handleDragEnd = (event: any, info: PanInfo) => {
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const { offset, velocity } = info;
     
     // Haptic feedback for swipe actions
@@ -138,13 +138,13 @@ export function PullToRefresh({ children, onRefresh, className }: PullToRefreshP
     }
   };
 
-  const handlePan = (event: any, info: PanInfo) => {
+  const handlePan = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     if (containerRef.current?.scrollTop === 0 && info.offset.y > 0) {
       setPullDistance(Math.min(info.offset.y, 100));
     }
   };
 
-  const handlePanEnd = async (event: any, info: PanInfo) => {
+  const handlePanEnd = async (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     if (pullDistance > 60 && !isRefreshing) {
       setIsRefreshing(true);
       

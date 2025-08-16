@@ -65,9 +65,9 @@ export interface PayMobOrderResponse {
     postal_code: string;
     street: string;
   };
-  collector: any;
+  collector: unknown;
   amount_cents: number;
-  shipping_data: any;
+  shipping_data: unknown;
   currency: string;
   is_payment_locked: boolean;
   is_return: boolean;
@@ -75,7 +75,7 @@ export interface PayMobOrderResponse {
   is_returned: boolean;
   is_canceled: boolean;
   merchant_order_id: string;
-  wallet_notification: any;
+  wallet_notification: unknown;
   paid_amount_cents: number;
   notify_user_with_email: boolean;
   items: Array<{
@@ -89,9 +89,9 @@ export interface PayMobOrderResponse {
   delivery_fees_cents: number;
   delivery_vat_cents: number;
   payment_method: string;
-  merchant_staff_tag: any;
+  merchant_staff_tag: unknown;
   api_source: string;
-  data: any;
+  data: unknown;
 }
 
 export interface PayMobPaymentKeyResponse {
@@ -116,14 +116,14 @@ export interface PayMobTransactionResponse {
     id: number;
     merchant_order_id: string;
     amount_cents: number;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   created_at: string;
   currency: string;
   source_data: {
     pan: string;
     type: string;
-    tenure: any;
+    tenure: unknown;
     sub_type: string;
   };
   error_occured: boolean;
@@ -137,8 +137,8 @@ export interface PayMobTransactionResponse {
   bill_balanced: boolean;
   is_bill: boolean;
   owner: number;
-  parent_transaction: any;
-  [key: string]: any; // For other potential fields
+  parent_transaction: unknown;
+  [key: string]: unknown; // For other potential fields
 }
 
 // Enhanced PayMob types for better type safety

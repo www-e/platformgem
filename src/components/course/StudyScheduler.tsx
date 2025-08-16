@@ -277,7 +277,7 @@ export function StudyScheduler({
             key={tab.id}
             variant={activeTab === tab.id ? "primary" : "outline"}
             size="sm"
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => setActiveTab(tab.id as "schedule" | "reminders" | "analytics" | "settings")}
             className="flex items-center gap-2 whitespace-nowrap"
           >
             <tab.icon className="w-4 h-4" />

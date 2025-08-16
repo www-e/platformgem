@@ -8,40 +8,73 @@ import { StudentStats } from './student-detail/StudentStats';
 import { StudentContactInfo } from './student-detail/StudentContactInfo';
 import { StudentDataTabs } from './student-detail/StudentDataTabs';
 import PaymentDetailsModal from '@/components/payment/PaymentDetailsModal';
+// R.A.K.A.N's FIX: Importing enums for strong typing in our client models.
+import { PaymentStatus, UserRole, CertificateStatus } from '@prisma/client';
 
-// Keep the props interface as it defines the shape of the data for this page
-interface StudentDetailProps {
-  student: {
-    id: string;
-    name: string;
-    email: string | null;
-    phone: string;
-    studentId: string | null;
-    isActive: boolean;
-    createdAt: Date;
-    enrollments: Array<{
-      id: string;
-      courseId: string;
-      enrolledAt: Date;
-      progressPercent: number;
-    }>;
-    payments: Array<{
-      id: string;
-      amount: number;
-      status: string;
-      createdAt: Date;
-    }>;
-    certificates: Array<{
-      id: string;
-      courseTitle: string;
-      issuedAt: Date;
-    }>;
+// R.A.K.A.N's NOTE: These types are now perfected. They include every field
+// required by the child components, resolving all prop-drilling errors.
+
+export type ClientCertificate = {
+  id: string;
+  certificateCode: string;
+  status: CertificateStatus;
+  issuedAt: Date;
+  course: {
+    title: string;
   };
+};
+
+export type ClientPayment = {
+  id: string;
+  amount: number;
+  status: PaymentStatus;
+  createdAt: Date;
+  completedAt: Date | null;
+  failureReason: string | null;
+  paymobTransactionId: number | null;
+  course: {
+    id: string;
+    title: string;
+    thumbnailUrl: string;
+  };
+};
+
+export type ClientEnrollment = {
+  id: string;
+  progressPercent: number;
+  enrolledAt: Date;
+  course: {
+    id: string;
+    title: string;
+    thumbnailUrl: string;
+    price: number | null;
+    currency: string;
+    professor: {
+      name: string;
+    };
+  };
+};
+
+export type ClientStudent = {
+  id: string;
+  name: string;
+  email: string | null;
+  phone: string;
+  studentId: string | null;
+  isActive: boolean;
+  createdAt: Date;
+  role: UserRole;
+  enrollments: ClientEnrollment[];
+  payments: ClientPayment[];
+  certificates: ClientCertificate[];
+};
+
+interface StudentDetailProps {
+  student: ClientStudent;
 }
 
 /**
  * Main container component for the student detail page.
- * It manages state and orchestrates the rendering of modular sub-components.
  */
 export default function AdminStudentDetail({ student }: StudentDetailProps) {
   const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(
@@ -58,7 +91,6 @@ export default function AdminStudentDetail({ student }: StudentDetailProps) {
 
       if (result.success) {
         toast.success('تم حذف الملتحق بنجاح');
-        // Redirect after successful deletion
         window.location.href = '/admin/students';
       } else {
         toast.error(result.error?.message || 'فشل في حذف الملتحق');
@@ -82,7 +114,7 @@ export default function AdminStudentDetail({ student }: StudentDetailProps) {
         toast.success(
           `تم ${student.isActive ? 'إلغاء تفعيل' : 'تفعيل'} الملتحق بنجاح`
         );
-        window.location.reload(); // Reload to reflect status change
+        window.location.reload();
       } else {
         toast.error(result.error?.message || 'فشل في تحديث حالة الملتحق');
       }
@@ -118,7 +150,6 @@ export default function AdminStudentDetail({ student }: StudentDetailProps) {
         onViewPaymentDetails={handleViewPaymentDetails}
       />
 
-      {/* The modal remains controlled by the main container component */}
       <PaymentDetailsModal
         paymentId={selectedPaymentId}
         isOpen={isDetailsModalOpen}

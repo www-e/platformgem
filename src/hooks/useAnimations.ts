@@ -108,7 +108,7 @@ export const useGestures = () => {
       setIsDragging(false)
       setDragOffset({ x: 0, y: 0 })
     },
-    onDrag: (_: any, info: any) => {
+    onDrag: (_: MouseEvent | TouchEvent | PointerEvent, info: { offset: { x: number; y: number } }) => {
       setDragOffset({ x: info.offset.x, y: info.offset.y })
     },
   }

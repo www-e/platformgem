@@ -110,8 +110,8 @@ const PaymentCard = ({
 }: {
   payment: Payment;
   index: number;
-  onAction: Function;
-  onSelect: Function;
+  onAction: (paymentId: string, action: string, additionalData?: PaymentActionData) => Promise<void>;
+  onSelect: (payment: Payment) => void;
 }) => {
   const lastWebhook = payment.webhooks?.[0]; // R.A.K.A.N: FIX - Safely access the first webhook.
 

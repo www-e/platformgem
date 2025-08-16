@@ -91,7 +91,7 @@ export function useCreateCourseForm() {
     }));
   };
 
-  const handleThumbnailUpload = (files: any[]) => {
+  const handleThumbnailUpload = (files: Array<{ url: string; name: string }>) => {
     if (files.length > 0) {
       setFormData(prev => ({
         ...prev,

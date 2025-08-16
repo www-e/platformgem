@@ -2,6 +2,7 @@
 'use client';
 
 import { UserRole } from '@prisma/client';
+import { CourseWithDetails } from '@/lib/types/db';
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCourseCatalog } from '@/hooks/useCourseCatalog';
@@ -51,7 +52,7 @@ interface AIRecommendation {
   type: 'trending' | 'personalized' | 'similar' | 'popular';
   title: string;
   description: string;
-  courses: any[];
+  courses: CourseWithDetails[];
   icon: React.ElementType;
 }
 

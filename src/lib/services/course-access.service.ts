@@ -3,6 +3,8 @@
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { CourseAccessResult } from '@/lib/types/course-access';
+import { getAccessMessage as getDetailedAccessMessage } from '../access-messages';
+
 
 // Re-export for backward compatibility
 export type { CourseAccessResult };
@@ -90,13 +92,7 @@ export async function requireCourseAccess(courseId: string): Promise<CourseAcces
   return accessResult;
 }
 
-/**
- * Get access message based on course access result
- * @deprecated Use getAccessMessage from access-messages.ts instead
- */
 export function getAccessMessage(reason: CourseAccessResult['reason']): string {
-  // Import the function from access-messages.ts to avoid duplication
-  const { getAccessMessage: getDetailedAccessMessage } = require('../access-messages');
   const result = { reason } as CourseAccessResult;
   return getDetailedAccessMessage(result).description;
 }

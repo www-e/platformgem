@@ -48,7 +48,7 @@ interface Course {
   title: string;
   description: string;
   thumbnailUrl: string;
-  price: any; // Decimal type from Prisma
+  price: number | null;
   currency: string;
   isPublished: boolean;
   createdAt: string;
@@ -139,7 +139,7 @@ export function ProfessorCourseManagement({ courses: initialCourses }: Professor
           />
         </div>
         
-        <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+        <Select value={statusFilter} onValueChange={(value: "all" | "published" | "draft") => setStatusFilter(value)}>
           <SelectTrigger className="w-[150px]">
             <SelectValue />
           </SelectTrigger>
@@ -150,7 +150,7 @@ export function ProfessorCourseManagement({ courses: initialCourses }: Professor
           </SelectContent>
         </Select>
 
-        <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+        <Select value={sortBy} onValueChange={(value: "title" | "enrollments" | "lessons" | "created") => setSortBy(value)}>
           <SelectTrigger className="w-[150px]">
             <SelectValue />
           </SelectTrigger>

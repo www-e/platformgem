@@ -6,7 +6,7 @@ interface LogContext {
     paymentId?: string;
     transactionId?: string | number;
     action?: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   }
   
   export class Logger {

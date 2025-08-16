@@ -97,7 +97,7 @@ export function verifyWebhookSignature(
  * @returns True if the payload is valid, false otherwise.
  */
 export function validateWebhookPayload(
-  data: any
+  data: unknown
 ): data is PayMobTransactionResponse {
   if (!data || typeof data !== "object") return false;
 

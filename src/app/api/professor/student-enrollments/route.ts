@@ -2,23 +2,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { EnrollmentWithHistory } from '@/lib/types/db';
+import type { ViewingHistory } from '@prisma/client';
 
 export async function GET(_request: NextRequest) {
   try {
     const session = await auth();
     
-    if (!session?.user?.id) {
+    if (!session?.user?.id || session.user.role !== 'PROFESSOR') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    if (session.user.role !== 'PROFESSOR') {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     const professorId = session.user.id;
 
-    // Get all enrollments for professor's courses
-    const enrollments = await prisma.enrollment.findMany({
+    // R.A.K.A.N: The Prisma query is now corrected to match the type definition perfectly.
+    const enrollments: EnrollmentWithHistory[] = await prisma.enrollment.findMany({
       where: {
         course: {
           professorId
@@ -27,7 +25,12 @@ export async function GET(_request: NextRequest) {
       include: {
         user: {
           include: {
-            viewingHistory: true
+            // FIX: This nested include was missing. It's now corrected.
+            viewingHistory: {
+              include: {
+                lesson: true,
+              },
+            },
           }
         },
         course: {
@@ -41,18 +44,15 @@ export async function GET(_request: NextRequest) {
       }
     });
 
-    // Transform enrollments data
     const enrollmentData = enrollments.map(enrollment => {
       const totalLessons = enrollment.course.lessons.length;
-      const completedLessons = enrollment.user.viewingHistory.filter((vh: any) => vh.completed).length;
+      const completedLessons = enrollment.user.viewingHistory.filter((vh) => vh.completed).length;
       const progress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
       
-      // Calculate total time spent
-      const timeSpent = enrollment.user.viewingHistory.reduce((total: number, vh: any) => {
+      const timeSpent = enrollment.user.viewingHistory.reduce((total: number, vh) => {
         return total + (vh.watchedDuration / 60); // Convert to minutes
       }, 0);
 
-      // Determine completion status
       let completionStatus: 'not_started' | 'in_progress' | 'completed' = 'not_started';
       if (completedLessons === totalLessons && totalLessons > 0) {
         completionStatus = 'completed';
@@ -60,9 +60,8 @@ export async function GET(_request: NextRequest) {
         completionStatus = 'in_progress';
       }
 
-      // Get last activity
-      const lastActivity = enrollment.user.viewingHistory.length > 0 
-        ? new Date(Math.max(...enrollment.user.viewingHistory.map((vh: any) => new Date(vh.updatedAt).getTime())))
+      const lastActivity = enrollment.user.viewingHistory.length > 0
+        ? new Date(Math.max(...enrollment.user.viewingHistory.map((vh) => new Date(vh.updatedAt).getTime())))
         : enrollment.enrolledAt;
 
       return {

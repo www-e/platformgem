@@ -88,6 +88,7 @@ export interface CourseFilters {
   priceRange?: 'free' | 'paid' | 'all';
   level?: 'beginner' | 'intermediate' | 'advanced' | 'all';
   search?: string;
+  [key: string]: unknown; // Add index signature for compatibility
 }
 
 export interface CourseCatalogResponse {

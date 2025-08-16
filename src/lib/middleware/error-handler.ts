@@ -6,9 +6,9 @@ import { API_ERROR_CODES, createErrorResponse } from '@/lib/api-response';
 export class ApiError extends Error {
   public statusCode?: number;
   public code?: string;
-  public details?: any;
+  public details?: unknown;
 
-  constructor(message: string, code?: string, statusCode?: number, details?: any) {
+  constructor(message: string, code?: string, statusCode?: number, details?: unknown) {
     super(message);
     this.name = 'ApiError';
     this.code = code;
@@ -20,7 +20,7 @@ export class ApiError extends Error {
 /**
  * Enhanced error handling middleware for API routes
  */
-export function withErrorHandling<T extends any[]>(
+export function withErrorHandling<T extends unknown[]>(
   handler: (...args: T) => Promise<NextResponse>
 ) {
   return async (...args: T): Promise<NextResponse> => {
@@ -89,7 +89,7 @@ export function createApiError(
   message: string,
   code?: string,
   statusCode?: number,
-  details?: any
+  details?: unknown
 ): ApiError {
   return new ApiError(message, code, statusCode, details);
 }
@@ -97,7 +97,7 @@ export function createApiError(
 /**
  * Validation error helper
  */
-export function createValidationError(message: string, issues?: any[]): ApiError {
+export function createValidationError(message: string, issues?: unknown[]): ApiError {
   return createApiError(
     message,
     API_ERROR_CODES.VALIDATION_ERROR,
@@ -109,7 +109,7 @@ export function createValidationError(message: string, issues?: any[]): ApiError
 /**
  * Payment error helper
  */
-export function createPaymentError(message: string, details?: any): ApiError {
+export function createPaymentError(message: string, details?: unknown): ApiError {
   return createApiError(
     message,
     API_ERROR_CODES.PAYMENT_GATEWAY_ERROR,

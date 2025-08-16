@@ -25,7 +25,7 @@ export interface MobileWalletPaymentResponse {
   success: boolean;
   redirect_url: string; // The URL for OTP verification
   // ... and other fields that we can add if needed from the PayMob response
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**

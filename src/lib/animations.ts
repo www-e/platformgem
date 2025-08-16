@@ -247,7 +247,7 @@ export const getReducedMotionVariants = (variants: Variants): Variants => {
 // Performance monitoring
 export const animationConfig = {
   // Enable GPU acceleration
-  transformTemplate: ({ x, y, rotate, scale }: any) => 
+  transformTemplate: ({ x, y, rotate, scale }: { x: string; y: string; rotate: string; scale: string }) => 
     `translate3d(${x}, ${y}, 0) rotate(${rotate}) scale(${scale})`,
   
   // Optimize for 60fps

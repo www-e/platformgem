@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import type { ViewingHistory } from '@prisma/client';
 
 export async function GET(_request: NextRequest) {
   try {
@@ -68,7 +69,7 @@ export async function GET(_request: NextRequest) {
     // Calculate active students (those with activity in the period)
     const activeStudents = new Set(
       allEnrollments.filter(enrollment =>
-        enrollment.user.viewingHistory.some((vh: any) => new Date(vh.updatedAt) >= periodStart)
+        enrollment.user.viewingHistory.some((vh: ViewingHistory) => new Date(vh.updatedAt) >= periodStart)
       ).map(e => e.userId)
     ).size;
 
@@ -77,8 +78,8 @@ export async function GET(_request: NextRequest) {
     // Calculate average watch time per student
     const totalWatchTime = allEnrollments.reduce((total, enrollment) => {
       return total + enrollment.user.viewingHistory
-        .filter((vh: any) => new Date(vh.updatedAt) >= periodStart)
-        .reduce((enrollmentTotal: number, vh: any) => enrollmentTotal + (vh.watchedDuration / 60), 0);
+        .filter((vh: ViewingHistory) => new Date(vh.updatedAt) >= periodStart)
+        .reduce((enrollmentTotal: number, vh: ViewingHistory) => enrollmentTotal + (vh.watchedDuration / 60), 0);
     }, 0);
 
     const averageWatchTime = totalActiveStudents > 0 ? totalWatchTime / totalActiveStudents : 0;
@@ -89,7 +90,7 @@ export async function GET(_request: NextRequest) {
       if (!course) return false;
       
       const totalLessons = course.lessons.length;
-      const completedLessons = enrollment.user.viewingHistory.filter((vh: any) => vh.completed).length;
+      const completedLessons = enrollment.user.viewingHistory.filter((vh: ViewingHistory) => vh.completed).length;
       
       return totalLessons > 0 && completedLessons === totalLessons;
     }).length;
@@ -108,10 +109,10 @@ export async function GET(_request: NextRequest) {
       .flatMap(enrollment => {
         const course = courses.find(c => c.id === enrollment.courseId);
         return enrollment.user.viewingHistory
-          .filter((vh: any) => new Date(vh.updatedAt) >= periodStart)
-          .map((vh: any) => {
+          .filter((vh: ViewingHistory) => new Date(vh.updatedAt) >= periodStart)
+          .map((vh: ViewingHistory) => {
             const totalLessons = course?.lessons.length || 0;
-            const completedLessons = enrollment.user.viewingHistory.filter((vhc: any) => vhc.completed).length;
+            const completedLessons = enrollment.user.viewingHistory.filter((vhc: ViewingHistory) => vhc.completed).length;
             const progress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
             return {
@@ -132,20 +133,20 @@ export async function GET(_request: NextRequest) {
     const courseEngagement = courses.map(course => {
       const courseEnrollments = course.enrollments;
       const activeCourseStudents = courseEnrollments.filter(enrollment =>
-        enrollment.user.viewingHistory.some((vh: any) => new Date(vh.updatedAt) >= periodStart)
+        enrollment.user.viewingHistory.some((vh: ViewingHistory) => new Date(vh.updatedAt) >= periodStart)
       ).length;
 
       const courseWatchTime = courseEnrollments.reduce((total, enrollment) => {
         return total + enrollment.user.viewingHistory
-          .filter((vh: any) => new Date(vh.updatedAt) >= periodStart)
-          .reduce((enrollmentTotal: number, vh: any) => enrollmentTotal + (vh.watchedDuration / 60), 0);
+          .filter((vh: ViewingHistory) => new Date(vh.updatedAt) >= periodStart)
+          .reduce((enrollmentTotal: number, vh: ViewingHistory) => enrollmentTotal + (vh.watchedDuration / 60), 0);
       }, 0);
 
       const averageCourseWatchTime = activeCourseStudents > 0 ? courseWatchTime / activeCourseStudents : 0;
 
       const courseCompletions = courseEnrollments.filter(enrollment => {
         const totalLessons = course.lessons.length;
-        const completedLessons = enrollment.user.viewingHistory.filter((vh: any) => vh.completed).length;
+        const completedLessons = enrollment.user.viewingHistory.filter((vh: ViewingHistory) => vh.completed).length;
         return totalLessons > 0 && completedLessons === totalLessons;
       }).length;
 
@@ -153,7 +154,7 @@ export async function GET(_request: NextRequest) {
 
       const averageCourseProgress = courseEnrollments.reduce((sum, enrollment) => {
         const totalLessons = course.lessons.length;
-        const completedLessons = enrollment.user.viewingHistory.filter((vh: any) => vh.completed).length;
+        const completedLessons = enrollment.user.viewingHistory.filter((vh: ViewingHistory) => vh.completed).length;
         return sum + (totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0);
       }, 0) / Math.max(1, courseEnrollments.length);
 
@@ -185,7 +186,7 @@ export async function GET(_request: NextRequest) {
 
       const weekActiveStudents = new Set(
         allEnrollments.filter(enrollment =>
-          enrollment.user.viewingHistory.some((vh: any) => {
+          enrollment.user.viewingHistory.some((vh: ViewingHistory) => {
             const vhDate = new Date(vh.updatedAt);
             return vhDate >= weekStart && vhDate < weekEnd;
           })
@@ -194,16 +195,16 @@ export async function GET(_request: NextRequest) {
 
       const weekWatchTime = allEnrollments.reduce((total, enrollment) => {
         return total + enrollment.user.viewingHistory
-          .filter((vh: any) => {
+          .filter((vh: ViewingHistory) => {
             const vhDate = new Date(vh.updatedAt);
             return vhDate >= weekStart && vhDate < weekEnd;
           })
-          .reduce((enrollmentTotal: number, vh: any) => enrollmentTotal + (vh.watchedDuration / 60), 0);
+          .reduce((enrollmentTotal: number, vh: ViewingHistory) => enrollmentTotal + (vh.watchedDuration / 60), 0);
       }, 0);
 
       const weekCompletedLessons = allEnrollments.reduce((total, enrollment) => {
         return total + enrollment.user.viewingHistory
-          .filter((vh: any) => {
+          .filter((vh: ViewingHistory) => {
             const vhDate = new Date(vh.updatedAt);
             return vh.completed && vhDate >= weekStart && vhDate < weekEnd;
           }).length;
@@ -224,7 +225,18 @@ export async function GET(_request: NextRequest) {
     }
 
     // Top engaged students
-    const studentEngagementMap = new Map();
+    interface StudentEngagement {
+      id: string;
+      name: string;
+      totalWatchTime: number;
+      completedCourses: number;
+      totalProgress: number;
+      courseCount: number;
+      lastActivity: Date;
+      activities: number;
+    }
+
+    const studentEngagementMap = new Map<string, StudentEngagement>();
     
     allEnrollments.forEach(enrollment => {
       const userId = enrollment.userId;
@@ -243,16 +255,16 @@ export async function GET(_request: NextRequest) {
         });
       }
       
-      const student = studentEngagementMap.get(userId);
+      const student = studentEngagementMap.get(userId)!;
       student.courseCount++;
       
       const course = courses.find(c => c.id === enrollment.courseId);
       const totalLessons = course?.lessons.length || 0;
-      const completedLessons = enrollment.user.viewingHistory.filter((vh: any) => vh.completed).length;
+      const completedLessons = enrollment.user.viewingHistory.filter((vh: ViewingHistory) => vh.completed).length;
       const courseProgress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
       
       student.totalProgress += courseProgress;
-      student.totalWatchTime += enrollment.user.viewingHistory.reduce((total: number, vh: any) => {
+      student.totalWatchTime += enrollment.user.viewingHistory.reduce((total: number, vh: ViewingHistory) => {
         return total + (vh.watchedDuration / 60);
       }, 0);
       
@@ -261,7 +273,7 @@ export async function GET(_request: NextRequest) {
       }
       
       // Update last activity
-      enrollment.user.viewingHistory.forEach((vh: any) => {
+      enrollment.user.viewingHistory.forEach((vh: ViewingHistory) => {
         if (new Date(vh.updatedAt) > student.lastActivity) {
           student.lastActivity = new Date(vh.updatedAt);
         }

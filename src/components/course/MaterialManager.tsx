@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 import { FileUploader } from "@/components/upload/FileUploader";
 import {
   Plus,
@@ -30,6 +30,14 @@ interface Material {
   uploadedAt?: string;
 }
 
+interface UploadedFile {
+  name: string;
+  url: string;
+  type: string;
+  size: number;
+  uploadedAt: Date;
+}
+
 interface MaterialManagerProps {
   lessonId: string;
   materials: JsonValue;
@@ -50,8 +58,8 @@ export function MaterialManager({
           return (
             typeof m === "object" &&
             m !== null &&
-            typeof (m as any).title === "string" &&
-            typeof (m as any).url === "string"
+            typeof (m as Record<string, unknown>).title === "string" &&
+            typeof (m as Record<string, unknown>).url === "string"
           );
         })
         .map((m) => m as unknown as Material);
@@ -79,7 +87,7 @@ export function MaterialManager({
     return <FileText className="w-4 h-4" />;
   };
 
-  const handleFileUpload = async (uploadedFiles: any[]) => {
+  const handleFileUpload = async (uploadedFiles: UploadedFile[]) => {
     setIsUploading(true);
     try {
       const newMaterials = uploadedFiles.map((file) => ({
@@ -87,7 +95,7 @@ export function MaterialManager({
         url: file.url,
         type: file.type,
         size: file.size,
-        uploadedAt: file.uploadedAt,
+        uploadedAt: file.uploadedAt.toISOString(),
       }));
 
       const updatedMaterials = [...parsedMaterials, ...newMaterials];

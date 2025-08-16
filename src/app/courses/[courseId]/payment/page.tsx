@@ -4,7 +4,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { PaymentFlow } from "@/components/payment/PaymentFlow";
-import { coursesApi, Course } from "@/lib/api/courses";
+// R.A.K.A.N's FIX: Replaced the old 'Course' import with the correct, detailed API type.
+import { coursesApi, ApiCourseWithTypedLessons } from "@/lib/api/courses";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -14,7 +15,8 @@ export default function PaymentPage() {
   const router = useRouter();
   const courseId = params.courseId as string;
   
-  const [course, setCourse] = useState<Course | null>(null);
+  // R.A.K.A.N's FIX: Updated the state to use the new type.
+  const [course, setCourse] = useState<ApiCourseWithTypedLessons | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

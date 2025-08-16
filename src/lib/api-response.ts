@@ -6,18 +6,24 @@ import { NextResponse } from 'next/server';
 /**
  * Unified API response interface
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
   };
   message?: string;
   timestamp: string;
   requestId?: string;
 }
+
+/**
+ * R.A.K.A.N's FIX: Exporting a specific type for error responses.
+ * This is the missing type that caused errors in the api/auth and api/database files.
+ */
+export type ErrorResponse = NextResponse<ApiResponse<null>>;
 
 /**
  * Create a standardized success response
@@ -44,10 +50,10 @@ export function createErrorResponse(
   code: string,
   message: string,
   status: number = 500,
-  details?: any,
+  details?: unknown,
   requestId?: string
-): NextResponse<ApiResponse> {
-  const response: ApiResponse = {
+): ErrorResponse {
+  const response: ApiResponse<null> = {
     success: false,
     error: {
       code,
@@ -58,7 +64,11 @@ export function createErrorResponse(
     requestId
   };
   
-  return NextResponse.json(response, { status });
+  // R.A.K.A.N's FIX: Added a custom header to make type guards more reliable.
+  return NextResponse.json(response, { 
+    status,
+    headers: { 'X-Error-Response': 'true' }
+  });
 }
 
 /**
@@ -167,7 +177,7 @@ export function getErrorMessage(code: keyof typeof API_ERROR_CODES): string {
 /**
  * Handle API errors with consistent formatting
  */
-export function handleApiError(error: any, context: string = 'API'): NextResponse {
+export function handleApiError(error: unknown, context: string = 'API'): NextResponse {
   console.error(`${context} error:`, error);
   
   return createErrorResponse(
@@ -204,7 +214,7 @@ export const ApiErrors = {
     code: API_ERROR_CODES.VALIDATION_ERROR, 
     message: ERROR_MESSAGES.VALIDATION_ERROR, 
     status: 400,
-    create: (details?: any) => createErrorResponse(API_ERROR_CODES.VALIDATION_ERROR, ERROR_MESSAGES.VALIDATION_ERROR, 400, details)
+    create: (details?: unknown) => createErrorResponse(API_ERROR_CODES.VALIDATION_ERROR, ERROR_MESSAGES.VALIDATION_ERROR, 400, details)
   },
   DUPLICATE_ERROR: { 
     code: API_ERROR_CODES.DUPLICATE_ERROR, 
@@ -216,6 +226,6 @@ export const ApiErrors = {
     code: API_ERROR_CODES.INTERNAL_ERROR, 
     message: ERROR_MESSAGES.INTERNAL_ERROR, 
     status: 500,
-    create: (details?: any) => createErrorResponse(API_ERROR_CODES.INTERNAL_ERROR, ERROR_MESSAGES.INTERNAL_ERROR, 500, details)
+    create: (details?: unknown) => createErrorResponse(API_ERROR_CODES.INTERNAL_ERROR, ERROR_MESSAGES.INTERNAL_ERROR, 500, details)
   }
 };

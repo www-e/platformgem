@@ -331,7 +331,7 @@ export function withCourseAccess<P extends object>(
   const { courseIdProp = 'courseId', fallback, showAccessInfo = true } = options;
 
   return function ProtectedComponent(props: P) {
-    const courseId = (props as any)[courseIdProp] as string;
+    const courseId = (props as Record<string, unknown>)[courseIdProp as string] as string;
 
     if (!courseId) {
       return (

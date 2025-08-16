@@ -2,23 +2,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { EnrollmentWithHistory } from "@/lib/types/db";
+import type { ViewingHistory } from '@prisma/client';
 
 export async function GET(_request: NextRequest) {
   try {
     const session = await auth();
 
-    if (!session?.user?.id) {
+    if (!session?.user?.id || session.user.role !== "PROFESSOR") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    if (session.user.role !== "PROFESSOR") {
-      return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     const professorId = session.user.id;
 
-    // Get all enrollments for professor's courses
-    const enrollments = await prisma.enrollment.findMany({
+    // R.A.K.A.N: The Prisma query is now corrected to match the type definition.
+    const enrollments: EnrollmentWithHistory[] = await prisma.enrollment.findMany({
       where: {
         course: {
           professorId,
@@ -27,8 +25,12 @@ export async function GET(_request: NextRequest) {
       include: {
         user: {
           include: {
-            // Correctly include viewingHistory nested under user
-            viewingHistory: true,
+            // FIX: This nested include was missing, causing the type error.
+            viewingHistory: {
+              include: {
+                lesson: true,
+              },
+            },
           },
         },
         course: {
@@ -39,10 +41,8 @@ export async function GET(_request: NextRequest) {
       },
     });
 
-    // Calculate basic stats
     const totalEnrollments = enrollments.length;
 
-    // Active students (those who have watched something in the last 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -50,49 +50,40 @@ export async function GET(_request: NextRequest) {
       enrollments
         .filter((enrollment) =>
           enrollment.user.viewingHistory.some(
-            (vh: any) => new Date(vh.updatedAt) >= thirtyDaysAgo
+            (vh: ViewingHistory) => new Date(vh.updatedAt) >= thirtyDaysAgo
           )
         )
         .map((e) => e.userId)
     ).size;
 
-    // Completed courses
     const completedCourses = enrollments.filter((enrollment) => {
       const totalLessons = enrollment.course.lessons.length;
       const completedLessons = enrollment.user.viewingHistory.filter(
-        (vh: any) => vh.completed
+        (vh: ViewingHistory) => vh.completed
       ).length;
-      return totalLessons > 0 && completedLessons === totalLessons;
+      return totalLessons > 0 && completedLessons >= totalLessons;
     }).length;
 
-    // Average progress
     const totalProgress = enrollments.reduce((sum, enrollment) => {
       const totalLessons = enrollment.course.lessons.length;
       const completedLessons = enrollment.user.viewingHistory.filter(
-        (vh: any) => vh.completed
+        (vh: ViewingHistory) => vh.completed
       ).length;
-      return (
-        sum + (totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0)
-      );
+      return sum + (totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0);
     }, 0);
 
-    const averageProgress =
-      totalEnrollments > 0 ? totalProgress / totalEnrollments : 0;
-
-    // Certificates issued (same as completed courses for now)
+    const averageProgress = totalEnrollments > 0 ? totalProgress / totalEnrollments : 0;
     const certificatesIssued = completedCourses;
 
-    // Total time spent (in minutes)
     const totalTimeSpent = enrollments.reduce((total, enrollment) => {
       return (
         total +
-        enrollment.user.viewingHistory.reduce((enrollmentTotal: number, vh: any) => {
+        enrollment.user.viewingHistory.reduce((enrollmentTotal: number, vh: ViewingHistory) => {
           return enrollmentTotal + vh.watchedDuration / 60; // Convert to minutes
         }, 0)
       );
     }, 0);
 
-    // Monthly enrollments (last 6 months)
     const enrollmentsByMonth = [];
     for (let i = 5; i >= 0; i--) {
       const date = new Date();
@@ -108,23 +99,26 @@ export async function GET(_request: NextRequest) {
       const monthCompletions = monthEnrollments.filter((enrollment) => {
         const totalLessons = enrollment.course.lessons.length;
         const completedLessons = enrollment.user.viewingHistory.filter(
-          (vh: any) => vh.completed
+          (vh: ViewingHistory) => vh.completed
         ).length;
-        return totalLessons > 0 && completedLessons === totalLessons;
+        return totalLessons > 0 && completedLessons >= totalLessons;
       }).length;
 
       enrollmentsByMonth.push({
-        month: date.toLocaleDateString("ar-SA", {
-          month: "long",
-          year: "numeric",
-        }),
+        month: date.toLocaleDateString("ar-SA", { month: "long", year: "numeric" }),
         enrollments: monthEnrollments.length,
         completions: monthCompletions,
       });
     }
 
-    // Top performers
-    const studentPerformance = new Map();
+    // R.A.K.A.N: Restored and fully typed the topPerformers logic.
+    const studentPerformance = new Map<string, {
+      studentName: string;
+      coursesCompleted: number;
+      totalScore: number;
+      courseCount: number;
+      totalTimeSpent: number;
+    }>();
 
     enrollments.forEach((enrollment) => {
       const userId = enrollment.userId;
@@ -140,21 +134,18 @@ export async function GET(_request: NextRequest) {
         });
       }
 
-      const student = studentPerformance.get(userId);
+      const student = studentPerformance.get(userId)!; // We know it exists from the check above
       student.courseCount++;
 
       const totalLessons = enrollment.course.lessons.length;
       const completedLessons = enrollment.user.viewingHistory.filter(
-        (vh: any) => vh.completed
+        (vh: ViewingHistory) => vh.completed
       ).length;
-      const courseProgress =
-        totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+      const courseProgress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
       student.totalScore += courseProgress;
       student.totalTimeSpent += enrollment.user.viewingHistory.reduce(
-        (total: number, vh: any) => {
-          return total + vh.watchedDuration / 60;
-        },
+        (total: number, vh: ViewingHistory) => total + vh.watchedDuration / 60,
         0
       );
 
@@ -167,10 +158,7 @@ export async function GET(_request: NextRequest) {
       .map((student) => ({
         studentName: student.studentName,
         coursesCompleted: student.coursesCompleted,
-        averageScore:
-          student.courseCount > 0
-            ? student.totalScore / student.courseCount
-            : 0,
+        averageScore: student.courseCount > 0 ? student.totalScore / student.courseCount : 0,
         totalTimeSpent: Math.round(student.totalTimeSpent),
       }))
       .sort((a, b) => b.averageScore - a.averageScore)
@@ -190,9 +178,6 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json(stats);
   } catch (error) {
     console.error("Enrollment stats error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch enrollment statistics" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch enrollment statistics" }, { status: 500 });
   }
 }

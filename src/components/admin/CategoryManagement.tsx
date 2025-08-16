@@ -134,7 +134,7 @@ export function CategoryManagement({
 
         <Select
           value={statusFilter}
-          onValueChange={(value: any) => setStatusFilter(value)}
+          onValueChange={(value: "all" | "active" | "inactive") => setStatusFilter(value)}
         >
           <SelectTrigger className="w-[150px]">
             <SelectValue />
@@ -146,7 +146,7 @@ export function CategoryManagement({
           </SelectContent>
         </Select>
 
-        <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+        <Select value={sortBy} onValueChange={(value: "name" | "courses" | "enrollments" | "created") => setSortBy(value)}>
           <SelectTrigger className="w-[150px]">
             <SelectValue />
           </SelectTrigger>

@@ -2,8 +2,8 @@
 // Consolidated database utilities and transaction helpers
 
 import prisma from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
-import { createErrorResponse, ApiErrors } from '@/lib/api-response';
+import { Prisma, UserRole } from '@prisma/client';
+import { createErrorResponse, ApiErrors, ErrorResponse } from '@/lib/api-response';
 
 /**
  * Execute database operation with error handling
@@ -11,7 +11,7 @@ import { createErrorResponse, ApiErrors } from '@/lib/api-response';
 export async function executeWithErrorHandling<T>(
   operation: () => Promise<T>,
   errorContext: string = 'Database operation'
-): Promise<T | ReturnType<typeof createErrorResponse>> {
+): Promise<T | ErrorResponse> {
   try {
     return await operation();
   } catch (error) {
@@ -57,7 +57,7 @@ export async function executeWithErrorHandling<T>(
 export async function executeTransaction<T>(
   operation: (tx: Prisma.TransactionClient) => Promise<T>,
   errorContext: string = 'Transaction'
-): Promise<T | ReturnType<typeof createErrorResponse>> {
+): Promise<T | ErrorResponse> {
   return executeWithErrorHandling(
     () => prisma.$transaction(operation, { timeout: 30000 }),
     errorContext
@@ -67,8 +67,8 @@ export async function executeTransaction<T>(
 /**
  * Check if database result is an error
  */
-export function isDatabaseError(result: any): result is ReturnType<typeof createErrorResponse> {
-  return result && typeof result.json === 'function';
+export function isDatabaseError(result: unknown): result is ErrorResponse {
+  return result instanceof Response && result.headers.get('X-Error-Response') === 'true';
 }
 
 /**
@@ -83,7 +83,7 @@ export const commonQueries = {
       () => prisma.user.findFirst({
         where: {
           id: userId,
-          ...(role && { role: role as any })
+          ...(role && { role: role as UserRole })
         },
         select: {
           id: true,

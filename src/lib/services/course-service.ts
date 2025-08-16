@@ -17,7 +17,7 @@ export class CourseService {
     return getFeaturedCourses(limit);
   }
 
-  static async getCourseCatalog(filters: any, page?: number, limit?: number, sort?: string, userId?: string) {
+  static async getCourseCatalog(filters: Record<string, unknown>, page?: number, limit?: number, sort?: string, userId?: string) {
     const { getCourseCatalog } = await import('./course/public.service');
     return getCourseCatalog(filters, page, limit, sort, userId);
   }

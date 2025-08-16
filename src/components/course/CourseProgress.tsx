@@ -147,7 +147,13 @@ export function CourseProgress({
     return colors[priority] || 'border-neutral-200 bg-neutral-50';
   };
 
-  const StatCard = ({ icon: Icon, title, value, desc, color }: any) => (
+  const StatCard = ({ icon: Icon, title, value, desc, color }: {
+    icon: React.ElementType;
+    title: string;
+    value: string | number;
+    desc: string;
+    color: string;
+  }) => (
     <Card>
       <CardContent className="p-6">
         <div className="flex items-center gap-3 mb-4">
@@ -272,7 +278,7 @@ export function CourseProgress({
             key={tab.id}
             variant={activeTab === tab.id ? 'primary' : 'outline'}
             size="sm"
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => setActiveTab(tab.id as 'overview' | 'achievements' | 'goals' | 'path')}
             className="flex items-center gap-2 whitespace-nowrap"
           >
             <tab.icon className="w-4 h-4" />

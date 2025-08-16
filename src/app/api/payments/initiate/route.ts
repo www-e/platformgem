@@ -13,6 +13,7 @@ import {
 } from "@/lib/api-response";
 import { z } from "zod";
 import { paymobConfig } from '@/lib/paymob/config';
+import { JsonObject } from '@/lib/types/db';
 
 
 // Validation schema for payment initiation
@@ -244,8 +245,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Update payment record with PayMob data
-    const updateData: any = {
-      paymobResponse: {
+    const updateData: { paymobResponse: JsonObject; paymobOrderId?: string; paymobTransactionId?: bigint | null; } = {      paymobResponse: {
         paymentMethod,
         initiatedAt: new Date().toISOString(),
       },

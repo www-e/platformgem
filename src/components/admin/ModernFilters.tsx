@@ -42,7 +42,7 @@ export interface FilterOption {
 }
 
 export interface FilterValue {
-  [key: string]: any;
+  [key: string]: string | string[] | Date | undefined;
 }
 
 interface ModernFiltersProps {
@@ -77,7 +77,7 @@ export function ModernFilters({
       (Array.isArray(value) ? value.length > 0 : true)
   ).length;
 
-  const handleFilterChange = (key: string, value: any) => {
+  const handleFilterChange = (key: string, value: string | string[] | Date | undefined) => {
     onChange({ ...values, [key]: value });
   };
 
@@ -109,7 +109,7 @@ export function ModernFilters({
         return (
           <Input
             placeholder={filter.placeholder}
-            value={value || ""}
+            value={typeof value === 'string' ? value : ""}
             onChange={(e) => handleFilterChange(filter.key, e.target.value)}
             className="h-9"
           />
@@ -118,7 +118,7 @@ export function ModernFilters({
       case "select":
         return (
           <Select
-            value={value || ""}
+            value={typeof value === 'string' ? value : ""}
             onValueChange={(val) => handleFilterChange(filter.key, val)}
           >
             <SelectTrigger className="h-9">
@@ -146,13 +146,17 @@ export function ModernFilters({
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {value ? formatAdminDate(new Date(value)) : filter.placeholder}
+                {value && (typeof value === 'string' || value instanceof Date) 
+                  ? formatAdminDate(new Date(value)) 
+                  : filter.placeholder}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
-                selected={value ? new Date(value) : undefined}
+                selected={value && (typeof value === 'string' || value instanceof Date) 
+                  ? new Date(value) 
+                  : undefined}
                 onSelect={(date: Date | undefined) =>
                   handleFilterChange(filter.key, date?.toISOString())
                 }
@@ -243,7 +247,7 @@ export function ModernFilters({
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="البحث..."
-              value={searchQuery}
+              value={typeof searchQuery === 'string' ? searchQuery : ''}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-10 h-10 bg-background/50"
             />
@@ -336,14 +340,14 @@ export function ModernFilters({
                       filter.options?.find((opt) => opt.value === value)
                         ?.label || value;
                   }
-                } else if (filter.type === "date") {
+                } else if (filter.type === "date" && (typeof value === 'string' || value instanceof Date)) {
                   displayValue = formatAdminDate(new Date(value));
                 }
 
                 return (
                   <Badge key={key} variant="secondary" className="gap-1">
                     <span className="text-xs font-medium">{filter.label}:</span>
-                    <span className="text-xs">{displayValue}</span>
+                    <span className="text-xs">{String(displayValue)}</span>
                     <Button
                       variant="ghost"
                       size="sm"

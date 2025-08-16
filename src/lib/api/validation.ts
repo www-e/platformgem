@@ -87,6 +87,6 @@ export async function validateRequestBody<T>(
 /**
  * Check if validation result is an error
  */
-export function isValidationError(result: any): result is ReturnType<typeof createErrorResponse> {
+export function isValidationError(result: unknown): result is ReturnType<typeof createErrorResponse> {
   return result && typeof result.json === 'function';
 }

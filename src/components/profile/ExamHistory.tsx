@@ -28,7 +28,15 @@ export default async function ExamHistory() {
       <CardContent>
         <div className="space-y-4">
           {exams.length > 0 ? (
-            exams.map((exam: any, index: number) => (
+            exams
+              .filter((exam): exam is { title: string; date: string; score: string | number } => 
+                typeof exam === 'object' && 
+                exam !== null && 
+                'title' in exam && 
+                'date' in exam && 
+                'score' in exam
+              )
+              .map((exam, index: number) => (
               <div key={index} className="p-4 rounded-lg bg-muted/50 flex justify-between items-center">
                 <div>
                   <h3 className="font-semibold text-foreground">{exam.title}</h3>

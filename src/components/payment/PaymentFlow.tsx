@@ -3,10 +3,11 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Course } from "@/lib/api/courses";
+// R.A.K.A.N's FIX: Replaced 'Course' with the correct API type.
+import { ApiCourseWithTypedLessons } from "@/lib/api/courses";
 import { PaymentMethodSelector } from "./PaymentMethodSelector";
 import { PaymentIframe } from "./PaymentIframe";
-import { PaymentStatus } from "./PaymentStatus";
+import { PaymentStatus as PaymentStatusComponent } from "./PaymentStatus";
 import { CourseInfo } from "./CourseInfo";
 import { paymentsApi, PaymentInitiationResponse } from "@/lib/api/payments";
 import { Button } from "@/components/ui/button";
@@ -22,9 +23,11 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+// R.A.K.A.N's FIX: Imported the PaymentStatus enum to resolve the implicit 'any' error.
+import { PaymentStatus } from "@prisma/client";
 
 interface PaymentFlowProps {
-  course: Course;
+  course: ApiCourseWithTypedLessons;
   onSuccess: (paymentId: string) => void;
   onCancel: () => void;
 }
@@ -99,12 +102,8 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
     } catch (error: unknown) {
       console.error("Payment initiation failed:", error);
       
-      // Handle specific error cases
       if ((error as Error).message?.includes('عملية دفع معلقة')) {
-        // For pending payment errors, show a retry option
         setError('لديك عملية دفع معلقة. سيتم إلغاؤها تلقائياً والمحاولة مرة أخرى.');
-        
-        // Automatically retry after a short delay
         setTimeout(() => {
           handleInitiatePayment();
         }, 2000);
@@ -126,7 +125,8 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
       const payment = await paymentsApi.pollPaymentStatus(paymentId, {
         maxAttempts: 30,
         intervalMs: 3000,
-        onStatusChange: (status) => {
+        // R.A.K.A.N's FIX: Applied the imported type to the 'status' parameter.
+        onStatusChange: (status: PaymentStatus) => {
           console.log("Payment status:", status);
         },
       });
@@ -154,7 +154,6 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Enhanced Header with Trust Indicators */}
       <div className="bg-white border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
@@ -173,7 +172,6 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
               </div>
             </div>
 
-            {/* Trust Badges */}
             <div className="hidden md:flex items-center gap-4">
               <div className="flex items-center gap-2 text-sm text-green-600">
                 <Shield className="w-4 h-4" />
@@ -190,7 +188,6 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
             </div>
           </div>
 
-          {/* Progress Indicator */}
           <div className="mt-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium font-primary">
@@ -202,7 +199,6 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
             </div>
             <Progress value={progressPercentage} className="h-2" />
 
-            {/* Step Indicators */}
             <div className="flex items-center justify-between mt-4">
               {STEPS.map((step, index) => {
                 const StepIcon = step.icon;
@@ -241,15 +237,12 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
         </div>
       </div>
 
-      {/* Main Content - Wide Layout */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
-          {/* Course Info Sidebar */}
           <div className="xl:col-span-1">
             <CourseInfo course={course} />
           </div>
 
-          {/* Payment Content */}
           <div className="xl:col-span-3">
             <AnimatePresence mode="wait">
               {currentStep === "method" && (
@@ -338,7 +331,7 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
                   transition={{ duration: 0.3 }}
                 >
                   {processingState === "processing" && (
-                    <PaymentStatus
+                    <PaymentStatusComponent
                       type="processing"
                       title="جاري تحضير عملية الدفع"
                       message="يرجى الانتظار بينما نحضر نموذج الدفع الآمن..."
@@ -358,7 +351,7 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
                   )}
 
                   {processingState === "verifying" && (
-                    <PaymentStatus
+                    <PaymentStatusComponent
                       type="verifying"
                       title="جاري التحقق من عملية الدفع"
                       message="يرجى الانتظار بينما نتحقق من حالة الدفع..."
@@ -367,7 +360,7 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
                   )}
 
                   {processingState === "success" && (
-                    <PaymentStatus
+                    <PaymentStatusComponent
                       type="success"
                       title="تم الدفع بنجاح!"
                       message="تم تسجيلك في الدورة بنجاح. سيتم توجيهك إلى الدورة قريباً..."
@@ -375,7 +368,7 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
                   )}
 
                   {processingState === "error" && (
-                    <PaymentStatus
+                    <PaymentStatusComponent
                       type="error"
                       title="فشل في عملية الدفع"
                       message={error || "حدث خطأ أثناء معالجة عملية الدفع"}
@@ -390,7 +383,6 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
         </div>
       </div>
 
-      {/* Security Footer */}
       <div className="bg-white border-t mt-12">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">

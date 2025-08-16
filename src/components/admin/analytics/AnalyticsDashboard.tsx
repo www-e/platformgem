@@ -50,7 +50,7 @@ interface AnalyticsData {
 
 interface AnalyticsDashboardProps {
   onExport?: (type: 'csv' | 'excel' | 'pdf') => void;
-  onDrillDown?: (category: string, data: any) => void;
+  onDrillDown?: (category: string, data: unknown) => void;
 }
 
 export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboardProps) {
@@ -174,7 +174,7 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
                   key={period.key}
                   variant={selectedPeriod === period.key ? 'primary' : 'ghost'}
                   size="sm"
-                  onClick={() => setSelectedPeriod(period.key as any)}
+                  onClick={() => setSelectedPeriod(period.key as '7d' | '30d' | '90d' | '1y')}
                   className="rounded-none first:rounded-r-md last:rounded-l-md"
                 >
                   {period.label}

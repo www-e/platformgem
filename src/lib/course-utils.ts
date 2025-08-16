@@ -100,7 +100,7 @@ export function buildCourseWhereClause(
   filters: CourseFilters,
   excludeEnrolledCourses?: string[]
 ) {
-  const where: any = {
+  const where: Record<string, unknown> = {
     isPublished: true,
   };
 
@@ -189,17 +189,17 @@ export function calculatePagination(
 /**
  * Validate course filters
  */
-export function validateCourseFilters(filters: any): CourseFilters {
+export function validateCourseFilters(filters: Record<string, unknown>): CourseFilters {
   return {
     category:
       typeof filters.category === "string" ? filters.category : undefined,
-    priceRange: ["free", "paid", "all"].includes(filters.priceRange)
-      ? filters.priceRange
+    priceRange: ["free", "paid", "all"].includes(filters.priceRange as string)
+      ? (filters.priceRange as "free" | "paid" | "all")
       : "all",
     level: ["beginner", "intermediate", "advanced", "all"].includes(
-      filters.level
+      filters.level as string
     )
-      ? filters.level
+      ? (filters.level as "beginner" | "intermediate" | "advanced" | "all")
       : "all",
     search:
       typeof filters.search === "string" && filters.search.length > 0

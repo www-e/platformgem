@@ -108,7 +108,9 @@ export function SystemLogs() {
         page: currentPage.toString(),
         limit: ITEMS_PER_PAGE.toString(),
         ...Object.fromEntries(
-          Object.entries(filters).filter(([_, value]) => value !== undefined && value !== "")
+          Object.entries(filters)
+            .filter(([_, value]) => value !== undefined && value !== "")
+            .map(([key, value]) => [key, String(value)])
         )
       });
 
@@ -160,7 +162,9 @@ export function SystemLogs() {
     try {
       const queryParams = new URLSearchParams({
         ...Object.fromEntries(
-          Object.entries(filters).filter(([_, value]) => value !== undefined && value !== "")
+          Object.entries(filters)
+            .filter(([_, value]) => value !== undefined && value !== "")
+            .map(([key, value]) => [key, String(value)])
         )
       });
 

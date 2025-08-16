@@ -103,8 +103,11 @@ export const PerformanceMonitor: React.FC = () => {
       // First Input Delay
       new PerformanceObserver((list) => {
         const entries = list.getEntries()
-        entries.forEach((entry: any) => {
-          setMetrics(prev => ({ ...prev, fid: entry.processingStart - entry.startTime }))
+        entries.forEach((entry) => {
+          if ('processingStart' in entry && 'startTime' in entry) {
+            const eventEntry = entry as PerformanceEventTiming;
+            setMetrics(prev => ({ ...prev, fid: eventEntry.processingStart - eventEntry.startTime }))
+          }
         })
       }).observe({ entryTypes: ['first-input'] })
       
@@ -112,9 +115,12 @@ export const PerformanceMonitor: React.FC = () => {
       new PerformanceObserver((list) => {
         let clsValue = 0
         const entries = list.getEntries()
-        entries.forEach((entry: any) => {
-          if (!entry.hadRecentInput) {
-            clsValue += entry.value
+        entries.forEach((entry) => {
+          if ('hadRecentInput' in entry && 'value' in entry) {
+            const layoutEntry = entry as { hadRecentInput: boolean; value: number }; // LayoutShift type not available in TypeScript
+            if (!layoutEntry.hadRecentInput) {
+              clsValue += layoutEntry.value
+            }
           }
         })
         setMetrics(prev => ({ ...prev, cls: clsValue }))

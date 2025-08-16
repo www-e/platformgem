@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen } from "lucide-react";
 import { formatCurrency } from "@/lib/formatters";
+import { EnrollmentWithCourseDetails } from "@/lib/types/db";
 
 interface EnrollmentListProps {
-  enrollments: any[];
+  enrollments: EnrollmentWithCourseDetails[];
 }
 
 export function EnrollmentList({ enrollments }: EnrollmentListProps) {
@@ -50,7 +51,7 @@ export function EnrollmentList({ enrollments }: EnrollmentListProps) {
                 <div className="text-right">
                   {enrollment.course.price != null ? (
                     <p className="font-semibold">
-                      {formatCurrency(enrollment.course.price)}
+                      {formatCurrency(Number(enrollment.course.price))}
                     </p>
                   ) : (
                     <Badge variant="outline">مجاني</Badge>

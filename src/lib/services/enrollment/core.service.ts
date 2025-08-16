@@ -176,7 +176,7 @@ export class EnrollmentService {
     return createPaidEnrollment(courseId, userId, paymentId);
   }
 
-  static async checkCourseAccess(courseId: string, userId?: string, userRole?: any) {
+  static async checkCourseAccess(courseId: string, userId?: string, userRole?: string) {
     // Import and use the access service
     const { checkCourseAccess } = await import('../enrollment/access.service');
     return checkCourseAccess(courseId, userId, userRole);

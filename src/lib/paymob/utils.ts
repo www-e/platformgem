@@ -48,7 +48,7 @@ export function createBillingData(userData: {
 /**
  * Validate PayMob webhook HMAC fields
  */
-export function validateHmacFields(data: any): boolean {
+export function validateHmacFields(data: Record<string, unknown>): boolean {
   const requiredFields = [
     'amount_cents',
     'created_at',
@@ -75,12 +75,12 @@ export function validateHmacFields(data: any): boolean {
 /**
  * Format PayMob error messages for user display
  */
-export function formatPayMobError(error: any): string {
+export function formatPayMobError(error: unknown): string {
   if (typeof error === 'string') {
     return error;
   }
 
-  if (error?.message) {
+  if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
     // Common PayMob error patterns
     if (error.message.includes('timeout')) {
       return 'انتهت مهلة الاتصال. يرجى المحاولة مرة أخرى.';

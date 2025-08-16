@@ -1,5 +1,6 @@
 // src/lib/certificate.ts
 import prisma from '@/lib/prisma';
+import { MilestoneType, Prisma } from '@prisma/client';
 
 // Certificate generation utilities
 export interface CertificateData {
@@ -203,7 +204,7 @@ export async function generateCertificate(
       data: {
         userId,
         courseId,
-        milestoneType: 'COURSE_COMPLETE' as any,
+        milestoneType: MilestoneType.COURSE_COMPLETE,
         metadata: {
           certificateCode,
           completionRate: enrollment.progressPercent
@@ -387,8 +388,8 @@ export async function getUserCertificates(userId: string): Promise<CertificateDa
 export async function recordProgressMilestone(
   userId: string,
   courseId: string,
-  milestoneType: any,
-  metadata?: any
+  milestoneType: MilestoneType,
+  metadata?: Prisma.InputJsonValue
 ): Promise<boolean> {
   try {
     await prisma.progressMilestone.upsert({
@@ -405,7 +406,7 @@ export async function recordProgressMilestone(
       create: {
         userId,
         courseId,
-        milestoneType,
+        milestoneType: milestoneType as MilestoneType,
         metadata
       }
     });

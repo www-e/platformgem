@@ -18,7 +18,7 @@ export interface CourseAccessResult {
   course?: {
     id: string;
     title: string;
-    price: any;
+    price: number | { toNumber(): number };
     currency: string;
     isPublished: boolean;
     professorId: string;
@@ -32,7 +32,7 @@ export interface CourseAccessResult {
   payment?: {
     id: string;
     status: string;
-    amount: any;
+    amount: number | { toNumber(): number };
   };
   // Additional fields for enhanced access checking
   accessType?: 'free' | 'paid' | 'enrolled' | 'owner' | 'admin';
