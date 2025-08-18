@@ -51,16 +51,29 @@ export function PaymentIframe({
         return;
       }
       
-      // The 'transaction_processed' callback is a common pattern for iframe communication
-      if (event.data?.message === 'transaction_processed') {
-        const success = event.data?.success;
-        if (success) {
+      try {
+        // Try to parse the message data
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        
+        // Handle different types of messages
+        if (data.type === 'payment_success') {
           console.log('Payment success message received from iframe.');
           onComplete(paymentData.paymentId);
-        } else {
-          console.error('Payment failure message received from iframe.');
+        } else if (data.type === 'payment_error') {
+          console.error('Payment error message received from iframe.');
           onError('فشل في إتمام عملية الدفع عبر النموذج.');
+        } else if (data.message === 'transaction_processed') {
+          const success = data.success;
+          if (success) {
+            console.log('Payment success message received from iframe.');
+            onComplete(paymentData.paymentId);
+          } else {
+            console.error('Payment failure message received from iframe.');
+            onError('فشل في إتمام عملية الدفع عبر النموذج.');
+          }
         }
+      } catch (err) {
+        console.error('Error parsing message from iframe:', err);
       }
     };
     

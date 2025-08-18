@@ -14,28 +14,48 @@ export function UserStatsCards({ stats }: UserStatsCardsProps) {
       title: 'إجمالي المستخدمين',
       value: stats.totalUsers,
       subtitle: `${stats.activeUsers} نشط`,
-      icon: Users
+      icon: Users,
+      cardClassName: "border border-gray-200 bg-white shadow-sm",
+      titleColor: "text-gray-700",
+      valueColor: "text-gray-900",
+      subtitleColor: "text-gray-500",
+      iconColor: "text-gray-500"
     },
     {
       id: 'students',
       title: 'الملتحقين',
       value: stats.totalStudents,
       subtitle: `${((stats.totalStudents / stats.totalUsers) * 100).toFixed(1)}% من المجموع`,
-      icon: User
+      icon: User,
+      cardClassName: "border border-gray-200 bg-white shadow-sm",
+      titleColor: "text-gray-700",
+      valueColor: "text-gray-900",
+      subtitleColor: "text-gray-500",
+      iconColor: "text-gray-500"
     },
     {
       id: 'professors',
       title: 'المدرسين',
       value: stats.totalProfessors,
       subtitle: `${((stats.totalProfessors / stats.totalUsers) * 100).toFixed(1)}% من المجموع`,
-      icon: GraduationCap
+      icon: GraduationCap,
+      cardClassName: "border border-gray-200 bg-white shadow-sm",
+      titleColor: "text-gray-700",
+      valueColor: "text-gray-900",
+      subtitleColor: "text-gray-500",
+      iconColor: "text-gray-500"
     },
     {
       id: 'new-users',
       title: 'مستخدمين جدد',
       value: stats.newUsersThisMonth,
       subtitle: 'هذا الشهر',
-      icon: Calendar
+      icon: Calendar,
+      cardClassName: "border border-gray-200 bg-white shadow-sm",
+      titleColor: "text-gray-700",
+      valueColor: "text-gray-900",
+      subtitleColor: "text-gray-500",
+      iconColor: "text-gray-500"
     }
   ];
 

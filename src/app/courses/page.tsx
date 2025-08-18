@@ -88,6 +88,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
     ...course,
     price: course.price ? Number(course.price) : null,
     revenue: course.payments.reduce((sum, p) => sum + Number(p.amount), 0),
+    payments: course.payments.map(p => ({ ...p, amount: Number(p.amount) })),
     createdAt: course.createdAt.toISOString(),
     updatedAt: course.updatedAt.toISOString()
   }));

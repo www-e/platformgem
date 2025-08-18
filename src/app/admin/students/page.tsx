@@ -130,9 +130,10 @@ export default function StudentsPage() {
       const response = await fetch(`/api/admin/students?${queryParams}`);
       const data = await response.json();
       
-      if (response.ok) {
-        setStudents(data.students || []);
-        setTotalCount(data.total || 0);
+      if (response.ok && data.success) {
+        // The API returns a paginated response with a data property
+        setStudents(data.data?.data || data.data?.students || data.students || []);
+        setTotalCount(data.data?.pagination?.total || data.data?.total || 0);
       }
     } catch (error) {
       console.error('Failed to fetch students:', error);

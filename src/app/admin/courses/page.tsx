@@ -142,8 +142,9 @@ export default function CoursesPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setCourses(data.courses || []);
-        setTotalCount(data.total || 0);
+        // The API returns a paginated response structure
+        setCourses(data.data?.courses || data.courses || []);
+        setTotalCount(data.data?.totalCount || data.total || 0);
       }
     } catch (error) {
       console.error("Failed to fetch courses:", error);
@@ -355,11 +356,11 @@ export default function CoursesPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="border-0 bg-gradient-to-r from-blue-500/10 to-blue-600/10">
+        <Card className="border border-gray-200 bg-white shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي الدورات</p>
+                <p className="text-sm text-gray-500">إجمالي الدورات</p>
                 <p className="text-2xl font-bold text-blue-600">{totalCount}</p>
               </div>
               <BookOpen className="w-8 h-8 text-blue-500" />
@@ -367,11 +368,11 @@ export default function CoursesPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 bg-gradient-to-r from-green-500/10 to-green-600/10">
+        <Card className="border border-gray-200 bg-white shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-500">
                   الدورات المنشورة
                 </p>
                 <p className="text-2xl font-bold text-green-600">
@@ -383,11 +384,11 @@ export default function CoursesPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 bg-gradient-to-r from-purple-500/10 to-purple-600/10">
+        <Card className="border border-gray-200 bg-white shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي الملتحقين</p>
+                <p className="text-sm text-gray-500">إجمالي الملتحقين</p>
                 <p className="text-2xl font-bold text-purple-600">
                   {courses.reduce((sum, c) => sum + c._count.enrollments, 0)}
                 </p>
@@ -397,11 +398,11 @@ export default function CoursesPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 bg-gradient-to-r from-orange-500/10 to-orange-600/10">
+        <Card className="border border-gray-200 bg-white shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-gray-500">
                   إجمالي الإيرادات
                 </p>
                 <p className="text-2xl font-bold text-orange-600">

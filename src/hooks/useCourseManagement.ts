@@ -54,7 +54,8 @@ export function useCourseManagement() {
     try {
       const response = await fetch('/api/admin/courses');
       const data = await response.json();
-      setCourses(data.courses);
+      // The API returns a paginated response with a data property
+      setCourses(data.data?.courses || data.courses || []);
     } catch (error) {
       console.error('Failed to fetch courses:', error);
     } finally {
@@ -66,7 +67,11 @@ export function useCourseManagement() {
     try {
       const response = await fetch('/api/admin/course-stats');
       const data = await response.json();
-      setStats(data);
+      if (response.ok) {
+        setStats(data);
+      } else {
+        console.error('Failed to fetch course stats:', data.error);
+      }
     } catch (error) {
       console.error('Failed to fetch course stats:', error);
     }

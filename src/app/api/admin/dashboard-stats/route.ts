@@ -70,6 +70,22 @@ export const GET = withErrorHandling(async (_request: NextRequest) => {
       user: enrollment.user.name
     }));
 
+    // Real-time metrics
+    const realTimeMetrics = {
+      activeUsers: 0, // Placeholder - would need WebSocket or real-time tracking
+      ongoingLessons: 0, // Placeholder
+      recentSignups: 0, // Placeholder
+      pendingPayments: 0 // Placeholder
+    };
+
+    // System health (simulated)
+    const systemHealth = {
+      database: { status: 'healthy' as const, responseTime: 25 },
+      server: { status: 'healthy' as const, cpuUsage: 45, memoryUsage: 65 },
+      storage: { status: 'healthy' as const, usedSpace: 150, totalSpace: 500 },
+      network: { status: 'healthy' as const, latency: 15 }
+    };
+
     const stats = {
       totalUsers,
       totalStudents,
@@ -81,7 +97,9 @@ export const GET = withErrorHandling(async (_request: NextRequest) => {
       totalEnrollments,
       activeCourses,
       certificatesIssued,
-      recentActivity: formattedActivity
+      recentActivity: formattedActivity,
+      realTimeMetrics,
+      systemHealth
     };
 
     return createSuccessResponse(stats);

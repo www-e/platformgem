@@ -197,7 +197,7 @@ export function PlatformOverview({ stats }: PlatformOverviewProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {stats.recentActivity.length > 0 ? (
+              {(stats.recentActivity && stats.recentActivity.length > 0) ? (
                 stats.recentActivity.slice(0, 10).map((activity) => (
                   <div key={activity.id} className="flex items-start gap-3 p-3 border rounded-lg">
                     <div className="flex-shrink-0 mt-0.5">

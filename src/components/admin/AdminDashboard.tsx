@@ -9,10 +9,10 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { FadeInScroll, StaggerChildren, StaggerItem } from '@/components/ui/micro-interactions';
-import { 
-  Users, 
-  BookOpen, 
-  DollarSign, 
+import {
+  Users,
+  BookOpen,
+  DollarSign,
   UserCheck,
   Settings,
   Bell,
@@ -121,13 +121,13 @@ export function AdminDashboard() {
   // WebSocket connection for real-time updates
   useEffect(() => {
     fetchDashboardStats();
-    
+
     // Set up real-time updates every 30 seconds
     const interval = setInterval(fetchDashboardStats, 30000);
-    
+
     // WebSocket connection for real-time notifications
     const ws = new WebSocket(process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001');
-    
+
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'dashboard_update') {
@@ -162,7 +162,7 @@ export function AdminDashboard() {
   };
 
   const toggleWidget = (widgetId: string) => {
-    setWidgets(prev => prev.map(w => 
+    setWidgets(prev => prev.map(w =>
       w.id === widgetId ? { ...w, visible: !w.visible } : w
     ));
   };
@@ -181,8 +181,8 @@ export function AdminDashboard() {
   if (isLoading) {
     return (
       <div className={cn("min-h-screen transition-colors duration-300", isDarkMode && "dark bg-neutral-900")}>
-        <LoadingState 
-          cardCount={8} 
+        <LoadingState
+          cardCount={8}
           gridCols="grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
         />
       </div>
@@ -231,7 +231,7 @@ export function AdminDashboard() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3">
               {/* Real-time Status */}
               <div className="flex items-center gap-2 px-3 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
@@ -268,15 +268,15 @@ export function AdminDashboard() {
                 <Button variant="outline" size="sm" onClick={handleRefresh}>
                   <RefreshCw className="w-4 h-4" />
                 </Button>
-                
-                <Button 
-                  variant="outline" 
+
+                <Button
+                  variant="outline"
                   size="sm"
                   onClick={() => setIsCustomizing(!isCustomizing)}
                 >
                   <Settings className="w-4 h-4" />
                 </Button>
-                
+
                 <Button variant="outline" size="sm">
                   <Download className="w-4 h-4" />
                 </Button>
@@ -322,58 +322,58 @@ export function AdminDashboard() {
         {/* Real-time Metrics Bar */}
         <FadeInScroll>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-black border-0">
+            <Card className="bg-white border border-gray-200 shadow-sm">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-blue-100 text-sm font-primary">المستخدمين النشطين</p>
-                    <p className="text-2xl font-bold font-display">
+                    <p className="text-gray-500 text-sm font-primary">المستخدمين النشطين</p>
+                    <p className="text-2xl font-bold font-display text-blue-600">
                       {stats.realTimeMetrics?.activeUsers || 0}
                     </p>
                   </div>
-                  <Users className="w-8 h-8 text-blue-200" />
+                  <Users className="w-8 h-8 text-blue-500" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-green-500 to-green-600 text-black border-0">
+            <Card className="bg-white border border-gray-200 shadow-sm">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-green-100 text-sm font-primary">دروس جارية</p>
-                    <p className="text-2xl font-bold font-display">
+                    <p className="text-gray-500 text-sm font-primary">دروس جارية</p>
+                    <p className="text-2xl font-bold font-display text-green-600">
                       {stats.realTimeMetrics?.ongoingLessons || 0}
                     </p>
                   </div>
-                  <BookOpen className="w-8 h-8 text-green-200" />
+                  <BookOpen className="w-8 h-8 text-green-500" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-black border-0">
+            <Card className="bg-white border border-gray-200 shadow-sm">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-purple-100 text-sm font-primary">تسجيلات حديثة</p>
-                    <p className="text-2xl font-bold font-display">
+                    <p className="text-gray-500 text-sm font-primary">تسجيلات حديثة</p>
+                    <p className="text-2xl font-bold font-display text-purple-600">
                       {stats.realTimeMetrics?.recentSignups || 0}
                     </p>
                   </div>
-                  <UserCheck className="w-8 h-8 text-purple-200" />
+                  <UserCheck className="w-8 h-8 text-purple-500" />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-black border-0">
+            <Card className="bg-white border border-gray-200 shadow-sm">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-orange-100 text-sm font-primary">مدفوعات معلقة</p>
-                    <p className="text-2xl font-bold font-display">
+                    <p className="text-gray-500 text-sm font-primary">مدفوعات معلقة</p>
+                    <p className="text-2xl font-bold font-display text-orange-600">
                       {stats.realTimeMetrics?.pendingPayments || 0}
                     </p>
                   </div>
-                  <Clock className="w-8 h-8 text-orange-200" />
+                  <Clock className="w-8 h-8 text-orange-500" />
                 </div>
               </CardContent>
             </Card>
@@ -388,35 +388,39 @@ export function AdminDashboard() {
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <Card className="hover:shadow-lg transition-all duration-200 dark:bg-neutral-800 dark:border-neutral-700">
+                <Card className="hover:shadow-lg transition-all duration-200 bg-white border border-gray-200">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-neutral-600 dark:text-neutral-400 font-primary">
+                    <CardTitle className="text-sm font-medium text-gray-600 font-primary">
                       {widget.id === 'users' && 'إجمالي المستخدمين'}
                       {widget.id === 'courses' && 'إجمالي الدورات'}
                       {widget.id === 'revenue' && 'إجمالي الإيرادات'}
                     </CardTitle>
-                    {widget.id === 'users' && <Users className="h-4 w-4 text-neutral-500" />}
-                    {widget.id === 'courses' && <BookOpen className="h-4 w-4 text-neutral-500" />}
-                    {widget.id === 'revenue' && <DollarSign className="h-4 w-4 text-neutral-500" />}
+                    {widget.id === 'users' && <Users className="h-4 w-4 text-gray-500" />}
+                    {widget.id === 'courses' && <BookOpen className="h-4 w-4 text-gray-500" />}
+                    {widget.id === 'revenue' && <DollarSign className="h-4 w-4 text-gray-500" />}
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-neutral-900 dark:text-black font-display">
+                    <div className="text-2xl font-bold text-gray-900 font-display">
                       {widget.id === 'users' && stats.totalUsers}
                       {widget.id === 'courses' && stats.totalCourses}
-                      {widget.id === 'revenue' && new Intl.NumberFormat('ar-EG', {
-                        style: 'currency',
-                        currency: 'EGP',
-                        minimumFractionDigits: 0
-                      }).format(stats.totalRevenue)}
+                      {widget.id === 'revenue' &&
+                        new Intl.NumberFormat('ar-EG', {
+                          style: 'currency',
+                          currency: 'EGP',
+                          minimumFractionDigits: 0,
+                        }).format(stats.totalRevenue)}
                     </div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 font-primary mt-1">
-                      {widget.id === 'users' && `${stats.totalStudents} ملتحق • ${stats.totalProfessors} مدرس`}
-                      {widget.id === 'courses' && `${stats.activeCourses} دورة نشطة`}
-                      {widget.id === 'revenue' && `${new Intl.NumberFormat('ar-EG', {
-                        style: 'currency',
-                        currency: 'EGP',
-                        minimumFractionDigits: 0
-                      }).format(stats.monthlyRevenue)} هذا الشهر`}
+                    <p className="text-xs text-gray-500 font-primary mt-1">
+                      {widget.id === 'users' &&
+                        `${stats.totalStudents} ملتحق • ${stats.totalProfessors} مدرس`}
+                      {widget.id === 'courses' &&
+                        `${stats.activeCourses} دورة نشطة`}
+                      {widget.id === 'revenue' &&
+                        `${new Intl.NumberFormat('ar-EG', {
+                          style: 'currency',
+                          currency: 'EGP',
+                          minimumFractionDigits: 0,
+                        }).format(stats.monthlyRevenue)} هذا الشهر`}
                     </p>
                   </CardContent>
                 </Card>
@@ -425,19 +429,19 @@ export function AdminDashboard() {
           ))}
 
           {/* Additional Stats */}
-          <StaggerItem>
-            <Card className="hover:shadow-lg transition-all duration-200 dark:bg-neutral-800 dark:border-neutral-700">
+          <StaggerItem key="additional-enrollments">
+            <Card className="hover:shadow-lg transition-all duration-200 bg-white border border-gray-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-neutral-600 dark:text-neutral-400 font-primary">
+                <CardTitle className="text-sm font-medium text-gray-600 font-primary">
                   التسجيلات
                 </CardTitle>
-                <UserCheck className="h-4 w-4 text-neutral-500" />
+                <UserCheck className="h-4 w-4 text-gray-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-neutral-900 dark:text-black font-display">
+                <div className="text-2xl font-bold text-gray-900 font-display">
                   {stats.totalEnrollments}
                 </div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 font-primary mt-1">
+                <p className="text-xs text-gray-500 font-primary mt-1">
                   إجمالي التسجيلات في الدورات
                 </p>
               </CardContent>
@@ -445,213 +449,235 @@ export function AdminDashboard() {
           </StaggerItem>
         </StaggerChildren>
 
-        {/* System Health Dashboard */}
-        {widgets.find(w => w.id === 'health' && w.visible) && (
-          <FadeInScroll>
-            <Card className="dark:bg-neutral-800 dark:border-neutral-700">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-neutral-900 dark:text-black font-display">
-                  <Shield className="w-5 h-5 text-green-600" />
-                  حالة النظام
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {/* Database Health */}
-                  <div className="p-4 border rounded-lg dark:border-neutral-600">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Database className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
-                        <span className="text-sm font-medium text-neutral-900 dark:text-black font-primary">
-                          قاعدة البيانات
-                        </span>
-                      </div>
-                      <Badge className={getStatusColor(stats.systemHealth?.database.status || 'healthy')}>
-                        {stats.systemHealth?.database.status === 'healthy' ? 'سليم' : 
-                         stats.systemHealth?.database.status === 'warning' ? 'تحذير' : 'خطأ'}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 font-primary">
-                      زمن الاستجابة: {stats.systemHealth?.database.responseTime || 0}ms
-                    </p>
-                  </div>
 
-                  {/* Server Health */}
-                  <div className="p-4 border rounded-lg dark:border-neutral-600">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Server className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
-                        <span className="text-sm font-medium text-neutral-900 dark:text-black font-primary">
-                          الخادم
-                        </span>
-                      </div>
-                      <Badge className={getStatusColor(stats.systemHealth?.server.status || 'healthy')}>
-                        {stats.systemHealth?.server.status === 'healthy' ? 'سليم' : 
-                         stats.systemHealth?.server.status === 'warning' ? 'تحذير' : 'خطأ'}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 font-primary">
-                      CPU: {stats.systemHealth?.server.cpuUsage || 0}% • RAM: {stats.systemHealth?.server.memoryUsage || 0}%
-                    </p>
-                  </div>
-
-                  {/* Storage Health */}
-                  <div className="p-4 border rounded-lg dark:border-neutral-600">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <HardDrive className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
-                        <span className="text-sm font-medium text-neutral-900 dark:text-black font-primary">
-                          التخزين
-                        </span>
-                      </div>
-                      <Badge className={getStatusColor(stats.systemHealth?.storage.status || 'healthy')}>
-                        {stats.systemHealth?.storage.status === 'healthy' ? 'سليم' : 
-                         stats.systemHealth?.storage.status === 'warning' ? 'تحذير' : 'خطأ'}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 font-primary">
-                      المستخدم: {((stats.systemHealth?.storage.usedSpace || 0) / (stats.systemHealth?.storage.totalSpace || 1) * 100).toFixed(1)}%
-                    </p>
-                  </div>
-
-                  {/* Network Health */}
-                  <div className="p-4 border rounded-lg dark:border-neutral-600">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Wifi className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
-                        <span className="text-sm font-medium text-neutral-900 dark:text-black font-primary">
-                          الشبكة
-                        </span>
-                      </div>
-                      <Badge className={getStatusColor(stats.systemHealth?.network.status || 'healthy')}>
-                        {stats.systemHealth?.network.status === 'healthy' ? 'سليم' : 
-                         stats.systemHealth?.network.status === 'warning' ? 'تحذير' : 'خطأ'}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 font-primary">
-                      زمن الاستجابة: {stats.systemHealth?.network.latency || 0}ms
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </FadeInScroll>
-        )}
-
-        {/* Enhanced Main Content Tabs */}
-        <FadeInScroll>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <div className="flex items-center justify-between">
-              <TabsList className="grid grid-cols-5 w-fit bg-neutral-100 dark:bg-neutral-800">
-                <TabsTrigger value="overview" className="font-primary">نظرة عامة</TabsTrigger>
-                <TabsTrigger value="users" className="font-primary">المستخدمين</TabsTrigger>
-                <TabsTrigger value="courses" className="font-primary">الدورات</TabsTrigger>
-                <TabsTrigger value="categories" className="font-primary">التصنيفات</TabsTrigger>
-                <TabsTrigger value="revenue" className="font-primary">الإيرادات</TabsTrigger>
-              </TabsList>
-
-              {/* Tab-specific Actions */}
-              <div className="flex items-center gap-2">
-                {activeTab === 'overview' && (
-                  <Button variant="outline" size="sm">
-                    <BarChart3 className="w-4 h-4 ml-2" />
-                    تقرير شامل
-                  </Button>
-                )}
-                {activeTab === 'users' && (
-                  <Button variant="outline" size="sm">
-                    <Filter className="w-4 h-4 ml-2" />
-                    فلترة متقدمة
-                  </Button>
-                )}
-                {activeTab === 'revenue' && (
-                  <Button variant="outline" size="sm">
-                    <Download className="w-4 h-4 ml-2" />
-                    تصدير البيانات
-                  </Button>
-                )}
+        {/* Additional Stats */}
+        <StaggerItem key="additional-enrollments">
+          <Card className="hover:shadow-lg transition-all duration-200 bg-white border border-gray-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600 font-primary">
+                التسجيلات
+              </CardTitle>
+              <UserCheck className="h-4 w-4 text-gray-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-900 font-display">
+                {stats.totalEnrollments}
               </div>
-            </div>
+              <p className="text-xs text-gray-500 font-primary mt-1">
+                إجمالي التسجيلات في الدورات
+              </p>
+            </CardContent>
+          </Card>
+        </StaggerItem>
+      </StaggerChildren>
 
-            <AnimatePresence mode="wait">
-              <TabsContent value="overview" className="space-y-6">
-                <motion.div
-                  key="overview"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <PlatformOverview stats={stats} />
-                </motion.div>
-              </TabsContent>
+      {/* System Health Dashboard */}
+      {widgets.find(w => w.id === 'health' && w.visible) && (
+        <FadeInScroll>
+          <Card className="bg-white border border-gray-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-gray-900 font-display">
+                <Shield className="w-5 h-5 text-green-600" />
+                حالة النظام
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Database Health */}
+                <div className="p-4 border rounded-lg border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Database className="w-4 h-4 text-gray-600" />
+                      <span className="text-sm font-medium text-gray-900 font-primary">
+                        قاعدة البيانات
+                      </span>
+                    </div>
+                    <Badge className={getStatusColor(stats.systemHealth?.database.status || 'healthy')}>
+                      {stats.systemHealth?.database.status === 'healthy' ? 'سليم' :
+                        stats.systemHealth?.database.status === 'warning' ? 'تحذير' : 'خطأ'}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-gray-500 font-primary">
+                    زمن الاستجابة: {stats.systemHealth?.database.responseTime || 0}ms
+                  </p>
+                </div>
 
-              <TabsContent value="users" className="space-y-6">
-                <motion.div
-                  key="users"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <UserManagement />
-                </motion.div>
-              </TabsContent>
+                {/* Server Health */}
+                <div className="p-4 border rounded-lg border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Server className="w-4 h-4 text-gray-600" />
+                      <span className="text-sm font-medium text-gray-900 font-primary">
+                        الخادم
+                      </span>
+                    </div>
+                    <Badge className={getStatusColor(stats.systemHealth?.server.status || 'healthy')}>
+                      {stats.systemHealth?.server.status === 'healthy' ? 'سليم' :
+                        stats.systemHealth?.server.status === 'warning' ? 'تحذير' : 'خطأ'}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-gray-500 font-primary">
+                    CPU: {stats.systemHealth?.server.cpuUsage || 0}% • RAM: {stats.systemHealth?.server.memoryUsage || 0}%
+                  </p>
+                </div>
 
-              <TabsContent value="courses" className="space-y-6">
-                <motion.div
-                  key="courses"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <CourseManagement />
-                </motion.div>
-              </TabsContent>
+                {/* Storage Health */}
+                <div className="p-4 border rounded-lg border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <HardDrive className="w-4 h-4 text-gray-600" />
+                      <span className="text-sm font-medium text-gray-900 font-primary">
+                        التخزين
+                      </span>
+                    </div>
+                    <Badge className={getStatusColor(stats.systemHealth?.storage.status || 'healthy')}>
+                      {stats.systemHealth?.storage.status === 'healthy' ? 'سليم' :
+                        stats.systemHealth?.storage.status === 'warning' ? 'تحذير' : 'خطأ'}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-gray-500 font-primary">
+                    المستخدم: {((stats.systemHealth?.storage.usedSpace || 0) / (stats.systemHealth?.storage.totalSpace || 1) * 100).toFixed(1)}%
+                  </p>
+                </div>
 
-              <TabsContent value="categories" className="space-y-6">
-                <motion.div
-                  key="categories"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <CategoryManagement categories={[]} />
-                </motion.div>
-              </TabsContent>
-
-              <TabsContent value="revenue" className="space-y-6">
-                <motion.div
-                  key="revenue"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <RevenueAnalytics />
-                </motion.div>
-              </TabsContent>
-            </AnimatePresence>
-          </Tabs>
+                {/* Network Health */}
+                <div className="p-4 border rounded-lg border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Wifi className="w-4 h-4 text-gray-600" />
+                      <span className="text-sm font-medium text-gray-900 font-primary">
+                        الشبكة
+                      </span>
+                    </div>
+                    <Badge className={getStatusColor(stats.systemHealth?.network.status || 'healthy')}>
+                      {stats.systemHealth?.network.status === 'healthy' ? 'سليم' :
+                        stats.systemHealth?.network.status === 'warning' ? 'تحذير' : 'خطأ'}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-gray-500 font-primary">
+                    زمن الاستجابة: {stats.systemHealth?.network.latency || 0}ms
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </FadeInScroll>
+      )}
 
-        {/* Floating Action Button for Quick Actions */}
-        <motion.div
-          className="fixed bottom-6 right-6 z-50"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 1, type: "spring", stiffness: 300 }}
+      {/* Enhanced Main Content Tabs */}
+      <FadeInScroll>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <div className="flex items-center justify-between">
+            <TabsList className="grid grid-cols-5 w-fit bg-neutral-100 dark:bg-neutral-800">
+              <TabsTrigger value="overview" className="font-primary">نظرة عامة</TabsTrigger>
+              <TabsTrigger value="users" className="font-primary">المستخدمين</TabsTrigger>
+              <TabsTrigger value="courses" className="font-primary">الدورات</TabsTrigger>
+              <TabsTrigger value="categories" className="font-primary">التصنيفات</TabsTrigger>
+              <TabsTrigger value="revenue" className="font-primary">الإيرادات</TabsTrigger>
+            </TabsList>
+
+            {/* Tab-specific Actions */}
+            <div className="flex items-center gap-2">
+              {activeTab === 'overview' && (
+                <Button variant="outline" size="sm">
+                  <BarChart3 className="w-4 h-4 ml-2" />
+                  تقرير شامل
+                </Button>
+              )}
+              {activeTab === 'users' && (
+                <Button variant="outline" size="sm">
+                  <Filter className="w-4 h-4 ml-2" />
+                  فلترة متقدمة
+                </Button>
+              )}
+              {activeTab === 'revenue' && (
+                <Button variant="outline" size="sm">
+                  <Download className="w-4 h-4 ml-2" />
+                  تصدير البيانات
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <AnimatePresence mode="wait">
+            <TabsContent value="overview" className="space-y-6">
+              <motion.div
+                key="overview"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <PlatformOverview stats={stats} />
+              </motion.div>
+            </TabsContent>
+
+            <TabsContent value="users" className="space-y-6">
+              <motion.div
+                key="users"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <UserManagement />
+              </motion.div>
+            </TabsContent>
+
+            <TabsContent value="courses" className="space-y-6">
+              <motion.div
+                key="courses"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <CourseManagement />
+              </motion.div>
+            </TabsContent>
+
+            <TabsContent value="categories" className="space-y-6">
+              <motion.div
+                key="categories"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <CategoryManagement categories={[]} />
+              </motion.div>
+            </TabsContent>
+
+            <TabsContent value="revenue" className="space-y-6">
+              <motion.div
+                key="revenue"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <RevenueAnalytics />
+              </motion.div>
+            </TabsContent>
+          </AnimatePresence>
+        </Tabs>
+      </FadeInScroll>
+
+      {/* Floating Action Button for Quick Actions */}
+      <motion.div
+        className="fixed bottom-6 right-6 z-50"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 1, type: "spring", stiffness: 300 }}
+      >
+        <Button
+          size="lg"
+          className="rounded-full w-14 h-14 shadow-lg hover:shadow-xl transition-all duration-200"
         >
-          <Button
-            size="lg"
-            className="rounded-full w-14 h-14 shadow-lg hover:shadow-xl transition-all duration-200"
-          >
-            <Grid3X3 className="w-6 h-6" />
-          </Button>
-        </motion.div>
-      </div>
+          <Grid3X3 className="w-6 h-6" />
+        </Button>
+      </motion.div>
     </div>
+    </div >
   );
 }

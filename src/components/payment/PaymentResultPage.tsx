@@ -63,7 +63,7 @@ export default function PaymentResultPage({
     if (currentStatus === 'pending') {
       const interval = setInterval(async () => {
         await checkPaymentStatus();
-      }, 10000); // Check every 10 seconds
+      }, 5000); // Check every 5 seconds for faster feedback
 
       return () => clearInterval(interval);
     }
@@ -83,6 +83,9 @@ export default function PaymentResultPage({
         } else if (newStatus === 'FAILED' && currentStatus !== 'failed') {
           setCurrentStatus('failed');
           toast.error('فشلت عملية الدفع.');
+        } else if (newStatus === 'PENDING' && currentStatus === 'pending') {
+          // Still pending, continue checking
+          console.log('Payment still pending...');
         }
       }
     } catch (error) {

@@ -61,10 +61,24 @@ export interface FeaturedCourse {
 export interface EnrolledCourse {
   id: string;
   title: string;
+  description: string;
   thumbnailUrl: string;
   category: { name: string }; // <-- Changed from categoryName
   professor: { name: string }; // <-- Changed from professorName
+  enrolledAt: Date;
   progress: number;
+  totalLessons: number;
+  completedLessons: number;
+  totalDuration: number; // in minutes
+  watchedDuration: number; // in minutes
+  lastAccessedAt?: Date;
+  nextLesson?: {
+    id: string;
+    title: string;
+    order: number;
+  } | null;
+  certificateEarned: boolean;
+  status: 'not_started' | 'in_progress' | 'completed';
 }
 
 export interface CourseUserActions {

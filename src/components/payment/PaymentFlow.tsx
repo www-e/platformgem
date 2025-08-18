@@ -122,25 +122,11 @@ export function PaymentFlow({ course, onSuccess, onCancel }: PaymentFlowProps) {
     try {
       setProcessingState("verifying");
 
-      const payment = await paymentsApi.pollPaymentStatus(paymentId, {
-        maxAttempts: 30,
-        intervalMs: 3000,
-        // R.A.K.A.N's FIX: Applied the imported type to the 'status' parameter.
-        onStatusChange: (status: PaymentStatus) => {
-          console.log("Payment status:", status);
-        },
-      });
-
-      if (payment.status === "COMPLETED") {
-        setProcessingState("success");
-        toast.success("تم الدفع بنجاح! تم تسجيلك في الدورة.");
-        setTimeout(() => onSuccess(paymentId), 2000);
-      } else {
-        setError("فشل في إتمام عملية الدفع");
-        setProcessingState("error");
-      }
+      // Instead of polling, redirect to the return page
+      // This ensures a consistent user experience
+      window.location.href = `/payments/return?course=${course.id}&status=success&paymentId=${paymentId}`;
     } catch (error) {
-      setError("انتهت مهلة انتظار تأكيد الدفع");
+      setError("حدث خطأ أثناء معالجة نتيجة الدفع");
       setProcessingState("error");
     }
   };

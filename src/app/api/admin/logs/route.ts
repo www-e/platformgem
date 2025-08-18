@@ -55,10 +55,18 @@ export async function GET(request: NextRequest) {
       dateTo
     });
 
+    // Convert BigInt values to strings to avoid serialization errors
+    const serializedLogs = logs.data.map(log => ({
+      ...log,
+      metadata: log.metadata ? JSON.parse(JSON.stringify(log.metadata, (key, value) => 
+        typeof value === 'bigint' ? value.toString() : value
+      )) : undefined
+    }));
+
     return NextResponse.json({
       success: true,
       data: {
-        logs: logs.data,
+        logs: serializedLogs,
         pagination: {
           page,
           limit,

@@ -7,6 +7,7 @@ import {
   initiateMobileWalletPayment, 
   getMobileWalletProvider 
 } from './mobile-wallet.service';
+import { buildReturnUrl } from './utils';
 
 /**
  * The response structure for a successful payment initiation.
@@ -138,12 +139,10 @@ function buildIframeUrl(paymentKey: string, courseId?: string): string {
   let iframeUrl = `https://accept.paymob.com/api/acceptance/iframes/${paymobConfig.iframeId}?payment_token=${paymentKey}`;
 
   // Add return URL if it's configured and a course ID is provided
-  if (paymobConfig.returnUrl && courseId) {
-    const returnUrlWithCourse = paymobConfig.returnUrl.replace(
-      '{courseId}',
-      courseId
-    );
-    iframeUrl += `&return_url=${encodeURIComponent(returnUrlWithCourse)}`;
+  if (courseId) {
+    // Use our new buildReturnUrl function
+    const returnUrl = buildReturnUrl('/payments/return', courseId);
+    iframeUrl += `&return_url=${encodeURIComponent(returnUrl)}`;
   }
 
   return iframeUrl;

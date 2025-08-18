@@ -76,7 +76,7 @@ export async function getEnrolledCourses(
         ? new Date(
             Math.max(...courseViewingHistory.map((vh) => new Date(vh.updatedAt).getTime()))
           )
-        : enrollment.lastAccessedAt;
+        : enrollment.lastAccessedAt || undefined;
 
     return {
       id: course.id,

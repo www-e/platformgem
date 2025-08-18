@@ -49,7 +49,7 @@ interface Professor {
     completionRate: number;
     coursesCount: number;
   };
-  ownedCourses: {
+  courses: {
     id: string;
     title: string;
     _count: {
@@ -134,8 +134,9 @@ export default function ProfessorsPage() {
       const data = await response.json();
       
       if (response.ok) {
-        setProfessors(data.professors || []);
-        setTotalCount(data.total || 0);
+        // The API returns a paginated response with a data property
+        setProfessors(data.data?.professors || data.professors || []);
+        setTotalCount(data.data?.total || data.total || 0);
       }
     } catch (error) {
       console.error('Failed to fetch professors:', error);
@@ -276,9 +277,9 @@ export default function ProfessorsPage() {
               <div className="text-xs text-muted-foreground">إجمالي الإيرادات</div>
             </div>
             
-            {professor.ownedCourses.length > 0 && (
+            {professor.courses.length > 0 && (
               <div className="text-sm text-muted-foreground">
-                {professor.ownedCourses.length} دورة منشورة
+                {professor.courses.length} دورة منشورة
               </div>
             )}
           </div>
