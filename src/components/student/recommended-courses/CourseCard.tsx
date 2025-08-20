@@ -39,23 +39,23 @@ const levelColors = {
 };
 
 const levelLabels = {
-  beginner: 'مبتدئ',
-  intermediate: 'متوسط',
-  advanced: 'متقدم'
+  beginner: 'Beginner',
+  intermediate: 'Intermediate',
+  advanced: 'Advanced'
 };
 
 const recommendationBadges = {
-  category_match: { icon: Target, label: 'يناسب اهتماماتك', color: 'bg-blue-500' },
-  similar_students: { icon: Users, label: 'اختيار الملتحقين', color: 'bg-green-500' },
-  trending: { icon: TrendingUp, label: 'رائج الآن', color: 'bg-pink-500' },
-  professor_match: { icon: Award, label: 'مدرس مميز', color: 'bg-purple-500' },
-  completion_based: { icon: Sparkles, label: 'مقترح لك', color: 'bg-orange-500' }
+  category_match: { icon: Target, label: 'Matches Your Interests', color: 'bg-blue-500' },
+  similar_students: { icon: Users, label: 'Student Choice', color: 'bg-green-500' },
+  trending: { icon: TrendingUp, label: 'Trending Now', color: 'bg-pink-500' },
+  professor_match: { icon: Award, label: 'Featured Instructor', color: 'bg-purple-500' },
+  completion_based: { icon: Sparkles, label: 'Recommended for You', color: 'bg-orange-500' }
 };
 
 export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardProps) {
   const formatPrice = (price: number, currency: string) => {
-    if (price === 0) return 'مجاني';
-    return new Intl.NumberFormat('ar-EG', {
+    if (price === 0) return 'Free';
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 0
@@ -65,7 +65,7 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    return hours > 0 ? `${hours}س ${mins}د` : `${mins}د`;
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
   const RecommendationBadge = recommendationBadges[course.recommendationReason];
@@ -119,7 +119,7 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
           <div className="absolute top-3 right-3">
             {course.price === 0 ? (
               <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
-                مجاني
+                Free
               </Badge>
             ) : (
               <Badge className="bg-gradient-to-r from-primary to-blue-600 text-white border-0 shadow-lg">
@@ -186,7 +186,7 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
               </Avatar>
               <div>
                 <p className="text-sm font-medium">{course.professor.name}</p>
-                <p className="text-xs text-muted-foreground">مدرب معتمد</p>
+                <p className="text-xs text-muted-foreground">Certified Instructor</p>
               </div>
             </div>
 
@@ -195,7 +195,7 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1 text-muted-foreground">
                   <Users className="w-4 h-4" />
-                  <span>{course.enrollmentCount.toLocaleString('ar-EG')}</span>
+                  <span>{course.enrollmentCount.toLocaleString('en-US')}</span>
                 </div>
                 <div className="flex items-center gap-1 text-muted-foreground">
                   <Clock className="w-4 h-4" />
@@ -228,7 +228,7 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
             <Link href={`/courses/${course.id}`}>
               <Button className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]">
                 <Eye className="w-4 h-4 ml-2" />
-                عرض التفاصيل
+                View Details
                 <ChevronRight className="w-4 h-4 mr-2" />
               </Button>
             </Link>

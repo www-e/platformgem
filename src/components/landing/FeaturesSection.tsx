@@ -89,19 +89,19 @@ export default function FeaturesSection() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Zap className="w-4 h-4" />
-            مميزات استثنائية
+            Exceptional Features
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-bold font-display mb-6 leading-arabic-tight">
-            <span className="text-neutral-800">لماذا تختار</span>
+          <h2 className="text-4xl md:text-5xl font-bold font-display mb-6 leading-tight">
+            <span className="text-neutral-800">Why Choose</span>
             <br />
             <span className="bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 bg-clip-text text-transparent">
-              منصتنا التعليمية؟
+              Our Educational Platform?
             </span>
           </h2>
           
-          <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-arabic-relaxed">
-            نحن نركز على الجودة والكفاءة لنقدم لك تجربة تعليمية فريدة من نوعها تضمن تحقيق أهدافك الأكاديمية
+          <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
+            We focus on quality and efficiency to provide you with a unique educational experience that ensures you achieve your academic goals
           </p>
         </div>
 
@@ -111,10 +111,10 @@ export default function FeaturesSection() {
           {/* Main Feature - Spans large area */}
           <BentoFeatureCard 
             className="lg:col-span-8 lg:row-span-2" 
-            title="منهج مُعد بخبرة واحترافية" 
-            description="محتوى تعليمي مُصمم خصيصًا ليتوافق مع أحدث المناهج الدراسية مع التركيز على المفاهيم الأساسية وتطبيقاتها العملية"
+            title="Curriculum Designed with Expertise" 
+            description="Educational content specifically designed to align with the latest curricula, focusing on core concepts and their practical applications"
             icon={BrainCircuit}
-            badgeText="منهج متطور"
+            badgeText="Advanced Curriculum"
             accentColor="primary"
           >
             {/* Visual mockup for curriculum */}
@@ -122,18 +122,18 @@ export default function FeaturesSection() {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-neutral-700">الفصل الأول: المفاهيم الأساسية</span>
-                  <Badge variant="secondary" className="mr-auto text-xs">مكتمل</Badge>
+                  <span className="text-sm font-medium text-neutral-700">Chapter 1: Core Concepts</span>
+                  <Badge variant="secondary" className="mr-auto text-xs">Completed</Badge>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-primary-400 rounded-full"></div>
-                  <span className="text-sm font-medium text-neutral-700">الفصل الثاني: التطبيقات العملية</span>
-                  <Badge variant="outline" className="mr-auto text-xs">قيد التطوير</Badge>
+                  <span className="text-sm font-medium text-neutral-700">Chapter 2: Practical Applications</span>
+                  <Badge variant="outline" className="mr-auto text-xs">In Development</Badge>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-neutral-300 rounded-full"></div>
-                  <span className="text-sm font-medium text-neutral-500">الفصل الثالث: المراجعة النهائية</span>
-                  <Badge variant="outline" className="mr-auto text-xs">قريباً</Badge>
+                  <span className="text-sm font-medium text-neutral-500">Chapter 3: Final Review</span>
+                  <Badge variant="outline" className="mr-auto text-xs">Coming Soon</Badge>
                 </div>
               </div>
             </div>
@@ -142,10 +142,10 @@ export default function FeaturesSection() {
           {/* Interactive Videos */}
           <BentoFeatureCard 
             className="lg:col-span-4 lg:row-span-1" 
-            title="شروحات فيديو تفاعلية" 
-            description="دروس عالية الجودة تجعل المواد الصعبة سهلة الفهم"
+            title="Interactive Video Lessons" 
+            description="High-quality lessons that make difficult material easy to understand"
             icon={Video}
-            badgeText="HD جودة"
+            badgeText="HD Quality"
             accentColor="secondary"
           >
             <div className="flex items-center justify-center mt-4 p-3 bg-neutral-800 rounded-lg">
@@ -156,14 +156,14 @@ export default function FeaturesSection() {
           {/* Student Tracking */}
           <BentoFeatureCard 
             className="lg:col-span-4 lg:row-span-1" 
-            title="متابعة تحقيق التفوق" 
-            description="نظام متكامل لتتبع تقدمك مع اختبارات دورية"
+            title="Tracking Academic Excellence" 
+            description="Integrated system to track your progress with periodic tests"
             icon={Trophy}
             accentColor="warning"
           >
             <div className="mt-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span>نسبة الإنجاز</span>
+                <span>Completion Rate</span>
                 <span className="font-bold">87%</span>
               </div>
               <div className="w-full bg-neutral-200 rounded-full h-2">
@@ -175,10 +175,10 @@ export default function FeaturesSection() {
           {/* Expert Support */}
           <BentoFeatureCard 
             className="lg:col-span-5 lg:row-span-2" 
-            title="دعم مباشر من الخبراء" 
-            description="تواصل مباشر مع المعلمين المتخصصين للحصول على إجابات فورية لأسئلتك ومساعدة شخصية"
+            title="Direct Support from Experts" 
+            description="Direct communication with specialized teachers for immediate answers to your questions and personalized assistance"
             icon={Users}
-            badgeText="24/7 دعم"
+            badgeText="24/7 Support"
             accentColor="success"
           >
             <div className="mt-6 space-y-4">
@@ -187,12 +187,12 @@ export default function FeaturesSection() {
                   م
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-emerald-800 font-medium">المعلم متاح الآن</p>
-                  <p className="text-xs text-emerald-600 mt-1">متوسط زمن الرد: دقيقتان</p>
+                  <p className="text-sm text-emerald-800 font-medium">Teacher Available Now</p>
+                  <p className="text-xs text-emerald-600 mt-1">Average response time: 2 minutes</p>
                 </div>
               </div>
               <div className="text-center">
-                <p className="text-sm text-neutral-600">+500 سؤال تم الإجابة عليه هذا الشهر</p>
+                <p className="text-sm text-neutral-600">+500 questions answered this month</p>
               </div>
             </div>
           </BentoFeatureCard>
@@ -200,8 +200,8 @@ export default function FeaturesSection() {
           {/* Certificates */}
           <BentoFeatureCard 
             className="lg:col-span-3 lg:row-span-1" 
-            title="شهادات معتمدة" 
-            description="احصل على شهادة معتمدة عند إتمام الدورة بنجاح"
+            title="Accredited Certificates" 
+            description="Receive an accredited certificate upon successfully completing a course"
             icon={Award}
             accentColor="warning"
           >
@@ -218,7 +218,7 @@ export default function FeaturesSection() {
         <div className="text-center mt-16">
           <div className="inline-flex items-center gap-2 text-primary font-medium">
             <Target className="w-5 h-5" />
-            <span>كل هذه المميزات وأكثر في انتظارك</span>
+            <span>All these features and more await you</span>
           </div>
         </div>
       </div>

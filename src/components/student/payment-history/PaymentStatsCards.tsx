@@ -18,7 +18,7 @@ export function PaymentStatsCards({ stats }: PaymentStatsCardsProps) {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <Card className="border-l-4 border-l-green-500">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">إجمالي الإنفاق</CardTitle>
+          <CardTitle className="text-sm font-medium">Total Spending</CardTitle>
           <DollarSign className="h-4 w-4 text-green-600" />
         </CardHeader>
         <CardContent>
@@ -26,27 +26,27 @@ export function PaymentStatsCards({ stats }: PaymentStatsCardsProps) {
             {formatCurrency(stats.totalSpent)}
           </div>
           <p className="text-xs text-muted-foreground">
-            على {stats.totalTransactions} معاملة
+            on {stats.totalTransactions} transactions
           </p>
         </CardContent>
       </Card>
 
       <Card className="border-l-4 border-l-blue-500">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">المعاملات الناجحة</CardTitle>
+          <CardTitle className="text-sm font-medium">Successful Transactions</CardTitle>
           <CheckCircle className="h-4 w-4 text-blue-600" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-blue-600">{stats.successfulPayments}</div>
           <p className="text-xs text-muted-foreground">
-            من أصل {stats.totalTransactions} معاملة
+            out of {stats.totalTransactions} transactions
           </p>
         </CardContent>
       </Card>
 
       <Card className="border-l-4 border-l-purple-500">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">متوسط قيمة الطلب</CardTitle>
+          <CardTitle className="text-sm font-medium">Average Order Value</CardTitle>
           <BarChart3 className="h-4 w-4 text-purple-600" />
         </CardHeader>
         <CardContent>
@@ -54,20 +54,20 @@ export function PaymentStatsCards({ stats }: PaymentStatsCardsProps) {
             {formatCurrency(stats.averageOrderValue)}
           </div>
           <p className="text-xs text-muted-foreground">
-            متوسط الإنفاق لكل دورة
+            average spending per course
           </p>
         </CardContent>
       </Card>
 
       <Card className="border-l-4 border-l-red-500">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">المعاملات الفاشلة</CardTitle>
+          <CardTitle className="text-sm font-medium">Failed Transactions</CardTitle>
           <XCircle className="h-4 w-4 text-red-600" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-red-600">{stats.failedPayments}</div>
           <p className="text-xs text-muted-foreground">
-            معاملة فاشلة
+            failed transactions
           </p>
         </CardContent>
       </Card>

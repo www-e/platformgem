@@ -29,7 +29,7 @@ interface SearchFilterProps {
 export function SearchFilter({
   value,
   onChange,
-  placeholder = 'البحث...',
+  placeholder = 'Search...',
   className = '',
   showIcon = true
 }: SearchFilterProps) {

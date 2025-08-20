@@ -171,7 +171,7 @@ export function StudentDashboard() {
   const formatWatchTime = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    return hours > 0 ? `${hours}س ${mins}د` : `${mins}د`;
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
   const getRarityColor = (rarity: Achievement["rarity"]) => {
@@ -227,14 +227,14 @@ export function StudentDashboard() {
           <Trophy className="w-8 h-8 text-red-600" />
         </div>
         <h3 className="text-lg font-semibold text-neutral-900 font-display mb-2">
-          خطأ في تحميل البيانات
+          Error Loading Data
         </h3>
         <p className="text-neutral-600 font-primary mb-4">
-          لم نتمكن من تحميل بيانات لوحة التحكم
+          We couldn't load your dashboard data
         </p>
         <Button onClick={fetchStudentStats}>
           <RefreshCw className="w-4 h-4 ml-2" />
-          إعادة المحاولة
+          Try Again
         </Button>
       </div>
     );
@@ -271,13 +271,13 @@ export function StudentDashboard() {
                 <Crown className="w-10 h-10 text-black" />
               </motion.div>
               <h2 className="text-2xl font-bold text-neutral-900 font-display mb-2">
-                🎉 مستوى جديد!
+                🎉 New Level!
               </h2>
               <p className="text-neutral-600 font-primary mb-4">
-                وصلت إلى المستوى {stats.level}
+                You've reached level {stats.level}
               </p>
               <Button onClick={() => setShowLevelUpAnimation(false)}>
-                متابعة التعلم
+                Continue Learning
               </Button>
             </motion.div>
           </motion.div>
@@ -300,7 +300,7 @@ export function StudentDashboard() {
                 <achievement.icon className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="font-bold font-display">إنجاز جديد!</h4>
+                <h4 className="font-bold font-display">New Achievement!</h4>
                 <p className="text-sm opacity-90 font-primary">
                   {achievement.title}
                 </p>
@@ -321,16 +321,16 @@ export function StudentDashboard() {
               <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
                 <Zap className="w-6 h-6 text-black" />
               </div>
-              لوحة تحكم الملتحق
+              Student Dashboard
             </h1>
             <div className="flex items-center gap-4 mt-2">
               <p className="text-neutral-600 font-primary">
-                تتبع تقدمك وحقق أهدافك التعليمية
+                Track your progress and achieve your educational goals
               </p>
               <div className="flex items-center gap-2 text-sm text-neutral-500">
                 <Activity className="w-4 h-4" />
                 <span className="font-primary">
-                  آخر تحديث: {lastUpdate.toLocaleTimeString("ar-EG")}
+                  Last updated: {lastUpdate.toLocaleTimeString("en-US")}
                 </span>
               </div>
             </div>
@@ -382,12 +382,12 @@ export function StudentDashboard() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-lg font-bold font-display">
-                  المستوى {stats.level ?? 0} •{" "}
+                  Level {stats.level ?? 0} •{" "}
                   {(stats.currentXP ?? 0).toLocaleString()} XP
                 </h3>
                 <p className="text-black/80 font-primary">
-                  {(stats.nextLevelXP ?? 0) - (stats.currentXP ?? 0)} XP متبقية
-                  للمستوى التالي
+                  {(stats.nextLevelXP ?? 0) - (stats.currentXP ?? 0)} XP remaining
+                  for next level
                 </p>
               </div>
               <div className="text-right">
@@ -395,7 +395,7 @@ export function StudentDashboard() {
                   #{stats.monthlyRank ?? 0}
                 </div>
                 <p className="text-black/80 text-sm font-primary">
-                  ترتيبك الشهري
+                  Your monthly rank
                 </p>
               </div>
             </div>
@@ -426,15 +426,15 @@ export function StudentDashboard() {
               {stats.totalEnrolledCourses ?? 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              {stats.completedCourses} مكتملة • {stats.inProgressCourses} قيد
-              التقدم
+              {stats.completedCourses} completed • {stats.inProgressCourses} in
+              progress
             </p>
           </CardContent>
         </Card>
 
         <Card className="border-l-4 border-l-green-500">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">متوسط التقدم</CardTitle>
+            <CardTitle className="text-sm font-medium">Average Progress</CardTitle>
             <Target className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
@@ -452,27 +452,27 @@ export function StudentDashboard() {
 
         <Card className="border-l-4 border-l-purple-500">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">وقت التعلم</CardTitle>
+            <CardTitle className="text-sm font-medium">Learning Time</CardTitle>
             <Clock className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-purple-600">
               {formatWatchTime(stats.totalWatchTime)}
             </div>
-            <p className="text-xs text-muted-foreground">إجمالي وقت المشاهدة</p>
+            <p className="text-xs text-muted-foreground">Total watch time</p>
           </CardContent>
         </Card>
 
         <Card className="border-l-4 border-l-orange-500">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">الشهادات</CardTitle>
+            <CardTitle className="text-sm font-medium">Certificates</CardTitle>
             <Award className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">
               {stats.certificatesEarned ?? 0}
             </div>
-            <p className="text-xs text-muted-foreground">شهادة مكتسبة</p>
+            <p className="text-xs text-muted-foreground">Certificate earned</p>
           </CardContent>
         </Card>
       </div>
@@ -484,12 +484,12 @@ export function StudentDashboard() {
         className="space-y-6"
       >
         <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
-          <TabsTrigger value="courses">دوراتي</TabsTrigger>
-          <TabsTrigger value="progress">التقدم</TabsTrigger>
-          <TabsTrigger value="payments">المدفوعات</TabsTrigger>
-          <TabsTrigger value="recommended">مقترحة</TabsTrigger>
-          <TabsTrigger value="certificates">الشهادات</TabsTrigger>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="courses">My Courses</TabsTrigger>
+          <TabsTrigger value="progress">Progress</TabsTrigger>
+          <TabsTrigger value="payments">Payments</TabsTrigger>
+          <TabsTrigger value="recommended">Recommended</TabsTrigger>
+          <TabsTrigger value="certificates">Certificates</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -499,7 +499,7 @@ export function StudentDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Eye className="h-5 w-5" />
-                  النشاط الحديث
+                  Recent Activity
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -526,17 +526,17 @@ export function StudentDashboard() {
                       <div className="flex-1">
                         <p className="font-medium text-sm">
                           {activity.type === "lesson_complete" &&
-                            `أكملت درس: ${activity.lessonName}`}
+                            `Completed lesson: ${activity.lessonName}`}
                           {activity.type === "course_enroll" &&
-                            `سجلت في دورة: ${activity.courseName}`}
+                            `Enrolled in course: ${activity.courseName}`}
                           {activity.type === "certificate_earned" &&
-                            `حصلت على شهادة: ${activity.courseName}`}
+                            `Earned certificate: ${activity.courseName}`}
                           {activity.type === "quiz_passed" &&
-                            `نجحت في اختبار: ${activity.courseName}`}
+                            `Passed quiz: ${activity.courseName}`}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(activity.timestamp).toLocaleDateString(
-                            "ar-SA"
+                            "en-US"
                           )}
                         </p>
                       </div>
@@ -558,7 +558,7 @@ export function StudentDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Star className="h-5 w-5" />
-                  الإنجازات الحديثة
+                  Recent Achievements
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -580,10 +580,10 @@ export function StudentDashboard() {
                         </p>
                       </div>
                       <Badge variant="outline" className="text-xs">
-                        {achievement.category === "completion" && "إكمال"}
-                        {achievement.category === "streak" && "استمرارية"}
-                        {achievement.category === "engagement" && "تفاعل"}
-                        {achievement.category === "excellence" && "تميز"}
+                        {achievement.category === "completion" && "Completion"}
+                        {achievement.category === "streak" && "Streak"}
+                        {achievement.category === "engagement" && "Engagement"}
+                        {achievement.category === "excellence" && "Excellence"}
                       </Badge>
                     </div>
                   ))}

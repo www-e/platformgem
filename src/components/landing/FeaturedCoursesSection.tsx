@@ -47,7 +47,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
       const data = await response.json();
       setCourses(data.courses);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'حدث خطأ في تحميل الدورات');
+      setError(err instanceof Error ? err.message : 'An error occurred while loading courses');
     } finally {
       setIsLoading(false);
     }
@@ -105,7 +105,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
               {course.professor.name.charAt(0)}
             </div>
             <p className="text-neutral-600 text-sm font-medium">
-              بواسطة {course.professor.name}
+              by {course.professor.name}
             </p>
           </div>
         </div>
@@ -117,21 +117,21 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
               <BookOpen className="w-4 h-4 text-primary-500" />
             </div>
             <div className="text-sm font-semibold text-neutral-800">{course.lessonCount}</div>
-            <div className="text-xs text-neutral-500">درس</div>
+            <div className="text-xs text-neutral-500">Lessons</div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center mb-1">
               <Users className="w-4 h-4 text-secondary-500" />
             </div>
             <div className="text-sm font-semibold text-neutral-800">{course.enrollmentCount}</div>
-            <div className="text-xs text-neutral-500">ملتحق</div>
+            <div className="text-xs text-neutral-500">Enrolled</div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center mb-1">
               <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
             </div>
             <div className="text-sm font-semibold text-neutral-800">4.9</div>
-            <div className="text-xs text-neutral-500">تقييم</div>
+            <div className="text-xs text-neutral-500">Rating</div>
           </div>
         </div>
 
@@ -139,7 +139,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
         <Link href={`/courses/${course.id}`} className="block">
           <Button className="w-full h-12 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-black font-bold rounded-xl shadow-elevation-2 hover:shadow-elevation-3 btn-hover-effect relative overflow-hidden group/btn">
             <span className="flex items-center justify-center gap-2 relative z-10">
-              <span>استكشف الدورة</span>
+              <span>Explore Course</span>
               <ArrowLeft className="w-5 h-5 transition-transform group-hover/btn:-translate-x-1" />
             </span>
             {/* Shimmer effect */}
@@ -180,11 +180,11 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
               <BookOpen className="w-8 h-8 text-red-600" />
             </div>
             <h3 className="text-xl font-semibold text-neutral-800 mb-2">
-              عذراً، حدث خطأ في تحميل الدورات
+              Sorry, an error occurred while loading courses
             </h3>
             <p className="text-neutral-600 mb-4">{error}</p>
             <Button onClick={fetchFeaturedCourses} variant="outline" className="btn-hover-effect">
-              إعادة المحاولة
+              Try Again
             </Button>
           </div>
         </div>
@@ -209,19 +209,19 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
               <TrendingUp className="w-4 h-4" />
-              الدورات الأكثر طلباً
+              Most Requested Courses
             </div>
             
-            <h2 className="text-4xl md:text-5xl font-bold font-display mb-6 leading-arabic-tight">
-              <span className="text-neutral-800">ابدأ رحلتك التعليمية</span>
+            <h2 className="text-4xl md:text-5xl font-bold font-display mb-6 leading-tight">
+              <span className="text-neutral-800">Start Your Educational Journey</span>
               <br />
               <span className="text-primary-600 font-bold">
-                مع أحدث دوراتنا
+                With Our Latest Courses
               </span>
             </h2>
             
-            <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-arabic-relaxed">
-              اكتشف مجموعة مختارة من أفضل الدورات التعليمية التي تم تصميمها خصيصاً لمساعدتك على تحقيق أهدافك الأكاديمية والمهنية
+            <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
+              Discover a curated selection of our best educational courses designed specifically to help you achieve your academic and professional goals
             </p>
           </div>
 
@@ -241,10 +241,10 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
                   <BookOpen className="w-8 h-8 text-neutral-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-neutral-800 mb-2">
-                  لا توجد دورات متاحة حالياً
+                  No courses available at the moment
                 </h3>
                 <p className="text-neutral-600">
-                  نعمل على إضافة دورات جديدة قريباً. تابعنا للحصول على آخر التحديثات!
+                  We're working on adding new courses soon. Follow us for the latest updates!
                 </p>
               </div>
             )}
@@ -256,23 +256,23 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
               <div className="flex items-center justify-center gap-2 mb-4">
                 <Sparkles className="w-6 h-6 text-primary-500" />
                 <h3 className="text-2xl font-bold text-neutral-800 font-display">
-                  هل تريد استكشاف المزيد من الدورات؟
+                  Want to explore more courses?
                 </h3>
               </div>
-              <p className="text-neutral-600 mb-8 max-w-2xl mx-auto leading-arabic-relaxed">
-                تصفح مكتبتنا الكاملة من الدورات التعليمية في مختلف المجالات واعثر على الدورة المثالية لك
+              <p className="text-neutral-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Browse our complete library of educational courses across various fields and find the perfect course for you
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/courses">
                   <Button size="lg" className="min-w-[200px] h-12 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-black font-bold rounded-xl shadow-elevation-2 hover:shadow-elevation-3 btn-hover-effect">
                     <BookOpen className="w-5 h-5 mr-2" />
-                    تصفح جميع الدورات
+                    Browse All Courses
                   </Button>
                 </Link>
                 <Link href="/signup">
                   <Button size="lg" variant="outline" className="min-w-[200px] h-12 glass-light border-2 border-neutral-200/50 text-neutral-700 hover:border-primary/30 hover:text-primary font-bold rounded-xl btn-hover-effect">
                     <Target className="w-5 h-5 mr-2" />
-                    إنشاء حساب مجاني
+                    Create Free Account
                   </Button>
                 </Link>
               </div>

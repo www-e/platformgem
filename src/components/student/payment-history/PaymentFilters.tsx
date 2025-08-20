@@ -25,19 +25,19 @@ export function PaymentFilters({
   onExport
 }: PaymentFiltersProps) {
   const statusOptions = [
-    { value: 'all', label: 'جميع الحالات' },
-    { value: 'completed', label: 'مكتمل' },
-    { value: 'pending', label: 'معلق' },
-    { value: 'failed', label: 'فاشل' },
-    { value: 'cancelled', label: 'ملغي' },
-    { value: 'refunded', label: 'مسترد' }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'failed', label: 'Failed' },
+    { value: 'cancelled', label: 'Cancelled' },
+    { value: 'refunded', label: 'Refunded' }
   ];
 
   const dateOptions = [
-    { value: 'all', label: 'جميع الفترات' },
-    { value: 'week', label: 'آخر أسبوع' },
-    { value: 'month', label: 'آخر شهر' },
-    { value: 'quarter', label: 'آخر 3 أشهر' }
+    { value: 'all', label: 'All Periods' },
+    { value: 'week', label: 'Last Week' },
+    { value: 'month', label: 'Last Month' },
+    { value: 'quarter', label: 'Last 3 Months' }
   ];
 
   return (
@@ -45,7 +45,7 @@ export function PaymentFilters({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Filter className="h-5 w-5" />
-          البحث والتصفية
+          Search and Filter
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -53,7 +53,7 @@ export function PaymentFilters({
           <SearchFilter
             value={searchTerm}
             onChange={setSearchTerm}
-            placeholder="البحث بالدورة أو رقم المعاملة..."
+            placeholder="Search by course or transaction number..."
             className="flex-1"
           />
           
@@ -61,18 +61,18 @@ export function PaymentFilters({
             value={statusFilter}
             onChange={setStatusFilter}
             options={statusOptions}
-            placeholder="تصفية بالحالة"
+            placeholder="Filter by Status"
           />
 
           <SelectFilter
             value={dateFilter}
             onChange={setDateFilter}
             options={dateOptions}
-            placeholder="تصفية بالتاريخ"
+            placeholder="Filter by Date"
           />
 
           <ActionButton
-            text="تصدير"
+            text="Export"
             onClick={onExport}
             variant="outline"
             icon={Download}

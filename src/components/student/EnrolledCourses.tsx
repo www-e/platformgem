@@ -70,20 +70,20 @@ export function EnrolledCourses() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />مكتمل</Badge>;
+        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Completed</Badge>;
       case 'in_progress':
-        return <Badge className="bg-blue-100 text-blue-800"><PlayCircle className="h-3 w-3 mr-1" />قيد التقدم</Badge>;
+        return <Badge className="bg-blue-100 text-blue-800"><PlayCircle className="h-3 w-3 mr-1" />In Progress</Badge>;
       case 'not_started':
-        return <Badge className="bg-gray-100 text-gray-800"><BookOpen className="h-3 w-3 mr-1" />لم يبدأ</Badge>;
+        return <Badge className="bg-gray-100 text-gray-800"><BookOpen className="h-3 w-3 mr-1" />Not Started</Badge>;
       default:
-        return <Badge variant="outline">غير محدد</Badge>;
+        return <Badge variant="outline">Undefined</Badge>;
     }
   };
 
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    return hours > 0 ? `${hours}س ${mins}د` : `${mins}د`;
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
   const formatTimeAgo = (date: Date) => {
@@ -92,9 +92,9 @@ export function EnrolledCourses() {
     const days = Math.floor(diff / 86400000);
     const hours = Math.floor(diff / 3600000);
 
-    if (days > 0) return `منذ ${days} يوم`;
-    if (hours > 0) return `منذ ${hours} ساعة`;
-    return 'اليوم';
+    if (days > 0) return `${days} days ago`;
+    if (hours > 0) return `${hours} hours ago`;
+    return 'Today';
   };
 
   const filteredCourses = courses.filter(course => {
@@ -132,28 +132,28 @@ export function EnrolledCourses() {
           size="sm"
           onClick={() => setFilter('all')}
         >
-          جميع الدورات ({courses.length})
+          All Courses ({courses.length})
         </Button>
         <Button
           variant={filter === 'in_progress' ? 'primary' : 'ghost'}
           size="sm"
           onClick={() => setFilter('in_progress')}
         >
-          قيد التقدم ({courses.filter(c => c.status === 'in_progress').length})
+          In Progress ({courses.filter(c => c.status === 'in_progress').length})
         </Button>
         <Button
           variant={filter === 'completed' ? 'primary' : 'ghost'}
           size="sm"
           onClick={() => setFilter('completed')}
         >
-          مكتملة ({courses.filter(c => c.status === 'completed').length})
+          Completed ({courses.filter(c => c.status === 'completed').length})
         </Button>
         <Button
           variant={filter === 'not_started' ? 'primary' : 'ghost'}
           size="sm"
           onClick={() => setFilter('not_started')}
         >
-          لم تبدأ ({courses.filter(c => c.status === 'not_started').length})
+          Not Started ({courses.filter(c => c.status === 'not_started').length})
         </Button>
       </div>
 
@@ -185,7 +185,7 @@ export function EnrolledCourses() {
                 <div className="absolute top-2 right-2">
                   <Badge className="bg-yellow-100 text-yellow-800">
                     <Award className="h-3 w-3 mr-1" />
-                    شهادة
+                    Certificate
                   </Badge>
                 </div>
               )}
@@ -193,8 +193,8 @@ export function EnrolledCourses() {
               {/* Progress Overlay */}
               <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-black p-2">
                 <div className="flex items-center justify-between text-sm mb-1">
-                  <span>{course.progress.toFixed(0)}% مكتمل</span>
-                  <span>{course.completedLessons}/{course.totalLessons} دروس</span>
+                  <span>{course.progress.toFixed(0)}% Complete</span>
+                  <span>{course.completedLessons}/{course.totalLessons} Lessons</span>
                 </div>
                 <Progress value={course.progress} className="h-1" />
               </div>
@@ -210,7 +210,7 @@ export function EnrolledCourses() {
                   {course.category.name}
                 </Badge>
                 <span>•</span>
-                <span>المدرس: {course.professor.name}</span>
+                <span>Instructor: {course.professor.name}</span>
               </div>
             </CardHeader>
 
@@ -224,21 +224,21 @@ export function EnrolledCourses() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span>سجلت {formatTimeAgo(course.enrolledAt)}</span>
+                    <span>Enrolled {formatTimeAgo(course.enrolledAt)}</span>
                   </div>
                 </div>
 
                 {/* Last Activity */}
                 {course.lastAccessedAt && (
                   <div className="text-sm text-muted-foreground">
-                    آخر نشاط: {formatTimeAgo(course.lastAccessedAt)}
+                    Last activity: {formatTimeAgo(course.lastAccessedAt)}
                   </div>
                 )}
 
                 {/* Next Lesson */}
                 {course.nextLesson && course.status !== 'completed' && (
                   <div className="p-3 bg-muted/50 rounded-lg">
-                    <p className="text-sm font-medium mb-1">الدرس التالي:</p>
+                    <p className="text-sm font-medium mb-1">Next Lesson:</p>
                     <p className="text-sm text-muted-foreground">{course.nextLesson.title}</p>
                   </div>
                 )}
@@ -250,17 +250,17 @@ export function EnrolledCourses() {
                       {course.status === 'not_started' ? (
                         <>
                           <Play className="h-4 w-4 mr-2" />
-                          ابدأ الدورة
+                          Start Course
                         </>
                       ) : course.status === 'completed' ? (
                         <>
                           <Eye className="h-4 w-4 mr-2" />
-                          مراجعة الدورة
+                          Review Course
                         </>
                       ) : (
                         <>
                           <PlayCircle className="h-4 w-4 mr-2" />
-                          متابعة التعلم
+                          Continue Learning
                         </>
                       )}
                     </Link>
@@ -290,20 +290,20 @@ export function EnrolledCourses() {
         <div className="text-center py-12">
           <BookOpen className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
           <h3 className="text-xl font-semibold mb-2">
-            {filter === 'all' ? 'لم تسجل في أي دورة بعد' : 
-             filter === 'in_progress' ? 'لا توجد دورات قيد التقدم' :
-             filter === 'completed' ? 'لم تكمل أي دورة بعد' :
-             'لم تبدأ أي دورة بعد'}
+            {filter === 'all' ? 'You haven\'t enrolled in any courses yet' : 
+             filter === 'in_progress' ? 'No courses in progress' :
+             filter === 'completed' ? 'You haven\'t completed any courses yet' :
+             'You haven\'t started any courses yet'}
           </h3>
           <p className="text-muted-foreground mb-4">
-            {filter === 'all' ? 'ابدأ رحلتك التعليمية بالتسجيل في دورة جديدة' :
-             'جرب تغيير المرشح لعرض دورات أخرى'}
+            {filter === 'all' ? 'Start your educational journey by enrolling in a new course' :
+             'Try changing the filter to view other courses'}
           </p>
           {filter === 'all' && (
             <Button asChild>
               <Link href="/courses">
                 <BookOpen className="h-4 w-4 mr-2" />
-                تصفح الدورات
+                Browse Courses
               </Link>
             </Button>
           )}

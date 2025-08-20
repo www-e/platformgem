@@ -14,7 +14,7 @@ export function MonthlySpendingCard({ monthlySpending }: MonthlySpendingCardProp
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5" />
-          الإنفاق الشهري
+          Monthly Spending
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -24,7 +24,7 @@ export function MonthlySpendingCard({ monthlySpending }: MonthlySpendingCardProp
               <div>
                 <p className="font-medium">{month.month}</p>
                 <p className="text-sm text-muted-foreground">
-                  {month.transactions} معاملة
+                  {month.transactions} transactions
                 </p>
               </div>
               <div className="text-right">

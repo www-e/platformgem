@@ -86,7 +86,7 @@ export default function Footer() {
       name: "WhatsApp",
       icon: WhatsAppIcon,
       url: "https://wa.me/201154688628",
-      followers: "مباشر",
+      followers: "Direct",
       color: "hover:text-green-600"
     },
     {
@@ -101,22 +101,22 @@ export default function Footer() {
   // Footer navigation links
   const footerLinks = {
     platform: [
-      { name: "الدورات", href: "/courses" },
-      { name: "المدربين", href: "/instructors" },
-      { name: "الشهادات", href: "/certificates" },
-      { name: "المدونة", href: "/blog" }
+      { name: "Courses", href: "/courses" },
+      { name: "Instructors", href: "/instructors" },
+      { name: "Certificates", href: "/certificates" },
+      { name: "Blog", href: "/blog" }
     ],
     support: [
-      { name: "مركز المساعدة", href: "/help" },
-      { name: "الأسئلة الشائعة", href: "/faq" },
-      { name: "تواصل معنا", href: "/contact" },
-      { name: "الدعم الفني", href: "/support" }
+      { name: "Help Center", href: "/help" },
+      { name: "FAQ", href: "/faq" },
+      { name: "Contact Us", href: "/contact" },
+      { name: "Technical Support", href: "/support" }
     ],
     legal: [
-      { name: "سياسة الخصوصية", href: "/privacy" },
-      { name: "شروط الاستخدام", href: "/terms" },
-      { name: "سياسة الاسترداد", href: "/refund" },
-      { name: "ملفات تعريف الارتباط", href: "/cookies" }
+      { name: "Privacy Policy", href: "/privacy" },
+      { name: "Terms of Use", href: "/terms" },
+      { name: "Refund Policy", href: "/refund" },
+      { name: "Cookies Policy", href: "/cookies" }
     ]
   };
 
@@ -152,13 +152,13 @@ export default function Footer() {
                 transition={{ duration: 0.2 }}
               >
                 <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
-                  <span className="text-black font-bold text-lg font-display">م</span>
+                  <span className="text-black font-bold text-lg font-display">E</span>
                 </div>
-                <span className="text-xl font-bold text-neutral-900 font-display">منصة التعلم</span>
+                <span className="text-xl font-bold text-neutral-900 font-display">Sportology</span>
               </motion.div>
               
-              <p className="text-neutral-600 text-sm leading-arabic-relaxed font-primary">
-                منصة تعليمية متطورة تهدف إلى تقديم أفضل تجربة تعلم رقمية باللغة العربية مع أحدث التقنيات والأساليب التفاعلية.
+              <p className="text-neutral-600 text-sm leading-relaxed font-primary">
+                An advanced educational platform aimed at providing the best digital learning experience in Arabic with the latest technologies and interactive methods.
               </p>
 
               {/* Contact Info */}
@@ -173,7 +173,7 @@ export default function Footer() {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-neutral-600">
                   <MapPin className="h-4 w-4 text-primary-600" />
-                  <span className="font-primary">القاهرة، مصر</span>
+                  <span className="font-primary">Cairo, Egypt</span>
                 </div>
               </div>
             </div>
@@ -182,7 +182,7 @@ export default function Footer() {
           {/* Platform Links */}
           <StaggerItem>
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-neutral-900 font-display">المنصة</h3>
+              <h3 className="text-lg font-semibold text-neutral-900 font-display">Platform</h3>
               <ul className="space-y-2">
                 {footerLinks.platform.map((link) => (
                   <li key={link.name}>
@@ -202,7 +202,7 @@ export default function Footer() {
           {/* Support Links */}
           <StaggerItem>
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-neutral-900 font-display">الدعم</h3>
+              <h3 className="text-lg font-semibold text-neutral-900 font-display">Support</h3>
               <ul className="space-y-2">
                 {footerLinks.support.map((link) => (
                   <li key={link.name}>
@@ -222,19 +222,19 @@ export default function Footer() {
           {/* Newsletter & Social */}
           <StaggerItem>
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-neutral-900 font-display">ابق على تواصل</h3>
+              <h3 className="text-lg font-semibold text-neutral-900 font-display">Stay Connected</h3>
               
               {/* Newsletter Signup */}
               <div className="space-y-3">
-                <p className="text-sm text-neutral-600 font-primary leading-arabic-normal">
-                  اشترك في نشرتنا الإخبارية للحصول على آخر التحديثات والعروض
+                <p className="text-sm text-neutral-600 font-primary leading-relaxed">
+                  Subscribe to our newsletter to receive the latest updates and offers
                 </p>
                 
                 {!isSubscribed ? (
                   <form onSubmit={handleSubscribe} className="space-y-2">
                     <Input
                       type="email"
-                      placeholder="بريدك الإلكتروني"
+                      placeholder="Your Email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="text-sm"
@@ -248,7 +248,7 @@ export default function Footer() {
                       disabled={isLoading}
                     >
                       <Send className="ml-2 h-4 w-4" />
-                      اشتراك
+                      Subscribe
                     </Button>
                   </form>
                 ) : (
@@ -259,7 +259,7 @@ export default function Footer() {
                     transition={{ duration: 0.3 }}
                   >
                     <Heart className="h-4 w-4 fill-current" />
-                    شكراً لك! تم الاشتراك بنجاح
+                    Thank you! Successfully subscribed
                   </motion.div>
                 )}
               </div>
@@ -271,7 +271,7 @@ export default function Footer() {
         <FadeInScroll className="mt-12 pt-8 border-t border-neutral-200">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="text-center sm:text-right">
-              <h4 className="text-sm font-semibold text-neutral-900 mb-3 font-display">تابعنا على</h4>
+              <h4 className="text-sm font-semibold text-neutral-900 mb-3 font-display">Follow Us</h4>
               <div className="flex items-center justify-center sm:justify-start gap-3">
                 {socialLinks.map((social) => (
                   <motion.a
@@ -305,7 +305,7 @@ export default function Footer() {
               whileTap={{ scale: 0.95 }}
             >
               <ArrowUp className="h-4 w-4" />
-              العودة للأعلى
+              Back to Top
             </motion.button>
           </div>
         </FadeInScroll>
@@ -318,8 +318,8 @@ export default function Footer() {
             <div className="flex items-center gap-2 text-sm text-neutral-600 font-primary">
               <Copyright className="h-4 w-4" />
               <span>
-                {new Date().getFullYear()} جميع الحقوق محفوظة لـ 
-                <span className="font-semibold text-neutral-900 mx-1">منصة التعلم</span>
+                {new Date().getFullYear()} All rights reserved to 
+                <span className="font-semibold text-neutral-900 mx-1">Sportology</span>
               </span>
             </div>
 

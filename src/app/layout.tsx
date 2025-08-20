@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "EduPlatform | Modern Learning",
+  title: "Sportology | Modern Learning",
   description: "A modern, advanced educational platform.",
 };
 
@@ -18,8 +18,8 @@ export default function RootLayout({
 }>) {
   return (
     <SessionProvider>
-      <html lang="ar" dir="rtl" className="h-full">
-        <body className="font-primary bg-background antialiased flex flex-col h-full pt-20">
+      <html lang="en" className="h-full">
+        <body className="font-primary bg-background antialiased flex flex-col h-full">
           <Navbar />
           <main className="flex-grow">
             {children}

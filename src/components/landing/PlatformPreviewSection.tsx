@@ -45,19 +45,19 @@ export default function PlatformPreviewSection() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold font-display text-neutral-800">
-            تجربة تعليمية متكاملة
+            Comprehensive Educational Experience
           </h2>
           <p className="text-muted-foreground mt-4 max-w-2xl mx-auto leading-relaxed">
-            نظرة سريعة على الأدوات والميزات التي صممناها لمساعدتك على التفوق والنجاح.
+            A quick look at the tools and features we've designed to help you excel and succeed.
           </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-[auto_auto_auto] gap-6 auto-rows-[250px]">
           <BentoCard 
             className="md:col-span-2 md:row-span-2" 
-            title="محاضرات فيديو تفاعلية" 
+            title="Interactive Video Lectures" 
             icon={PlayCircle}
-            badgeText="جودة عالية"
+            badgeText="High Quality"
           >
             {/* Mockup for a video player */}
             <div className="w-full h-full bg-neutral-100 rounded-md flex flex-col items-center justify-center p-4 border border-neutral-200">
@@ -75,19 +75,19 @@ export default function PlatformPreviewSection() {
           </BentoCard>
 
           <BentoCard 
-            title="متابعة فورية للتقدم" 
+            title="Instant Progress Tracking" 
             icon={BarChart3}
           >
              <div className="w-full h-full bg-neutral-100 rounded-md p-4 flex flex-col justify-center gap-3 border border-neutral-200">
-                <div className="flex justify-between text-sm"><span>إكمال الدورة</span><span className="font-semibold">75%</span></div>
+                <div className="flex justify-between text-sm"><span>Course Completion</span><span className="font-semibold">75%</span></div>
                 <div className="w-full bg-neutral-200 rounded-full h-2.5"><div className="bg-primary h-2.5 rounded-full w-[75%]"></div></div>
-                <div className="flex justify-between text-sm"><span>الواجبات</span><span className="font-semibold">8/10</span></div>
+                <div className="flex justify-between text-sm"><span>Assignments</span><span className="font-semibold">8/10</span></div>
                 <div className="w-full bg-neutral-200 rounded-full h-2.5"><div className="bg-secondary h-2.5 rounded-full w-[80%]"></div></div>
              </div>
           </BentoCard>
 
           <BentoCard 
-            title="متوافق مع كل الأجهزة" 
+            title="Compatible with All Devices" 
             icon={Smartphone}
           >
             <div className="w-full h-full rounded-md flex items-center justify-center gap-8 p-4">
@@ -97,19 +97,19 @@ export default function PlatformPreviewSection() {
           </BentoCard>
 
           <BentoCard 
-            title="شهادات معتمدة" 
+            title="Accredited Certificates" 
             icon={Award}
           >
              <div className="w-full h-full bg-neutral-100 rounded-md p-4 flex flex-col items-center justify-center border border-neutral-200">
                 <Award className="w-12 h-12 text-yellow-500 mb-2" />
-                <p className="font-semibold text-center">شهادة إتمام</p>
-                <p className="text-xs text-muted-foreground text-center">لكل دورة تكملها بنجاح</p>
+                <p className="font-semibold text-center">Completion Certificate</p>
+                <p className="text-xs text-muted-foreground text-center">For every course you complete successfully</p>
              </div>
           </BentoCard>
 
           <BentoCard 
             className="md:col-span-2" 
-            title="مجتمع تفاعلي للملتحقين" 
+            title="Interactive Student Community" 
             icon={Users}
           >
              <div className="w-full h-full bg-neutral-100 rounded-md p-4 flex items-center justify-center gap-4 border border-neutral-200">

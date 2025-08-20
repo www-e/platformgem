@@ -34,7 +34,7 @@ export function TransactionsList({ transactions }: TransactionsListProps) {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>سجل المدفوعات ({transactions.length})</CardTitle>
+          <CardTitle>Payment History ({transactions.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -48,7 +48,7 @@ export function TransactionsList({ transactions }: TransactionsListProps) {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold truncate">{transaction.courseName}</h3>
                     <p className="text-sm text-muted-foreground">
-                      رقم المعاملة: {transaction.transactionId}
+                      Transaction ID: {transaction.transactionId}
                     </p>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
                       <div className="flex items-center gap-1">
@@ -72,7 +72,7 @@ export function TransactionsList({ transactions }: TransactionsListProps) {
                   
                   {transaction.refundReason && (
                     <p className="text-xs text-red-600">
-                      سبب الاسترداد: {transaction.refundReason}
+                      Refund Reason: {transaction.refundReason}
                     </p>
                   )}
                   
@@ -83,7 +83,7 @@ export function TransactionsList({ transactions }: TransactionsListProps) {
                     className="mt-2"
                   >
                     <Eye className="h-3 w-3 mr-1" />
-                    التفاصيل
+                    Details
                   </Button>
                 </div>
               </div>
@@ -92,7 +92,7 @@ export function TransactionsList({ transactions }: TransactionsListProps) {
             {transactions.length === 0 && (
               <div className="text-center py-8">
                 <CreditCard className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">لا توجد معاملات مطابقة للبحث</p>
+                <p className="text-muted-foreground">No transactions match your search</p>
               </div>
             )}
           </div>

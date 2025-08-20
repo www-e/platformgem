@@ -26,10 +26,11 @@ const config: Config = {
       },
     },
     extend: {
-      /* Arabic Font Families */
+      /* Font Families */
       fontFamily: {
         primary: ['var(--font-primary)'],
         display: ['var(--font-display)'],
+        accent: ['var(--font-accent)'],
         sans: ['var(--font-primary)'],
       },
       

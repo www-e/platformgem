@@ -14,7 +14,7 @@ export function PaymentMethodsCard({ paymentMethods }: PaymentMethodsCardProps) 
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
-          طرق الدفع
+          Payment Methods
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -28,7 +28,7 @@ export function PaymentMethodsCard({ paymentMethods }: PaymentMethodsCardProps) 
                     {formatPaymentMethod(method.method)}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {method.count} معاملة
+                    {method.count} transactions
                   </p>
                 </div>
               </div>

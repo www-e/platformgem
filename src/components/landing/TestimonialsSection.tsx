@@ -20,40 +20,40 @@ interface Testimonial {
 
 const testimonials: Testimonial[] = [
   {
-    quote: "الشرح كان ممتازًا ومباشرًا. قدرت أفهم أجزاء كانت صعبة عليّ جدًا بفضل أسلوب المعلم المبسط والواضح. النتيجة كانت فوق التوقعات!",
-    name: "أحمد خالد",
-    role: "ملتحق ثانوية عامة",
-    grade: "الصف الثالث الثانوي",
+    quote: "The explanation was excellent and straightforward. I was able to understand parts that were very difficult for me thanks to the teacher's simplified and clear approach. The result was beyond expectations!",
+    name: "Ahmed Khalid",
+    role: "High School Student",
+    grade: "Third Year Secondary",
     rating: 5,
-    achievement: "تحسن بنسبة 25%",
-    school: "مدرسة النور الثانوية"
+    achievement: "25% Improvement",
+    school: "Al-Noor Secondary School"
   },
   {
-    quote: "المنصة سهلة الاستخدام ومكنتني من المذاكرة في أي وقت. متابعة الواجبات والتقدم ساعدتني أنظم وقتي بشكل أفضل وأحقق نتائج ممتازة.",
-    name: "سارة محمود",
-    role: "ملتحقة ثانوية عامة",
-    grade: "الصف الثاني الثانوي",
+    quote: "The platform is easy to use and enabled me to study anytime. The homework tracking and progress monitoring helped me better organize my time and achieve excellent results.",
+    name: "Sara Mahmoud",
+    role: "High School Student",
+    grade: "Second Year Secondary",
     rating: 5,
-    achievement: "درجات متفوقة",
-    school: "مدرسة المستقبل الثانوية"
+    achievement: "Outstanding Grades",
+    school: "Future Secondary School"
   },
   {
-    quote: "أسلوب التدريس التفاعلي والأمثلة العملية جعلت الفيزياء مادة ممتعة بالنسبة لي. الآن أفهم المفاهيم بعمق أكبر وأحل المسائل بثقة أكبر.",
-    name: "محمد أحمد",
-    role: "ملتحق ثانوية عامة",
-    grade: "الصف الثالث الثانوي",
+    quote: "The interactive teaching style and practical examples made physics an enjoyable subject for me. Now I understand concepts in greater depth and solve problems with more confidence.",
+    name: "Mohamed Ahmed",
+    role: "High School Student",
+    grade: "Third Year Secondary",
     rating: 5,
-    achievement: "95% في الامتحان",
-    school: "مدرسة الرواد الثانوية"
+    achievement: "95% on Exam",
+    school: "Al-Ruwad Secondary School"
   },
   {
-    quote: "الدعم المستمر والمتابعة الشخصية من المعلم كانت الفرق الحقيقي. شعرت بالثقة والاستعداد الكامل للامتحانات النهائية.",
-    name: "فاطمة علي",
-    role: "ملتحقة ثانوية عامة", 
-    grade: "الصف الثالث الثانوي",
+    quote: "The continuous support and personal follow-up from the teacher made the real difference. I felt confident and fully prepared for the final exams.",
+    name: "Fatima Ali",
+    role: "High School Student", 
+    grade: "Third Year Secondary",
     rating: 5,
-    achievement: "تأهلت للجامعة",
-    school: "مدرسة الأمل الثانوية"
+    achievement: "Admitted to University",
+    school: "Al-Amal Secondary School"
   }
 ];
 
@@ -192,19 +192,19 @@ export default function TestimonialsSection() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-secondary/10 text-secondary-600 px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Star className="w-4 h-4" />
-            شهادات النجاح
+            Success Stories
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-bold font-display mb-6 leading-arabic-tight">
-            <span className="text-neutral-800">ماذا يقول</span>
+          <h2 className="text-4xl md:text-5xl font-bold font-display mb-6 leading-tight">
+            <span className="text-neutral-800">What Do Our</span>
             <br />
             <span className="bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 bg-clip-text text-transparent">
-              ملتحقيننا المتفوقون؟
+              Outstanding Students Say?
             </span>
           </h2>
           
-          <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-arabic-relaxed">
-            اكتشف كيف ساعدت منصتنا مئات الملتحقين على تحقيق أحلامهم الأكاديمية والوصول إلى أعلى الدرجات
+          <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
+            Discover how our platform has helped hundreds of students achieve their academic dreams and reach the highest grades
           </p>
         </div>
 

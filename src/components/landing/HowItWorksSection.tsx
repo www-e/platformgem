@@ -21,39 +21,39 @@ interface Step {
 const steps: Step[] = [
   {
     number: 1,
-    title: "إنشاء حساب",
-    description: "سجل بياناتك بسهولة وأمان للوصول الفوري إلى كافة ميزات المنصة التعليمية",
+    title: "Create Account",
+    description: "Register your data easily and securely for instant access to all educational platform features",
     icon: UserPlus,
     details: [
-      "تسجيل سريع في أقل من دقيقة",
-      "حماية كاملة لبياناتك الشخصية",
-      "تفعيل فوري للحساب"
+      "Quick registration in under a minute",
+      "Complete protection of your personal data",
+      "Instant account activation"
     ],
     accentColor: "from-blue-400 to-blue-600",
     bgGradient: "from-blue-50/50 to-blue-100/30"
   },
   {
     number: 2,
-    title: "اختر دورتك",
-    description: "تصفح الدورات المتاحة لمرحلتك الدراسية وسجل في المادة التي ترغب في دراستها",
+    title: "Choose Your Course",
+    description: "Browse available courses for your academic stage and register for the subject you want to study",
     icon: BookCheck,
     details: [
-      "مجموعة واسعة من المواد الدراسية",
-      "محتوى مُحدث باستمرار",
-      "معاينة مجانية لكل دورة"
+      "Wide range of academic subjects",
+      "Continuously updated content",
+      "Free preview of every course"
     ],
     accentColor: "from-primary-400 to-primary-600",
     bgGradient: "from-primary-50/50 to-primary-100/30"
   },
   {
     number: 3,
-    title: "ابدأ التعلم",
-    description: "شاهد المحاضرات، حل الواجبات، وتابع تقدمك نحو تحقيق أعلى الدرجات",
+    title: "Start Learning",
+    description: "Watch lectures, complete assignments, and track your progress toward achieving the highest grades",
     icon: Rocket,
     details: [
-      "محاضرات عالية الجودة",
-      "واجبات تفاعلية ومتابعة دورية",
-      "شهادات إتمام معتمدة"
+      "High-quality lectures",
+      "Interactive assignments and periodic follow-up",
+      "Accredited completion certificates"
     ],
     accentColor: "from-secondary-400 to-secondary-600",
     bgGradient: "from-secondary-50/50 to-secondary-100/30"
@@ -123,7 +123,7 @@ const StepCard = ({
                 ? "bg-primary/10 text-primary-700 border-primary/20" 
                 : "bg-neutral-100 text-neutral-600 border-neutral-200"
             )}>
-              الخطوة {step.number}
+              Step {step.number}
             </Badge>
             <h3 className="text-2xl font-bold font-display leading-arabic-tight text-neutral-800">
               {step.title}
@@ -162,7 +162,7 @@ const StepCard = ({
           <div className="mt-6 p-4 bg-primary/5 rounded-xl border border-primary/10">
             <div className="flex items-center gap-2 text-primary-700 text-sm font-medium">
               <Sparkles className="w-4 h-4" />
-              <span>هذه هي خطوتك الحالية</span>
+              <span>This is your current step</span>
             </div>
           </div>
         )}
@@ -199,19 +199,19 @@ export default function HowItWorksSection() {
         <div className="text-center mb-20">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Rocket className="w-4 h-4" />
-            خطوات بسيطة للنجاح
+            Simple Steps to Success
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-bold font-display mb-6 leading-arabic-tight">
-            <span className="text-neutral-800">كيف تبدأ رحلتك</span>
+          <h2 className="text-4xl md:text-5xl font-bold font-display mb-6 leading-tight">
+            <span className="text-neutral-800">How to Start Your</span>
             <br />
             <span className="bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 bg-clip-text text-transparent">
-              التعليمية معنا؟
+              Educational Journey with Us?
             </span>
           </h2>
           
-          <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-arabic-relaxed">
-            ابدأ رحلتك التعليمية في ثلاث خطوات بسيطة فقط واحصل على تجربة تعليمية متكاملة تضمن نجاحك الأكاديمي
+          <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
+            Start your educational journey in just three simple steps and get a comprehensive educational experience that ensures your academic success
           </p>
         </div>
 
@@ -229,7 +229,8 @@ export default function HowItWorksSection() {
 
         {/* Step Navigation Dots */}
         <div className="flex justify-center items-center gap-4 mb-12">
-          <span className="text-sm text-neutral-500 font-medium">خطوة</span>
+          <div className="flex justify-center items-center gap-4 mb-12">
+            <span className="text-sm text-neutral-500 font-medium">Step</span>
           <div className="flex items-center gap-2">
             {steps.map((step) => (
               <button
@@ -244,18 +245,19 @@ export default function HowItWorksSection() {
               />
             ))}
           </div>
-          <span className="text-sm text-neutral-500">من {steps.length}</span>
+          <span className="text-sm text-neutral-500">of {steps.length}</span>
+        </div>
         </div>
 
         {/* Enhanced CTA Section */}
         <div className="text-center">
           <div className="glass-medium rounded-3xl p-12 shadow-elevation-4 border border-white/30 max-w-4xl mx-auto">
             <div className="mb-8">
-              <h3 className="text-3xl font-bold text-neutral-800 font-display mb-4 leading-arabic-tight">
-                هل أنت مستعد للبدء؟
+              <h3 className="text-3xl font-bold text-neutral-800 font-display mb-4 leading-tight">
+                Are You Ready to Begin?
               </h3>
-              <p className="text-neutral-600 text-lg max-w-2xl mx-auto leading-arabic-relaxed">
-                انضم إلى مئات الملتحقين الذين بدأوا رحلتهم معنا وحققوا نتائج استثنائية في دراستهم
+              <p className="text-neutral-600 text-lg max-w-2xl mx-auto leading-relaxed">
+                Join hundreds of students who have started their journey with us and achieved exceptional results in their studies
               </p>
             </div>
 
@@ -266,9 +268,9 @@ export default function HowItWorksSection() {
                   className="h-14 px-10 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-black font-bold rounded-xl shadow-elevation-3 hover:shadow-elevation-4 btn-hover-effect relative overflow-hidden group min-w-[220px]"
                 >
                   <span className="flex items-center justify-center gap-3 relative z-10">
-                    <span>ابدأ رحلتك الآن</span>
-                    <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
-                  </span>
+                  <span>Start Your Journey Now</span>
+                  <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+                </span>
                   {/* Shimmer effect */}
                   <div className="absolute inset-0 -top-px bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                 </Button>
@@ -281,8 +283,8 @@ export default function HowItWorksSection() {
                   <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full border-2 border-white flex items-center justify-center text-black text-sm font-bold">M</div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium">انضم إلى +500 ملتحق</p>
-                  <p className="text-xs text-neutral-500">بدأوا بالفعل</p>
+                  <p className="text-sm font-medium">Join +500 Students</p>
+                  <p className="text-xs text-neutral-500">Already Started</p>
                 </div>
               </div>
             </div>
@@ -292,15 +294,15 @@ export default function HowItWorksSection() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
                 <div className="space-y-1">
                   <div className="text-2xl font-bold text-primary-600 font-display">100%</div>
-                  <div className="text-sm text-neutral-600">ضمان استرداد المال</div>
+                  <div className="text-sm text-neutral-600">Money-Back Guarantee</div>
                 </div>
                 <div className="space-y-1">
                   <div className="text-2xl font-bold text-secondary-600 font-display">24/7</div>
-                  <div className="text-sm text-neutral-600">دعم فني متاح</div>
+                  <div className="text-sm text-neutral-600">Technical Support Available</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-2xl font-bold text-primary-600 font-display">فوري</div>
-                  <div className="text-sm text-neutral-600">وصول للمحتوى</div>
+                  <div className="text-2xl font-bold text-primary-600 font-display">Instant</div>
+                  <div className="text-sm text-neutral-600">Content Access</div>
                 </div>
               </div>
             </div>

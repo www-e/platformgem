@@ -40,35 +40,35 @@ export function getPaymentStatusBgColor(status: string): string {
   }
 }
 
-/**
- * Get payment status text in Arabic
+/** 
+ * Get payment status text in English
  */
 export function getPaymentStatusText(status: string): string {
   switch (status) {
     case 'COMPLETED':
-      return 'مكتمل';
+      return 'Completed';
     case 'PENDING':
-      return 'معلق';
+      return 'Pending';
     case 'FAILED':
-      return 'فاشل';
+      return 'Failed';
     case 'CANCELLED':
-      return 'ملغي';
+      return 'Cancelled';
     case 'REFUNDED':
-      return 'مسترد';
+      return 'Refunded';
     default:
-      return 'غير محدد';
+      return 'Undefined';
   }
 }
 
 /**
- * Get payment method text in Arabic
+ * Get payment method text in English
  */
 export function getPaymentMethodText(method: string): string {
   switch (method) {
     case 'CARD':
-      return 'بطاقة';
+      return 'Card';
     case 'WALLET':
-      return 'محفظة';
+      return 'Wallet';
     default:
       return method;
   }
@@ -77,8 +77,8 @@ export function getPaymentMethodText(method: string): string {
 /**
  * Format payment amount
  */
-export function formatPaymentAmount(amount: number, currency: string = 'EGP'): string {
-  return new Intl.NumberFormat('ar-EG', {
+export function formatPaymentAmount(amount: number, currency: string = 'USD'): string {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
     minimumFractionDigits: 0
@@ -86,9 +86,9 @@ export function formatPaymentAmount(amount: number, currency: string = 'EGP'): s
 }
 
 /**
- * Format currency with default EGP
+ * Format currency with default USD
  */
-export function formatCurrency(amount: number, currency: string = 'EGP'): string {
+export function formatCurrency(amount: number, currency: string = 'USD'): string {
   return formatPaymentAmount(amount, currency);
 }
 
@@ -109,5 +109,5 @@ export const getPaymentMethodIcon = getPaymentMethodIconName;
 export const formatPaymentMethod = getPaymentMethodText;
 export const getStatusBadge = getPaymentStatusText;
 export const formatDateArabic = (date: Date | string): string => {
-  return new Date(date).toLocaleDateString('ar-SA');
+  return new Date(date).toLocaleDateString('en-US');
 };

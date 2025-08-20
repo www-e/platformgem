@@ -10,9 +10,9 @@ export function EmptyState({ onResetFilters }: EmptyStateProps) {
   return (
     <SharedEmptyState
       icon={Sparkles}
-      title="لا توجد دورات مطابقة للمرشحات"
-      description="جرب تغيير المرشحات للعثور على دورات مناسبة لك"
-      actionText="إعادة تعيين المرشحات"
+      title="No courses match your filters"
+      description="Try changing your filters to find courses that suit you"
+      actionText="Reset Filters"
       onAction={onResetFilters}
     />
   );

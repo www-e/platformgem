@@ -75,21 +75,21 @@ const ExpertiseCard = ({
 export default function InstructorSection() {
   const expertiseAreas = [
     {
-      title: "المناهج الدراسية",
+      title: "Academic Curricula",
       items: [
-        "فيزياء الصف الأول الثانوي",
-        "فيزياء الصف الثاني الثانوي", 
-        "فيزياء الصف الثالث الثانوي",
-        "مراجعات شاملة للامتحانات النهائية"
+        "Physics for First Year Secondary",
+        "Physics for Second Year Secondary", 
+        "Physics for Third Year Secondary",
+        "Comprehensive Reviews for Final Exams"
       ]
     },
     {
-      title: "أساليب التدريس",
+      title: "Teaching Methods",
       items: [
-        "شرح تفصيلي للمفاهيم المعقدة",
-        "حل المسائل خطوة بخطوة",
-        "تدريب مكثف على أسئلة الامتحانات",
-        "متابعة فردية لكل ملتحق"
+        "Detailed Explanation of Complex Concepts",
+        "Step-by-Step Problem Solving",
+        "Intensive Training on Exam Questions",
+        "Individual Follow-up for Each Student"
       ]
     }
   ];
@@ -110,19 +110,19 @@ export default function InstructorSection() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
             <GraduationCap className="w-4 h-4" />
-            خبرة تعليمية موثوقة
+            Trusted Educational Experience
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-bold font-display mb-6 leading-arabic-tight">
-            <span className="text-neutral-800">تعرف على</span>
+          <h2 className="text-4xl md:text-5xl font-bold font-display mb-6 leading-tight">
+            <span className="text-neutral-800">Get to Know</span>
             <br />
             <span className="bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 bg-clip-text text-transparent">
-              خبير الفيزياء
+              The Physics Expert
             </span>
           </h2>
           
-          <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-arabic-relaxed">
-            معلم متخصص مع سنوات من الخبرة في تبسيط المفاهيم المعقدة وإعداد الملتحقين للتفوق في الامتحانات
+          <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
+            A specialized teacher with years of experience simplifying complex concepts and preparing students for exam excellence
           </p>
         </div>
 
@@ -139,18 +139,18 @@ export default function InstructorSection() {
                   <GraduationCap className="w-8 h-8 text-black" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-primary-700 font-display leading-arabic-tight">
-                    المهندس في الفيزياء
+                  <h3 className="text-2xl font-bold text-primary-700 font-display leading-tight">
+                    Engineer in Physics
                   </h3>
                   <Badge className="glass-light border-0 text-neutral-700 font-semibold mt-2">
                     <Award className="w-3 h-3 mr-1" />
-                    خبير معتمد في التدريس
+                    Certified Teaching Expert
                   </Badge>
                 </div>
               </div>
 
-              <p className="text-lg text-neutral-700 leading-arabic-relaxed">
-                متخصص في تدريس الفيزياء لجميع مراحل الثانوية العامة بخبرة واسعة. أقدم شرحًا تفصيليًا ومبسطًا يركز على بناء فهم عميق للمفاهيم الفيزيائية، مع حلول عملية للمسائل الصعبة وتدريب مكثف على أسئلة الامتحانات، لضمان استعدادك الكامل وتحقيق التميز.
+              <p className="text-lg text-neutral-700 leading-relaxed">
+                Specialized in teaching physics for all stages of secondary school with extensive experience. I provide detailed and simplified explanations focused on building a deep understanding of physical concepts, with practical solutions to difficult problems and intensive training on exam questions, ensuring your complete readiness and excellence.
               </p>
             </div>
 
@@ -159,25 +159,25 @@ export default function InstructorSection() {
               <StatCard 
                 icon={Users} 
                 value="500+" 
-                label="ملتحق متخرج"
+                label="Graduated Students"
                 accent="primary"
               />
               <StatCard 
                 icon={Trophy} 
                 value="95%" 
-                label="معدل النجاح"
+                label="Success Rate"
                 accent="secondary"
               />
               <StatCard 
                 icon={Star} 
                 value="4.9" 
-                label="تقييم الملتحقين"
+                label="Student Ratings"
                 accent="success"
               />
               <StatCard 
                 icon={Clock} 
                 value="5+" 
-                label="سنوات خبرة"
+                label="Years Experience"
                 accent="primary"
               />
             </div>
@@ -192,7 +192,7 @@ export default function InstructorSection() {
                 <Link href="/courses">
                   <span className="flex items-center justify-center gap-3 relative z-10">
                     <BookOpen className="w-5 h-5" />
-                    <span>تصفح الدورات المتاحة</span>
+                    <span>Browse Available Courses</span>
                     <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
                   </span>
                   {/* Shimmer effect */}
@@ -213,7 +213,7 @@ export default function InstructorSection() {
                 <div className="aspect-square relative overflow-hidden rounded-2xl bg-gradient-to-br from-neutral-100 to-neutral-200">
                   <Image 
                     src="/omar.png" 
-                    alt="صورة المهندس في الفيزياء" 
+                    alt="Image of the Physics Engineer" 
                     fill
                     className="object-contain p-4"
                     priority
@@ -224,13 +224,13 @@ export default function InstructorSection() {
                   <div className="absolute top-4 left-4">
                     <Badge className="glass-medium border-0 text-neutral-800 font-semibold shadow-elevation-2">
                       <Star className="w-3 h-3 mr-1 text-secondary-500" />
-                      معلم متميز
+                      Outstanding Teacher
                     </Badge>
                   </div>
                   <div className="absolute bottom-4 right-4">
                     <Badge className="glass-medium border-0 text-neutral-800 font-semibold shadow-elevation-2">
                       <Target className="w-3 h-3 mr-1 text-primary-500" />
-                      نتائج مضمونة
+                      Guaranteed Results
                     </Badge>
                   </div>
                 </div>
@@ -246,11 +246,11 @@ export default function InstructorSection() {
         {/* Expertise Areas */}
         <div>
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-neutral-800 font-display mb-4 leading-arabic-tight">
-              مجالات الخبرة
+            <h3 className="text-3xl font-bold text-neutral-800 font-display mb-4 leading-tight">
+              Areas of Expertise
             </h3>
-            <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-arabic-relaxed">
-              تخصص شامل في جميع جوانب تدريس الفيزياء مع التركيز على النتائج العملية
+            <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">
+              Comprehensive specialization in all aspects of physics teaching with a focus on practical results
             </p>
           </div>
 
@@ -280,7 +280,7 @@ export default function InstructorSection() {
                   className="min-w-[220px] h-14 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-black font-bold rounded-xl shadow-elevation-3 hover:shadow-elevation-4 btn-hover-effect"
                 >
                   <BookOpen className="w-5 h-5 mr-2" />
-                  ابدأ دورتك الآن
+                  Start Your Course Now
                 </Button>
               </Link>
               
@@ -291,8 +291,8 @@ export default function InstructorSection() {
                   <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full border-2 border-white flex items-center justify-center text-black text-sm font-bold">M</div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium">ملتحقين متفوقون</p>
-                  <p className="text-xs text-neutral-500">حققوا التميز</p>
+                  <p className="text-sm font-medium">Outstanding Students</p>
+                  <p className="text-xs text-neutral-500">Achieved Excellence</p>
                 </div>
               </div>
             </div>
@@ -301,16 +301,16 @@ export default function InstructorSection() {
             <div className="mt-8 pt-8 border-t border-neutral-200/30">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
                 <div className="space-y-1">
-                  <div className="text-2xl font-bold text-primary-600 font-display">خبرة مثبتة</div>
-                  <div className="text-sm text-neutral-600">في التدريس والإعداد</div>
+                  <div className="text-2xl font-bold text-primary-600 font-display">Proven Expertise</div>
+                  <div className="text-sm text-neutral-600">In Teaching & Preparation</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-2xl font-bold text-secondary-600 font-display">متابعة شخصية</div>
-                  <div className="text-sm text-neutral-600">لكل ملتحق على حدة</div>
+                  <div className="text-2xl font-bold text-secondary-600 font-display">Personal Follow-up</div>
+                  <div className="text-sm text-neutral-600">For Each Student</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-2xl font-bold text-primary-600 font-display">نتائج مضمونة</div>
-                  <div className="text-sm text-neutral-600">أو استرداد المال</div>
+                  <div className="text-2xl font-bold text-primary-600 font-display">Guaranteed Results</div>
+                  <div className="text-sm text-neutral-600">Or Money Back</div>
                 </div>
               </div>
             </div>

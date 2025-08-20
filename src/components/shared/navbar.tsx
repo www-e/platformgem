@@ -40,13 +40,13 @@ export function Navbar() {
   const navLinks = [
     {
       href: "/courses",
-      label: "الدورات",
+      label: "Courses",
       icon: BookOpen,
       public: true,
     },
     {
       href: "/profile",
-      label: "الملف الشخصي",
+      label: "Profile",
       icon: User,
       protected: true,
     },
@@ -129,8 +129,8 @@ export function Navbar() {
                     <GraduationCap className="h-8 w-8 text-primary-600 transition-transform group-hover:rotate-12" />
                     <div className="absolute inset-0 bg-primary-500/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
-                  <span className="text-neutral-900 text-xl font-bold font-display leading-arabic-tight">
-                    منصة التعلم
+                  <span className="text-neutral-900 text-xl font-bold font-display leading-tight">
+                    Sportology
                   </span>
                 </InstantLink>
               </motion.div>
@@ -163,13 +163,13 @@ export function Navbar() {
                     <Button variant="ghost" size="sm" asChild>
                       <InstantLink href="/login" preloadOnHover>
                         <LogIn className="ml-2 h-4 w-4" />
-                        تسجيل الدخول
+                        Login
                       </InstantLink>
                     </Button>
                     <Button variant="primary" size="sm" asChild>
                       <InstantLink href="/signup" preloadOnHover>
                         <UserPlus className="ml-2 h-4 w-4" />
-                        إنشاء حساب
+                        Sign Up
                       </InstantLink>
                     </Button>
                   </motion.div>
@@ -189,7 +189,7 @@ export function Navbar() {
                       </div>
                       <Button variant="ghost" size="sm" onClick={handleLogout}>
                         <LogOut className="ml-2 h-4 w-4" />
-                        خروج
+                        Logout
                       </Button>
                     </div>
                   </motion.div>
@@ -250,8 +250,8 @@ export function Navbar() {
                     animate="animate"
                     transition={{ delay: 0.3 }}
                   >
-                    <NavLink href="/login" label="تسجيل الدخول" icon={LogIn} isMobile />
-                    <NavLink href="/signup" label="إنشاء حساب" icon={UserPlus} isMobile />
+                    <NavLink href="/login" label="Login" icon={LogIn} isMobile />
+                    <NavLink href="/signup" label="Sign Up" icon={UserPlus} isMobile />
                   </motion.div>
                 )}
 
@@ -263,8 +263,8 @@ export function Navbar() {
                     >
                       <LogOut className="h-5 w-5" />
                       <div className="flex flex-col text-right">
-                        <span>تسجيل الخروج</span>
-                        <span className="text-xs text-neutral-500">إنهاء الجلسة الحالية</span>
+                        <span>Logout</span>
+                        <span className="text-xs text-neutral-500">End current session</span>
                       </div>
                     </button>
                   </motion.div>

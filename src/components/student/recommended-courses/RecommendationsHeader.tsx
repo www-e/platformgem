@@ -19,11 +19,11 @@ export function RecommendationsHeader() {
             <Sparkles className="w-6 h-6 text-primary" />
           </div>
           <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-            الدورات المقترحة لك
+            Courses Recommended for You
           </h2>
         </div>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          دورات مختارة بعناية تناسب اهتماماتك ومستواك التعليمي، مع توصيات ذكية لتسريع رحلتك التعليمية
+          Carefully selected courses that match your interests and educational level, with smart recommendations to accelerate your educational journey
         </p>
       </motion.div>
 
@@ -39,8 +39,8 @@ export function RecommendationsHeader() {
               <div className="w-10 h-10 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Target className="w-5 h-5 text-blue-600" />
               </div>
-              <h3 className="font-semibold text-blue-900 mb-1">مخصصة لك</h3>
-              <p className="text-sm text-blue-700">بناءً على تقدمك واهتماماتك</p>
+              <h3 className="font-semibold text-blue-900 mb-1">Personalized for You</h3>
+              <p className="text-sm text-blue-700">Based on your progress and interests</p>
             </CardContent>
           </Card>
         </motion.div>
@@ -55,8 +55,8 @@ export function RecommendationsHeader() {
               <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
                 <TrendingUp className="w-5 h-5 text-green-600" />
               </div>
-              <h3 className="font-semibold text-green-900 mb-1">الأكثر رواجاً</h3>
-              <p className="text-sm text-green-700">الدورات الأكثر طلباً حالياً</p>
+              <h3 className="font-semibold text-green-900 mb-1">Most Popular</h3>
+              <p className="text-sm text-green-700">Currently most in-demand courses</p>
             </CardContent>
           </Card>
         </motion.div>
@@ -71,8 +71,8 @@ export function RecommendationsHeader() {
               <div className="w-10 h-10 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Award className="w-5 h-5 text-purple-600" />
               </div>
-              <h3 className="font-semibold text-purple-900 mb-1">عالية الجودة</h3>
-              <p className="text-sm text-purple-700">من أفضل المدربين المعتمدين</p>
+              <h3 className="font-semibold text-purple-900 mb-1">High Quality</h3>
+              <p className="text-sm text-purple-700">From top certified instructors</p>
             </CardContent>
           </Card>
         </motion.div>

@@ -44,7 +44,7 @@ export function SelectFilter({
   value,
   onChange,
   options,
-  placeholder = 'اختر...',
+  placeholder = 'Select...',
   className = '',
   fullWidth = false
 }: SelectFilterProps) {
