@@ -230,7 +230,7 @@ export function StudentDashboard() {
           Error Loading Data
         </h3>
         <p className="text-neutral-600 font-primary mb-4">
-          We couldn't load your dashboard data
+          We couldn&apos;t load your dashboard data
         </p>
         <Button onClick={fetchStudentStats}>
           <RefreshCw className="w-4 h-4 ml-2" />
@@ -274,7 +274,7 @@ export function StudentDashboard() {
                 🎉 New Level!
               </h2>
               <p className="text-neutral-600 font-primary mb-4">
-                You've reached level {stats.level}
+                You&apos;ve reached level {stats.level}
               </p>
               <Button onClick={() => setShowLevelUpAnimation(false)}>
                 Continue Learning

@@ -60,7 +60,7 @@ const faqs: FAQ[] = [
   },
   {
     question: "Can I get a completion certificate?",
-    answer: "Yes! Upon successfully completing any course and achieving a success rate of 80% or higher on the exams, you'll receive an accredited completion certificate that can be printed. The certificate includes your name, course duration, and grade achieved, and can be used in your resume or university applications.",
+    answer: "Yes! Upon successfully completing any course and achieving a success rate of 80% or higher on the exams, you&apos;ll receive an accredited completion certificate that can be printed. The certificate includes your name, course duration, and grade achieved, and can be used in your resume or university applications.",
     category: "courses"
   },
   {
@@ -225,10 +225,10 @@ export default function FAQSection() {
           <div className="glass-medium rounded-3xl p-12 shadow-elevation-4 border border-white/30 max-w-4xl mx-auto">
             <div className="mb-8">
               <h3 className="text-3xl font-bold text-neutral-800 font-display mb-4 leading-tight">
-                Didn't Find an Answer to Your Question?
+                Didn&apos;t Find an Answer to Your Question?
               </h3>
               <p className="text-neutral-600 text-lg max-w-2xl mx-auto leading-relaxed">
-                Our support team is available 24/7 to help you. Contact us and you'll get a reply within minutes
+                Our support team is available 24/7 to help you. Contact us and you&apos;ll get a reply within minutes
               </p>
             </div>
 
@@ -241,7 +241,7 @@ export default function FAQSection() {
                 <h4 className="font-bold text-green-800 mb-2">WhatsApp</h4>
                 <p className="text-sm text-green-600 mb-3">Instant reply within minutes</p>
                 <Button size="sm" className="bg-green-500 hover:bg-green-600 text-black">
-                  تواصل الآن
+                  Contact Now
                 </Button>
               </div>
 

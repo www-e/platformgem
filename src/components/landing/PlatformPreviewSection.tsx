@@ -48,7 +48,7 @@ export default function PlatformPreviewSection() {
             Comprehensive Educational Experience
           </h2>
           <p className="text-muted-foreground mt-4 max-w-2xl mx-auto leading-relaxed">
-            A quick look at the tools and features we've designed to help you excel and succeed.
+            A quick look at the tools and features we&apos;ve designed to help you excel and succeed.
           </p>
         </div>
         

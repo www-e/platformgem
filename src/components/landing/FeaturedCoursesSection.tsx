@@ -244,7 +244,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
                   No courses available at the moment
                 </h3>
                 <p className="text-neutral-600">
-                  We're working on adding new courses soon. Follow us for the latest updates!
+                  We&apos;re working on adding new courses soon. Follow us for the latest updates!
                 </p>
               </div>
             )}

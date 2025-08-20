@@ -100,7 +100,7 @@ export default function HeroSection() {
               >
                 <Sparkles className="w-5 h-5 mr-2 text-primary-600" />
                 <span className="text-primary-600 font-semibold">
-                  Egypt's Leading Educational Platform
+                  Egypt&apos;s Leading Educational Platform
                 </span>
                 {/* Subtle moving background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-primary-50/50 via-white to-secondary-50/50 opacity-50 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
