@@ -13,7 +13,7 @@ export function CoursesList({ courses, onCourseAction }: CoursesListProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>قائمة الدورات ({courses.length})</CardTitle>
+        <CardTitle>Courses List ({courses.length})</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -28,7 +28,7 @@ export function CoursesList({ courses, onCourseAction }: CoursesListProps) {
           {courses.length === 0 && (
             <div className="text-center py-8">
               <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">لا توجد نتائج مطابقة للبحث</p>
+              <p className="text-muted-foreground">No matching results found</p>
             </div>
           )}
         </div>

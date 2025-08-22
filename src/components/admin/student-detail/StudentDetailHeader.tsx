@@ -44,15 +44,15 @@ export function StudentDetailHeader({
           {student.name}
           {student.isActive ? (
             <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
-              نشط
+              Active
             </Badge>
           ) : (
-            <Badge variant="destructive">غير نشط</Badge>
+            <Badge variant="destructive">Inactive</Badge>
           )}
         </h1>
         <p className="text-muted-foreground mt-1">
-          معرف الملتحق: {student.studentId || 'غير محدد'} | تاريخ التسجيل:{' '}
-          {new Date(student.createdAt).toLocaleDateString('ar-SA')}
+          Student ID: {student.studentId || 'Not specified'} | Registration Date:{' '}
+          {new Date(student.createdAt).toLocaleDateString('en-US')}
         </p>
       </div>
 
@@ -60,7 +60,7 @@ export function StudentDetailHeader({
         <DropdownMenuTrigger asChild>
           <Button variant="outline">
             <MoreHorizontal className="h-4 w-4 mr-2" />
-            إجراءات
+            Actions
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -68,12 +68,12 @@ export function StudentDetailHeader({
             {student.isActive ? (
               <>
                 <XCircle className="h-4 w-4 ml-2" />
-                <span>إلغاء التفعيل</span>
+                <span>Deactivate</span>
               </>
             ) : (
               <>
                 <CheckCircle className="h-4 w-4 ml-2" />
-                <span>تفعيل</span>
+                <span>Activate</span>
               </>
             )}
           </DropdownMenuItem>
@@ -85,24 +85,24 @@ export function StudentDetailHeader({
                 onSelect={(e) => e.preventDefault()}
               >
                 <Trash2 className="h-4 w-4 ml-2" />
-                <span>حذف الملتحق</span>
+                <span>Delete Student</span>
               </DropdownMenuItem>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>هل أنت متأكد؟</AlertDialogTitle>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  سيتم حذف الملتحق وجميع بياناته بشكل نهائي. هذا الإجراء لا يمكن
-                  التراجع عنه.
+                  The student and all their data will be permanently deleted. This action cannot be
+                  undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={onDelete}
                   className="bg-red-600 hover:bg-red-700"
                 >
-                  حذف
+                  Delete
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

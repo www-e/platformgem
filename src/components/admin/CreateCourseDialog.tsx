@@ -15,7 +15,7 @@ export default function CreateCourseDialog() {
             <DialogTrigger asChild>
                 <Button>
                     <PlusCircle className="ml-2 h-4 w-4" />
-                    إضافة دورة جديدة
+                    Add New Course
                 </Button>
             </DialogTrigger>
             <DialogContent>

@@ -19,12 +19,12 @@ function SubmitButton() {
       {pending ? (
         <>
           <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-          جاري الإنشاء...
+          Creating...
         </>
       ) : (
         <>
           <UserPlus className="w-4 h-4" />
-          إنشاء حساب الأستاذ
+          Create Professor Account
         </>
       )}
     </Button>
@@ -46,24 +46,24 @@ export function CreateProfessorDialog() {
       <DialogTrigger asChild>
         <Button>
           <UserPlus className="w-4 h-4" />
-          إضافة أستاذ جديد
+          Add New Professor
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>إنشاء حساب أستاذ جديد</DialogTitle>
+          <DialogTitle>Create New Professor Account</DialogTitle>
           <DialogDescription>
-            أدخل بيانات الأستاذ الجديد. سيتمكن من إنشاء وإدارة الدورات التعليمية.
+            Enter the new professor&apos;s details. They will be able to create and manage educational courses.
           </DialogDescription>
         </DialogHeader>
 
         <form action={dispatch} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="prof-name">الاسم الكامل</Label>
+            <Label htmlFor="prof-name">Full Name</Label>
             <Input 
               id="prof-name" 
               name="name" 
-              placeholder="د. أحمد محمد" 
+              placeholder="Dr. Ahmed Mohamed" 
               required 
               className="h-11" 
             />
@@ -71,7 +71,7 @@ export function CreateProfessorDialog() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="prof-phone">رقم الهاتف</Label>
+              <Label htmlFor="prof-phone">Phone Number</Label>
               <Input 
                 id="prof-phone" 
                 name="phone" 
@@ -83,7 +83,7 @@ export function CreateProfessorDialog() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="prof-email">البريد الإلكتروني</Label>
+              <Label htmlFor="prof-email">Email Address</Label>
               <Input 
                 id="prof-email" 
                 name="email" 
@@ -96,30 +96,30 @@ export function CreateProfessorDialog() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="prof-bio">نبذة تعريفية</Label>
+            <Label htmlFor="prof-bio">Biography</Label>
             <Textarea 
               id="prof-bio" 
               name="bio" 
-              placeholder="أستاذ في التربية البدنية مع خبرة 10 سنوات..." 
+              placeholder="Professor of Physical Education with 10 years of experience..." 
               className="min-h-[80px]" 
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="prof-expertise">مجالات الخبرة</Label>
+            <Label htmlFor="prof-expertise">Areas of Expertise</Label>
             <Input 
               id="prof-expertise" 
               name="expertise" 
-              placeholder="التربية البدنية, التغذية, السباحة" 
+              placeholder="Physical Education, Nutrition, Swimming" 
               className="h-11" 
             />
             <p className="text-sm text-muted-foreground">
-              اكتب المجالات مفصولة بفواصل
+              Enter fields separated by commas
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="prof-password">كلمة المرور</Label>
+            <Label htmlFor="prof-password">Password</Label>
             <div className="relative">
               <Input 
                 id="prof-password" 
@@ -127,7 +127,7 @@ export function CreateProfessorDialog() {
                 type={showPassword ? "text" : "password"} 
                 required 
                 className="h-11 pr-12" 
-                placeholder="كلمة مرور قوية (8 أحرف على الأقل)" 
+                placeholder="Strong password (at least 8 characters)" 
               />
               <button 
                 type="button" 

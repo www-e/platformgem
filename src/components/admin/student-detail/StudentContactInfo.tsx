@@ -20,7 +20,7 @@ export function StudentContactInfo({ student }: StudentContactInfoProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <User className="h-5 w-5" />
-          معلومات الاتصال
+          Contact Information
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -28,9 +28,9 @@ export function StudentContactInfo({ student }: StudentContactInfoProps) {
           <div className="flex items-center gap-3">
             <Mail className="h-4 w-4 text-muted-foreground" />
             <div>
-              <p className="font-medium">البريد الإلكتروني</p>
+              <p className="font-medium">Email</p>
               <p className="text-muted-foreground">
-                {student.email || 'غير محدد'}
+                {student.email || 'Not specified'}
               </p>
             </div>
           </div>
@@ -38,7 +38,7 @@ export function StudentContactInfo({ student }: StudentContactInfoProps) {
           <div className="flex items-center gap-3">
             <Phone className="h-4 w-4 text-muted-foreground" />
             <div>
-              <p className="font-medium">رقم الهاتف</p>
+              <p className="font-medium">Phone Number</p>
               <p className="text-muted-foreground" dir="ltr">
                 {student.phone}
               </p>
@@ -48,9 +48,9 @@ export function StudentContactInfo({ student }: StudentContactInfoProps) {
           <div className="flex items-center gap-3">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <div>
-              <p className="font-medium">تاريخ التسجيل</p>
+              <p className="font-medium">Registration Date</p>
               <p className="text-muted-foreground">
-                {new Date(student.createdAt).toLocaleDateString('ar-SA')}
+                {new Date(student.createdAt).toLocaleDateString('en-US')}
               </p>
             </div>
           </div>

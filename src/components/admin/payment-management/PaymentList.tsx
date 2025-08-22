@@ -27,7 +27,7 @@ export function PaymentList({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>المدفوعات ({totalPayments})</CardTitle>
+        <CardTitle>Payments ({totalPayments})</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading && payments.length === 0 ? (
@@ -62,9 +62,9 @@ export function PaymentList({
           // Empty state
           <div className="text-center py-12">
             <CreditCard className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold">لا توجد مدفوعات</h3>
+            <h3 className="text-lg font-semibold">No payments found</h3>
             <p className="text-muted-foreground">
-              لا توجد مدفوعات مطابقة لمعايير البحث الحالية.
+              No payments match the current search criteria.
             </p>
           </div>
         )}

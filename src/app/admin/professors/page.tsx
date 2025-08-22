@@ -71,47 +71,47 @@ export default function ProfessorsPage() {
   const filterOptions: FilterOption[] = [
     {
       key: 'status',
-      label: 'الحالة',
+      label: 'Status',
       type: 'select',
       options: [
-        { value: 'active', label: 'نشط' },
-        { value: 'inactive', label: 'غير نشط' }
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' }
       ],
-      placeholder: 'اختر الحالة'
+      placeholder: 'Select status'
     },
     {
       key: 'hasCourses',
-      label: 'الدورات',
+      label: 'Courses',
       type: 'select',
       options: [
-        { value: 'yes', label: 'لديه دورات' },
-        { value: 'no', label: 'لا يوجد دورات' }
+        { value: 'yes', label: 'Has Courses' },
+        { value: 'no', label: 'No Courses' }
       ],
-      placeholder: 'اختر حالة الدورات'
+      placeholder: 'Select course status'
     },
     {
       key: 'revenueRange',
-      label: 'نطاق الإيرادات',
+      label: 'Revenue Range',
       type: 'select',
       options: [
-        { value: '0-1000', label: '0 - 1,000 جنيه' },
-        { value: '1000-5000', label: '1,000 - 5,000 جنيه' },
-        { value: '5000-10000', label: '5,000 - 10,000 جنيه' },
-        { value: '10000+', label: 'أكثر من 10,000 جنيه' }
+        { value: '0-1000', label: '0 - 1,000 EGP' },
+        { value: '1000-5000', label: '1,000 - 5,000 EGP' },
+        { value: '5000-10000', label: '5,000 - 10,000 EGP' },
+        { value: '10000+', label: 'More than 10,000 EGP' }
       ],
-      placeholder: 'اختر نطاق الإيرادات'
+      placeholder: 'Select revenue range'
     },
     {
       key: 'dateFrom',
-      label: 'تاريخ الانضمام من',
+      label: 'Join Date From',
       type: 'date',
-      placeholder: 'اختر التاريخ'
+      placeholder: 'Select date'
     },
     {
       key: 'dateTo',
-      label: 'تاريخ الانضمام إلى',
+      label: 'Join Date To',
       type: 'date',
-      placeholder: 'اختر التاريخ'
+      placeholder: 'Select date'
     }
   ];
 
@@ -177,12 +177,12 @@ export default function ProfessorsPage() {
                 <h3 className="font-semibold text-lg">{professor.name}</h3>
                 <div className="flex items-center gap-2">
                   <Badge variant={professor.isActive ? "default" : "secondary"} className="text-xs">
-                    {professor.isActive ? "نشط" : "غير نشط"}
+                    {professor.isActive ? "Active" : "Inactive"}
                   </Badge>
                   {index < 3 && (
                     <Badge variant="outline" className="text-xs text-yellow-600 border-yellow-600">
                       <Star className="w-3 h-3 mr-1" />
-                      متميز
+                      Top Performer
                     </Badge>
                   )}
                 </div>
@@ -199,7 +199,7 @@ export default function ProfessorsPage() {
                 <DropdownMenuItem asChild>
                   <Link href={`/admin/professors/${professor.id}`} className="flex items-center">
                     <Eye className="w-4 h-4 mr-2" />
-                    عرض التفاصيل
+                    View Details
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -221,7 +221,7 @@ export default function ProfessorsPage() {
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="w-4 h-4" />
-              <span>انضم في {formatAdminDate(new Date(professor.createdAt))}</span>
+              <span>Joined on {formatAdminDate(new Date(professor.createdAt))}</span>
             </div>
           </div>
 
@@ -249,19 +249,19 @@ export default function ProfessorsPage() {
           <div className="grid grid-cols-2 gap-4 mb-4 p-4 bg-muted/30 rounded-lg">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">{professor.stats.coursesCount}</div>
-              <div className="text-xs text-muted-foreground">دورة</div>
+              <div className="text-xs text-muted-foreground">Courses</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">{professor.stats.totalEnrollments}</div>
-              <div className="text-xs text-muted-foreground">ملتحق</div>
+              <div className="text-xs text-muted-foreground">Students</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-600">{professor.stats.totalCertificates}</div>
-              <div className="text-xs text-muted-foreground">شهادة</div>
+              <div className="text-xs text-muted-foreground">Certificates</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-600">{professor.stats.completionRate}%</div>
-              <div className="text-xs text-muted-foreground">إكمال</div>
+              <div className="text-xs text-muted-foreground">Complete</div>
             </div>
           </div>
 
@@ -274,12 +274,12 @@ export default function ProfessorsPage() {
                   minimumFractionDigits: 0
                 }).format(professor.stats.totalRevenue)}
               </div>
-              <div className="text-xs text-muted-foreground">إجمالي الإيرادات</div>
+              <div className="text-xs text-muted-foreground">Total Revenue</div>
             </div>
             
             {professor.courses.length > 0 && (
               <div className="text-sm text-muted-foreground">
-                {professor.courses.length} دورة منشورة
+                {professor.courses.length} published courses
               </div>
             )}
           </div>
@@ -298,10 +298,10 @@ export default function ProfessorsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-            إدارة الأساتذة
+            Professor Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            إدارة ومتابعة الأساتذة والمدرسين في المنصة
+            Manage and monitor professors and instructors on the platform
           </p>
         </div>
         <CreateProfessorDialog />
@@ -313,7 +313,7 @@ export default function ProfessorsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي الأساتذة</p>
+                <p className="text-sm text-muted-foreground">Total Professors</p>
                 <p className="text-2xl font-bold text-blue-600">{totalCount}</p>
               </div>
               <Users className="w-8 h-8 text-blue-500" />
@@ -325,7 +325,7 @@ export default function ProfessorsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي الدورات</p>
+                <p className="text-sm text-muted-foreground">Total Courses</p>
                 <p className="text-2xl font-bold text-green-600">{totalCourses}</p>
               </div>
               <BookOpen className="w-8 h-8 text-green-500" />
@@ -337,7 +337,7 @@ export default function ProfessorsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي الملتحقين</p>
+                <p className="text-sm text-muted-foreground">Total Enrollments</p>
                 <p className="text-2xl font-bold text-purple-600">{totalEnrollments}</p>
               </div>
               <Target className="w-8 h-8 text-purple-500" />
@@ -349,7 +349,7 @@ export default function ProfessorsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي الإيرادات</p>
+                <p className="text-sm text-muted-foreground">Total Revenue</p>
                 <p className="text-2xl font-bold text-orange-600">
                   {new Intl.NumberFormat('ar-EG', {
                     style: 'currency',
@@ -370,7 +370,7 @@ export default function ProfessorsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              أفضل الأساتذة أداءً
+              Top Performing Professors
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -383,7 +383,7 @@ export default function ProfessorsPage() {
                   <div className="flex-1">
                     <h4 className="font-semibold">{professor.name}</h4>
                     <div className="text-sm text-muted-foreground">
-                      {professor.stats.coursesCount} دورة • {professor.stats.totalEnrollments} ملتحق
+                      {professor.stats.coursesCount} courses • {professor.stats.totalEnrollments} enrolled
                     </div>
                     <div className="text-sm font-medium text-green-600">
                       {new Intl.NumberFormat('ar-EG', {
@@ -444,10 +444,10 @@ export default function ProfessorsPage() {
             <div className="flex justify-center items-center gap-2 mt-8">
               <Button
                 variant="outline"
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
               >
-                السابق
+                Previous
               </Button>
               
               <div className="flex items-center gap-1">
@@ -469,10 +469,12 @@ export default function ProfessorsPage() {
 
               <Button
                 variant="outline"
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                }
                 disabled={currentPage === totalPages}
               >
-                التالي
+                Next
               </Button>
             </div>
           )}
@@ -481,11 +483,11 @@ export default function ProfessorsPage() {
         <Card className="border-0 bg-card/50">
           <CardContent className="p-12 text-center">
             <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">لا يوجد أساتذة</h3>
+            <h3 className="text-lg font-semibold mb-2">No Professors Found</h3>
             <p className="text-muted-foreground mb-6">
               {Object.keys(filters).length > 0 
-                ? "لم يتم العثور على أساتذة مطابقين للفلاتر المحددة"
-                : "لم يتم إضافة أي أساتذة بعد"
+                ? "No professors found matching the selected filters"
+                : "No professors have been added yet"
               }
             </p>
             <CreateProfessorDialog />

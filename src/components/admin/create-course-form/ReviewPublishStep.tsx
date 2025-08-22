@@ -21,7 +21,7 @@ export function ReviewPublishStep({ formData, categories, professors, onInputCha
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Eye className="w-5 h-5" />
-          المراجعة والنشر
+          Review & Publish
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -41,8 +41,8 @@ export function ReviewPublishStep({ formData, categories, professors, onInputCha
                 {formData.description}
               </p>
               <div className="flex items-center gap-4 mt-2 text-sm">
-                <span>التصنيف: {selectedCategory?.name}</span>
-                <span>المدرس: {selectedProfessor?.name}</span>
+                <span>Category: {selectedCategory?.name}</span>
+                <span>Professor: {selectedProfessor?.name}</span>
                 {formData.price && (
                   <span className="font-semibold text-primary">
                     {formData.price} {formData.currency}
@@ -56,9 +56,9 @@ export function ReviewPublishStep({ formData, categories, professors, onInputCha
         {/* Publish Settings */}
         <div className="flex items-center justify-between p-4 border rounded-lg">
           <div>
-            <Label htmlFor="publish">نشر الدورة</Label>
+            <Label htmlFor="publish">Publish Course</Label>
             <p className="text-sm text-muted-foreground">
-              هل تريد نشر الدورة فوراً؟
+              Do you want to publish the course immediately?
             </p>
           </div>
           <Switch

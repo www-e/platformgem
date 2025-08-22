@@ -107,7 +107,7 @@ export function InteractiveCharts({
                 {entry.name}: 
               </span>
               <span className="font-semibold font-primary text-neutral-900 dark:text-black">
-                {entry.name === 'الإيرادات' ? formatCurrency(entry.value) : formatNumber(entry.value)}
+                {entry.name === 'Revenue' ? formatCurrency(entry.value) : formatNumber(entry.value)}
               </span>
             </div>
           ))}
@@ -136,7 +136,7 @@ export function InteractiveCharts({
             onClick={() => setSelectedChart('revenue')}
           >
             <DollarSign className="w-4 h-4 ml-2" />
-            الإيرادات
+            Revenue
           </Button>
           <Button
             variant={selectedChart === 'users' ? 'primary' : 'outline'}
@@ -144,7 +144,7 @@ export function InteractiveCharts({
             onClick={() => setSelectedChart('users')}
           >
             <Users className="w-4 h-4 ml-2" />
-            المستخدمين
+            Users
           </Button>
           <Button
             variant={selectedChart === 'courses' ? 'primary' : 'outline'}
@@ -152,7 +152,7 @@ export function InteractiveCharts({
             onClick={() => setSelectedChart('courses')}
           >
             <BookOpen className="w-4 h-4 ml-2" />
-            الدورات
+            Courses
           </Button>
           <Button
             variant={selectedChart === 'categories' ? 'primary' : 'outline'}
@@ -160,7 +160,7 @@ export function InteractiveCharts({
             onClick={() => setSelectedChart('categories')}
           >
             <PieChartIcon className="w-4 h-4 ml-2" />
-            التصنيفات
+            Categories
           </Button>
         </div>
 
@@ -168,10 +168,10 @@ export function InteractiveCharts({
           {/* Time Range Selector */}
           <div className="flex items-center border rounded-lg">
             {[
-              { key: '7d', label: '7 أيام' },
-              { key: '30d', label: '30 يوم' },
-              { key: '90d', label: '90 يوم' },
-              { key: '1y', label: 'سنة' }
+              { key: '7d', label: '7 Days' },
+              { key: '30d', label: '30 Days' },
+              { key: '90d', label: '90 Days' },
+              { key: '1y', label: '1 Year' }
             ].map((range) => (
               <Button
                 key={range.key}
@@ -187,12 +187,12 @@ export function InteractiveCharts({
 
           <Button variant="outline" size="sm">
             <Filter className="w-4 h-4 ml-2" />
-            فلترة
+            Filter
           </Button>
 
           <Button variant="outline" size="sm">
             <Download className="w-4 h-4 ml-2" />
-            تصدير
+            Export
           </Button>
 
           <Button 
@@ -221,25 +221,25 @@ export function InteractiveCharts({
                   {selectedChart === 'revenue' && (
                     <>
                       <TrendingUp className="w-5 h-5 text-green-600" />
-                      تحليل الإيرادات
+                      Revenue Analysis
                     </>
                   )}
                   {selectedChart === 'users' && (
                     <>
                       <Users className="w-5 h-5 text-blue-600" />
-                      نمو المستخدمين
+                      User Growth
                     </>
                   )}
                   {selectedChart === 'courses' && (
                     <>
                       <BookOpen className="w-5 h-5 text-purple-600" />
-                      تسجيلات الدورات
+                      Course Enrollments
                     </>
                   )}
                   {selectedChart === 'categories' && (
                     <>
                       <PieChartIcon className="w-5 h-5 text-orange-600" />
-                      توزيع التصنيفات
+                      Category Distribution
                     </>
                   )}
                 </CardTitle>
@@ -254,7 +254,7 @@ export function InteractiveCharts({
                       <div className="flex items-center gap-1">
                         {getTrendIcon(12.5)}
                         <span className="text-sm font-primary text-neutral-600">
-                          +12.5% من الشهر الماضي
+                          +12.5% from last month
                         </span>
                       </div>
                     </div>
@@ -267,7 +267,7 @@ export function InteractiveCharts({
                       <div className="flex items-center gap-1">
                         {getTrendIcon(8.3)}
                         <span className="text-sm font-primary text-neutral-600">
-                          +8.3% نمو شهري
+                          +8.3% monthly growth
                         </span>
                       </div>
                     </div>
@@ -300,7 +300,7 @@ export function InteractiveCharts({
                           fill="url(#revenueGradient)"
                           stroke="#10b981"
                           strokeWidth={2}
-                          name="الإيرادات"
+                          name="Revenue"
                         />
                         <Line
                           type="monotone"
@@ -335,7 +335,7 @@ export function InteractiveCharts({
                           stroke="#3b82f6"
                           fill="url(#userGradient)"
                           strokeWidth={2}
-                          name="المستخدمين الجدد"
+                          name="New Users"
                         />
                         <defs>
                           <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
@@ -360,7 +360,7 @@ export function InteractiveCharts({
                           dataKey="value" 
                           fill="#8b5cf6" 
                           radius={[4, 4, 0, 0]}
-                          name="التسجيلات"
+                          name="Enrollments"
                         />
                       </BarChart>
                     ) : selectedChart === 'categories' ? (
@@ -399,8 +399,8 @@ export function InteractiveCharts({
                 <TrendingUp className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-neutral-600 font-primary">أعلى نمو</p>
-                <p className="font-semibold font-display">الدورات التقنية</p>
+                <p className="text-sm text-neutral-600 font-primary">Highest Growth</p>
+                <p className="font-semibold font-display">Technical Courses</p>
                 <Badge className="text-xs mt-1 bg-green-100 text-green-800">
                   +24.5%
                 </Badge>
@@ -416,8 +416,8 @@ export function InteractiveCharts({
                 <Users className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm text-neutral-600 font-primary">أكثر نشاطاً</p>
-                <p className="font-semibold font-display">المستخدمين الجدد</p>
+                <p className="text-sm text-neutral-600 font-primary">Most Active</p>
+                <p className="font-semibold font-display">New Users</p>
                 <Badge className="text-xs mt-1 bg-blue-100 text-blue-800">
                   +18.2%
                 </Badge>
@@ -433,8 +433,8 @@ export function InteractiveCharts({
                 <DollarSign className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm text-neutral-600 font-primary">أعلى إيراد</p>
-                <p className="font-semibold font-display">دورات البرمجة</p>
+                <p className="text-sm text-neutral-600 font-primary">Highest Revenue</p>
+                <p className="font-semibold font-display">Programming Courses</p>
                 <Badge className="text-xs mt-1 bg-purple-100 text-purple-800">
                   {formatCurrency(45000)}
                 </Badge>

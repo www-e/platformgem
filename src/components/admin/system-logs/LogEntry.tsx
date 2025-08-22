@@ -51,7 +51,7 @@ export function LogEntry({ log }: LogEntryProps) {
         {log.metadata && Object.keys(log.metadata).length > 0 && (
           <details className="mt-2">
             <summary className="text-xs text-muted-foreground cursor-pointer">
-              عرض التفاصيل
+              View Details
             </summary>
             <pre className="text-xs bg-muted p-2 rounded mt-1 overflow-auto">
               {JSON.stringify(log.metadata, null, 2)}

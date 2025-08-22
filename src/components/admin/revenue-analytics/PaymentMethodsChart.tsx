@@ -14,7 +14,7 @@ export function PaymentMethodsChart({ paymentMethods }: PaymentMethodsChartProps
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
-          طرق الدفع
+          Payment Methods
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -34,7 +34,7 @@ export function PaymentMethodsChart({ paymentMethods }: PaymentMethodsChartProps
                 ></div>
               </div>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>{method.count} معاملة</span>
+                <span>{method.count} transactions</span>
                 <span>
                   {formatCurrency(method.revenue)}
                 </span>

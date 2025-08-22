@@ -66,8 +66,8 @@ export default async function CategoriesPage() {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">إدارة الفئات</h1>
-          <p className="text-muted-foreground">إدارة فئات الدورات التعليمية</p>
+          <h1 className="text-3xl font-bold">Category Management</h1>
+          <p className="text-muted-foreground">Manage course categories</p>
         </div>
         <CategoryDialog />
       </div>
@@ -76,46 +76,46 @@ export default async function CategoriesPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي الفئات</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Categories</CardTitle>
             <FolderOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalCategories}</div>
             <p className="text-xs text-muted-foreground">
-              {activeCategories} نشطة
+              {activeCategories} active
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي الدورات</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalCourses}</div>
             <p className="text-xs text-muted-foreground">
-              في جميع الفئات
+              Across all categories
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي التسجيلات</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Enrollments</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalEnrollments}</div>
             <p className="text-xs text-muted-foreground">
-              ملتحق مسجل
+              Registered students
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">متوسط الدورات</CardTitle>
+            <CardTitle className="text-sm font-medium">Average Courses</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -123,7 +123,7 @@ export default async function CategoriesPage() {
               {totalCategories > 0 ? Math.round(totalCourses / totalCategories * 10) / 10 : 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              دورة لكل فئة
+              Per category
             </p>
           </CardContent>
         </Card>
@@ -132,17 +132,17 @@ export default async function CategoriesPage() {
       {/* Categories List */}
       <Card>
         <CardHeader>
-          <CardTitle>قائمة الفئات</CardTitle>
+          <CardTitle>Categories List</CardTitle>
           <CardDescription>
-            جميع فئات الدورات التعليمية في المنصة
+            All course categories on the platform
           </CardDescription>
         </CardHeader>
         <CardContent>
           {categories.length === 0 ? (
             <div className="text-center py-8">
               <FolderOpen className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-2 text-sm font-semibold text-gray-900">لا توجد فئات</h3>
-              <p className="mt-1 text-sm text-muted-foreground">ابدأ بإضافة أول فئة للمنصة</p>
+              <h3 className="mt-2 text-sm font-semibold text-gray-900">No categories found</h3>
+              <p className="mt-1 text-sm text-muted-foreground">Start by adding your first category</p>
               <div className="mt-6">
                 <CategoryDialog />
               </div>

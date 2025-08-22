@@ -23,13 +23,13 @@ export default function GradeFilter() {
     return (
         <Select onValueChange={handleValueChange} defaultValue={currentGrade}>
             <SelectTrigger className="w-full md:w-[180px]">
-                <SelectValue placeholder="فلترة حسب المرحلة" />
+                <SelectValue placeholder="Filter by Grade" />
             </SelectTrigger>
             <SelectContent>
-                <SelectItem value="ALL">كل المراحل</SelectItem>
-                <SelectItem value="FIRST_YEAR">الصف الأول الثانوي</SelectItem>
-                <SelectItem value="SECOND_YEAR">الصف الثاني الثانوي</SelectItem>
-                <SelectItem value="THIRD_YEAR">الصف الثالث الثانوي</SelectItem>
+                <SelectItem value="ALL">All Grades</SelectItem>
+                <SelectItem value="FIRST_YEAR">First Year Secondary</SelectItem>
+                <SelectItem value="SECOND_YEAR">Second Year Secondary</SelectItem>
+                <SelectItem value="THIRD_YEAR">Third Year Secondary</SelectItem>
             </SelectContent>
         </Select>
     );

@@ -246,7 +246,7 @@ export function ModernFilters({
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="البحث..."
+              placeholder="Search..."
               value={typeof searchQuery === 'string' ? searchQuery : ''}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-10 h-10 bg-background/50"
@@ -269,7 +269,7 @@ export function ModernFilters({
             className="h-10 px-4"
           >
             <Filter className="w-4 h-4 mr-2" />
-            فلترة
+            Filter
             {activeFiltersCount > 0 && (
               <Badge
                 variant="secondary"
@@ -294,7 +294,7 @@ export function ModernFilters({
               className="h-10 px-3"
             >
               <RotateCcw className="w-4 h-4 mr-2" />
-              إعادة تعيين
+              Reset
             </Button>
           )}
 
@@ -306,7 +306,7 @@ export function ModernFilters({
               className="h-10 px-4"
             >
               <Download className="w-4 h-4 mr-2" />
-              تصدير
+              Export
             </Button>
           )}
         </div>

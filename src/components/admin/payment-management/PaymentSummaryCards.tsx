@@ -37,41 +37,41 @@ export function PaymentSummaryCards({
   const statsData = [
     {
       id: 'total-payments',
-      title: 'إجمالي المدفوعات',
+      title: 'Total Payments',
       value: summary.total,
-      subtitle: 'جميع المعاملات',
+      subtitle: 'All transactions',
       icon: CreditCard,
       cardClassName: 'border-l-4 border-l-blue-500'
     },
     {
       id: 'completed-payments',
-      title: 'مكتملة',
+      title: 'Completed',
       value: summary.completed,
-      subtitle: `${summary.total > 0 ? ((summary.completed / summary.total) * 100).toFixed(1) : 0}% من المجموع`,
+      subtitle: `${summary.total > 0 ? ((summary.completed / summary.total) * 100).toFixed(1) : 0}% of total`,
       icon: CheckCircle,
       cardClassName: 'border-l-4 border-l-green-500'
     },
     {
       id: 'pending-payments',
-      title: 'معلقة',
+      title: 'Pending',
       value: summary.pending,
-      subtitle: 'تحتاج متابعة',
+      subtitle: 'Need follow-up',
       icon: Clock,
       cardClassName: 'border-l-4 border-l-yellow-500'
     },
     {
       id: 'failed-payments',
-      title: 'فاشلة',
+      title: 'Failed',
       value: summary.failed,
-      subtitle: `${summary.cancelled} ملغية`,
+      subtitle: `${summary.cancelled} cancelled`,
       icon: XCircle,
       cardClassName: 'border-l-4 border-l-red-500'
     },
     {
       id: 'total-revenue',
-      title: 'إجمالي الإيرادات',
+      title: 'Total Revenue',
       value: formatCurrency(summary.totalRevenue),
-      subtitle: 'من المدفوعات المكتملة',
+      subtitle: 'From completed payments',
       icon: DollarSign,
       cardClassName: 'border-l-4 border-l-purple-500'
     }

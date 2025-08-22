@@ -24,18 +24,18 @@ export function FormNavigation({
         onClick={onPrevious}
         disabled={currentStep === 1}
       >
-        السابق
+        Previous
       </Button>
 
       <div className="flex gap-2">
         {currentStep < 4 ? (
           <Button onClick={onNext}>
-            التالي
+            Next
           </Button>
         ) : (
           <Button onClick={onSubmit} disabled={isLoading}>
             <Save className="w-4 h-4 mr-2" />
-            {isLoading ? 'جاري الإنشاء...' : 'إنشاء الدورة'}
+            {isLoading ? 'Creating...' : 'Create Course'}
           </Button>
         )}
       </div>

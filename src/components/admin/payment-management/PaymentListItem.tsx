@@ -72,19 +72,19 @@ export function PaymentListItem({
 
           {payment.paymobTransactionId && (
             <p className="text-xs text-muted-foreground mt-1">
-              رقم المعاملة: {payment.paymobTransactionId}
+              Transaction ID: {payment.paymobTransactionId}
             </p>
           )}
 
           {payment.failureReason && (
             <p className="text-xs text-red-600 mt-1">
-              سبب الفشل: {payment.failureReason}
+              Failure reason: {payment.failureReason}
             </p>
           )}
 
           {payment.lastWebhook?.lastError && (
             <p className="text-xs text-orange-600 mt-1">
-              خطأ في المعالجة: {payment.lastWebhook.lastError}
+              Processing error: {payment.lastWebhook.lastError}
             </p>
           )}
         </div>
@@ -102,7 +102,7 @@ export function PaymentListItem({
             onClick={() => onViewDetails(payment.id)}
           >
             <Eye className="h-3 w-3 ml-1" />
-            التفاصيل
+            Details
           </Button>
 
           <DropdownMenu modal={false}>
@@ -132,7 +132,7 @@ export function PaymentListItem({
                     className="cursor-pointer"
                   >
                     <CheckCircle className="h-4 w-4 ml-2" />
-                    <span>إكمال يدوياً</span>
+                    <span>Complete Manually</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="text-red-500 focus:text-red-500 cursor-pointer"
@@ -142,7 +142,7 @@ export function PaymentListItem({
                     }}
                   >
                     <XCircle className="h-4 w-4 ml-2" />
-                    <span>إلغاء</span>
+                    <span>Cancel</span>
                   </DropdownMenuItem>
                 </>
               )}
@@ -155,7 +155,7 @@ export function PaymentListItem({
                   className="cursor-pointer"
                 >
                   <RefreshCw className="h-4 w-4 ml-2" />
-                  <span>إعادة محاولة التسجيل</span>
+                  <span>Retry Enrollment</span>
                 </DropdownMenuItem>
               )}
               {payment.status === 'FAILED' && (
@@ -167,7 +167,7 @@ export function PaymentListItem({
                   className="cursor-pointer"
                 >
                   <CheckCircle className="h-4 w-4 ml-2" />
-                  <span>إكمال يدوياً</span>
+                  <span>Complete Manually</span>
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>

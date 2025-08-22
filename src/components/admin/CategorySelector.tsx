@@ -21,7 +21,7 @@ export function CategorySelector({
   selectedCategory, 
   onCategoryChange, 
   showAll = false,
-  placeholder = "اختر الفئة",
+  placeholder = "Select Category",
   required = false,
   name = "categoryId"
 }: CategorySelectorProps) {
@@ -37,7 +37,7 @@ export function CategorySelector({
         setCategories(data);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'فشل في جلب الفئات');
+        setError(err instanceof Error ? err.message : 'Failed to fetch categories');
       } finally {
         setLoading(false);
       }
@@ -63,7 +63,7 @@ export function CategorySelector({
           <span className="text-sm">{error}</span>
         </div>
         <div className="h-11 border border-destructive/20 rounded-md flex items-center justify-center bg-destructive/5">
-          <span className="text-sm text-muted-foreground">غير متاح</span>
+          <span className="text-sm text-muted-foreground">Unavailable</span>
         </div>
       </div>
     );
@@ -74,10 +74,10 @@ export function CategorySelector({
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-muted-foreground">
           <FolderOpen className="w-4 h-4" />
-          <span className="text-sm">لا توجد فئات متاحة</span>
+          <span className="text-sm">No categories available</span>
         </div>
         <div className="h-11 border border-border rounded-md flex items-center justify-center bg-muted/20">
-          <span className="text-sm text-muted-foreground">يجب إنشاء فئة أولاً</span>
+          <span className="text-sm text-muted-foreground">Category must be created first</span>
         </div>
       </div>
     );
@@ -101,12 +101,12 @@ export function CategorySelector({
               <div className="flex items-center gap-2 mr-2">
                 {category._count && (
                   <Badge variant="outline" className="text-xs">
-                    {category._count.courses} دورة
+                    {category._count.courses} courses
                   </Badge>
                 )}
                 {!category.isActive && (
                   <Badge variant="secondary" className="text-xs">
-                    غير نشط
+                    Inactive
                   </Badge>
                 )}
               </div>
@@ -122,7 +122,7 @@ export function CategorySelector({
 export function SimpleCategorySelector({ 
   selectedCategory, 
   onCategoryChange, 
-  placeholder = "اختر الفئة",
+  placeholder = "Select Category",
   required = false,
   name = "categoryId"
 }: Omit<CategorySelectorProps, 'showAll'>) {

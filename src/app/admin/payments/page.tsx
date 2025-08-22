@@ -63,11 +63,11 @@ const StatusBadge = memo(({ status }: { status: string }) => {
   };
 
   const labels: Record<string, string> = {
-    COMPLETED: "مكتمل",
-    PENDING: "في الانتظار",
-    FAILED: "فاشل",
-    CANCELLED: "ملغي",
-    REFUNDED: "مسترد",
+    COMPLETED: "Completed",
+    PENDING: "Pending",
+    FAILED: "Failed",
+    CANCELLED: "Cancelled",
+    REFUNDED: "Refunded",
   };
 
   return (
@@ -175,8 +175,8 @@ const PaymentCard = ({
                 )}
                 {lastWebhook?.lastError && (
                   <div className="mt-3 p-2 bg-orange-50 border border-orange-200 rounded-lg text-xs text-orange-600 flex items-center gap-2">
-                    <AlertCircle className="w-3 h-3 flex-shrink-0" /> خطأ في
-                    المعالجة: {lastWebhook.lastError}
+                    <AlertCircle className="w-3 h-3 flex-shrink-0" /> Processing
+                  Error: {lastWebhook.lastError}
                   </div>
                 )}
               </div>
@@ -203,7 +203,7 @@ const PaymentCard = ({
                   onClick={() => onSelect(payment)}
                 >
                   <Eye className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">التفاصيل</span>
+                  <span className="hidden sm:inline">Details</span>
                 </Button>
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
@@ -221,7 +221,7 @@ const PaymentCard = ({
                           className="cursor-pointer"
                         >
                           <CheckCircle className="h-4 w-4 ml-2" />
-                          <span>إكمال يدوياً</span>
+                          <span>Complete Manually</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() =>
@@ -232,7 +232,7 @@ const PaymentCard = ({
                           className="cursor-pointer text-red-500 focus:text-red-500"
                         >
                           <XCircle className="h-4 w-4 ml-2" />
-                          <span>إلغاء</span>
+                          <span>Cancel</span>
                         </DropdownMenuItem>
                       </>
                     )}
@@ -245,7 +245,7 @@ const PaymentCard = ({
                           className="cursor-pointer"
                         >
                           <RefreshCw className="h-4 w-4 ml-2" />
-                          <span>إعادة محاولة التسجيل</span>
+                          <span>Retry Enrollment</span>
                         </DropdownMenuItem>
                       )}
                     {payment.status === "FAILED" && (
@@ -254,7 +254,7 @@ const PaymentCard = ({
                         className="cursor-pointer"
                       >
                         <CheckCircle className="h-4 w-4 ml-2" />
-                        <span>إكمال يدوياً</span>
+                        <span>Complete Manually</span>
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />
@@ -263,7 +263,7 @@ const PaymentCard = ({
                       className="cursor-pointer"
                     >
                       <Eye className="h-4 w-4 ml-2" />
-                      <span>عرض التفاصيل</span>
+                      <span>View Details</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -288,40 +288,40 @@ export default function AdminPaymentsPage() {
   const filterOptions: FilterOption[] = [
     {
       key: "status",
-      label: "حالة الدفع",
+      label: "Payment Status",
       type: "select",
       options: [
-        { value: "PENDING", label: "في الانتظار" },
-        { value: "COMPLETED", label: "مكتمل" },
-        { value: "FAILED", label: "فاشل" },
-        { value: "CANCELLED", label: "ملغي" },
-        { value: "REFUNDED", label: "مسترد" },
+        { value: "PENDING", label: "Pending" },
+        { value: "COMPLETED", label: "Completed" },
+        { value: "FAILED", label: "Failed" },
+        { value: "CANCELLED", label: "Cancelled" },
+        { value: "REFUNDED", label: "Refunded" },
       ],
-      placeholder: "اختر حالة الدفع",
+      placeholder: "Select payment status",
     },
     {
       key: "amountRange",
-      label: "نطاق المبلغ",
+      label: "Amount Range",
       type: "select",
       options: [
-        { value: "0-100", label: "0 - 100 جنيه" },
-        { value: "100-500", label: "100 - 500 جنيه" },
-        { value: "500-1000", label: "500 - 1,000 جنيه" },
-        { value: "1000+", label: "أكثر من 1,000 جنيه" },
+        { value: "0-100", label: "0 - 100 EGP" },
+        { value: "100-500", label: "100 - 500 EGP" },
+        { value: "500-1000", label: "500 - 1,000 EGP" },
+        { value: "1000+", label: "More than 1,000 EGP" },
       ],
-      placeholder: "اختر نطاق المبلغ",
+      placeholder: "Select amount range",
     },
     {
       key: "dateFrom",
-      label: "من تاريخ",
+      label: "From Date",
       type: "date",
-      placeholder: "اختر التاريخ",
+      placeholder: "Select date",
     },
     {
       key: "dateTo",
-      label: "إلى تاريخ",
+      label: "To Date",
       type: "date",
-      placeholder: "اختر التاريخ",
+      placeholder: "Select date",
     },
   ];
 
@@ -407,9 +407,9 @@ export default function AdminPaymentsPage() {
     <div className="space-y-6">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">إدارة المدفوعات</h1>
+          <h1 className="text-3xl font-bold">Payment Management</h1>
           <p className="text-muted-foreground mt-1">
-            مراقبة وإدارة جميع المدفوعات والمعاملات في النظام
+            Monitor and manage all payments and transactions in the system
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -421,11 +421,11 @@ export default function AdminPaymentsPage() {
             <RefreshCw
               className={cn("w-4 h-4 mr-2", isLoading && "animate-spin")}
             />
-            تحديث
+            Refresh
           </Button>
           <Button variant="outline" onClick={handleExport}>
             <Download className="w-4 h-4 mr-2" />
-            تصدير
+            Export
           </Button>
         </div>
       </header>
@@ -434,31 +434,31 @@ export default function AdminPaymentsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <StatCard
             icon={CreditCard}
-            title="إجمالي المدفوعات"
+            title="Total Payments"
             value={summary.total}
             color="blue"
           />
           <StatCard
             icon={CheckCircle}
-            title="مكتملة"
+            title="Completed"
             value={summary.completed}
             color="green"
           />
           <StatCard
             icon={Clock}
-            title="في الانتظar"
+            title="Pending"
             value={summary.pending}
             color="yellow"
           />
           <StatCard
             icon={XCircle}
-            title="فاشلة"
+            title="Failed"
             value={summary.failed}
             color="red"
           />
           <StatCard
             icon={DollarSign}
-            title="إجمالي الإيرادات"
+            title="Total Revenue"
             value={new Intl.NumberFormat("ar-EG", {
               style: "currency",
               currency: "EGP",
@@ -507,11 +507,11 @@ export default function AdminPaymentsPage() {
         <Card className="border-0 bg-card/50">
           <CardContent className="p-12 text-center">
             <CreditCard className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">لا توجد مدفوعات</h3>
+            <h3 className="text-lg font-semibold mb-2">No payments found</h3>
             <p className="text-muted-foreground">
               {Object.keys(filters).length > 0
-                ? "لم يتم العثور على مدفوعات مطابقة للفلاتر المحددة"
-                : "لا توجد مدفوعات في النظام حتى الآن"}
+                ? "No payments match the selected filters"
+                : "No payments in the system yet"}
             </p>
           </CardContent>
         </Card>
@@ -528,7 +528,7 @@ export default function AdminPaymentsPage() {
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <StatusIcon status={selectedPayment.status} />
-                  تفاصيل المدفوعة
+                  Payment Details
                 </DialogTitle>
               </DialogHeader>
               <PaymentDetails payment={selectedPayment} />
@@ -597,17 +597,17 @@ const Pagination = ({
       onClick={() => onPageChange(currentPage - 1)}
       disabled={currentPage === 1}
     >
-      السابق
+      Previous
     </Button>
     <span className="text-sm text-muted-foreground">
-      صفحة {currentPage} من {totalPages}
+      Page {currentPage} of {totalPages}
     </span>
     <Button
       variant="outline"
       onClick={() => onPageChange(currentPage + 1)}
       disabled={currentPage === totalPages}
     >
-      التالي
+      Next
     </Button>
   </div>
 );
@@ -616,7 +616,7 @@ const PaymentDetails = ({ payment }: { payment: Payment }) => (
   <div className="space-y-6 py-4">
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div>
-        <label className="text-sm font-medium">المبلغ</label>
+        <label className="text-sm font-medium">Amount</label>
         <p className="text-lg font-bold text-primary">
           {new Intl.NumberFormat("ar-EG", {
             style: "currency",
@@ -626,63 +626,63 @@ const PaymentDetails = ({ payment }: { payment: Payment }) => (
         </p>
       </div>
       <div>
-        <label className="text-sm font-medium">الحالة</label>
+        <label className="text-sm font-medium">Status</label>
         <div className="mt-1">
           <StatusBadge status={payment.status} />
         </div>
       </div>
     </div>
     <div>
-      <label className="text-sm font-medium">الدورة</label>
-      <div className="flex items-center gap-3 mt-2 p-3 bg-muted/50 rounded-lg">
-        <div className="relative w-16 h-10 bg-primary/10 rounded overflow-hidden flex-shrink-0">
-          <Image
-            src={payment.course.thumbnailUrl}
-            alt={payment.course.title}
-            fill
-            sizes="64px"
-            className="object-cover"
-          />
-        </div>
-        <div>
-          <p className="font-medium">{payment.course.title}</p>
-          <p className="text-sm text-muted-foreground">
-            المدرس: {payment.course.professor.name}
-          </p>
+        <label className="text-sm font-medium">Course</label>
+        <div className="flex items-center gap-3 mt-2 p-3 bg-muted/50 rounded-lg">
+          <div className="relative w-16 h-10 bg-primary/10 rounded overflow-hidden flex-shrink-0">
+            <Image
+              src={payment.course.thumbnailUrl}
+              alt={payment.course.title}
+              fill
+              sizes="64px"
+              className="object-cover"
+            />
+          </div>
+          <div>
+            <p className="font-medium">{payment.course.title}</p>
+            <p className="text-sm text-muted-foreground">
+              Professor: {payment.course.professor.name}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
     <div>
-      <label className="text-sm font-medium">بيانات الملتحق</label>
-      <div className="mt-2 p-3 bg-muted/50 rounded-lg space-y-2 text-sm">
-        <p>
-          <strong>الاسم:</strong> {payment.user.name}
-        </p>
-        <p>
-          <strong>الهاتف:</strong> {payment.user.phone}
-        </p>
-        {payment.user.email && (
+        <label className="text-sm font-medium">Student Information</label>
+        <div className="mt-2 p-3 bg-muted/50 rounded-lg space-y-2 text-sm">
           <p>
-            <strong>البريد الإلكتروني:</strong> {payment.user.email}
+            <strong>Name:</strong> {payment.user.name}
           </p>
-        )}
+          <p>
+            <strong>Phone:</strong> {payment.user.phone}
+          </p>
+          {payment.user.email && (
+            <p>
+              <strong>Email:</strong> {payment.user.email}
+            </p>
+          )}
+        </div>
       </div>
-    </div>
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
       <div>
-        <label className="font-medium">تاريخ الإنشاء</label>
+        <label className="font-medium">Created At</label>
         <p className="mt-1">{formatAdminDateTime(payment.createdAt)}</p>
       </div>
       {payment.completedAt && (
         <div>
-          <label className="font-medium">تاريخ الإكمال</label>
+          <label className="font-medium">Completed At</label>
           <p className="mt-1">{formatAdminDateTime(payment.completedAt)}</p>
         </div>
       )}
     </div>
     {payment.paymobTransactionId && (
       <div>
-        <label className="text-sm font-medium">معرف المعاملة</label>
+        <label className="text-sm font-medium">Transaction ID</label>
         <p className="text-sm mt-1 font-mono">
           {String(payment.paymobTransactionId)}
         </p>

@@ -53,11 +53,11 @@ export function CourseItem({ course, onAction }: CourseItemProps) {
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Users className="h-3 w-3" />
-              {course._count.enrollments} ملتحق
+              {course._count.enrollments} enrolled
             </div>
             <div className="flex items-center gap-1">
               <BookOpen className="h-3 w-3" />
-              {course._count.lessons} درس
+              {course._count.lessons} lessons
             </div>
             <div className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
@@ -68,7 +68,7 @@ export function CourseItem({ course, onAction }: CourseItemProps) {
           <div className="flex items-center gap-2 mt-2">
             <Badge variant="outline">{course.category.name}</Badge>
             <span className="text-sm text-muted-foreground">
-              بواسطة {course.professor.name}
+              by {course.professor.name}
             </span>
           </div>
         </div>
@@ -79,7 +79,7 @@ export function CourseItem({ course, onAction }: CourseItemProps) {
           </div>
           {course.revenue && (
             <div className="text-sm text-muted-foreground">
-              إيراد: {formatPrice(course.revenue)}
+              Revenue: {formatPrice(course.revenue)}
             </div>
           )}
         </div>
@@ -94,11 +94,11 @@ export function CourseItem({ course, onAction }: CourseItemProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuItem>
             <Eye className="h-4 w-4 mr-2" />
-            عرض التفاصيل
+            View Details
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Edit className="h-4 w-4 mr-2" />
-            تعديل الدورة
+            Edit Course
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => onAction(course.id, course.isPublished ? 'unpublish' : 'publish')}
@@ -110,7 +110,7 @@ export function CourseItem({ course, onAction }: CourseItemProps) {
             onClick={() => onAction(course.id, 'delete')}
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            حذف الدورة
+            Delete Course
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

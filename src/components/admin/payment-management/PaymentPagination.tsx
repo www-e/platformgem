@@ -26,11 +26,11 @@ export function PaymentPagination({ pagination }: PaymentPaginationProps) {
         onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
       >
-        السابق
+        Previous
       </Button>
 
       <span className="text-sm text-muted-foreground">
-        صفحة {currentPage} من {totalPages}
+        Page {currentPage} of {totalPages}
       </span>
 
       <Button
@@ -39,7 +39,7 @@ export function PaymentPagination({ pagination }: PaymentPaginationProps) {
         onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
       >
-        التالي
+        Next
       </Button>
     </div>
   );

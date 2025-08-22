@@ -70,45 +70,45 @@ export default function StudentsPage() {
   const filterOptions: FilterOption[] = [
     {
       key: 'status',
-      label: 'الحالة',
+      label: 'Status',
       type: 'select',
       options: [
-        { value: 'active', label: 'نشط' },
-        { value: 'inactive', label: 'غير نشط' }
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' }
       ],
-      placeholder: 'اختر الحالة'
+      placeholder: 'Select status'
     },
     {
       key: 'hasEnrollments',
-      label: 'التسجيلات',
+      label: 'Enrollments',
       type: 'select',
       options: [
-        { value: 'yes', label: 'لديه تسجيلات' },
-        { value: 'no', label: 'لا يوجد تسجيلات' }
+        { value: 'yes', label: 'Has Enrollments' },
+        { value: 'no', label: 'No Enrollments' }
       ],
-      placeholder: 'اختر حالة التسجيل'
+      placeholder: 'Select enrollment status'
     },
     {
       key: 'hasCertificates',
-      label: 'الشهادات',
+      label: 'Certificates',
       type: 'select',
       options: [
-        { value: 'yes', label: 'لديه شهادات' },
-        { value: 'no', label: 'لا يوجد شهادات' }
+        { value: 'yes', label: 'Has Certificates' },
+        { value: 'no', label: 'No Certificates' }
       ],
-      placeholder: 'اختر حالة الشهادات'
+      placeholder: 'Select certificate status'
     },
     {
       key: 'dateFrom',
-      label: 'تاريخ التسجيل من',
+      label: 'Registration Date From',
       type: 'date',
-      placeholder: 'اختر التاريخ'
+      placeholder: 'Select date'
     },
     {
       key: 'dateTo',
-      label: 'تاريخ التسجيل إلى',
+      label: 'Registration Date To',
       type: 'date',
-      placeholder: 'اختر التاريخ'
+      placeholder: 'Select date'
     }
   ];
 
@@ -187,7 +187,7 @@ export default function StudentsPage() {
               
               <div className="flex items-center gap-2">
                 <Badge variant={student.isActive ? "default" : "secondary"} className="text-xs">
-                  {student.isActive ? "نشط" : "غير نشط"}
+                  {student.isActive ? "Active" : "Inactive"}
                 </Badge>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -199,7 +199,7 @@ export default function StudentsPage() {
                     <DropdownMenuItem asChild>
                       <Link href={`/admin/students/${student.id}`} className="flex items-center">
                         <Eye className="w-4 h-4 mr-2" />
-                        عرض التفاصيل
+                        View Details
                       </Link>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -222,28 +222,28 @@ export default function StudentsPage() {
 
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="w-4 h-4" />
-                <span>انضم في {formatAdminDate(new Date(student.createdAt))}</span>
+                <span>Joined on {formatAdminDate(new Date(student.createdAt))}</span>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-4 mt-6 p-4 bg-muted/30 rounded-lg">
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">{student._count.enrollments}</div>
-                <div className="text-xs text-muted-foreground">دورة</div>
+                <div className="text-xs text-muted-foreground">course</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">{student._count.certificates}</div>
-                <div className="text-xs text-muted-foreground">شهادة</div>
+                <div className="text-xs text-muted-foreground">certificate</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600">{Math.round(averageProgress)}%</div>
-                <div className="text-xs text-muted-foreground">التقدم</div>
+                <div className="text-xs text-muted-foreground">progress</div>
               </div>
             </div>
 
             {student.enrollments.length > 0 && (
               <div className="mt-4">
-                <h4 className="text-sm font-medium mb-2">الدورات الحالية</h4>
+                <h4 className="text-sm font-medium mb-2">Current Courses</h4>
                 <div className="space-y-2">
                   {student.enrollments.slice(0, 2).map((enrollment) => (
                     <div key={enrollment.id} className="flex justify-between items-center text-sm p-2 bg-background/50 rounded">
@@ -255,7 +255,7 @@ export default function StudentsPage() {
                   ))}
                   {student.enrollments.length > 2 && (
                     <div className="text-xs text-muted-foreground text-center">
-                      و {student.enrollments.length - 2} دورة أخرى...
+                      And {student.enrollments.length - 2} more courses...
                     </div>
                   )}
                 </div>
@@ -273,10 +273,10 @@ export default function StudentsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-            إدارة الملتحقين
+            Student Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            إدارة ومتابعة الملتحقين المسجلين في المنصة
+            Manage and track students registered on the platform
           </p>
         </div>
       </div>
@@ -287,7 +287,7 @@ export default function StudentsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي الملتحقين</p>
+                <p className="text-sm text-muted-foreground">Total Students</p>
                 <p className="text-2xl font-bold text-blue-600">{totalCount}</p>
               </div>
               <Users className="w-8 h-8 text-blue-500" />
@@ -299,7 +299,7 @@ export default function StudentsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">الملتحقين النشطين</p>
+                <p className="text-sm text-muted-foreground">Active Students</p>
                 <p className="text-2xl font-bold text-green-600">
                   {students.filter(s => s.isActive).length}
                 </p>
@@ -313,7 +313,7 @@ export default function StudentsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي التسجيلات</p>
+                <p className="text-sm text-muted-foreground">Total Enrollments</p>
                 <p className="text-2xl font-bold text-purple-600">
                   {students.reduce((sum, s) => sum + s._count.enrollments, 0)}
                 </p>
@@ -327,7 +327,7 @@ export default function StudentsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">الشهادات الممنوحة</p>
+                <p className="text-sm text-muted-foreground">Certificates Issued</p>
                 <p className="text-2xl font-bold text-orange-600">
                   {students.reduce((sum, s) => sum + s._count.certificates, 0)}
                 </p>
@@ -382,10 +382,10 @@ export default function StudentsPage() {
             <div className="flex justify-center items-center gap-2 mt-8">
               <Button
                 variant="outline"
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
               >
-                السابق
+                Previous
               </Button>
               
               <div className="flex items-center gap-1">
@@ -407,10 +407,12 @@ export default function StudentsPage() {
 
               <Button
                 variant="outline"
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                }
                 disabled={currentPage === totalPages}
               >
-                التالي
+                Next
               </Button>
             </div>
           )}
@@ -419,11 +421,11 @@ export default function StudentsPage() {
         <Card className="border-0 bg-card/50">
           <CardContent className="p-12 text-center">
             <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">لا يوجد ملتحقين</h3>
+            <h3 className="text-lg font-semibold mb-2">No Students Found</h3>
             <p className="text-muted-foreground">
               {Object.keys(filters).length > 0 
-                ? "لم يتم العثور على ملتحقين مطابقين للفلاتر المحددة"
-                : "لم يقم أي ملتحق بالتسجيل بعد"
+                ? "No students found matching the selected filters"
+                : "No students have registered yet"
               }
             </p>
           </CardContent>

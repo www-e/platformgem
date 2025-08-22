@@ -17,7 +17,7 @@ export function PaymentList({ payments, onViewDetails }: PaymentListProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>سجل المدفوعات ({payments.length})</CardTitle>
+        <CardTitle>Payment History ({payments.length})</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -39,22 +39,22 @@ export function PaymentList({ payments, onViewDetails }: PaymentListProps) {
                   </div>
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
                     <span>
-                      تاريخ الإنشاء:{' '}
-                      {new Date(payment.createdAt).toLocaleDateString('ar-SA')}
+                      Created At:{' '}
+                      {new Date(payment.createdAt).toLocaleDateString('en-US')}
                     </span>
                     {payment.completedAt && (
                       <span>
-                        تاريخ الإكمال:{' '}
-                        {new Date(payment.completedAt).toLocaleDateString('ar-SA')}
+                        Completed At:{' '}
+                        {new Date(payment.completedAt).toLocaleDateString('en-US')}
                       </span>
                     )}
                     {payment.paymobTransactionId && (
-                      <span>رقم المعاملة: {payment.paymobTransactionId}</span>
+                      <span>Transaction ID: {payment.paymobTransactionId}</span>
                     )}
                   </div>
                   {payment.failureReason && (
                     <p className="text-xs text-red-600 mt-1">
-                      سبب الفشل: {payment.failureReason}
+                      Failure Reason: {payment.failureReason}
                     </p>
                   )}
                 </div>
@@ -68,7 +68,7 @@ export function PaymentList({ payments, onViewDetails }: PaymentListProps) {
                     onClick={() => onViewDetails(payment.id)}
                   >
                     <Eye className="h-3 w-3 ml-1" />
-                    التفاصيل
+                    Details
                   </Button>
                 </div>
               </div>
@@ -76,7 +76,7 @@ export function PaymentList({ payments, onViewDetails }: PaymentListProps) {
           ) : (
             <div className="text-center py-8">
               <CreditCard className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">لا توجد مدفوعات</p>
+              <p className="text-muted-foreground">No payments found</p>
             </div>
           )}
         </div>

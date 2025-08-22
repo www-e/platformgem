@@ -29,7 +29,7 @@ export function LogsFilters({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Filter className="w-5 h-5" />
-          البحث والتصفية
+          Search & Filter
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -37,7 +37,7 @@ export function LogsFilters({
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="البحث في السجلات..."
+              placeholder="Search logs..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -46,32 +46,32 @@ export function LogsFilters({
           
           <Select value={severityFilter} onValueChange={setSeverityFilter}>
             <SelectTrigger>
-              <SelectValue placeholder="تصفية بالخطورة" />
+              <SelectValue placeholder="Filter by severity" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">جميع المستويات</SelectItem>
-              <SelectItem value="success">نجح</SelectItem>
-              <SelectItem value="info">معلومات</SelectItem>
-              <SelectItem value="warning">تحذير</SelectItem>
-              <SelectItem value="error">خطأ</SelectItem>
+              <SelectItem value="all">All Levels</SelectItem>
+              <SelectItem value="success">Success</SelectItem>
+              <SelectItem value="info">Info</SelectItem>
+              <SelectItem value="warning">Warning</SelectItem>
+              <SelectItem value="error">Error</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={dateFilter} onValueChange={setDateFilter}>
             <SelectTrigger>
-              <SelectValue placeholder="تصفية بالتاريخ" />
+              <SelectValue placeholder="Filter by date" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="today">اليوم</SelectItem>
-              <SelectItem value="yesterday">أمس</SelectItem>
-              <SelectItem value="week">هذا الأسبوع</SelectItem>
-              <SelectItem value="month">هذا الشهر</SelectItem>
-              <SelectItem value="all">جميع التواريخ</SelectItem>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="yesterday">Yesterday</SelectItem>
+              <SelectItem value="week">This Week</SelectItem>
+              <SelectItem value="month">This Month</SelectItem>
+              <SelectItem value="all">All Dates</SelectItem>
             </SelectContent>
           </Select>
 
           <Button onClick={onClearFilters} variant="outline">
-            مسح الفلاتر
+            Clear Filters
           </Button>
         </div>
       </CardContent>

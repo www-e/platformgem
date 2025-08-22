@@ -40,7 +40,7 @@ export function CourseFilters({
   onProfessorChange,
 }: CourseFiltersProps) {
   const categoryOptions = [
-    { value: "all", label: "جميع التصنيفات" },
+    { value: "all", label: "All Categories" },
     ...categories.map((category) => ({
       value: category.id,
       label: category.name,
@@ -48,13 +48,13 @@ export function CourseFilters({
   ];
 
   const statusOptions = [
-    { value: "all", label: "جميع الحالات" },
-    { value: "published", label: "منشورة" },
-    { value: "draft", label: "مسودة" },
+    { value: "all", label: "All Statuses" },
+    { value: "published", label: "Published" },
+    { value: "draft", label: "Draft" },
   ];
 
   const professorOptions = [
-    { value: "all", label: "جميع المدرسين" },
+    { value: "all", label: "All Professors" },
     ...professors.map((professor) => ({
       value: professor.id,
       label: professor.name,
@@ -66,7 +66,7 @@ export function CourseFilters({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Filter className="h-5 w-5" />
-          البحث والتصفية
+          Search & Filter
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -74,7 +74,7 @@ export function CourseFilters({
           <SearchFilter
             value={searchTerm}
             onChange={onSearchChange}
-            placeholder="البحث بعنوان الدورة أو المدرس..."
+            placeholder="Search by course title or professor..."
             className="flex-1"
           />
 
@@ -82,21 +82,21 @@ export function CourseFilters({
             value={categoryFilter}
             onChange={onCategoryChange}
             options={categoryOptions}
-            placeholder="تصفية بالتصنيف"
+            placeholder="Filter by category"
           />
 
           <SelectFilter
             value={statusFilter}
             onChange={onStatusChange}
             options={statusOptions}
-            placeholder="تصفية بالحالة"
+            placeholder="Filter by status"
           />
 
           <SelectFilter
             value={professorFilter}
             onChange={onProfessorChange}
             options={professorOptions}
-            placeholder="تصفية بالمدرس"
+            placeholder="Filter by professor"
           />
         </div>
       </CardContent>

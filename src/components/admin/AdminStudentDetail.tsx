@@ -89,14 +89,14 @@ export default function AdminStudentDetail({ student }: StudentDetailProps) {
       const result = await response.json();
 
       if (result.success) {
-        toast.success('تم حذف الملتحق بنجاح');
+        toast.success('Student deleted successfully');
         window.location.href = '/admin/students';
       } else {
-        toast.error(result.error?.message || 'فشل في حذف الملتحق');
+        toast.error(result.error?.message || 'Failed to delete student');
       }
     } catch (error) {
       console.error('Delete student failed:', error);
-      toast.error('حدث خطأ في حذف الملتحق');
+      toast.error('An error occurred while deleting the student');
     }
   };
 
@@ -111,15 +111,15 @@ export default function AdminStudentDetail({ student }: StudentDetailProps) {
 
       if (result.success) {
         toast.success(
-          `تم ${student.isActive ? 'إلغاء تفعيل' : 'تفعيل'} الملتحق بنجاح`
+          `Student ${student.isActive ? 'deactivated' : 'activated'} successfully`
         );
         window.location.reload();
       } else {
-        toast.error(result.error?.message || 'فشل في تحديث حالة الملتحق');
+        toast.error(result.error?.message || 'Failed to update student status');
       }
     } catch (error) {
       console.error('Toggle status failed:', error);
-      toast.error('حدث خطأ في تحديث الحالة');
+      toast.error('An error occurred while updating status');
     }
   };
 

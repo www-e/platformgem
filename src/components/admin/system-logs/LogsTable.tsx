@@ -25,7 +25,7 @@ export function LogsTable({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>سجل الأنشطة</CardTitle>
+        <CardTitle>Activity Log</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -36,7 +36,7 @@ export function LogsTable({
           {logs.length === 0 && !isLoading && (
             <div className="text-center py-8">
               <Activity className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">لا توجد سجلات مطابقة للبحث</p>
+              <p className="text-muted-foreground">No matching logs found</p>
             </div>
           )}
         </div>
@@ -50,11 +50,11 @@ export function LogsTable({
               onClick={onPrevPage}
               disabled={currentPage === 1}
             >
-              السابق
+              Previous
             </Button>
             
             <span className="text-sm text-muted-foreground">
-              صفحة {currentPage} من {totalPages}
+              Page {currentPage} of {totalPages}
             </span>
             
             <Button
@@ -63,7 +63,7 @@ export function LogsTable({
               onClick={onNextPage}
               disabled={currentPage === totalPages}
             >
-              التالي
+              Next
             </Button>
           </div>
         )}

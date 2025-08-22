@@ -26,9 +26,9 @@ export function StudentDataTabs({
   return (
     <Tabs defaultValue="enrollments" className="w-full">
       <TabsList>
-        <TabsTrigger value="enrollments">الدورات المسجل بها</TabsTrigger>
-        <TabsTrigger value="payments">سجل المدفوعات</TabsTrigger>
-        <TabsTrigger value="certificates">الشهادات</TabsTrigger>
+        <TabsTrigger value="enrollments">Enrolled Courses</TabsTrigger>
+        <TabsTrigger value="payments">Payment History</TabsTrigger>
+        <TabsTrigger value="certificates">Certificates</TabsTrigger>
       </TabsList>
       <TabsContent value="enrollments" className="pt-4">
         <EnrollmentList enrollments={studentData.enrollments} />

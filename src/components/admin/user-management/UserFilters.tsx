@@ -22,16 +22,16 @@ export function UserFilters({
   setStatusFilter
 }: UserFiltersProps) {
   const roleOptions = [
-    { value: 'all', label: 'جميع الأدوار' },
-    { value: 'STUDENT', label: 'ملتحقين' },
-    { value: 'PROFESSOR', label: 'مدرسين' },
-    { value: 'ADMIN', label: 'مديرين' }
+    { value: 'all', label: 'All Roles' },
+    { value: 'STUDENT', label: 'Students' },
+    { value: 'PROFESSOR', label: 'Professors' },
+    { value: 'ADMIN', label: 'Admins' }
   ];
 
   const statusOptions = [
-    { value: 'all', label: 'جميع الحالات' },
-    { value: 'active', label: 'نشط' },
-    { value: 'inactive', label: 'غير نشط' }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   return (
@@ -39,7 +39,7 @@ export function UserFilters({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Filter className="h-5 w-5" />
-          البحث والتصفية
+          Search & Filter
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -47,7 +47,7 @@ export function UserFilters({
           <SearchFilter
             value={searchTerm}
             onChange={setSearchTerm}
-            placeholder="البحث بالاسم أو البريد الإلكتروني..."
+            placeholder="Search by name or email..."
             className="flex-1"
           />
 
@@ -55,14 +55,14 @@ export function UserFilters({
             value={roleFilter}
             onChange={setRoleFilter}
             options={roleOptions}
-            placeholder="تصفية بالدور"
+            placeholder="Filter by role"
           />
 
           <SelectFilter
             value={statusFilter}
             onChange={setStatusFilter}
             options={statusOptions}
-            placeholder="تصفية بالحالة"
+            placeholder="Filter by status"
           />
         </div>
       </CardContent>

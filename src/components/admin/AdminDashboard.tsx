@@ -147,11 +147,11 @@ export function AdminDashboard() {
   // Initialize widgets layout
   useEffect(() => {
     const defaultWidgets: DashboardWidget[] = [
-      { id: 'users', title: 'المستخدمين', type: 'stat', size: 'small', position: { x: 0, y: 0 }, visible: true },
-      { id: 'courses', title: 'الدورات', type: 'stat', size: 'small', position: { x: 1, y: 0 }, visible: true },
-      { id: 'revenue', title: 'الإيرادات', type: 'stat', size: 'small', position: { x: 2, y: 0 }, visible: true },
-      { id: 'activity', title: 'النشاط الحديث', type: 'activity', size: 'large', position: { x: 0, y: 1 }, visible: true },
-      { id: 'health', title: 'حالة النظام', type: 'health', size: 'medium', position: { x: 2, y: 1 }, visible: true }
+      { id: 'users', title: 'Users', type: 'stat', size: 'small', position: { x: 0, y: 0 }, visible: true },
+      { id: 'courses', title: 'Courses', type: 'stat', size: 'small', position: { x: 1, y: 0 }, visible: true },
+      { id: 'revenue', title: 'Revenue', type: 'stat', size: 'small', position: { x: 2, y: 0 }, visible: true },
+      { id: 'activity', title: 'Recent Activity', type: 'activity', size: 'large', position: { x: 0, y: 1 }, visible: true },
+      { id: 'health', title: 'System Status', type: 'health', size: 'medium', position: { x: 2, y: 1 }, visible: true }
     ];
     setWidgets(defaultWidgets);
   }, []);
@@ -195,14 +195,14 @@ export function AdminDashboard() {
             <AlertTriangle className="w-8 h-8 text-red-600" />
           </div>
           <h3 className="text-lg font-semibold text-neutral-900 dark:text-black font-display mb-2">
-            خطأ في تحميل البيانات
+            Error Loading Data
           </h3>
           <p className="text-neutral-600 dark:text-neutral-400 font-primary mb-4">
-            فشل في تحميل بيانات لوحة التحكم
+            Failed to load dashboard data
           </p>
           <Button onClick={handleRefresh}>
             <RefreshCw className="w-4 h-4 ml-2" />
-            إعادة المحاولة
+            Retry
           </Button>
         </div>
       </div>
@@ -218,15 +218,15 @@ export function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-neutral-900 dark:text-black font-display">
-                لوحة التحكم الإدارية
+                Admin Dashboard
               </h1>
               <div className="flex items-center gap-4 mt-2">
                 <p className="text-neutral-600 dark:text-neutral-400 font-primary">
-                  إدارة شاملة للمنصة التعليمية
+                  Comprehensive Educational Platform Management
                 </p>
                 <div className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="font-primary">متصل</span>
+                  <span className="font-primary">Connected</span>
                 </div>
               </div>
             </div>
@@ -236,7 +236,7 @@ export function AdminDashboard() {
               <div className="flex items-center gap-2 px-3 py-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
                 <Zap className="w-4 h-4 text-green-500" />
                 <span className="text-sm font-primary text-neutral-700 dark:text-neutral-300">
-                  آخر تحديث: {lastUpdate.toLocaleTimeString('ar-EG')}
+                  Last Update: {lastUpdate.toLocaleTimeString()}
                 </span>
               </div>
 
@@ -295,7 +295,7 @@ export function AdminDashboard() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-neutral-900 dark:text-black font-display">
-                  تخصيص الويدجت
+                  Customize Widgets
                 </h3>
                 <Button variant="ghost" size="sm" onClick={() => setIsCustomizing(false)}>
                   <Minimize2 className="w-4 h-4" />
@@ -325,7 +325,7 @@ export function AdminDashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-500 text-sm font-primary">المستخدمين النشطين</p>
+                    <p className="text-gray-500 text-sm font-primary">Active Users</p>
                     <p className="text-2xl font-bold font-display text-blue-600">
                       {stats.realTimeMetrics?.activeUsers || 0}
                     </p>
@@ -339,7 +339,7 @@ export function AdminDashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-500 text-sm font-primary">دروس جارية</p>
+                    <p className="text-gray-500 text-sm font-primary">Ongoing Lessons</p>
                     <p className="text-2xl font-bold font-display text-green-600">
                       {stats.realTimeMetrics?.ongoingLessons || 0}
                     </p>
@@ -353,7 +353,7 @@ export function AdminDashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-500 text-sm font-primary">تسجيلات حديثة</p>
+                    <p className="text-gray-500 text-sm font-primary">Recent Signups</p>
                     <p className="text-2xl font-bold font-display text-purple-600">
                       {stats.realTimeMetrics?.recentSignups || 0}
                     </p>
@@ -367,7 +367,7 @@ export function AdminDashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-500 text-sm font-primary">مدفوعات معلقة</p>
+                    <p className="text-gray-500 text-sm font-primary">Pending Payments</p>
                     <p className="text-2xl font-bold font-display text-orange-600">
                       {stats.realTimeMetrics?.pendingPayments || 0}
                     </p>
@@ -390,9 +390,9 @@ export function AdminDashboard() {
                 <Card className="hover:shadow-lg transition-all duration-200 bg-white border border-gray-200">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-gray-600 font-primary">
-                      {widget.id === 'users' && 'إجمالي المستخدمين'}
-                      {widget.id === 'courses' && 'إجمالي الدورات'}
-                      {widget.id === 'revenue' && 'إجمالي الإيرادات'}
+                      {widget.id === 'users' && 'Total Users'}
+                      {widget.id === 'courses' && 'Total Courses'}
+                      {widget.id === 'revenue' && 'Total Revenue'}
                     </CardTitle>
                     {widget.id === 'users' && <Users className="h-4 w-4 text-gray-500" />}
                     {widget.id === 'courses' && <BookOpen className="h-4 w-4 text-gray-500" />}
@@ -409,13 +409,13 @@ export function AdminDashboard() {
                       }).format(stats.totalRevenue)}
                     </div>
                     <p className="text-xs text-gray-500 font-primary mt-1">
-                      {widget.id === 'users' && `${stats.totalStudents} ملتحق • ${stats.totalProfessors} مدرس`}
-                      {widget.id === 'courses' && `${stats.activeCourses} دورة نشطة`}
-                      {widget.id === 'revenue' && `${new Intl.NumberFormat('ar-EG', {
+                      {widget.id === 'users' && `${stats.totalStudents} Enrolled • ${stats.totalProfessors} Professors`}
+                      {widget.id === 'courses' && `${stats.activeCourses} Active Courses`}
+                      {widget.id === 'revenue' && `${new Intl.NumberFormat('en-US', {
                         style: 'currency',
-                        currency: 'EGP',
+                        currency: 'USD',
                         minimumFractionDigits: 0
-                      }).format(stats.monthlyRevenue)} هذا الشهر`}
+                      }).format(stats.monthlyRevenue)} This Month`}
                     </p>
                   </CardContent>
                 </Card>
@@ -428,7 +428,7 @@ export function AdminDashboard() {
             <Card className="hover:shadow-lg transition-all duration-200 bg-white border border-gray-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600 font-primary">
-                  التسجيلات
+                  Enrollments
                 </CardTitle>
                 <UserCheck className="h-4 w-4 text-gray-500" />
               </CardHeader>
@@ -437,7 +437,7 @@ export function AdminDashboard() {
                   {stats.totalEnrollments}
                 </div>
                 <p className="text-xs text-gray-500 font-primary mt-1">
-                  إجمالي التسجيلات في الدورات
+                  Total Course Enrollments
                 </p>
               </CardContent>
             </Card>
@@ -451,7 +451,7 @@ export function AdminDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-gray-900 font-display">
                   <Shield className="w-5 h-5 text-green-600" />
-                  حالة النظام
+                  System Status
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -462,16 +462,16 @@ export function AdminDashboard() {
                       <div className="flex items-center gap-2">
                         <Database className="w-4 h-4 text-gray-600" />
                         <span className="text-sm font-medium text-gray-900 font-primary">
-                          قاعدة البيانات
+                          Database
                         </span>
                       </div>
                       <Badge className={getStatusColor(stats.systemHealth?.database.status || 'healthy')}>
-                        {stats.systemHealth?.database.status === 'healthy' ? 'سليم' :
-                          stats.systemHealth?.database.status === 'warning' ? 'تحذير' : 'خطأ'}
+                        {stats.systemHealth?.database.status === 'healthy' ? 'Healthy' :
+                          stats.systemHealth?.database.status === 'warning' ? 'Warning' : 'Error'}
                       </Badge>
                     </div>
                     <p className="text-xs text-gray-500 font-primary">
-                      زمن الاستجابة: {stats.systemHealth?.database.responseTime || 0}ms
+                      Response Time: {stats.systemHealth?.database.responseTime || 0}ms
                     </p>
                   </div>
 
@@ -481,12 +481,12 @@ export function AdminDashboard() {
                       <div className="flex items-center gap-2">
                         <Server className="w-4 h-4 text-gray-600" />
                         <span className="text-sm font-medium text-gray-900 font-primary">
-                          الخادم
+                          Server
                         </span>
                       </div>
                       <Badge className={getStatusColor(stats.systemHealth?.server.status || 'healthy')}>
-                        {stats.systemHealth?.server.status === 'healthy' ? 'سليم' :
-                          stats.systemHealth?.server.status === 'warning' ? 'تحذير' : 'خطأ'}
+                        {stats.systemHealth?.server.status === 'healthy' ? 'Healthy' :
+                          stats.systemHealth?.server.status === 'warning' ? 'Warning' : 'Error'}
                       </Badge>
                     </div>
                     <p className="text-xs text-gray-500 font-primary">
@@ -500,16 +500,16 @@ export function AdminDashboard() {
                       <div className="flex items-center gap-2">
                         <HardDrive className="w-4 h-4 text-gray-600" />
                         <span className="text-sm font-medium text-gray-900 font-primary">
-                          التخزين
+                          Storage
                         </span>
                       </div>
                       <Badge className={getStatusColor(stats.systemHealth?.storage.status || 'healthy')}>
-                        {stats.systemHealth?.storage.status === 'healthy' ? 'سليم' :
-                          stats.systemHealth?.storage.status === 'warning' ? 'تحذير' : 'خطأ'}
+                        {stats.systemHealth?.storage.status === 'healthy' ? 'Healthy' :
+                          stats.systemHealth?.storage.status === 'warning' ? 'Warning' : 'Error'}
                       </Badge>
                     </div>
                     <p className="text-xs text-gray-500 font-primary">
-                      المستخدم: {((stats.systemHealth?.storage.usedSpace || 0) / (stats.systemHealth?.storage.totalSpace || 1) * 100).toFixed(1)}%
+                      Used: {((stats.systemHealth?.storage.usedSpace || 0) / (stats.systemHealth?.storage.totalSpace || 1) * 100).toFixed(1)}%
                     </p>
                   </div>
 
@@ -519,16 +519,16 @@ export function AdminDashboard() {
                       <div className="flex items-center gap-2">
                         <Wifi className="w-4 h-4 text-gray-600" />
                         <span className="text-sm font-medium text-gray-900 font-primary">
-                          الشبكة
+                          Network
                         </span>
                       </div>
                       <Badge className={getStatusColor(stats.systemHealth?.network.status || 'healthy')}>
-                        {stats.systemHealth?.network.status === 'healthy' ? 'سليم' :
-                          stats.systemHealth?.network.status === 'warning' ? 'تحذير' : 'خطأ'}
+                        {stats.systemHealth?.network.status === 'healthy' ? 'Healthy' :
+                          stats.systemHealth?.network.status === 'warning' ? 'Warning' : 'Error'}
                       </Badge>
                     </div>
                     <p className="text-xs text-gray-500 font-primary">
-                      زمن الاستجابة: {stats.systemHealth?.network.latency || 0}ms
+                      Latency: {stats.systemHealth?.network.latency || 0}ms
                     </p>
                   </div>
                 </div>
@@ -542,31 +542,31 @@ export function AdminDashboard() {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <div className="flex items-center justify-between">
               <TabsList className="grid grid-cols-5 w-fit bg-neutral-100 dark:bg-neutral-800">
-                <TabsTrigger value="overview" className="font-primary">نظرة عامة</TabsTrigger>
-                <TabsTrigger value="users" className="font-primary">المستخدمين</TabsTrigger>
-                <TabsTrigger value="courses" className="font-primary">الدورات</TabsTrigger>
-                <TabsTrigger value="categories" className="font-primary">التصنيفات</TabsTrigger>
-                <TabsTrigger value="revenue" className="font-primary">الإيرادات</TabsTrigger>
+                <TabsTrigger value="overview" className="font-primary">Overview</TabsTrigger>
+                <TabsTrigger value="users" className="font-primary">Users</TabsTrigger>
+                <TabsTrigger value="courses" className="font-primary">Courses</TabsTrigger>
+                <TabsTrigger value="categories" className="font-primary">Categories</TabsTrigger>
+                <TabsTrigger value="revenue" className="font-primary">Revenue</TabsTrigger>
               </TabsList>
 
               {/* Tab-specific Actions */}
               <div className="flex items-center gap-2">
                 {activeTab === 'overview' && (
                   <Button variant="outline" size="sm">
-                    <BarChart3 className="w-4 h-4 ml-2" />
-                    تقرير شامل
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Comprehensive Report
                   </Button>
                 )}
                 {activeTab === 'users' && (
                   <Button variant="outline" size="sm">
-                    <Filter className="w-4 h-4 ml-2" />
-                    فلترة متقدمة
+                    <Filter className="w-4 h-4 mr-2" />
+                    Advanced Filtering
                   </Button>
                 )}
                 {activeTab === 'revenue' && (
                   <Button variant="outline" size="sm">
-                    <Download className="w-4 h-4 ml-2" />
-                    تصدير البيانات
+                    <Download className="w-4 h-4 mr-2" />
+                    Export Data
                   </Button>
                 )}
               </div>

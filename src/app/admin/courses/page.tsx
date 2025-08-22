@@ -3,10 +3,10 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from 'next/image';
 import {
   ModernFilters,
@@ -73,52 +73,51 @@ export default function CoursesPage() {
   const filterOptions: FilterOption[] = [
     {
       key: "category",
-      label: "التصنيف",
+      label: "Category",
       type: "select",
       options: categories.map((cat) => ({ value: cat.id, label: cat.name })),
-      placeholder: "اختر التصنيف",
+      placeholder: "Select Category",
     },
     {
       key: "professor",
-      label: "المدرس",
+      label: "Professor",
       type: "select",
       options: professors.map((prof) => ({ value: prof.id, label: prof.name })),
-      placeholder: "اختر المدرس",
+      placeholder: "Select Professor",
     },
     {
       key: "status",
-      label: "الحالة",
+      label: "Status",
       type: "select",
       options: [
-        { value: "published", label: "منشورة" },
-        { value: "draft", label: "مسودة" },
+        { value: "published", label: "Published" },
+        { value: "draft", label: "Draft" },
       ],
-      placeholder: "اختر الحالة",
+      placeholder: "Select Status",
     },
     {
       key: "priceType",
-      label: "نوع السعر",
+      label: "Price Type",
       type: "select",
       options: [
-        { value: "free", label: "مجانية" },
-        { value: "paid", label: "مدفوعة" },
+        { value: "free", label: "Free" },
+        { value: "paid", label: "Paid" },
       ],
-      placeholder: "اختر نوع السعر",
+      placeholder: "Select Price Type",
     },
     {
       key: "dateFrom",
-      label: "من تاريخ",
+      label: "From Date",
       type: "date",
-      placeholder: "اختر التاريخ",
+      placeholder: "Select Date",
     },
     {
       key: "dateTo",
-      label: "إلى تاريخ",
+      label: "To Date",
       type: "date",
-      placeholder: "اختر التاريخ",
+      placeholder: "Select Date",
     },
   ];
-
   useEffect(() => {
     fetchData();
     fetchCategories();
@@ -212,14 +211,14 @@ export default function CoursesPage() {
               variant={course.isPublished ? "default" : "secondary"}
               className="text-xs"
             >
-              {course.isPublished ? "منشورة" : "مسودة"}
+              {course.isPublished ? "Published" : "Draft"}
             </Badge>
             {course.price === null && (
               <Badge
                 variant="outline"
                 className="text-xs bg-green-50 text-green-700 border-green-200"
               >
-                مجانية
+                Free
               </Badge>
             )}
           </div>
@@ -240,8 +239,7 @@ export default function CoursesPage() {
                     href={`/admin/courses/${course.id}`}
                     className="flex items-center"
                   >
-                    <Eye className="w-4 h-4 mr-2" />
-                    عرض التفاصيل
+                    <Eye className="w-4 h-4 mr-2" />\n                    View Details
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -250,13 +248,12 @@ export default function CoursesPage() {
                     className="flex items-center"
                   >
                     <Edit className="w-4 h-4 mr-2" />
-                    تعديل
+                    Edit
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="text-destructive focus:text-destructive">
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  حذف
+                  <Trash2 className="w-4 h-4 mr-2" />\n                  Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -314,7 +311,7 @@ export default function CoursesPage() {
                     }).format(course.price)}
                   </div>
                 ) : (
-                  <div className="font-semibold text-green-600">مجانية</div>
+                  <div className="font-semibold text-green-600">Free</div>
                 )}
                 {course.revenue && course.revenue > 0 && (
                   <div className="text-xs text-muted-foreground flex items-center gap-1">
@@ -340,16 +337,16 @@ export default function CoursesPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-            إدارة الدورات
+            Course Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            إنشاء وتعديل وإدارة الدورات التعليمية
+            Create, edit, and manage educational courses
           </p>
         </div>
         <Button asChild size="lg" className="shadow-lg">
           <Link href="/admin/courses/new">
             <Plus className="w-4 h-4 mr-2" />
-            إضافة دورة جديدة
+            Add New Course
           </Link>
         </Button>
       </div>
@@ -360,7 +357,7 @@ export default function CoursesPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">إجمالي الدورات</p>
+                <p className="text-sm text-gray-500">Total Courses</p>
                 <p className="text-2xl font-bold text-blue-600">{totalCount}</p>
               </div>
               <BookOpen className="w-8 h-8 text-blue-500" />
@@ -373,7 +370,7 @@ export default function CoursesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">
-                  الدورات المنشورة
+                  Published Courses
                 </p>
                 <p className="text-2xl font-bold text-green-600">
                   {courses.filter((c) => c.isPublished).length}
@@ -388,7 +385,7 @@ export default function CoursesPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">إجمالي الملتحقين</p>
+                <p className="text-sm text-gray-500">Total Enrollments</p>
                 <p className="text-2xl font-bold text-purple-600">
                   {courses.reduce((sum, c) => sum + c._count.enrollments, 0)}
                 </p>
@@ -403,7 +400,7 @@ export default function CoursesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">
-                  إجمالي الإيرادات
+                  Total Revenue
                 </p>
                 <p className="text-2xl font-bold text-orange-600">
                   {new Intl.NumberFormat("ar-EG", {
@@ -461,7 +458,7 @@ export default function CoursesPage() {
                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
               >
-                السابق
+                Previous
               </Button>
 
               <div className="flex items-center gap-1">
@@ -488,7 +485,7 @@ export default function CoursesPage() {
                 }
                 disabled={currentPage === totalPages}
               >
-                التالي
+                Next
               </Button>
             </div>
           )}
@@ -497,16 +494,16 @@ export default function CoursesPage() {
         <Card className="border-0 bg-card/50">
           <CardContent className="p-12 text-center">
             <BookOpen className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">لا توجد دورات</h3>
+            <h3 className="text-lg font-semibold mb-2">No Courses Found</h3>
             <p className="text-muted-foreground mb-6">
               {Object.keys(filters).length > 0
-                ? "لم يتم العثور على دورات مطابقة للفلاتر المحددة"
-                : "لم يتم إنشاء أي دورات بعد"}
+                ? "No courses found matching the selected filters"
+                : "No courses have been created yet"}
             </p>
             <Button asChild>
               <Link href="/admin/courses/new">
                 <Plus className="w-4 h-4 mr-2" />
-                إضافة أول دورة
+                Add First Course
               </Link>
             </Button>
           </CardContent>

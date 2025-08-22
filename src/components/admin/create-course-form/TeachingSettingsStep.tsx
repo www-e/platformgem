@@ -19,15 +19,15 @@ export function TeachingSettingsStep({ formData, professors, onInputChange }: Te
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Users className="w-5 h-5" />
-          إعدادات التدريس
+          Teaching Settings
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <Label htmlFor="professor">المدرس *</Label>
+          <Label htmlFor="professor">Professor *</Label>
           <Select value={formData.professorId} onValueChange={(value: string) => onInputChange('professorId', value)}>
             <SelectTrigger className="mt-2">
-              <SelectValue placeholder="اختر المدرس" />
+              <SelectValue placeholder="Select Professor" />
             </SelectTrigger>
             <SelectContent>
               {professors.map((professor) => (
@@ -40,22 +40,22 @@ export function TeachingSettingsStep({ formData, professors, onInputChange }: Te
         </div>
 
         <div>
-          <Label htmlFor="bunnyLibraryId">معرف مكتبة Bunny.net *</Label>
+          <Label htmlFor="bunnyLibraryId">Bunny.net Library ID *</Label>
           <Input
             id="bunnyLibraryId"
             value={formData.bunnyLibraryId}
             onChange={(e) => onInputChange('bunnyLibraryId', e.target.value)}
-            placeholder="أدخل معرف مكتبة الفيديو"
+            placeholder="Enter video library ID"
             className="mt-2"
           />
           <p className="text-sm text-muted-foreground mt-1">
-            يمكنك العثور على معرف المكتبة في لوحة تحكم Bunny.net
+            You can find the library ID in the Bunny.net dashboard
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="price">سعر الدورة</Label>
+            <Label htmlFor="price">Course Price</Label>
             <Input
               id="price"
               type="number"
@@ -65,12 +65,12 @@ export function TeachingSettingsStep({ formData, professors, onInputChange }: Te
               className="mt-2"
             />
             <p className="text-sm text-muted-foreground mt-1">
-              اتركه فارغاً للدورات المجانية
+              Leave blank for free courses
             </p>
           </div>
 
           <div>
-            <Label htmlFor="currency">العملة</Label>
+            <Label htmlFor="currency">Currency</Label>
             <Select value={formData.currency} onValueChange={(value: string) => onInputChange('currency', value)}>
               <SelectTrigger className="mt-2">
                 <SelectValue />

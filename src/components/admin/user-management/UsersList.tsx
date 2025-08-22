@@ -22,13 +22,13 @@ export function UsersList({ users, onUserAction }: UsersListProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>قائمة المستخدمين (0)</CardTitle>
+          <CardTitle>Users List (0)</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <p className="text-muted-foreground">
-              لا توجد نتائج مطابقة للبحث
+              No matching results found
             </p>
           </div>
         </CardContent>
@@ -39,7 +39,7 @@ export function UsersList({ users, onUserAction }: UsersListProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>قائمة المستخدمين ({users.length})</CardTitle>
+        <CardTitle>Users List ({users.length})</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -63,7 +63,7 @@ export function UsersList({ users, onUserAction }: UsersListProps) {
                         {getRoleDisplayName(user.role)}
                       </Badge>
                       <Badge variant={user.isActive ? "default" : "secondary"}>
-                        {user.isActive ? "نشط" : "غير نشط"}
+                        {user.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </div>
 
@@ -74,13 +74,13 @@ export function UsersList({ users, onUserAction }: UsersListProps) {
                       </div>
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        انضم في{" "}
-                        {new Date(user.createdAt).toLocaleDateString("ar-SA")}
+                        Joined on{" "}
+                        {new Date(user.createdAt).toLocaleDateString("en-US")}
                       </div>
                       {user.lastLogin && (
                         <div className="flex items-center gap-1">
-                          آخر دخول:{" "}
-                          {new Date(user.lastLogin).toLocaleDateString("ar-SA")}
+                          Last login:{" "}
+                          {new Date(user.lastLogin).toLocaleDateString("en-US")}
                         </div>
                       )}
                     </div>
@@ -88,14 +88,14 @@ export function UsersList({ users, onUserAction }: UsersListProps) {
                     {user.role === "STUDENT" &&
                       user.enrollmentCount !== undefined && (
                         <div className="text-sm text-muted-foreground mt-1">
-                          مسجل في {user.enrollmentCount} دورة
+                          Enrolled in {user.enrollmentCount} courses
                         </div>
                       )}
 
                     {user.role === "PROFESSOR" &&
                       user.courseCount !== undefined && (
                         <div className="text-sm text-muted-foreground mt-1">
-                          يدرس {user.courseCount} دورة
+                          Teaching {user.courseCount} courses
                         </div>
                       )}
                   </div>
@@ -113,12 +113,12 @@ export function UsersList({ users, onUserAction }: UsersListProps) {
                         window.open(`/admin/students/${user.id}`, "_blank")
                       }
                     >
-                      عرض التفاصيل
+                      View Details
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={() => alert("ميزة تعديل المعلومات قيد التطوير")}
+                      onClick={() => alert("Edit feature is under development")}
                     >
-                      تعديل المعلومات
+                      Edit Information
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() =>
@@ -128,13 +128,13 @@ export function UsersList({ users, onUserAction }: UsersListProps) {
                         )
                       }
                     >
-                      {user.isActive ? "إلغاء التفعيل" : "تفعيل الحساب"}
+                      {user.isActive ? "Deactivate" : "Activate Account"}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="text-red-600"
                       onClick={() => onUserAction(user.id, "delete")}
                     >
-                      حذف الحساب
+                      Delete Account
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

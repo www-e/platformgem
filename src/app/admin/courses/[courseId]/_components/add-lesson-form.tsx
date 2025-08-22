@@ -14,7 +14,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? "جاري الإضافة..." : "إضافة درس"}
+      {pending ? "Adding..." : "Add Lesson"}
     </Button>
   );
 }
@@ -26,10 +26,10 @@ export function AddLessonForm({ courseId }: { courseId: string }) {
 
   useEffect(() => {
     if (state.error) {
-      toast.error("خطأ", { description: state.error });
+      toast.error("Error", { description: state.error });
     }
     if (state.success) {
-      toast.success("تم بنجاح!", { description: state.success });
+      toast.success("Success!", { description: state.success });
       formRef.current?.reset();
     }
   }, [state]);
@@ -37,20 +37,20 @@ export function AddLessonForm({ courseId }: { courseId: string }) {
   return (
     <Card className="bg-card">
         <CardHeader>
-            <CardTitle>إضافة درس جديد</CardTitle>
+            <CardTitle>Add New Lesson</CardTitle>
         </CardHeader>
         <CardContent>
             <form ref={formRef} action={dispatch} className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="title">عنوان الدرس</Label>
-                    <Input name="title" id="title" placeholder="مثال: مقدمة في التفاضل" required />
+                    <Label htmlFor="title">Lesson Title</Label>
+                    <Input name="title" id="title" placeholder="Example: Introduction to Calculus" required />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="order">ترتيب الدرس</Label>
+                    <Label htmlFor="order">Lesson Order</Label>
                     <Input name="order" id="order" type="number" placeholder="1" required />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="bunnyVideoId">معرف الفيديو (Bunny.net)</Label>
+                    <Label htmlFor="bunnyVideoId">Video ID (Bunny.net)</Label>
                     <Input name="bunnyVideoId" id="bunnyVideoId" placeholder="abc-123-xyz" required />
                 </div>
                 <SubmitButton />

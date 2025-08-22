@@ -33,7 +33,7 @@ export function PaymentFilters({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Filter className="h-5 w-5" />
-          البحث والتصفية
+          Search & Filter
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -42,7 +42,7 @@ export function PaymentFilters({
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="البحث بالملتحق، الدورة، أو رقم المعاملة..."
+                placeholder="Search by student, course, or transaction ID..."
                 value={filters.searchTerm}
                 onChange={(e) => filters.setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -55,14 +55,14 @@ export function PaymentFilters({
             onValueChange={filters.setStatusFilter}
           >
             <SelectTrigger>
-              <SelectValue placeholder="تصفية بالحالة" />
+              <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">جميع الحالات</SelectItem>
-              <SelectItem value="completed">مكتمل</SelectItem>
-              <SelectItem value="pending">معلق</SelectItem>
-              <SelectItem value="failed">فاشل</SelectItem>
-              <SelectItem value="cancelled">ملغي</SelectItem>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="failed">Failed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
 
@@ -83,11 +83,11 @@ export function PaymentFilters({
         <div className="flex justify-end gap-2 mt-4">
           <Button onClick={onRefresh} variant="outline">
             <RefreshCw className="h-4 w-4 ml-2" />
-            تحديث
+            Refresh
           </Button>
           <Button onClick={onExport} variant="primary">
             <Download className="h-4 w-4 ml-2" />
-            تصدير
+            Export
           </Button>
         </div>
       </CardContent>

@@ -28,12 +28,12 @@ function SubmitButton({ isEdit }: { isEdit: boolean }) {
       {pending ? (
         <>
           <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-          {isEdit ? "جاري التحديث..." : "جاري الإنشاء..."}
+          {isEdit ? "Updating..." : "Creating..."}
         </>
       ) : (
         <>
           {isEdit ? <Edit className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-          {isEdit ? "تحديث الفئة" : "إنشاء الفئة"}
+          {isEdit ? "Update Category" : "Create Category"}
         </>
       )}
     </Button>
@@ -104,7 +104,7 @@ export function CategoryDialog({
       size={isEdit ? "sm" : "default"}
     >
       {isEdit ? <Edit className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-      {isEdit ? "تعديل" : "إضافة فئة جديدة"}
+      {isEdit ? "Edit" : "Add New Category"}
     </Button>
   );
 
@@ -114,36 +114,36 @@ export function CategoryDialog({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
-            {isEdit ? "تعديل الفئة" : "إنشاء فئة جديدة"}
+            {isEdit ? "Edit Category" : "Create New Category"}
           </DialogTitle>
           <DialogDescription>
             {isEdit
-              ? "قم بتعديل بيانات الفئة أدناه."
-              : "أدخل بيانات الفئة الجديدة. ستتمكن من تنظيم الدورات تحت هذه الفئة."}
+              ? "Modify the category details below."
+              : "Enter the new category details. You'll be able to organize courses under this category."}
           </DialogDescription>
         </DialogHeader>
 
         <form action={dispatch} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="category-name">اسم الفئة</Label>
+            <Label htmlFor="category-name">Category Name</Label>
             <Input
               id="category-name"
               name="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="التربية البدنية واللياقة"
+              placeholder="Physical Education and Fitness"
               required
               className="h-11"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category-description">وصف الفئة</Label>
+            <Label htmlFor="category-description">Category Description</Label>
             <Textarea
               id="category-description"
               name="description"
               defaultValue={category?.description || ""}
-              placeholder="دورات التربية البدنية واللياقة البدنية للمبتدئين والمتقدمين"
+              placeholder="Physical education and fitness courses for beginners and advanced learners"
               required
               className="min-h-[80px]"
             />
@@ -151,7 +151,7 @@ export function CategoryDialog({
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="category-slug">الرابط المختصر</Label>
+              <Label htmlFor="category-slug">Slug</Label>
               {!isEdit && (
                 <div className="flex items-center space-x-2 space-x-reverse">
                   <Switch
@@ -163,7 +163,7 @@ export function CategoryDialog({
                     htmlFor="auto-slug"
                     className="text-sm text-muted-foreground"
                   >
-                    توليد تلقائي
+                    Auto-generate
                   </Label>
                 </div>
               )}
@@ -186,12 +186,12 @@ export function CategoryDialog({
               <Link className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             </div>
             <p className="text-xs text-muted-foreground">
-              يُستخدم في الروابط. أحرف إنجليزية صغيرة وأرقام وشرطات فقط.
+              Used in URLs. Lowercase letters, numbers, and hyphens only.
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category-icon">رابط الأيقونة (اختياري)</Label>
+            <Label htmlFor="category-icon">Icon URL (Optional)</Label>
             <div className="relative">
               <Input
                 id="category-icon"
@@ -213,7 +213,7 @@ export function CategoryDialog({
                 name="isActive"
                 defaultChecked={category?.isActive}
               />
-              <Label htmlFor="category-active">الفئة نشطة</Label>
+              <Label htmlFor="category-active">Category Active</Label>
             </div>
           )}
 

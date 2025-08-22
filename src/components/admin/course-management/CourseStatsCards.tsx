@@ -13,33 +13,33 @@ export function CourseStatsCards({ stats }: CourseStatsCardsProps) {
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
       <Card className="border border-gray-200 bg-white shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-gray-700">إجمالي الدورات</CardTitle>
+          <CardTitle className="text-sm font-medium text-gray-700">Total Courses</CardTitle>
           <BookOpen className="h-4 w-4 text-gray-500" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-gray-900">{stats.totalCourses}</div>
           <p className="text-xs text-gray-500">
-            {stats.publishedCourses} منشورة • {stats.draftCourses} مسودة
+            {stats.publishedCourses} published • {stats.draftCourses} drafts
           </p>
         </CardContent>
       </Card>
 
       <Card className="border border-gray-200 bg-white shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-gray-700">إجمالي التسجيلات</CardTitle>
+          <CardTitle className="text-sm font-medium text-gray-700">Total Enrollments</CardTitle>
           <Users className="h-4 w-4 text-gray-500" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-gray-900">{stats.totalEnrollments}</div>
           <p className="text-xs text-gray-500">
-            {stats.totalCourses > 0 ? (stats.totalEnrollments / stats.totalCourses).toFixed(1) : 0} متوسط لكل دورة
+            {stats.totalCourses > 0 ? (stats.totalEnrollments / stats.totalCourses).toFixed(1) : 0} avg per course
           </p>
         </CardContent>
       </Card>
 
       <Card className="border border-gray-200 bg-white shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-gray-700">إجمالي الإيرادات</CardTitle>
+          <CardTitle className="text-sm font-medium text-gray-700">Total Revenue</CardTitle>
           <DollarSign className="h-4 w-4 text-gray-500" />
         </CardHeader>
         <CardContent>
@@ -47,14 +47,14 @@ export function CourseStatsCards({ stats }: CourseStatsCardsProps) {
             {formatPrice(stats.totalRevenue)}
           </div>
           <p className="text-xs text-gray-500">
-            من جميع الدورات
+            From all courses
           </p>
         </CardContent>
       </Card>
 
       <Card className="border border-gray-200 bg-white shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-gray-700">متوسط السعر</CardTitle>
+          <CardTitle className="text-sm font-medium text-gray-700">Average Price</CardTitle>
           <DollarSign className="h-4 w-4 text-gray-500" />
         </CardHeader>
         <CardContent>
@@ -62,7 +62,7 @@ export function CourseStatsCards({ stats }: CourseStatsCardsProps) {
             {formatPrice(stats.averagePrice)}
           </div>
           <p className="text-xs text-gray-500">
-            متوسط سعر الدورة
+            Average course price
           </p>
         </CardContent>
       </Card>

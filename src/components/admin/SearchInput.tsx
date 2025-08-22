@@ -33,7 +33,7 @@ export default function SearchInput() {
     <form onSubmit={handleSearch} className="relative w-full md:w-1/3">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       <Input
-        placeholder="ابحث بالاسم..."
+        placeholder="Search by name..."
         className="pl-9"
         value={query}
         onChange={(e) => setQuery(e.target.value)}

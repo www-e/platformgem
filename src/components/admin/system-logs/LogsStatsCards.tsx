@@ -11,7 +11,7 @@ export function LogsStatsCards({ stats }: LogsStatsCardsProps) {
     <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-8 gap-4">
       <Card className="border-l-4 border-l-blue-500">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">إجمالي السجلات</CardTitle>
+          <CardTitle className="text-sm font-medium">Total Logs</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-blue-600">{stats.totalLogs}</div>
@@ -20,7 +20,7 @@ export function LogsStatsCards({ stats }: LogsStatsCardsProps) {
 
       <Card className="border-l-4 border-l-green-500">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">اليوم</CardTitle>
+          <CardTitle className="text-sm font-medium">Today</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-green-600">{stats.todayLogs}</div>
@@ -29,7 +29,7 @@ export function LogsStatsCards({ stats }: LogsStatsCardsProps) {
 
       <Card className="border-l-4 border-l-red-500">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">أخطاء</CardTitle>
+          <CardTitle className="text-sm font-medium">Errors</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-red-600">{stats.errorLogs}</div>
@@ -38,7 +38,7 @@ export function LogsStatsCards({ stats }: LogsStatsCardsProps) {
 
       <Card className="border-l-4 border-l-yellow-500">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">تحذيرات</CardTitle>
+          <CardTitle className="text-sm font-medium">Warnings</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-yellow-600">{stats.warningLogs}</div>
@@ -47,7 +47,7 @@ export function LogsStatsCards({ stats }: LogsStatsCardsProps) {
 
       <Card className="border-l-4 border-l-purple-500">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">المستخدمين</CardTitle>
+          <CardTitle className="text-sm font-medium">Users</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-purple-600">{stats.userActions}</div>
@@ -56,7 +56,7 @@ export function LogsStatsCards({ stats }: LogsStatsCardsProps) {
 
       <Card className="border-l-4 border-l-indigo-500">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">المدفوعات</CardTitle>
+          <CardTitle className="text-sm font-medium">Payments</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-indigo-600">{stats.paymentActions}</div>
@@ -65,7 +65,7 @@ export function LogsStatsCards({ stats }: LogsStatsCardsProps) {
 
       <Card className="border-l-4 border-l-pink-500">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">الدورات</CardTitle>
+          <CardTitle className="text-sm font-medium">Courses</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-pink-600">{stats.courseActions}</div>
@@ -74,7 +74,7 @@ export function LogsStatsCards({ stats }: LogsStatsCardsProps) {
 
       <Card className="border-l-4 border-l-gray-500">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">النظام</CardTitle>
+          <CardTitle className="text-sm font-medium">System</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-gray-600">{stats.systemActions}</div>

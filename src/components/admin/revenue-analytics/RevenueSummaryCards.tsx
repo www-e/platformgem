@@ -21,13 +21,13 @@ interface RevenueSummaryCardsProps {
 export function RevenueSummaryCards({ revenueData }: RevenueSummaryCardsProps) {
   const growthIndicator =
     revenueData.revenueGrowth >= 0
-      ? `+${revenueData.revenueGrowth.toFixed(1)}% من الشهر الماضي`
-      : `${revenueData.revenueGrowth.toFixed(1)}% من الشهر الماضي`;
+      ? `+${revenueData.revenueGrowth.toFixed(1)}% from last month`
+      : `${revenueData.revenueGrowth.toFixed(1)}% from last month`;
 
   const statsData = [
     {
       id: "total-revenue",
-      title: "إجمالي الإيرادات",
+      title: "Total Revenue",
       value: formatCurrency(revenueData.totalRevenue),
       subtitle: growthIndicator,
       icon: DollarSign,
@@ -36,28 +36,28 @@ export function RevenueSummaryCards({ revenueData }: RevenueSummaryCardsProps) {
     },
     {
       id: "monthly-revenue",
-      title: "إيرادات الشهر",
+      title: "Monthly Revenue",
       value: formatCurrency(revenueData.monthlyRevenue),
       subtitle: formatMonthYear(),
       icon: Calendar,
     },
     {
       id: "daily-revenue",
-      title: "إيرادات اليوم",
+      title: "Daily Revenue",
       value: formatCurrency(revenueData.dailyRevenue),
       subtitle: formatDate(new Date()),
       icon: BarChart3,
     },
     {
       id: "average-order",
-      title: "متوسط الطلب",
+      title: "Average Order",
       value:
         revenueData.recentPayments.length > 0
           ? formatCurrency(
               calculateAverageOrderValue(revenueData.recentPayments.map(p => Number(p.amount)))
             )
-          : "0 ج.م",
-      subtitle: "قيمة الطلب الواحد",
+          : "0 EGP",
+      subtitle: "Per order value",
       icon: CreditCard,
     },
   ];

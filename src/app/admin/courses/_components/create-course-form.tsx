@@ -14,7 +14,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={pending}>
-      {pending ? "جاري الإنشاء..." : "إنشاء الدورة"}
+      {pending ? "Creating..." : "Create Course"}
     </Button>
   );
 }
@@ -91,15 +91,15 @@ export function CreateCourseForm({ onFormSuccess }: CreateCourseFormProps) {
       });
 
       if (response.ok) {
-        toast.success("تم إنشاء الدورة بنجاح!");
+        toast.success("Course created successfully!");
         formRef.current?.reset();
         onFormSuccess();
       } else {
         const error = await response.json();
-        toast.error("فشل في إنشاء الدورة", { description: error.message });
+        toast.error("Failed to create course", { description: error.message });
       }
     } catch (error) {
-      toast.error("حدث خطأ أثناء إنشاء الدورة");
+      toast.error("An error occurred while creating the course");
     } finally {
       setLoading(false);
     }
@@ -108,32 +108,32 @@ export function CreateCourseForm({ onFormSuccess }: CreateCourseFormProps) {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>إنشاء دورة جديدة</DialogTitle>
+        <DialogTitle>Create New Course</DialogTitle>
         <DialogDescription className="pt-1">
-          املأ التفاصيل لإضافة دورة جديدة. ستظهر في قائمة الدورات فورًا.
+          Fill in the details to add a new course. It will appear in the courses list immediately.
         </DialogDescription>
       </DialogHeader>
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 pt-4">
         <div className="space-y-2">
-          <Label htmlFor="title">عنوان الدورة</Label>
-          <Input id="title" name="title" placeholder="مثال: تطوير تطبيقات الويب" required />
+          <Label htmlFor="title">Course Title</Label>
+          <Input id="title" name="title" placeholder="Example: Web Application Development" required />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="description">وصف الدورة</Label>
-          <Input id="description" name="description" placeholder="دورة شاملة لـ..." required />
+          <Label htmlFor="description">Course Description</Label>
+          <Input id="description" name="description" placeholder="Comprehensive course on..." required />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="thumbnailUrl">رابط الصورة المصغرة</Label>
+          <Label htmlFor="thumbnailUrl">Thumbnail URL</Label>
           <Input id="thumbnailUrl" name="thumbnailUrl" placeholder="https://path/to/image.jpg" required />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="categoryId">الفئة</Label>
+          <Label htmlFor="categoryId">Category</Label>
           <Select name="categoryId" required>
             <SelectTrigger>
-              <SelectValue placeholder="اختر الفئة" />
+              <SelectValue placeholder="Select Category" />
             </SelectTrigger>
             <SelectContent>
               {categories.map((category) => (
@@ -146,10 +146,10 @@ export function CreateCourseForm({ onFormSuccess }: CreateCourseFormProps) {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="professorId">الأستاذ</Label>
+          <Label htmlFor="professorId">Professor</Label>
           <Select name="professorId" required>
             <SelectTrigger>
-              <SelectValue placeholder="اختر الأستاذ" />
+              <SelectValue placeholder="Select Professor" />
             </SelectTrigger>
             <SelectContent>
               {professors.map((professor) => (
@@ -162,33 +162,33 @@ export function CreateCourseForm({ onFormSuccess }: CreateCourseFormProps) {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="price">السعر (اتركه فارغاً للدورات المجانية)</Label>
+          <Label htmlFor="price">Price (Leave blank for free courses)</Label>
           <Input 
             id="price" 
             name="price" 
             type="number" 
             min="0" 
             step="0.01" 
-            placeholder="0 للدورات المجانية" 
+            placeholder="0 for free courses" 
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="bunnyLibraryId">معرف مكتبة الفيديو</Label>
+          <Label htmlFor="bunnyLibraryId">Video Library ID</Label>
           <Input 
             id="bunnyLibraryId" 
             name="bunnyLibraryId" 
-            placeholder="معرف مكتبة Bunny CDN" 
+            placeholder="Bunny CDN Library ID" 
             required 
           />
         </div>
         
         <DialogFooter className="pt-4">
           <DialogClose asChild>
-            <Button type="button" variant="outline">إلغاء</Button>
+            <Button type="button" variant="outline">Cancel</Button>
           </DialogClose>
           <Button type="submit" disabled={loading}>
-            {loading ? "جاري الإنشاء..." : "إنشاء الدورة"}
+            {loading ? "Creating..." : "Create Course"}
           </Button>
         </DialogFooter>
       </form>

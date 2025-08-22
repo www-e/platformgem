@@ -38,27 +38,27 @@ function EditCourseForm({ course, onFormSuccess }: { course: CourseData, onFormS
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // For now, just show a message that editing should be done through the course management page
-    toast.info("يرجى استخدام صفحة إدارة الدورة لتعديل التفاصيل");
+    toast.info("Please use the course management page to edit details");
     onFormSuccess();
   };
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 mt-4">
       <div className="space-y-2">
-        <Label htmlFor="title">عنوان الدورة</Label>
+        <Label htmlFor="title">Course Title</Label>
         <Input id="title" name="title" defaultValue={course.title} disabled />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="description">وصف الدورة</Label>
+        <Label htmlFor="description">Course Description</Label>
         <Input id="description" name="description" defaultValue={course.description} disabled />
       </div>
       <div className="text-sm text-muted-foreground">
-        لتعديل تفاصيل الدورة، يرجى استخدام صفحة إدارة الدورة.
+        To edit course details, please use the course management page.
       </div>
       <DialogFooter>
-        <Button type="button" variant="outline" onClick={onFormSuccess}>إغلاق</Button>
+        <Button type="button" variant="outline" onClick={onFormSuccess}>Close</Button>
         <Button type="button" asChild>
-          <Link href={`/admin/courses/${course.id}`}>إدارة الدورة</Link>
+          <Link href={`/admin/courses/${course.id}`}>Manage Course</Link>
         </Button>
       </DialogFooter>
     </form>
@@ -73,10 +73,10 @@ export default function CourseActions({ course }: { course: CourseData }) {
   const handleDelete = async () => {
     const result = await deleteCourse(course.id);
     if (result.success) {
-      toast.success("تم الحذف بنجاح!", { description: result.success });
+      toast.success("Deleted successfully!", { description: result.success });
       setIsDeleteDialogOpen(false);
     } else if (result.error) {
-      toast.error("فشل الحذف", { description: result.error });
+      toast.error("Delete failed", { description: result.error });
     }
   };
 
@@ -88,16 +88,16 @@ export default function CourseActions({ course }: { course: CourseData }) {
           <Button variant="ghost" className="h-8 w-8 p-0"><span className="sr-only">Open menu</span><MoreHorizontal className="h-4 w-4" /></Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem asChild>
             <Link href={`/admin/courses/${course.id}`}>
               <ExternalLink className="mr-2 h-4 w-4" />
-              إدارة الدروس
+              Manage Lessons
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
             <Edit className="mr-2 h-4 w-4" />
-            عرض التفاصيل
+            View Details
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem 
@@ -105,7 +105,7 @@ export default function CourseActions({ course }: { course: CourseData }) {
             className="text-destructive focus:text-destructive"
           >
             <Trash className="mr-2 h-4 w-4" />
-            حذف
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -114,7 +114,7 @@ export default function CourseActions({ course }: { course: CourseData }) {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>تفاصيل الدورة</DialogTitle>
+            <DialogTitle>Course Details</DialogTitle>
           </DialogHeader>
           <EditCourseForm course={course} onFormSuccess={() => setIsEditDialogOpen(false)} />
         </DialogContent>
@@ -122,12 +122,12 @@ export default function CourseActions({ course }: { course: CourseData }) {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent><DialogHeader><DialogTitle>هل أنت متأكد تماماً؟</DialogTitle>
-            <DialogDescription>هذا الإجراء لا يمكن التراجع عنه. سيؤدي هذا إلى حذف الدورة وجميع الدروس المرتبطة بها بشكل دائم.</DialogDescription>
+        <DialogContent><DialogHeader><DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>This action cannot be undone. This will permanently delete the course and all associated lessons.</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <DialogClose asChild><Button variant="outline">إلغاء</Button></DialogClose>
-            <Button variant="destructive" onClick={handleDelete}>نعم، قم بالحذف</Button>
+            <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
+            <Button variant="destructive" onClick={handleDelete}>Yes, delete it</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

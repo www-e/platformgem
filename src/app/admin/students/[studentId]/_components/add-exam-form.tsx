@@ -14,7 +14,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? "جاري الإضافة..." : "إضافة نتيجة الامتحان"}
+      {pending ? "Adding..." : "Add Exam Result"}
     </Button>
   );
 }
@@ -26,29 +26,29 @@ export function AddExamResultForm({ userId }: { userId: string }) {
 
   useEffect(() => {
     if (state.error) {
-      toast.error("خطأ", { description: state.error });
+      toast.error("Error", { description: state.error });
     }
     if (state.success) {
-      toast.success("تم بنجاح!", { description: state.success });
+      toast.success("Success!", { description: state.success });
       formRef.current?.reset();
     }
   }, [state]);
 
   return (
     <Card className="bg-card">
-      <CardHeader><CardTitle>إضافة نتيجة امتحان جديدة</CardTitle></CardHeader>
+      <CardHeader><CardTitle>Add New Exam Result</CardTitle></CardHeader>
       <CardContent>
         <form ref={formRef} action={dispatch} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">عنوان الامتحان</Label>
-            <Input name="title" id="title" placeholder="مثال: امتحان الفيزياء النهائي" required />
+            <Label htmlFor="title">Exam Title</Label>
+            <Input name="title" id="title" placeholder="Example: Final Physics Exam" required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="date">تاريخ الامتحان</Label>
+            <Label htmlFor="date">Exam Date</Label>
             <Input name="date" id="date" type="date" required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="score">النتيجة</Label>
+            <Label htmlFor="score">Score</Label>
             <Input name="score" id="score" type="number" step="0.5" placeholder="88.5" required />
           </div>
           <SubmitButton />

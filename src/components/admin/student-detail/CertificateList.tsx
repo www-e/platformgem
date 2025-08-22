@@ -15,7 +15,7 @@ export function CertificateList({ certificates }: CertificateListProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>الشهادات ({certificates.length})</CardTitle>
+        <CardTitle>Certificates ({certificates.length})</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -28,11 +28,11 @@ export function CertificateList({ certificates }: CertificateListProps) {
                 <div>
                   <h3 className="font-semibold">{certificate.course.title}</h3>
                   <p className="text-sm text-muted-foreground">
-                    رمز الشهادة: {certificate.certificateCode}
+                    Certificate Code: {certificate.certificateCode}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    تاريخ الإصدار:{' '}
-                    {new Date(certificate.issuedAt).toLocaleDateString('ar-SA')}
+                    Issue Date:{' '}
+                    {new Date(certificate.issuedAt).toLocaleDateString('en-US')}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -41,11 +41,11 @@ export function CertificateList({ certificates }: CertificateListProps) {
                       certificate.status === 'ACTIVE' ? 'default' : 'secondary'
                     }
                   >
-                    {certificate.status === 'ACTIVE' ? 'نشطة' : 'غير نشطة'}
+                    {certificate.status === 'ACTIVE' ? 'Active' : 'Inactive'}
                   </Badge>
                   <Button variant="outline" size="sm">
                     <Eye className="h-3 w-3 ml-1" />
-                    عرض
+                    View
                   </Button>
                 </div>
               </div>
@@ -53,7 +53,7 @@ export function CertificateList({ certificates }: CertificateListProps) {
           ) : (
             <div className="text-center py-8">
               <Award className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">لا توجد شهادات</p>
+              <p className="text-muted-foreground">No certificates found</p>
             </div>
           )}
         </div>

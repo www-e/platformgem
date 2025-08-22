@@ -63,41 +63,41 @@ export function SystemLogs() {
   const filterOptions: FilterOption[] = [
     {
       key: 'type',
-      label: 'نوع السجل',
+      label: 'Log Type',
       type: 'select',
       options: [
-        { value: 'USER', label: 'المستخدمين' },
-        { value: 'PAYMENT', label: 'المدفوعات' },
-        { value: 'COURSE', label: 'الدورات' },
-        { value: 'ENROLLMENT', label: 'التسجيلات' },
-        { value: 'CERTIFICATE', label: 'الشهادات' },
-        { value: 'SYSTEM', label: 'النظام' }
+        { value: 'USER', label: 'Users' },
+        { value: 'PAYMENT', label: 'Payments' },
+        { value: 'COURSE', label: 'Courses' },
+        { value: 'ENROLLMENT', label: 'Enrollments' },
+        { value: 'CERTIFICATE', label: 'Certificates' },
+        { value: 'SYSTEM', label: 'System' }
       ],
-      placeholder: 'اختر نوع السجل'
+      placeholder: 'Select log type'
     },
     {
       key: 'severity',
-      label: 'مستوى الأهمية',
+      label: 'Severity Level',
       type: 'select',
       options: [
-        { value: 'SUCCESS', label: 'نجح' },
-        { value: 'INFO', label: 'معلومات' },
-        { value: 'WARNING', label: 'تحذير' },
-        { value: 'ERROR', label: 'خطأ' }
+        { value: 'SUCCESS', label: 'Success' },
+        { value: 'INFO', label: 'Info' },
+        { value: 'WARNING', label: 'Warning' },
+        { value: 'ERROR', label: 'Error' }
       ],
-      placeholder: 'اختر مستوى الأهمية'
+      placeholder: 'Select severity level'
     },
     {
       key: 'dateFrom',
-      label: 'من تاريخ',
+      label: 'From Date',
       type: 'date',
-      placeholder: 'اختر التاريخ'
+      placeholder: 'Select date'
     },
     {
       key: 'dateTo',
-      label: 'إلى تاريخ',
+      label: 'To Date',
       type: 'date',
-      placeholder: 'اختر التاريخ'
+      placeholder: 'Select date'
     }
   ];
 
@@ -205,10 +205,10 @@ export function SystemLogs() {
     };
     
     const labels = {
-      SUCCESS: "نجح",
-      INFO: "معلومات",
-      WARNING: "تحذير",
-      ERROR: "خطأ"
+      SUCCESS: "Success",
+      INFO: "Info",
+      WARNING: "Warning",
+      ERROR: "Error"
     };
 
     return (
@@ -300,21 +300,21 @@ export function SystemLogs() {
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                       {getTypeIcon(log.type)}
-                      تفاصيل السجل
+                      Log Details
                     </DialogTitle>
                   </DialogHeader>
                   
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium">النوع</label>
+                        <label className="text-sm font-medium">Type</label>
                         <div className="flex items-center gap-2 mt-1">
                           {getTypeIcon(log.type)}
                           <span className="text-sm">{log.type}</span>
                         </div>
                       </div>
                       <div>
-                        <label className="text-sm font-medium">الأهمية</label>
+                        <label className="text-sm font-medium">Severity</label>
                         <div className="mt-1">
                           {getSeverityBadge(log.severity)}
                         </div>
@@ -322,23 +322,23 @@ export function SystemLogs() {
                     </div>
                     
                     <div>
-                      <label className="text-sm font-medium">الإجراء</label>
+                      <label className="text-sm font-medium">Action</label>
                       <p className="text-sm mt-1">{log.action}</p>
                     </div>
                     
                     <div>
-                      <label className="text-sm font-medium">الوصف</label>
+                      <label className="text-sm font-medium">Description</label>
                       <p className="text-sm mt-1">{log.description}</p>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium">التوقيت</label>
+                        <label className="text-sm font-medium">Timestamp</label>
                         <p className="text-sm mt-1">{formatAdminDateTime(log.timestamp)}</p>
                       </div>
                       {log.userName && (
                         <div>
-                          <label className="text-sm font-medium">المستخدم</label>
+                          <label className="text-sm font-medium">User</label>
                           <p className="text-sm mt-1">{log.userName}</p>
                         </div>
                       )}
@@ -346,14 +346,14 @@ export function SystemLogs() {
                     
                     {log.ipAddress && (
                       <div>
-                        <label className="text-sm font-medium">عنوان IP</label>
+                        <label className="text-sm font-medium">IP Address</label>
                         <p className="text-sm mt-1 font-mono">{log.ipAddress}</p>
                       </div>
                     )}
                     
                     {log.metadata && (
                       <div>
-                        <label className="text-sm font-medium">بيانات إضافية</label>
+                        <label className="text-sm font-medium">Additional Data</label>
                         <pre className="text-xs mt-1 p-3 bg-muted rounded-lg overflow-x-auto">
                           {JSON.stringify(log.metadata, null, 2)}
                         </pre>
@@ -375,21 +375,21 @@ export function SystemLogs() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-            سجل الأنشطة
+            Activity Log
           </h1>
           <p className="text-muted-foreground mt-1">
-            مراقبة وتتبع جميع الأنشطة في النظام
+            Monitor and track all system activities
           </p>
         </div>
         
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={fetchLogs} disabled={isLoading}>
             <RefreshCw className={cn("w-4 h-4 mr-2", isLoading && "animate-spin")} />
-            تحديث
+            Refresh
           </Button>
           <Button variant="outline" onClick={handleExport}>
             <Download className="w-4 h-4 mr-2" />
-            تصدير
+            Export
           </Button>
         </div>
       </div>
@@ -401,7 +401,7 @@ export function SystemLogs() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">إجمالي السجلات</p>
+                  <p className="text-sm text-muted-foreground">Total Logs</p>
                   <p className="text-2xl font-bold text-blue-600">{stats.totalLogs}</p>
                 </div>
                 <Activity className="w-8 h-8 text-blue-500" />
@@ -413,7 +413,7 @@ export function SystemLogs() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">سجلات اليوم</p>
+                  <p className="text-sm text-muted-foreground">Today&apos;s Logs</p>
                   <p className="text-2xl font-bold text-green-600">{stats.todayLogs}</p>
                 </div>
                 <Calendar className="w-8 h-8 text-green-500" />
@@ -425,7 +425,7 @@ export function SystemLogs() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">تحذيرات</p>
+                  <p className="text-sm text-muted-foreground">Warnings</p>
                   <p className="text-2xl font-bold text-yellow-600">{stats.warningLogs}</p>
                 </div>
                 <AlertTriangle className="w-8 h-8 text-yellow-500" />
@@ -437,7 +437,7 @@ export function SystemLogs() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">أخطاء</p>
+                  <p className="text-sm text-muted-foreground">Errors</p>
                   <p className="text-2xl font-bold text-red-600">{stats.errorLogs}</p>
                 </div>
                 <XCircle className="w-8 h-8 text-red-500" />
@@ -493,7 +493,7 @@ export function SystemLogs() {
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
               >
-                السابق
+                Previous
               </Button>
               
               <div className="flex items-center gap-1">
@@ -518,7 +518,7 @@ export function SystemLogs() {
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
               >
-                التالي
+                Next
               </Button>
             </div>
           )}
@@ -527,11 +527,11 @@ export function SystemLogs() {
         <Card className="border-0 bg-card/50">
           <CardContent className="p-12 text-center">
             <Activity className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">لا توجد سجلات</h3>
+            <h3 className="text-lg font-semibold mb-2">No logs found</h3>
             <p className="text-muted-foreground">
               {Object.keys(filters).length > 0 
-                ? "لم يتم العثور على سجلات مطابقة للفلاتر المحددة"
-                : "لا توجد سجلات أنشطة حتى الآن"
+                ? "No logs match the selected filters"
+                : "No activity logs yet"
               }
             </p>
           </CardContent>

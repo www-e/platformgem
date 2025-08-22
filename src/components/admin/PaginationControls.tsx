@@ -23,7 +23,7 @@ export default function PaginationControls({ currentPage, totalPages }: Paginati
   return (
     <div className="flex items-center justify-end gap-4">
       <span className="text-sm text-muted-foreground">
-        صفحة {currentPage} من {totalPages}
+        Page {currentPage} of {totalPages}
       </span>
       <div className="flex items-center gap-2">
         <Button
@@ -33,7 +33,7 @@ export default function PaginationControls({ currentPage, totalPages }: Paginati
           disabled={currentPage <= 1}
         >
           <ChevronRight className="h-4 w-4" />
-          السابق
+          Previous
         </Button>
         <Button
           variant="outline"
@@ -41,7 +41,7 @@ export default function PaginationControls({ currentPage, totalPages }: Paginati
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
         >
-          التالي
+          Next
           <ChevronLeft className="h-4 w-4" />
         </Button>
       </div>

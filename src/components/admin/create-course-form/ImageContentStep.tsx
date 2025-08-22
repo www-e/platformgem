@@ -17,12 +17,12 @@ export function ImageContentStep({ formData, onThumbnailUpload }: ImageContentSt
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ImageIcon className="w-5 h-5" />
-          الصورة والمحتوى
+          Image & Content
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <Label>صورة الدورة *</Label>
+          <Label>Course Image *</Label>
           <div className="mt-2">
             <FileUploader
               onUpload={onThumbnailUpload}
@@ -35,7 +35,7 @@ export function ImageContentStep({ formData, onThumbnailUpload }: ImageContentSt
             <div className="mt-4">
               <Image
                 src={formData.thumbnailUrl}
-                alt="صورة الدورة"
+                alt="Course Image"
                 width={128}
                 height={96}
                 className="w-32 h-24 object-cover rounded-lg border"

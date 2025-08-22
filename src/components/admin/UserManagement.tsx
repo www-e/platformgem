@@ -32,14 +32,14 @@ export function UserManagement() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">إدارة المستخدمين</h2>
+          <h2 className="text-2xl font-bold">User Management</h2>
           <p className="text-muted-foreground">
-            إدارة حسابات المستخدمين والصلاحيات
+            Manage user accounts and permissions
           </p>
         </div>
         <Button>
           <UserPlus className="h-4 w-4 mr-2" />
-          إضافة مستخدم
+          Add User
         </Button>
       </div>
 

@@ -13,13 +13,13 @@ export default function NewCoursePage() {
         <Button variant="outline" size="sm" asChild>
           <Link href="/admin/courses">
             <ArrowRight className="h-4 w-4 mr-2" />
-            العودة للدورات
+            Back to Courses
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">إنشاء دورة جديدة</h1>
+          <h1 className="text-3xl font-bold">Create New Course</h1>
           <p className="text-muted-foreground">
-            أضف دورة تعليمية جديدة للمنصة
+            Add a new educational course to the platform
           </p>
         </div>
       </div>
@@ -27,7 +27,7 @@ export default function NewCoursePage() {
       {/* Form */}
       <Card>
         <CardHeader>
-          <CardTitle>معلومات الدورة</CardTitle>
+          <CardTitle>Course Information</CardTitle>
         </CardHeader>
         <CardContent>
           <CreateCourseForm />

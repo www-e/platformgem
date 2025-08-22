@@ -130,10 +130,10 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
       <div className="text-center py-12">
         <BarChart3 className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-neutral-900 font-display mb-2">
-          لا توجد بيانات تحليلية
+          No analytics data
         </h3>
         <p className="text-neutral-600 font-primary">
-          لم نتمكن من تحميل البيانات التحليلية
+          Failed to load analytics data
         </p>
       </div>
     );
@@ -146,16 +146,16 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-neutral-900 font-display">
-              لوحة التحليلات المتقدمة
+              Advanced Analytics Dashboard
             </h2>
             <div className="flex items-center gap-4 mt-2">
               <p className="text-neutral-600 font-primary">
-                تحليل شامل لأداء المنصة
+                Comprehensive platform performance analysis
               </p>
               <div className="flex items-center gap-2 text-sm text-neutral-500">
                 <Clock className="w-4 h-4" />
                 <span className="font-primary">
-                  آخر تحديث: {lastUpdate.toLocaleTimeString('ar-EG')}
+                  Last update: {lastUpdate.toLocaleTimeString('en-US')}
                 </span>
               </div>
             </div>
@@ -165,10 +165,10 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
             {/* Period Selector */}
             <div className="flex items-center border rounded-lg">
               {[
-                { key: '7d', label: '7 أيام' },
-                { key: '30d', label: '30 يوم' },
-                { key: '90d', label: '90 يوم' },
-                { key: '1y', label: 'سنة' }
+                { key: '7d', label: '7 Days' },
+                { key: '30d', label: '30 Days' },
+                { key: '90d', label: '90 Days' },
+                { key: '1y', label: '1 Year' }
               ].map((period) => (
                 <Button
                   key={period.key}
@@ -184,12 +184,12 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
 
             <Button variant="outline" size="sm">
               <RefreshCw className="w-4 h-4 ml-2" />
-              تحديث
+              Refresh
             </Button>
 
             <Button variant="outline" size="sm" onClick={() => onExport?.('excel')}>
               <Download className="w-4 h-4 ml-2" />
-              تصدير
+              Export
             </Button>
           </div>
         </div>
@@ -204,7 +204,7 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-neutral-600 font-primary mb-1">
-                      إجمالي الإيرادات
+                      Total Revenue
                     </p>
                     <p className="text-2xl font-bold text-neutral-900 font-display">
                       {formatCurrency(analyticsData.revenue.total)}
@@ -232,7 +232,7 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-neutral-600 font-primary mb-1">
-                      المستخدمين النشطين
+                      Active Users
                     </p>
                     <p className="text-2xl font-bold text-neutral-900 font-display">
                       {formatNumber(analyticsData.users.total)}
@@ -260,7 +260,7 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-neutral-600 font-primary mb-1">
-                      تسجيلات الدورات
+                      Course Enrollments
                     </p>
                     <p className="text-2xl font-bold text-neutral-900 font-display">
                       {formatNumber(analyticsData.courses.total)}
@@ -288,7 +288,7 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-neutral-600 font-primary mb-1">
-                      معدل التحويل
+                      Conversion Rate
                     </p>
                     <p className="text-2xl font-bold text-neutral-900 font-display">
                       {formatPercentage(analyticsData.kpis.conversionRate)}
@@ -296,7 +296,7 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
                     <div className="flex items-center gap-1 mt-2">
                       <Target className="w-4 h-4 text-orange-600" />
                       <span className="text-sm font-primary text-neutral-600">
-                        من الزوار
+                        from visitors
                       </span>
                     </div>
                   </div>
@@ -327,7 +327,7 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-display">
               <Award className="w-5 h-5 text-primary-600" />
-              مؤشرات الأداء المتقدمة
+              Advanced Performance Indicators
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -339,7 +339,7 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
                 <p className="text-2xl font-bold text-blue-600 font-display">
                   {formatCurrency(analyticsData.kpis.averageOrderValue)}
                 </p>
-                <p className="text-sm text-neutral-600 font-primary">متوسط قيمة الطلب</p>
+                <p className="text-sm text-neutral-600 font-primary">Average Order Value</p>
               </div>
 
               <div className="text-center p-4 border rounded-lg">
@@ -349,7 +349,7 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
                 <p className="text-2xl font-bold text-green-600 font-display">
                   {formatCurrency(analyticsData.kpis.customerLifetimeValue)}
                 </p>
-                <p className="text-sm text-neutral-600 font-primary">قيمة العميل مدى الحياة</p>
+                <p className="text-sm text-neutral-600 font-primary">Customer Lifetime Value</p>
               </div>
 
               <div className="text-center p-4 border rounded-lg">
@@ -359,7 +359,7 @@ export function AnalyticsDashboard({ onExport, onDrillDown }: AnalyticsDashboard
                 <p className="text-2xl font-bold text-red-600 font-display">
                   {formatPercentage(analyticsData.kpis.churnRate)}
                 </p>
-                <p className="text-sm text-neutral-600 font-primary">معدل التسرب</p>
+                <p className="text-sm text-neutral-600 font-primary">Churn Rate</p>
               </div>
             </div>
           </CardContent>

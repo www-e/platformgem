@@ -13,7 +13,7 @@ export function EnrollmentList({ enrollments }: EnrollmentListProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>الدورات المسجل بها ({enrollments.length})</CardTitle>
+        <CardTitle>Enrolled Courses ({enrollments.length})</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -31,18 +31,18 @@ export function EnrollmentList({ enrollments }: EnrollmentListProps) {
                 <div className="flex-1">
                   <h3 className="font-semibold">{enrollment.course.title}</h3>
                   <p className="text-sm text-muted-foreground">
-                    الأستاذ: {enrollment.course.professor.name}
+                    Professor: {enrollment.course.professor.name}
                   </p>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                    <span>التقدم: {enrollment.progressPercent}%</span>
+                    <span>Progress: {enrollment.progressPercent}%</span>
                     <span>
-                      وقت المشاهدة: {Math.round(enrollment.totalWatchTime / 60)}{" "}
-                      دقيقة
+                      Watch Time: {Math.round(enrollment.totalWatchTime / 60)}{" "}
+                      minutes
                     </span>
                     <span>
-                      تاريخ التسجيل:{" "}
+                      Enrollment Date:{" "}
                       {new Date(enrollment.enrolledAt).toLocaleDateString(
-                        "ar-SA"
+                        "en-US"
                       )}
                     </span>
                   </div>
@@ -53,7 +53,7 @@ export function EnrollmentList({ enrollments }: EnrollmentListProps) {
                       {formatCurrency(Number(enrollment.course.price))}
                     </p>
                   ) : (
-                    <Badge variant="outline">مجاني</Badge>
+                    <Badge variant="outline">Free</Badge>
                   )}
                 </div>
               </div>
@@ -61,7 +61,7 @@ export function EnrollmentList({ enrollments }: EnrollmentListProps) {
           ) : (
             <div className="text-center py-8">
               <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">لم يسجل في أي دورات بعد</p>
+              <p className="text-muted-foreground">Not enrolled in any courses yet</p>
             </div>
           )}
         </div>

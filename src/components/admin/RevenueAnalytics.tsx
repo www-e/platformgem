@@ -26,7 +26,7 @@ export function RevenueAnalytics() {
   if (!revenueData) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">فشل في تحميل بيانات الإيرادات</p>
+        <p className="text-muted-foreground">Failed to load revenue data</p>
       </div>
     );
   }
@@ -36,8 +36,8 @@ export function RevenueAnalytics() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">تحليل الإيرادات</h2>
-          <p className="text-muted-foreground">تتبع الأداء المالي للمنصة</p>
+          <h2 className="text-2xl font-bold">Revenue Analytics</h2>
+          <p className="text-muted-foreground">Track the platform&apos;s financial performance</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center border rounded-lg">
@@ -46,26 +46,26 @@ export function RevenueAnalytics() {
               size="sm"
               onClick={() => setSelectedPeriod("week")}
             >
-              أسبوع
+              Week
             </Button>
             <Button
               variant={selectedPeriod === "month" ? "primary" : "ghost"}
               size="sm"
               onClick={() => setSelectedPeriod("month")}
             >
-              شهر
+              Month
             </Button>
             <Button
               variant={selectedPeriod === "year" ? "primary" : "ghost"}
               size="sm"
               onClick={() => setSelectedPeriod("year")}
             >
-              سنة
+              Year
             </Button>
           </div>
           <Button onClick={exportReport} variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
-            تصدير التقرير
+            Export Report
           </Button>
         </div>
       </div>

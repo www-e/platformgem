@@ -105,10 +105,10 @@ export function CategoryManagement({
         setCategories((prev) => prev.filter((cat) => cat.id !== categoryId));
         toast.success(result.success);
       } else {
-        toast.error(result.error || "فشل في حذف الفئة");
+        toast.error(result.error || "Failed to delete category");
       }
     } catch (error) {
-      toast.error("حدث خطأ أثناء حذف الفئة");
+      toast.error("An error occurred while deleting the category");
     }
   };
 
@@ -125,7 +125,7 @@ export function CategoryManagement({
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="البحث في الفئات..."
+            placeholder="Search categories..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -140,9 +140,9 @@ export function CategoryManagement({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">جميع الفئات</SelectItem>
-            <SelectItem value="active">النشطة فقط</SelectItem>
-            <SelectItem value="inactive">غير النشطة</SelectItem>
+            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="active">Active Only</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
           </SelectContent>
         </Select>
 
@@ -151,10 +151,10 @@ export function CategoryManagement({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="created">الأحدث</SelectItem>
-            <SelectItem value="name">الاسم</SelectItem>
-            <SelectItem value="courses">عدد الدورات</SelectItem>
-            <SelectItem value="enrollments">التسجيلات</SelectItem>
+            <SelectItem value="created">Most Recent</SelectItem>
+            <SelectItem value="name">Name</SelectItem>
+            <SelectItem value="courses">Course Count</SelectItem>
+            <SelectItem value="enrollments">Enrollments</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -163,9 +163,9 @@ export function CategoryManagement({
       {filteredCategories.length === 0 ? (
         <div className="text-center py-8">
           <Search className="mx-auto h-12 w-12 text-muted-foreground" />
-          <h3 className="mt-2 text-sm font-semibold">لا توجد نتائج</h3>
+          <h3 className="mt-2 text-sm font-semibold">No results found</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            جرب تغيير معايير البحث أو الفلترة
+            Try adjusting your search or filter criteria
           </p>
         </div>
       ) : (
@@ -194,7 +194,7 @@ export function CategoryManagement({
                       trigger={
                         <DropdownMenuItem onSelect={(e: Event) => e.preventDefault()}>
                           <Edit className="w-4 h-4 mr-2" />
-                          تعديل
+                          Edit
                         </DropdownMenuItem>
                       }
                     />
@@ -207,24 +207,24 @@ export function CategoryManagement({
                           disabled={category._count.courses > 0}
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
-                          حذف
+                          Delete
                         </DropdownMenuItem>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+                          <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
                           <AlertDialogDescription>
-                            هل أنت متأكد من حذف فئة &ldquo;{category.name}&rdquo;؟ هذا
-                            الإجراء لا يمكن التراجع عنه.
+                            Are you sure you want to delete category &ldquo;{category.name}&rdquo;? This
+                            action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handleDelete(category.id)}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
-                            حذف
+                            Delete
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -239,12 +239,12 @@ export function CategoryManagement({
                   {category.isActive ? (
                     <>
                       <Eye className="w-3 h-3 mr-1" />
-                      نشط
+                      Active
                     </>
                   ) : (
                     <>
                       <EyeOff className="w-3 h-3 mr-1" />
-                      غير نشط
+                      Inactive
                     </>
                   )}
                 </Badge>
@@ -259,7 +259,7 @@ export function CategoryManagement({
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
                     <BookOpen className="w-4 h-4" />
-                    <span>الدورات</span>
+                    <span>Courses</span>
                   </div>
                   <div className="text-lg font-semibold">
                     {category._count.courses}
@@ -268,7 +268,7 @@ export function CategoryManagement({
                 <div className="text-center">
                   <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
                     <Users className="w-4 h-4" />
-                    <span>الملتحقين</span>
+                    <span>Enrollments</span>
                   </div>
                   <div className="text-lg font-semibold">
                     {category.totalEnrollments}
@@ -279,8 +279,8 @@ export function CategoryManagement({
               {/* Created Date */}
               <div className="flex items-center text-xs text-muted-foreground pt-2 border-t">
                 <Calendar className="w-3 h-3 mr-1" />
-                تم الإنشاء:{" "}
-                {new Date(category.createdAt).toLocaleDateString("ar-EG")}
+                Created:{" "}
+                {new Date(category.createdAt).toLocaleDateString("en-US")}
               </div>
             </div>
           ))}

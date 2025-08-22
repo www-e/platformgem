@@ -6,14 +6,14 @@ export function ManagementHeader() {
   return (
     <div className="flex items-center justify-between">
       <div>
-        <h2 className="text-2xl font-bold">إدارة الدورات</h2>
+        <h2 className="text-2xl font-bold">Course Management</h2>
         <p className="text-muted-foreground">
-          إدارة محتوى الدورات والموافقة على النشر
+          Manage course content and publishing approvals
         </p>
       </div>
       <Button>
         <Plus className="h-4 w-4 mr-2" />
-        إضافة دورة
+        Add Course
       </Button>
     </div>
   );

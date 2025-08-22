@@ -15,13 +15,13 @@ import { motion, AnimatePresence } from "framer-motion";
 function AdminNavLinks({ isCollapsed = false, onItemClick }: { isCollapsed?: boolean; onItemClick?: () => void }) {
   const pathname = usePathname();
   const navLinks = [
-    { href: "/admin", label: "لوحة التحكم", icon: LayoutDashboard },
-    { href: "/admin/courses", label: "الدورات", icon: Book },
-    { href: "/admin/students", label: "الملتحقين", icon: Users },
-    { href: "/admin/professors", label: "المدربين", icon: Users },
-    { href: "/admin/payments", label: "المدفوعات", icon: CreditCard },
-    { href: "/admin/logs", label: "سجلات النظام", icon: Activity },
-    { href: "/admin/settings", label: "الإعدادات", icon: Settings },
+    { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/admin/courses", label: "Courses", icon: Book },
+    { href: "/admin/students", label: "Students", icon: Users },
+    { href: "/admin/professors", label: "Professors", icon: Users },
+    { href: "/admin/payments", label: "Payments", icon: CreditCard },
+    { href: "/admin/logs", label: "System Logs", icon: Activity },
+    { href: "/admin/settings", label: "Settings", icon: Settings },
   ];
 
   return (
@@ -112,8 +112,8 @@ function EnhancedSidebar({ children }: { children: React.ReactNode }) {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <h2 className="text-xl font-bold text-foreground">لوحة التحكم</h2>
-                  <p className="text-sm text-muted-foreground">نظام إدارة التعلم</p>
+                  <h2 className="text-xl font-bold text-foreground">Dashboard</h2>
+                  <p className="text-sm text-muted-foreground">Learning Management System</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -190,7 +190,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         <header className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card/95 backdrop-blur-sm sticky top-0 z-40">
           <Link href="/admin" className="flex items-center gap-2">
             <GraduationCap className="h-6 w-6 text-primary" />
-            <span className="font-bold">لوحة التحكم</span>
+            <span className="font-bold">Dashboard</span>
           </Link>
           <Sheet>
             <SheetTrigger asChild>
@@ -203,8 +203,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                 <div className="flex items-center gap-3">
                   <GraduationCap className="h-8 w-8 text-primary" />
                   <div>
-                    <h2 className="text-xl font-bold text-foreground">لوحة التحكم</h2>
-                    <p className="text-sm text-muted-foreground">نظام إدارة التعلم</p>
+                    <h2 className="text-xl font-bold text-foreground">Dashboard</h2>
+                    <p className="text-sm text-muted-foreground">Learning Management System</p>
                   </div>
                 </div>
               </div>

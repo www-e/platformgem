@@ -14,7 +14,7 @@ export function TopCoursesByRevenue({ courses }: TopCoursesByRevenueProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <BookOpen className="h-5 w-5" />
-          أعلى الدورات إيراداً
+          Top Revenue Courses
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -28,7 +28,7 @@ export function TopCoursesByRevenue({ courses }: TopCoursesByRevenueProps) {
                 <div>
                   <p className="font-medium truncate">{course.title}</p>
                   <p className="text-sm text-muted-foreground">
-                    {course.professor} • {course.enrollments} تسجيل
+                    {course.professor} • {course.enrollments} enrollments
                   </p>
                 </div>
               </div>
