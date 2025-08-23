@@ -2,24 +2,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   BookOpen, 
   Users, 
   Star,
   Clock,
   Heart,
-  Eye,
-  ShoppingCart,
   Play,
   Share2,
-  TrendingUp,
-  Award,
-  Sparkles,
   Target,
+  Zap,
   ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
@@ -47,9 +43,9 @@ const levelLabels = {
 const recommendationBadges = {
   category_match: { icon: Target, label: 'Matches Your Interests', color: 'bg-blue-500' },
   similar_students: { icon: Users, label: 'Student Choice', color: 'bg-green-500' },
-  trending: { icon: TrendingUp, label: 'Trending Now', color: 'bg-pink-500' },
-  professor_match: { icon: Award, label: 'Featured Instructor', color: 'bg-purple-500' },
-  completion_based: { icon: Sparkles, label: 'Recommended for You', color: 'bg-orange-500' }
+  trending: { icon: Target, label: 'Trending Now', color: 'bg-pink-500' },
+  professor_match: { icon: Target, label: 'Featured Instructor', color: 'bg-purple-500' },
+  completion_based: { icon: Target, label: 'Recommended for You', color: 'bg-orange-500' }
 };
 
 export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardProps) {
@@ -75,18 +71,10 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="group"
+      className="group perspective-1000"
     >
-      <Card className="h-full hover:shadow-2xl transition-all duration-500 border-0 bg-white/90 backdrop-blur-sm overflow-hidden group-hover:scale-[1.02] relative">
-        {/* Trending/Popular badges */}
-        <div className="absolute top-3 left-3 z-10">
-          <Badge className={cn("text-white border-0 shadow-lg flex items-center gap-1", RecommendationBadge.color)}>
-            <RecommendationBadge.icon className="w-3 h-3" />
-            {RecommendationBadge.label}
-          </Badge>
-        </div>
-
-        <div className="relative">
+      <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-white shadow-lg overflow-hidden group-hover:scale-[1.02] rounded-2xl">
+        <div className="relative aspect-video overflow-hidden">
           <div className="aspect-video bg-gradient-to-br from-primary/10 to-primary/5 overflow-hidden relative">
             {course.thumbnailUrl ? (
               <img 
@@ -104,6 +92,28 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
           </div>
           
+          {/* Recommendation badge */}
+          <div className="absolute top-3 left-3 z-10">
+            <Badge className={cn("text-white border-0 shadow-lg flex items-center gap-1", RecommendationBadge.color)}>
+              <RecommendationBadge.icon className="w-3 h-3" />
+              {RecommendationBadge.label}
+            </Badge>
+          </div>
+          
+          {/* Price badge */}
+          <div className="absolute top-3 right-3">
+            {course.price === 0 ? (
+              <Badge className="bg-emerald-500 text-white font-semibold shadow-lg">
+                <Zap className="w-3 h-3 mr-1" />
+                مجاني
+              </Badge>
+            ) : (
+              <Badge className="bg-gradient-to-r from-primary to-secondary text-white font-semibold shadow-lg">
+                {formatPrice(course.price, course.currency)}
+              </Badge>
+            )}
+          </div>
+          
           {/* Play button overlay */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
             <motion.div
@@ -115,25 +125,12 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
             </motion.div>
           </div>
           
-          {/* Price badge */}
-          <div className="absolute top-3 right-3">
-            {course.price === 0 ? (
-              <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg">
-                Free
-              </Badge>
-            ) : (
-              <Badge className="bg-gradient-to-r from-primary to-blue-600 text-white border-0 shadow-lg">
-                {formatPrice(course.price, course.currency)}
-              </Badge>
-            )}
-          </div>
-          
           {/* Action buttons */}
           <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <Button 
               size="sm" 
               variant="ghost" 
-              className="w-8 h-8 p-0 bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg"
+              className="w-9 h-9 p-0 bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg"
               onClick={(e) => {
                 e.preventDefault();
                 onToggleWishlist(course.id);
@@ -147,15 +144,15 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
             <Button 
               size="sm" 
               variant="ghost" 
-              className="w-8 h-8 p-0 bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg"
+              className="w-9 h-9 p-0 bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg"
             >
               <Share2 className="w-4 h-4 text-gray-600" />
             </Button>
           </div>
         </div>
 
-        <CardContent className="p-6">
-          <div className="space-y-4">
+        <CardContent className="p-5 flex flex-col flex-grow">
+          <div className="flex-grow space-y-4">
             {/* Category and Level */}
             <div className="flex items-center justify-between">
               <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20">
@@ -168,7 +165,7 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
 
             {/* Course title and description */}
             <div>
-              <h3 className="font-bold text-xl line-clamp-2 group-hover:text-primary transition-colors mb-2 leading-tight">
+              <h3 className="font-bold text-lg line-clamp-2 group-hover:text-primary transition-colors mb-2 leading-tight">
                 {course.title}
               </h3>
               <p className="text-muted-foreground text-sm line-clamp-2 leading-relaxed">
@@ -177,9 +174,8 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
             </div>
 
             {/* Professor info */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 pb-2">
               <Avatar className="w-10 h-10 ring-2 ring-primary/10">
-                <AvatarImage src="" alt={course.professor.name} />
                 <AvatarFallback className="bg-gradient-to-br from-primary/10 to-primary/5 text-primary text-sm font-semibold">
                   {course.professor.name.charAt(0)}
                 </AvatarFallback>
@@ -191,20 +187,21 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
             </div>
 
             {/* Course stats */}
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Users className="w-4 h-4" />
-                  <span>{course.enrollmentCount.toLocaleString('en-US')}</span>
-                </div>
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Clock className="w-4 h-4" />
-                  <span>{formatDuration(course.duration)}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                  <span className="font-medium">{course.rating.toFixed(1)}</span>
-                </div>
+            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border">
+              <div className="flex flex-col items-center">
+                <Users className="w-4 h-4 text-muted-foreground mb-1" />
+                <span className="text-xs font-medium">{course.enrollmentCount.toLocaleString('en-US')}</span>
+                <span className="text-xs text-muted-foreground">Students</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Clock className="w-4 h-4 text-muted-foreground mb-1" />
+                <span className="text-xs font-medium">{formatDuration(course.duration)}</span>
+                <span className="text-xs text-muted-foreground">Duration</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 mb-1" />
+                <span className="text-xs font-medium">{course.rating.toFixed(1)}</span>
+                <span className="text-xs text-muted-foreground">Rating</span>
               </div>
             </div>
 
@@ -223,13 +220,14 @@ export function CourseCard({ course, onToggleWishlist, index = 0 }: CourseCardPr
                 )}
               </div>
             )}
+          </div>
 
-            {/* Action button */}
+          {/* Action button */}
+          <div className="pt-4 mt-auto">
             <Link href={`/courses/${course.id}`}>
               <Button className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]">
-                <Eye className="w-4 h-4 ml-2" />
                 View Details
-                <ChevronRight className="w-4 h-4 mr-2" />
+                <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
           </div>

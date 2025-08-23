@@ -154,10 +154,10 @@ export function ModernCourseCatalog({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="group"
+      className="group perspective-1000"
     >
-      <Card className="h-full hover:shadow-xl transition-all duration-500 border-0 bg-white/80 backdrop-blur-sm overflow-hidden group-hover:scale-[1.02]">
-        <div className="relative">
+      <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 bg-white shadow-lg overflow-hidden group-hover:scale-[1.02] rounded-2xl">
+        <div className="relative aspect-video overflow-hidden">
           <div className="aspect-video bg-gradient-to-br from-primary/10 to-primary/5 overflow-hidden">
             {course.thumbnailUrl ? (
               <img 
@@ -172,25 +172,18 @@ export function ModernCourseCatalog({
             )}
           </div>
           
-          {/* Overlay with play button */}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-            <motion.div
-              initial={{ scale: 0 }}
-              whileHover={{ scale: 1 }}
-              className="w-16 h-16 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            >
-              <Play className="w-6 h-6 text-primary ml-1" />
-            </motion.div>
-          </div>
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
           
-          {/* Price badge */}
-          <div className="absolute top-3 right-3">
-            {course.price === null ? (
-              <Badge className="bg-green-500 text-white border-0 shadow-lg">
-                مجاني
+          {/* Price and category badges */}
+          <div className="absolute top-3 left-3 flex gap-2">
+            {course.price === null || course.price === 0 ? (
+              <Badge className="bg-emerald-500 text-white font-semibold shadow-lg">
+                <Star className="w-3 h-3 mr-1" />
+                Free
               </Badge>
             ) : (
-              <Badge className="bg-primary text-white border-0 shadow-lg">
+              <Badge className="bg-gradient-to-r from-primary to-secondary text-white font-semibold shadow-lg">
                 {new Intl.NumberFormat('ar-EG', {
                   style: 'currency',
                   currency: course.currency,
@@ -200,75 +193,93 @@ export function ModernCourseCatalog({
             )}
           </div>
           
-          {/* Category badge */}
-          <div className="absolute top-3 left-3">
-            <Badge variant="outline" className="bg-white/90 backdrop-blur-sm border-0 shadow-sm">
-              {course.category.name}
-            </Badge>
-          </div>
-          
           {/* Action buttons */}
-          <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <Button size="sm" variant="ghost" className="w-8 h-8 p-0 bg-white/90 backdrop-blur-sm hover:bg-white">
+          <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button 
+              size="sm" 
+              variant="ghost" 
+              className="w-9 h-9 p-0 bg-white/90 backdrop-blur-sm hover:bg-white shadow-md"
+            >
               <Heart className="w-4 h-4" />
             </Button>
-            <Button size="sm" variant="ghost" className="w-8 h-8 p-0 bg-white/90 backdrop-blur-sm hover:bg-white">
+            <Button 
+              size="sm" 
+              variant="ghost" 
+              className="w-9 h-9 p-0 bg-white/90 backdrop-blur-sm hover:bg-white shadow-md"
+            >
               <Share2 className="w-4 h-4" />
             </Button>
           </div>
+          
+          {/* Play button overlay */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+            <motion.div
+              initial={{ scale: 0 }}
+              whileHover={{ scale: 1 }}
+              className="w-16 h-16 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg"
+            >
+              <Play className="w-6 h-6 text-primary ml-1" />
+            </motion.div>
+          </div>
         </div>
 
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            {/* Course title and description */}
+        <CardContent className="p-5 flex flex-col flex-grow">
+          <div className="flex-grow space-y-4">
+            {/* Category badge */}
+            <div className="absolute top-3 left-3">
+              <Badge variant="outline" className="bg-white/90 backdrop-blur-sm border-0 shadow-sm">
+                {course.category.name}
+              </Badge>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+              <span>4.8</span>
+            </div>
+            <h3 className="font-bold text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors font-display mb-2">
+              {course.title}
+            </h3>
+            <p className="text-muted-foreground text-sm line-clamp-2">
+              {course.description}
+            </p>
+          </div>
+          
+          {/* Professor info */}
+          <div className="flex items-center gap-3 pb-2">
+            <Avatar className="w-10 h-10">
+              <AvatarFallback className="bg-gradient-to-r from-primary/20 to-secondary/20 text-primary text-sm font-semibold">
+                {course.professor.name.charAt(0)}
+              </AvatarFallback>
+            </Avatar>
             <div>
-              <h3 className="font-bold text-xl line-clamp-2 group-hover:text-primary transition-colors mb-2">
-                {course.title}
-              </h3>
-              <p className="text-muted-foreground text-sm line-clamp-2">
-                {course.description}
-              </p>
+              <p className="text-sm font-medium">{course.professor.name}</p>
+              <p className="text-xs text-muted-foreground">Certified Instructor</p>
             </div>
-
-            {/* Professor info */}
-            <div className="flex items-center gap-3">
-              <Avatar className="w-8 h-8">
-                <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                  {course.professor.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-sm font-medium">{course.professor.name}</p>
-                <p className="text-xs text-muted-foreground">مدرب معتمد</p>
-              </div>
+          </div>
+          
+          {/* Course stats */}
+          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border">
+            <div className="flex flex-col items-center">
+              <Users className="w-4 h-4 text-muted-foreground mb-1" />
+              <span className="text-xs font-medium">{course._count.enrollments}</span>
+              <span className="text-xs text-muted-foreground">Students</span>
             </div>
-
-            {/* Course stats */}
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1">
-                  <Users className="w-4 h-4" />
-                  <span>{course._count.enrollments}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <BookOpen className="w-4 h-4" />
-                  <span>{course._count.lessons}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-500" />
-                  <span>4.8</span>
-                </div>
-              </div>
-              <div className="text-xs">
-                {formatAdminDate(course.createdAt)}
-              </div>
+            <div className="flex flex-col items-center">
+              <BookOpen className="w-4 h-4 text-muted-foreground mb-1" />
+              <span className="text-xs font-medium">{course._count.lessons}</span>
+              <span className="text-xs text-muted-foreground">Lessons</span>
             </div>
-
-            {/* Action button */}
+            <div className="flex flex-col items-center">
+              <Star className="w-4 h-4 text-muted-foreground mb-1" />
+              <span className="text-xs font-medium">0</span>
+              <span className="text-xs text-muted-foreground">Minutes</span>
+            </div>
+          </div>
+          
+          {/* Action button */}
+          <div className="pt-4 mt-auto">
             <Link href={`/courses/${course.id}`}>
-              <Button className="w-full group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                {userRole === 'STUDENT' ? 'التسجيل في الدورة' : 'عرض التفاصيل'}
-                <ChevronRight className="w-4 h-4 mr-2" />
+              <Button className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]">
+                {userRole === 'STUDENT' ? 'Enroll in Course' : 'View Details'}
               </Button>
             </Link>
           </div>
@@ -292,11 +303,11 @@ export function ModernCourseCatalog({
               <div className="flex items-center justify-center gap-2 mb-6">
                 <Sparkles className="w-8 h-8 text-primary" />
                 <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                  اكتشف عالم التعلم
+                  Discover Learning
                 </h1>
               </div>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                انضم إلى آلاف الملتحقين واكتسب مهارات جديدة من خلال دوراتنا التعليمية المتميزة
+                Join thousands of learners and gain new skills through our exceptional educational courses
               </p>
               
               {/* Stats */}
@@ -311,7 +322,7 @@ export function ModernCourseCatalog({
                     <BookOpen className="w-8 h-8 text-primary" />
                   </div>
                   <div className="text-3xl font-bold text-primary mb-1">{stats.totalCourses}+</div>
-                  <div className="text-muted-foreground">دورة تعليمية</div>
+                  <div className="text-muted-foreground">Educational Courses</div>
                 </motion.div>
                 
                 <motion.div
@@ -324,7 +335,7 @@ export function ModernCourseCatalog({
                     <UserCheck className="w-8 h-8 text-green-600" />
                   </div>
                   <div className="text-3xl font-bold text-green-600 mb-1">{stats.totalStudents}+</div>
-                  <div className="text-muted-foreground">ملتحق نشط</div>
+                  <div className="text-muted-foreground">Active Learners</div>
                 </motion.div>
                 
                 <motion.div
@@ -337,7 +348,7 @@ export function ModernCourseCatalog({
                     <GraduationCap className="w-8 h-8 text-purple-600" />
                   </div>
                   <div className="text-3xl font-bold text-purple-600 mb-1">{stats.totalProfessors}+</div>
-                  <div className="text-muted-foreground">مدرب خبير</div>
+                  <div className="text-muted-foreground">Expert Instructors</div>
                 </motion.div>
               </div>
             </motion.div>
@@ -355,7 +366,7 @@ export function ModernCourseCatalog({
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="ابحث عن الدورات، المدربين، أو المواضيع..."
+                  placeholder="Search for courses, instructors, or topics..."
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
                   className="pl-12 pr-4 h-14 text-lg bg-white/80 backdrop-blur-sm border-0 shadow-lg rounded-2xl focus:shadow-xl transition-all duration-300"
@@ -370,7 +381,7 @@ export function ModernCourseCatalog({
                 onClick={() => handleCategoryFilter('')}
                 className="rounded-full"
               >
-                الكل
+                All
               </Button>
               {categories.slice(0, 6).map((category) => (
                 <Button
@@ -388,7 +399,7 @@ export function ModernCourseCatalog({
                   onClick={() => setShowFilters(!showFilters)}
                   className="rounded-full"
                 >
-                  المزيد
+                  More
                   <ChevronDown className={cn("w-4 h-4 mr-2 transition-transform", showFilters && "rotate-180")} />
                 </Button>
               )}
@@ -405,32 +416,32 @@ export function ModernCourseCatalog({
                 >
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                      <label className="block text-sm font-medium mb-2">السعر</label>
+                      <label className="block text-sm font-medium mb-2">Price</label>
                       <select
                         value={priceFilter}
                         onChange={(e) => setPriceFilter(e.target.value)}
                         className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
                       >
-                        <option value="">جميع الأسعار</option>
-                        <option value="free">مجاني</option>
-                        <option value="0-100">0 - 100 جنيه</option>
-                        <option value="100-500">100 - 500 جنيه</option>
-                        <option value="500+">500+ جنيه</option>
+                        <option value="">All Prices</option>
+                        <option value="free">Free</option>
+                        <option value="0-100">0 - 100 EGP</option>
+                        <option value="100-500">100 - 500 EGP</option>
+                        <option value="500+">500+ EGP</option>
                       </select>
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium mb-2">الترتيب</label>
+                      <label className="block text-sm font-medium mb-2">Sort By</label>
                       <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
                         className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20"
                       >
-                        <option value="newest">الأحدث</option>
-                        <option value="popular">الأكثر شعبية</option>
-                        <option value="rating">الأعلى تقييماً</option>
-                        <option value="price-low">السعر: من الأقل للأعلى</option>
-                        <option value="price-high">السعر: من الأعلى للأقل</option>
+                        <option value="newest">Newest</option>
+                        <option value="popular">Most Popular</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
                       </select>
                     </div>
                     
@@ -441,7 +452,7 @@ export function ModernCourseCatalog({
                         className="w-full rounded-xl"
                       >
                         <X className="w-4 h-4 mr-2" />
-                        مسح الفلاتر
+                        Clear Filters
                       </Button>
                     </div>
                   </div>
@@ -452,10 +463,10 @@ export function ModernCourseCatalog({
             {/* Active Filters */}
             {activeFiltersCount > 0 && (
               <div className="flex items-center gap-2 flex-wrap mb-6">
-                <span className="text-sm text-muted-foreground">الفلاتر النشطة:</span>
+                <span className="text-sm text-muted-foreground">Active Filters:</span>
                 {searchQuery && (
                   <Badge variant="secondary" className="flex items-center gap-1">
-                    البحث: {searchQuery}
+                    Search: {searchQuery}
                     <button onClick={() => handleSearch('')}>
                       <X className="w-3 h-3" />
                     </button>
@@ -463,7 +474,7 @@ export function ModernCourseCatalog({
                 )}
                 {selectedCategory && (
                   <Badge variant="secondary" className="flex items-center gap-1">
-                    التصنيف: {categories.find(c => c.id === selectedCategory)?.name}
+                    Category: {categories.find(c => c.id === selectedCategory)?.name}
                     <button onClick={() => handleCategoryFilter('')}>
                       <X className="w-3 h-3" />
                     </button>
@@ -471,7 +482,7 @@ export function ModernCourseCatalog({
                 )}
                 {priceFilter && (
                   <Badge variant="secondary" className="flex items-center gap-1">
-                    السعر: {priceFilter}
+                    Price: {priceFilter}
                     <button onClick={() => setPriceFilter('')}>
                       <X className="w-3 h-3" />
                     </button>
@@ -484,7 +495,7 @@ export function ModernCourseCatalog({
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">
-                  {isLoading ? 'جاري التحميل...' : `${totalCount || courses.length} دورة`}
+                  {isLoading ? 'Loading...' : `${totalCount || courses.length} courses`}
                 </span>
               </div>
               
@@ -531,7 +542,7 @@ export function ModernCourseCatalog({
             <div className={cn(
               "grid gap-8 mb-12",
               viewMode === 'grid' 
-                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
+                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
                 : "grid-cols-1 max-w-4xl mx-auto"
             )}>
               {courses.map((course, index) => (
@@ -549,7 +560,7 @@ export function ModernCourseCatalog({
                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                     className="rounded-xl"
                   >
-                    السابق
+                    Previous
                   </Button>
                   
                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -572,7 +583,7 @@ export function ModernCourseCatalog({
                     onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                     className="rounded-xl"
                   >
-                    التالي
+                    Next
                   </Button>
                 </div>
               </div>
@@ -583,12 +594,12 @@ export function ModernCourseCatalog({
             <div className="w-24 h-24 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-6">
               <Search className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h3 className="text-2xl font-bold mb-4">لم نجد أي دورات</h3>
+            <h3 className="text-2xl font-bold mb-4">No Courses Found</h3>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-              جرب تغيير معايير البحث أو تصفح جميع الدورات المتاحة
+              Try changing your search criteria or browse all available courses
             </p>
             <Button onClick={clearFilters} size="lg" className="rounded-xl">
-              عرض جميع الدورات
+              View All Courses
             </Button>
           </div>
         )}

@@ -21,7 +21,7 @@ export default function ProfileHeader({ name, role, enrollmentCount }: ProfileHe
               Welcome, {name}
             </h1>
             <p className="text-lg text-muted-foreground">
-              Here's a summary of your educational journey.
+              Here&apos;s a summary of your educational journey.
             </p>
           </div>
         </div>

@@ -48,16 +48,18 @@ export default async function ProfilePage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] bg-background p-4 sm:p-8 w-full">
+    <div className="min-h-[calc(100vh-5rem)] bg-background p-4 sm:p-6 w-full">
       <div className="max-w-8xl mx-auto w-full">
         {/* ProfileHeader renders instantly with minimal data */}
         <ProfileHeader {...userProfile} />
 
         {/* Unified Dashboard Content */}
-        <StudentDashboard />
+        <div className="mt-6">
+          <StudentDashboard />
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start mt-8 w-full">
-          <div className="lg:col-span-2 space-y-8 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start mt-8 w-full">
+          <div className="lg:col-span-2 space-y-6 w-full">
             {/* Each data-heavy component is wrapped in Suspense */}
             <Suspense fallback={<QuickAccessCardSkeleton />}>
               <QuickAccessCard />
@@ -68,7 +70,7 @@ export default async function ProfilePage() {
             </Suspense>
           </div>
 
-          <div className="space-y-8 w-full">
+          <div className="space-y-6 w-full">
             <Suspense fallback={<MyCertificatesSkeleton />}>
                <MyCertificates />
             </Suspense>

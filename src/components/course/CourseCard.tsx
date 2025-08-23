@@ -23,11 +23,11 @@ import {
   Heart,
   Share2,
   CheckCircle,
+  Zap,
 } from 'lucide-react';
 import { formatCoursePrice } from '@/lib/course-utils';
 import { cn } from '@/lib/utils';
 
-// R.A.K.A.N: Kept the full original props for maximum flexibility
 interface CourseCardProps {
   course: CourseWithMetadata;
   userRole?: UserRole;
@@ -94,7 +94,7 @@ export default function CourseCard({
 
   const progress = userActions.isEnrolled ? (course.progress ?? Math.floor(Math.random() * 100)) : 0;
 
-  // R.A.K.A.N: The 'list' view logic is fully preserved here.
+  // List view logic
   if (viewMode === 'list') {
     return (
       <motion.div
@@ -126,7 +126,6 @@ export default function CourseCard({
                 )}
                 <div className="absolute top-3 right-3">
                   <Badge className="bg-white/95 text-neutral-900 font-semibold shadow-sm">
-                    {/* R.A.K.A.N: FIX #1 - Cast Decimal to number */}
                     {formatCoursePrice(course.price ? Number(course.price) : null, course.currency)}
                   </Badge>
                 </div>
@@ -161,7 +160,6 @@ export default function CourseCard({
                     ) : (
                       <Button variant="primary" size="sm" className="w-full" onClick={handleEnroll} disabled={isLoading}>
                         <BookOpen className="w-4 h-4 ml-2" />
-                        {/* R.A.K.A.N: FIX #2 - Cast Decimal to number */}
                         {course.price ? `التسجيل - ${formatCoursePrice(Number(course.price), course.currency)}` : 'التسجيل المجاني'}
                       </Button>
                     )}
@@ -179,7 +177,7 @@ export default function CourseCard({
     );
   }
 
-  // Grid view with all original logic and effects preserved
+  // Modern Grid view with enhanced design
   return (
     <motion.div
       ref={cardRef}
@@ -191,8 +189,8 @@ export default function CourseCard({
       onHoverEnd={() => setIsHovered(false)}
       whileHover={shouldReduceMotion ? {} : { scale: 1.02, transition: { duration: 0.3 } }}
     >
-      <Card className="overflow-hidden border-0 bg-white shadow-sm hover:shadow-xl transition-shadow duration-300 h-full flex flex-col">
-        <div className="aspect-video relative overflow-hidden">
+      <Card className="overflow-hidden border-0 bg-white shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col rounded-2xl">
+        <div className="relative aspect-video overflow-hidden">
           <Image
             src={course.thumbnailUrl}
             alt={course.title}
@@ -200,47 +198,152 @@ export default function CourseCard({
             className="object-cover transition-all duration-500 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
           <motion.div
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"
             animate={isHovered ? { translateX: "200%" } : { translateX: "-100%" }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
           />
+          
+          {/* Action buttons */}
           <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            {enableWishlist && <motion.button className={cn("w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-md", isWishlisted ? "text-red-500" : "text-neutral-600 hover:text-red-500")} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={handleWishlist}><Heart className={cn("w-4 h-4", isWishlisted && "fill-current")} /></motion.button>}
-            {enableShare && <motion.button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-md text-neutral-600 hover:text-primary" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={handleShare}><Share2 className="w-4 h-4" /></motion.button>}
+            {enableWishlist && (
+              <motion.button 
+                className={cn(
+                  "w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md transition-colors",
+                  isWishlisted ? "text-red-500" : "text-neutral-600 hover:text-red-500"
+                )} 
+                whileHover={{ scale: 1.1 }} 
+                whileTap={{ scale: 0.9 }} 
+                onClick={handleWishlist}
+              >
+                <Heart className={cn("w-4 h-4", isWishlisted && "fill-current")} />
+              </motion.button>
+            )}
+            {enableShare && (
+              <motion.button 
+                className="w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md text-neutral-600 hover:text-primary transition-colors" 
+                whileHover={{ scale: 1.1 }} 
+                whileTap={{ scale: 0.9 }} 
+                onClick={handleShare}
+              >
+                <Share2 className="w-4 h-4" />
+              </motion.button>
+            )}
           </div>
-          {showPreview && <motion.button className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setShowQuickPreview(true)}><div className="w-16 h-16 bg-white/95 rounded-full flex items-center justify-center shadow-lg"><Play className="w-6 h-6 text-primary ml-1" /></div></motion.button>}
-          <div className="absolute top-3 left-3">
-            <Badge className="bg-white/95 text-neutral-900 font-semibold shadow-sm">
-              {/* R.A.K.A.N: FIX #3 - Cast Decimal to number */}
-              {formatCoursePrice(course.price ? Number(course.price) : null, course.currency)}
-            </Badge>
+          
+          {/* Price and category badges */}
+          <div className="absolute top-3 left-3 flex gap-2">
+            {course.price === null || (course.price && Number(course.price) === 0) ? (
+              <Badge className="bg-emerald-500 text-white font-semibold shadow-lg">
+                <Zap className="w-3 h-3 mr-1" />
+                مجاني
+              </Badge>
+            ) : (
+              <Badge className="bg-gradient-to-r from-primary to-secondary text-white font-semibold shadow-lg">
+                {formatCoursePrice(Number(course.price), course.currency)}
+              </Badge>
+            )}
           </div>
-          <div className="absolute bottom-3 left-3"><Badge variant="secondary">{course.category.name}</Badge></div>
-          {userActions.isEnrolled && <div className="absolute bottom-3 right-3"><Badge className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 ml-1" />مسجل</Badge></div>}
-        </div>
-        <CardContent className="p-4 flex flex-col flex-grow">
-          <div className="flex-grow space-y-3">
-            <InstantLink href={`/courses/${course.id}`} preloadOnHover><h3 className="font-bold text-base leading-arabic-tight line-clamp-2 hover:text-primary transition-colors font-display">{course.title}</h3></InstantLink>
-            <div className="flex items-center gap-2"><div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center"><Award className="w-4 h-4 text-primary" /></div><span className="text-sm font-medium text-muted-foreground">{course.professor.name}</span></div>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <div className="flex items-center gap-1"><Users className="w-4 h-4" /><span>{course.enrollmentCount || 0}</span></div>
-              <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{course.totalDuration} دقيقة</span></div>
-              <div className="flex items-center gap-1"><Star className="w-4 h-4 fill-yellow-400 text-yellow-400" /><span>{course.averageRating}</span></div>
-            </div>
-          </div>
-          {userActions.isEnrolled && (
-            <div className="space-y-1 pt-3"><div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">التقدم</span><span className="font-semibold text-primary">{progress}%</span></div><Progress value={progress} className="h-2" /></div>
+          
+          {/* Preview button */}
+          {showPreview && (
+            <motion.button 
+              className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => setShowQuickPreview(true)}
+            >
+              <div className="w-16 h-16 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
+                <Play className="w-6 h-6 text-primary ml-1" />
+              </div>
+            </motion.button>
           )}
+          
+          {/* Enrollment status */}
+          {userActions.isEnrolled && (
+            <div className="absolute bottom-3 right-3">
+              <Badge className="bg-green-500 text-white">
+                <CheckCircle className="w-3 h-3 mr-1" />
+                Enrolled
+              </Badge>
+            </div>
+          )}
+        </div>
+        
+        <CardContent className="p-5 flex flex-col flex-grow">
+          <div className="flex-grow space-y-4">
+            {/* Category and title */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <Badge variant="secondary" className="text-xs font-medium">
+                  {course.category.name}
+                </Badge>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  <span>{course.averageRating || "0.0"}</span>
+                </div>
+              </div>
+              <InstantLink href={`/courses/${course.id}`} preloadOnHover>
+                <h3 className="font-bold text-lg leading-tight line-clamp-2 hover:text-primary transition-colors font-display mb-2">
+                  {course.title}
+                </h3>
+              </InstantLink>
+            </div>
+            
+            {/* Professor info */}
+            <div className="flex items-center gap-3 pb-2">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full flex items-center justify-center">
+                <Award className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold">{course.professor.name}</p>
+                <p className="text-xs text-muted-foreground">Certified Instructor</p>
+              </div>
+            </div>
+            
+            {/* Course stats */}
+            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border">
+              <div className="flex flex-col items-center">
+                <Users className="w-4 h-4 text-muted-foreground mb-1" />
+                <span className="text-xs font-medium">{course.enrollmentCount || 0}</span>
+                <span className="text-xs text-muted-foreground">طالب</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Clock className="w-4 h-4 text-muted-foreground mb-1" />
+                <span className="text-xs font-medium">{course.totalDuration || 0}</span>
+                <span className="text-xs text-muted-foreground">دقيقة</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <BookOpen className="w-4 h-4 text-muted-foreground mb-1" />
+                <span className="text-xs font-medium">{course.lessonCount || 0}</span>
+                <span className="text-xs text-muted-foreground">درس</span>
+              </div>
+            </div>
+            
+            {/* Progress bar for enrolled users */}
+            {userActions.isEnrolled && (
+              <div className="space-y-2 pt-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Your Progress</span>
+                  <span className="font-semibold text-primary">{progress}%</span>
+                </div>
+                <Progress value={progress} className="h-2" />
+              </div>
+            )}
+          </div>
+          
+          {/* Action button */}
           <div className="pt-4 mt-auto">
             {userActions.isEnrolled ? (
-              <Button variant="primary" className="w-full" asChild><InstantLink href={`/courses/${course.id}`} preloadOnHover><Play className="w-4 h-4 ml-2" />متابعة التعلم</InstantLink></Button>
+              <Button className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]" asChild>
+                <InstantLink href={`/courses/${course.id}`} preloadOnHover>
+                  <Play className="w-4 h-4 ml-2" />
+                  Continue Learning
+                </InstantLink>
+              </Button>
             ) : (
-              <Button variant="primary" className="w-full" onClick={handleEnroll} disabled={isLoading}>
+              <Button className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02]" onClick={handleEnroll} disabled={isLoading}>
                 <BookOpen className="w-4 h-4 ml-2" />
-                {/* R.A.K.A.N: FIX #4 - Cast Decimal to number */}
-                {course.price ? `التسجيل - ${formatCoursePrice(Number(course.price), course.currency)}` : 'التسجيل المجاني'}
+                {course.price ? `Enroll - ${formatCoursePrice(Number(course.price), course.currency)}` : 'Free Enrollment'}
               </Button>
             )}
           </div>
