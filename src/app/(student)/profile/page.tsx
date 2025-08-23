@@ -14,9 +14,10 @@ import {
   MyCertificatesSkeleton,
   ExamHistorySkeleton
 } from '@/components/skeletons/ProfileSkeletons';
+import { StudentDashboard } from "@/components/student/StudentDashboard";
 import prisma from '@/lib/prisma';
 
-// This is now the main layout component for the profile page
+// This is now the main layout component for the profile/dashboard page
 export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user?.id) {
@@ -39,18 +40,24 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  return (
-    <div className="min-h-[calc(100vh-5rem)] bg-background p-4 sm:p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* ProfileHeader renders instantly with minimal data */}
-        <ProfileHeader 
-          name={user.name}
-          role={user.role}
-          enrollmentCount={user._count.enrollments}
-        />
+  // Create user object with correct property names for ProfileHeader
+  const userProfile = {
+    name: user.name,
+    role: user.role,
+    enrollmentCount: user._count.enrollments
+  };
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          <div className="lg:col-span-2 space-y-8">
+  return (
+    <div className="min-h-[calc(100vh-5rem)] bg-background p-4 sm:p-8 w-full">
+      <div className="max-w-8xl mx-auto w-full">
+        {/* ProfileHeader renders instantly with minimal data */}
+        <ProfileHeader {...userProfile} />
+
+        {/* Unified Dashboard Content */}
+        <StudentDashboard />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start mt-8 w-full">
+          <div className="lg:col-span-2 space-y-8 w-full">
             {/* Each data-heavy component is wrapped in Suspense */}
             <Suspense fallback={<QuickAccessCardSkeleton />}>
               <QuickAccessCard />
@@ -61,7 +68,7 @@ export default async function ProfilePage() {
             </Suspense>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-8 w-full">
             <Suspense fallback={<MyCertificatesSkeleton />}>
                <MyCertificates />
             </Suspense>

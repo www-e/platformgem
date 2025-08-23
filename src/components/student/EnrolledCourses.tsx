@@ -59,9 +59,15 @@ export function EnrolledCourses() {
     try {
       const response = await fetch('/api/student/enrolled-courses');
       const data = await response.json();
-      setCourses(data.courses);
+      // Ensure we have an array before setting the state
+      if (data && Array.isArray(data.courses)) {
+        setCourses(data.courses);
+      } else {
+        setCourses([]); // Default to empty array if data is invalid
+      }
     } catch (error) {
       console.error('Failed to fetch enrolled courses:', error);
+      setCourses([]); // Default to empty array on error
     } finally {
       setIsLoading(false);
     }
@@ -97,10 +103,10 @@ export function EnrolledCourses() {
     return 'Today';
   };
 
-  const filteredCourses = courses.filter(course => {
+  const filteredCourses = courses?.filter(course => {
     if (filter === 'all') return true;
     return course.status === filter;
-  });
+  }) || [];
 
   if (isLoading) {
     return (
@@ -132,28 +138,28 @@ export function EnrolledCourses() {
           size="sm"
           onClick={() => setFilter('all')}
         >
-          All Courses ({courses.length})
+          All Courses ({courses?.length || 0})
         </Button>
         <Button
           variant={filter === 'in_progress' ? 'primary' : 'ghost'}
           size="sm"
           onClick={() => setFilter('in_progress')}
         >
-          In Progress ({courses.filter(c => c.status === 'in_progress').length})
+          In Progress ({courses?.filter(c => c.status === 'in_progress').length || 0})
         </Button>
         <Button
           variant={filter === 'completed' ? 'primary' : 'ghost'}
           size="sm"
           onClick={() => setFilter('completed')}
         >
-          Completed ({courses.filter(c => c.status === 'completed').length})
+          Completed ({courses?.filter(c => c.status === 'completed').length || 0})
         </Button>
         <Button
           variant={filter === 'not_started' ? 'primary' : 'ghost'}
           size="sm"
           onClick={() => setFilter('not_started')}
         >
-          Not Started ({courses.filter(c => c.status === 'not_started').length})
+          Not Started ({courses?.filter(c => c.status === 'not_started').length || 0})
         </Button>
       </div>
 

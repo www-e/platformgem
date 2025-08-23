@@ -263,19 +263,19 @@ export default function TestimonialsSection() {
                 <div className="text-3xl font-bold text-primary-600 font-display">
                   500+
                 </div>
-                <div className="text-neutral-600 font-medium">ملتحق متخرج</div>
+                <div className="text-neutral-600 font-medium">Attenders</div>
               </div>
               <div className="space-y-2">
                 <div className="text-3xl font-bold text-secondary-600 font-display">
                   4.9/5
                 </div>
-                <div className="text-neutral-600 font-medium">متوسط التقييم</div>
+                <div className="text-neutral-600 font-medium">Average Score </div>
               </div>
               <div className="space-y-2">
                 <div className="text-3xl font-bold text-primary-600 font-display">
                   95%
                 </div>
-                <div className="text-neutral-600 font-medium">معدل النجاح</div>
+                <div className="text-neutral-600 font-medium">Success Rate</div>
               </div>
             </div>
           </div>

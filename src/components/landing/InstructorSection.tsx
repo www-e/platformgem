@@ -266,10 +266,10 @@ export default function InstructorSection() {
           <div className="glass-medium rounded-3xl p-12 shadow-elevation-4 border border-white/30 max-w-4xl mx-auto">
             <div className="mb-8">
               <h3 className="text-3xl font-bold text-neutral-800 font-display mb-4 leading-arabic-tight">
-                هل تريد تحقيق التفوق في الفيزياء؟
+               Wanna be the next success story?
               </h3>
               <p className="text-neutral-600 text-lg max-w-2xl mx-auto leading-arabic-relaxed">
-                انضم إلى مئات الملتحقين الذين حققوا نتائج استثنائية وحصلوا على أعلى الدرجات تحت إشرافي المباشر
+                Join hundreds of students who have achieved excellence with expert guidance and proven methods. Your success journey starts here!
               </p>
             </div>
 

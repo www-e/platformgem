@@ -276,9 +276,7 @@ export default function FAQSection() {
               </p>
               <Link href="/help">
                 <Button variant="outline" size="lg" className="border-2 border-neutral-200/50 hover:border-primary/30 hover:bg-primary/5 btn-hover-effect">
-                  <HelpCircle className="w-5 h-5 mr-2" />
                   Help Center
-                  <ArrowLeft className="w-5 h-5 mr-2" />
                 </Button>
               </Link>
             </div>

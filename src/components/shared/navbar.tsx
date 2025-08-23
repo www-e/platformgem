@@ -11,12 +11,10 @@ import {
   LogIn,
   Menu,
   X,
-  LayoutDashboard, // kept in imports not needed anymore, can be removed
   User,
   LogOut,
   UserPlus,
   BookOpen,
-  Award, // not used now
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";

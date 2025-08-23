@@ -115,15 +115,15 @@ export default function PlatformPreviewSection() {
              <div className="w-full h-full bg-neutral-100 rounded-md p-4 flex items-center justify-center gap-4 border border-neutral-200">
                 <div className="text-center">
                   <div className="w-16 h-16 rounded-full bg-blue-200 flex items-center justify-center text-blue-600 font-bold text-lg">A</div>
-                  <p className="text-sm mt-1">أحمد</p>
+                  <p className="text-sm mt-1">Ahmed</p>
                 </div>
                 <div className="text-center">
                   <div className="w-16 h-16 rounded-full bg-pink-200 flex items-center justify-center text-pink-600 font-bold text-lg">S</div>
-                  <p className="text-sm mt-1">سارة</p>
+                  <p className="text-sm mt-1">Sara</p>
                 </div>
                 <div className="text-center">
                   <div className="w-16 h-16 rounded-full bg-green-200 flex items-center justify-center text-green-600 font-bold text-lg">M</div>
-                  <p className="text-sm mt-1">محمد</p>
+                  <p className="text-sm mt-1">Omar</p>
                 </div>
              </div>
           </BentoCard>
