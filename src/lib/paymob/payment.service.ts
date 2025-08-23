@@ -140,9 +140,32 @@ function buildIframeUrl(paymentKey: string, courseId?: string): string {
 
   // Add return URL if it's configured and a course ID is provided
   if (courseId) {
-    // Use our new buildReturnUrl function
-    const returnUrl = buildReturnUrl('/payments/return', courseId);
+    // Use proper base URL for production deployment
+    // Priority: NEXTAUTH_URL > NEXT_PUBLIC_APP_URL > window.location.origin > localhost fallback
+    let baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL;
+    
+    if (!baseUrl && typeof window !== 'undefined') {
+      baseUrl = window.location.origin;
+    }
+    
+    if (!baseUrl) {
+      baseUrl = 'http://localhost:3000';
+    }
+    
+    // Ensure baseUrl doesn't end with slash
+    baseUrl = baseUrl.replace(/\/$/, '');
+    
+    const returnUrl = buildReturnUrl(baseUrl, courseId);
+    
+    console.log('🔗 PayMob iframe return URL configured:', {
+      baseUrl,
+      returnUrl,
+      courseId
+    });
+    
     iframeUrl += `&return_url=${encodeURIComponent(returnUrl)}`;
+  } else {
+    console.warn('⚠️ PayMob iframe created without return URL (no courseId provided)');
   }
 
   return iframeUrl;

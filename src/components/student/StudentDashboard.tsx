@@ -127,8 +127,10 @@ export function StudentDashboard() {
 
   const fetchStudentStats = useCallback(async () => {
     try {
-      // Ensure we don't fetch if already loading
-      if (!isLoading) setIsLoading(true);
+      // Prevent multiple simultaneous calls
+      if (isLoading) return;
+      
+      setIsLoading(true);
 
       const response = await fetch("/api/student/dashboard-stats");
       if (!response.ok) {
@@ -136,23 +138,28 @@ export function StudentDashboard() {
       }
       const data = await response.json();
 
-      if (stats && data.level > stats.level) {
-        setShowLevelUpAnimation(true);
-        setTimeout(() => setShowLevelUpAnimation(false), 3000);
-      }
-
-      if (stats && data.achievements.length > stats.achievements.length) {
-        const newAchievements = data.achievements.filter(
-          (achievement: Achievement) =>
-            !stats.achievements.some(
-              (existing) => existing.id === achievement.id
-            )
-        );
-        setNewAchievements(newAchievements);
-        setTimeout(() => setNewAchievements([]), 5000);
-      }
-
-      setStats(data);
+      // Check for level up animation (only if we have previous stats)
+      setStats(prevStats => {
+        if (prevStats && data.level > prevStats.level) {
+          setShowLevelUpAnimation(true);
+          setTimeout(() => setShowLevelUpAnimation(false), 3000);
+        }
+        
+        // Check for new achievements
+        if (prevStats && data.achievements.length > prevStats.achievements.length) {
+          const newAchievements = data.achievements.filter(
+            (achievement: Achievement) =>
+              !prevStats.achievements.some(
+                (existing) => existing.id === achievement.id
+              )
+          );
+          setNewAchievements(newAchievements);
+          setTimeout(() => setNewAchievements([]), 5000);
+        }
+        
+        return data;
+      });
+      
       setLastUpdate(new Date());
     } catch (error) {
       console.error("Failed to fetch student stats:", error);
@@ -160,13 +167,19 @@ export function StudentDashboard() {
     } finally {
       setIsLoading(false);
     }
-  }, [stats, isLoading]); // Add isLoading to dependencies
+  }, [isLoading]); // ✅ FIXED: Only depend on isLoading to prevent duplicate calls
 
+  // ✅ FIXED: Separate useEffect without fetchStudentStats dependency
   useEffect(() => {
     fetchStudentStats();
-    const interval = setInterval(fetchStudentStats, 120000);
+    
+    // Set up interval with a stable reference
+    const interval = setInterval(() => {
+      fetchStudentStats();
+    }, 120000); // 2 minutes
+    
     return () => clearInterval(interval);
-  }, [fetchStudentStats]); // Add fetchStudentStats to dependencies
+  }, []); // ✅ FIXED: Empty dependency array prevents infinite loop
 
   const formatWatchTime = (minutes: number) => {
     const hours = Math.floor(minutes / 60);

@@ -112,13 +112,25 @@ export function parsePayMobTimestamp(timestamp: string): Date {
  * Generate PayMob return URL with course context
  */
 export function buildReturnUrl(baseUrl: string, courseId: string, success: boolean = true): string {
-  // Use the new dedicated return page
-  const returnUrl = '/payments/return';
+  // Ensure baseUrl doesn't end with slash
+  const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+  
+  // Use full domain URL for PayMob return
+  const fullReturnUrl = `${cleanBaseUrl}/payments/return`;
   const params = new URLSearchParams({
     course: courseId,
     status: success ? 'success' : 'failed',
     timestamp: Date.now().toString(),
   });
 
-  return `${returnUrl}?${params.toString()}`;
+  const finalUrl = `${fullReturnUrl}?${params.toString()}`;
+  
+  console.log('📝 PayMob return URL built:', {
+    baseUrl: cleanBaseUrl,
+    courseId,
+    success,
+    finalUrl
+  });
+
+  return finalUrl;
 }

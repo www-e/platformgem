@@ -1,7 +1,7 @@
 // src/app/admin/courses/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -122,9 +122,9 @@ export default function CoursesPage() {
     fetchData();
     fetchCategories();
     fetchProfessors();
-  }, [currentPage, filters]);
+  }, [currentPage, filters, fetchData]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
       const queryParams = new URLSearchParams({
@@ -152,7 +152,7 @@ export default function CoursesPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentPage, filters]);
 
   const fetchCategories = async () => {
     try {

@@ -85,11 +85,11 @@ export async function middleware(request: NextRequest) {
 
     // Student access control - prevent access to admin/professor routes
     if (userRole === 'STUDENT' && (isAdminRoute || isProfessorRoute)) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
+      return NextResponse.redirect(new URL('/profile', request.url));
     }
 
     // Check if user is on the correct dashboard for their role
-    const isDashboardRoute = isAdminRoute || isProfessorRoute || pathname.startsWith('/dashboard');
+    const isDashboardRoute = isAdminRoute || isProfessorRoute || pathname.startsWith('/profile');
     if (isDashboardRoute && !isCorrectDashboardForRole(pathname, userRole)) {
       const correctUrl = getRoleBasedRedirectUrl(userRole);
       return NextResponse.redirect(new URL(correctUrl, request.url));

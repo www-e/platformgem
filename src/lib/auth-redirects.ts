@@ -11,7 +11,7 @@ export function getRoleBasedRedirectUrl(role: UserRole): string {
     case 'PROFESSOR':
       return '/professor';
     case 'STUDENT':
-      return '/dashboard'; // Updated to use /dashboard for students
+      return '/profile'; // Updated to use /profile for students consistently
     default:
       return '/profile'; // Fallback
   }
@@ -46,7 +46,7 @@ export function getRoleNavigation(role: UserRole) {
       ];
     case 'STUDENT':
       return [
-        { href: '/dashboard', label: 'لوحة التحكم' },
+        { href: '/profile', label: 'لوحة التحكم' },
         { href: '/courses', label: 'الدورات' },
         { href: '/certificates', label: 'الشهادات' },
       ];

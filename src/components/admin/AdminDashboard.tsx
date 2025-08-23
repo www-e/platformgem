@@ -131,7 +131,9 @@ export function AdminDashboard() {
     fetchDashboardStats();
 
     // Set up real-time updates every 30 seconds
-    const interval = setInterval(fetchDashboardStats, 30000);
+    const interval = setInterval(() => {
+      fetchDashboardStats();
+    }, 30000);
 
     // WebSocket connection for real-time notifications
     const ws = new WebSocket(process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001');
@@ -152,7 +154,7 @@ export function AdminDashboard() {
       clearInterval(interval);
       ws.close();
     };
-  }, [fetchDashboardStats]);
+  }, []); // ✅ FIXED: Empty dependencies to prevent infinite loop
 
   // Initialize widgets layout
   useEffect(() => {
