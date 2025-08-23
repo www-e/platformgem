@@ -108,8 +108,16 @@ export function AdminDashboard() {
   const fetchDashboardStats = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/dashboard-stats');
-      const data = await response.json();
-      setStats(data);
+      const responseData = await response.json();
+      
+      // Extract actual data from the API response wrapper
+      if (responseData.success && responseData.data) {
+        setStats(responseData.data);
+        console.log('Dashboard stats loaded successfully:', responseData.data);
+      } else {
+        console.error('Dashboard API returned error:', responseData.error || 'Unknown error');
+      }
+      
       setLastUpdate(new Date());
     } catch (error) {
       console.error('Failed to fetch dashboard stats:', error);
@@ -131,7 +139,9 @@ export function AdminDashboard() {
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'dashboard_update') {
-        setStats(prev => prev ? { ...prev, ...data.payload } : null);
+        // Handle WebSocket updates with the same data extraction pattern
+        const updateData = data.payload?.data || data.payload;
+        setStats(prev => prev ? { ...prev, ...updateData } : updateData);
         setLastUpdate(new Date());
       } else if (data.type === 'notification') {
         setNotifications(prev => [data.payload, ...prev.slice(0, 9)]);

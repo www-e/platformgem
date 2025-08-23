@@ -141,9 +141,11 @@ export default function CoursesPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // The API returns a paginated response structure
-        setCourses(data.data?.courses || data.courses || []);
-        setTotalCount(data.data?.totalCount || data.total || 0);
+        // The API returns: {success: true, data: {data: [...], pagination: {...}}}
+        // Extract courses from the correct nested location
+        const responseData = data.data || {};
+        setCourses(responseData.data || data.courses || []);
+        setTotalCount(responseData.pagination?.total || data.total || 0);
       }
     } catch (error) {
       console.error("Failed to fetch courses:", error);

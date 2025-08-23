@@ -40,8 +40,11 @@ export function useUserManagement() {
   const fetchUsers = async () => {
     try {
       const response = await fetch("/api/admin/users");
-      const data = await response.json();
-      setUsers(data.users);
+      const responseData = await response.json();
+      
+      // Handle both response patterns (wrapped and direct)
+      const usersData = responseData.success ? responseData.data?.users : responseData.users;
+      setUsers(usersData || []);
     } catch (error) {
       console.error("Failed to fetch users:", error);
     } finally {
@@ -52,8 +55,12 @@ export function useUserManagement() {
   const fetchUserStats = async () => {
     try {
       const response = await fetch("/api/admin/user-stats");
-      const data = await response.json();
-      setStats(data);
+      const responseData = await response.json();
+      
+      // Handle both response patterns (wrapped and direct)
+      const statsData = responseData.success ? responseData.data : responseData;
+      setStats(statsData);
+      console.log('User stats loaded:', statsData);
     } catch (error) {
       console.error("Failed to fetch user stats:", error);
     }

@@ -1,15 +1,19 @@
 // src/app/api/admin/course-stats/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
+import { 
+  createSuccessResponse,
+  authenticateAdmin,
+  isAuthError,
+  withErrorHandling
+} from '@/lib/api';
 
-export async function GET(_request: NextRequest) {
-  try {
-    const session = await auth();
-
-    if (!session?.user?.id || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
-    }
+export const GET = withErrorHandling(async (_request: NextRequest) => {
+  // Authenticate admin
+  const authResult = await authenticateAdmin();
+  if (isAuthError(authResult)) {
+    return authResult;
+  }
 
     const [
       totalCourses,
@@ -42,18 +46,14 @@ export async function GET(_request: NextRequest) {
           coursesWithPrices.length
         : 0;
 
-    const stats = {
-      totalCourses,
-      publishedCourses,
-      draftCourses,
-      totalEnrollments,
-      totalRevenue,
-      averagePrice,
-    };
+  const stats = {
+    totalCourses,
+    publishedCourses,
+    draftCourses,
+    totalEnrollments,
+    totalRevenue,
+    averagePrice,
+  };
 
-    return NextResponse.json(stats);
-  } catch (error) {
-    console.error("Course stats error:", error);
-    return NextResponse.json({ error: "خطأ في الخادم" }, { status: 500 });
-  }
-}
+  return createSuccessResponse(stats);
+});

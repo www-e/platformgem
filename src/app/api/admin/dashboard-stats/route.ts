@@ -70,12 +70,79 @@ export const GET = withErrorHandling(async (_request: NextRequest) => {
       user: enrollment.user.name
     }));
 
-    // Real-time metrics
+    // Real-time metrics calculations
+    const now = new Date();
+    const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const lastHour = new Date(now.getTime() - 60 * 60 * 1000);
+    const last30Minutes = new Date(now.getTime() - 30 * 60 * 1000);
+    
+    const [
+      pendingPaymentsCount,
+      recentSignupsCount,
+      recentViewingActivity,
+      recentEnrollments,
+      recentPaymentActivity
+    ] = await Promise.all([
+      // Pending Payments - simple count of payments with PENDING status
+      prisma.payment.count({
+        where: { status: 'PENDING' }
+      }),
+      
+      // Recent Signups - users created in last 24 hours
+      prisma.user.count({
+        where: {
+          createdAt: { gte: last24Hours },
+          role: 'STUDENT' // Focus on student signups
+        }
+      }),
+      
+      // Recent viewing activity for ongoing lessons calculation
+      prisma.viewingHistory.findMany({
+        where: {
+          updatedAt: { gte: last30Minutes },
+          completed: false // Only incomplete/ongoing lessons
+        },
+        select: {
+          userId: true,
+          lessonId: true,
+          updatedAt: true
+        }
+      }),
+      
+      // Recent enrollments for active users calculation
+      prisma.enrollment.findMany({
+        where: {
+          OR: [
+            { enrolledAt: { gte: lastHour } },
+            { lastAccessedAt: { gte: lastHour } }
+          ]
+        },
+        distinct: ['userId'],
+        select: { userId: true }
+      }),
+      
+      // Recent payment activity for active users calculation
+      prisma.payment.findMany({
+        where: {
+          createdAt: { gte: lastHour }
+        },
+        distinct: ['userId'],
+        select: { userId: true }
+      })
+    ]);
+    
+    // Calculate unique active users from various activities
+    const activeUserIds = new Set([
+      ...recentViewingActivity.map(vh => vh.userId),
+      ...recentEnrollments.map(e => e.userId),
+      ...recentPaymentActivity.map(p => p.userId)
+    ]);
+    
     const realTimeMetrics = {
-      activeUsers: 0, // Placeholder - would need WebSocket or real-time tracking
-      ongoingLessons: 0, // Placeholder
-      recentSignups: 0, // Placeholder
-      pendingPayments: 0 // Placeholder
+      activeUsers: activeUserIds.size,
+      ongoingLessons: recentViewingActivity.length,
+      recentSignups: recentSignupsCount,
+      pendingPayments: pendingPaymentsCount
     };
 
     // System health (simulated)

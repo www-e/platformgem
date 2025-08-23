@@ -53,11 +53,36 @@ export function useCourseManagement() {
   const fetchCourses = async () => {
     try {
       const response = await fetch('/api/admin/courses');
-      const data = await response.json();
-      // The API returns a paginated response with a data property
-      setCourses(data.data?.courses || data.courses || []);
+      const responseData = await response.json();
+      
+      console.log('Raw courses API response:', responseData);
+      
+      // Extract courses from API response - handle nested structure
+      let coursesData = [];
+      if (responseData.success && responseData.data) {
+        // New wrapped response with pagination: { success: true, data: { data: [...], pagination: {...} } }
+        if (responseData.data.data) {
+          coursesData = responseData.data.data;
+        } else if (responseData.data.courses) {
+          // Fallback for potential different structure
+          coursesData = responseData.data.courses;
+        } else if (Array.isArray(responseData.data)) {
+          // In case data is directly an array
+          coursesData = responseData.data;
+        }
+      } else if (responseData.courses) {
+        // Direct courses array (fallback)
+        coursesData = responseData.courses;
+      } else if (Array.isArray(responseData)) {
+        // Response is directly an array (fallback)
+        coursesData = responseData;
+      }
+      
+      console.log('Extracted courses data:', coursesData);
+      setCourses(coursesData || []);
     } catch (error) {
       console.error('Failed to fetch courses:', error);
+      setCourses([]);
     } finally {
       setIsLoading(false);
     }
@@ -66,11 +91,15 @@ export function useCourseManagement() {
   const fetchCourseStats = async () => {
     try {
       const response = await fetch('/api/admin/course-stats');
-      const data = await response.json();
+      const responseData = await response.json();
+      
       if (response.ok) {
-        setStats(data);
+        // Extract actual data from the API response wrapper
+        const statsData = responseData.success ? responseData.data : responseData;
+        console.log('Course stats fetched successfully:', statsData);
+        setStats(statsData);
       } else {
-        console.error('Failed to fetch course stats:', data.error);
+        console.error('Failed to fetch course stats:', responseData.error || responseData);
       }
     } catch (error) {
       console.error('Failed to fetch course stats:', error);
