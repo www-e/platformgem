@@ -118,12 +118,6 @@ export default function CoursesPage() {
       placeholder: "Select Date",
     },
   ];
-  useEffect(() => {
-    fetchData();
-    fetchCategories();
-    fetchProfessors();
-  }, [currentPage, filters, fetchData]);
-
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -153,6 +147,12 @@ export default function CoursesPage() {
       setIsLoading(false);
     }
   }, [currentPage, filters]);
+
+  useEffect(() => {
+    fetchData();
+    fetchCategories();
+    fetchProfessors();
+  }, [currentPage, filters, fetchData]);
 
   const fetchCategories = async () => {
     try {
