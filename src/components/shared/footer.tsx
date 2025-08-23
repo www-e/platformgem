@@ -154,7 +154,7 @@ export default function Footer() {
                 <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                   <span className="text-black font-bold text-lg font-display">E</span>
                 </div>
-                <span className="text-xl font-bold text-neutral-900 font-display">Sportology</span>
+                <span className="text-xl font-bold text-neutral-900 font-display">Sport School</span>
               </motion.div>
               
               <p className="text-neutral-600 text-sm leading-relaxed font-primary">
@@ -319,7 +319,7 @@ export default function Footer() {
               <Copyright className="h-4 w-4" />
               <span>
                 {new Date().getFullYear()} All rights reserved to 
-                <span className="font-semibold text-neutral-900 mx-1">Sportology</span>
+                <span className="font-semibold text-neutral-900 mx-1">Sport School</span>
               </span>
             </div>
 

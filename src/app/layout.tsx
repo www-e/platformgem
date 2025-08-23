@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sportology | Modern Learning",
+  title: "Sport School | Modern Learning",
   description: "A modern, advanced educational platform.",
 };
 

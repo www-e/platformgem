@@ -9,7 +9,7 @@ export function getRoleBasedRedirectUrl(role: UserRole): string {
     case 'ADMIN':
       return '/admin';
     case 'PROFESSOR':
-      return '/professor';
+      return '/professor'; // Reverted: Professor uses dedicated dashboard
     case 'STUDENT':
       return '/profile'; // Updated to use /profile for students consistently
     default:

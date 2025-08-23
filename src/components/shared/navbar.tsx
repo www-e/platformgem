@@ -128,7 +128,7 @@ export function Navbar() {
                     <div className="absolute inset-0 bg-primary-500/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                   <span className="text-neutral-900 text-xl font-bold font-display leading-tight">
-                    Sportology
+                    Sport School
                   </span>
                 </InstantLink>
               </motion.div>

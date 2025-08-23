@@ -11,12 +11,12 @@ import FinalCTASection from "@/components/landing/FinalCTASection";
 import FeaturedCoursesSection from "@/components/landing/FeaturedCoursesSection";
 
 export const metadata: Metadata = {
-  title: 'Sportology | Transform Your Learning Journey',
+  title: 'Sport School | Transform Your Learning Journey',
   description: 'Experience specialized academic training with Egypt\'s leading educational platform. Expert instruction, personalized follow-up, and proven results for student success.',
   keywords: 'educational platform, academic training, student success, expert instruction, personalized learning, Egypt education',
-  authors: [{ name: 'Sportology' }],
-  creator: 'Sportology',
-  publisher: 'Sportology',
+  authors: [{ name: 'Sport School' }],
+  creator: 'Sport School',
+  publisher: 'Sport School',
   formatDetection: {
     email: false,
     address: false,
@@ -31,16 +31,16 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'Sportology | Transform Your Learning Journey',
+    title: 'Sport School | Transform Your Learning Journey',
     description: 'Experience specialized academic training with Egypt\'s leading educational platform. Expert instruction, personalized follow-up, and proven results for student success.',
     url: '/',
-    siteName: 'Sportology',
+    siteName: 'Sport School',
     images: [
       {
         url: '/og-image.jpg', // Add your OG image
         width: 1200,
         height: 630,
-        alt: 'Sportology - Modern Educational Experience',
+        alt: 'Sport School - Modern Educational Experience',
       },
     ],
     locale: 'en_US',
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sportology | Transform Your Learning Journey',
+    title: 'Sport School | Transform Your Learning Journey',
     description: 'Experience specialized academic training with Egypt\'s leading educational platform.',
     images: ['/og-image.jpg'], // Add your Twitter image
     creator: '@yourplatform', // Replace with your Twitter handle
