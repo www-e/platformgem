@@ -138,7 +138,7 @@ export default function CourseCard({
                   </div>
                   <div>
                     <InstantLink href={`/courses/${course.id}`} preloadOnHover>
-                      <h3 className="font-bold text-lg leading-arabic-tight line-clamp-2 hover:text-primary transition-colors font-display">{course.title}</h3>
+                      <h3 className="font-bold text-lg leading-tight line-clamp-2 hover:text-primary transition-colors font-display">{course.title}</h3>
                     </InstantLink>
                     <p className="text-muted-foreground text-sm line-clamp-2 mt-1">{course.description}</p>
                   </div>

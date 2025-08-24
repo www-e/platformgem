@@ -56,14 +56,14 @@ const ExpertiseCard = ({
   items: string[];
 }) => (
   <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-neutral-200/50 card-hover-effect">
-    <h4 className="text-lg font-bold text-neutral-800 font-display mb-4 leading-arabic-tight">
+    <h4 className="text-lg font-bold text-neutral-800 font-display mb-4 leading-tight">
       {title}
     </h4>
     <div className="space-y-3">
       {items.map((item, index) => (
         <div key={index} className="flex items-start gap-3">
           <CheckCircle className="w-5 h-5 text-primary-500 mt-0.5 flex-shrink-0" />
-          <span className="text-neutral-700 text-sm leading-arabic-normal">
+          <span className="text-neutral-700 text-sm leading-normal">
             {item}
           </span>
         </div>
@@ -265,10 +265,10 @@ export default function InstructorSection() {
         <div className="mt-20 text-center">
           <div className="glass-medium rounded-3xl p-12 shadow-elevation-4 border border-white/30 max-w-4xl mx-auto">
             <div className="mb-8">
-              <h3 className="text-3xl font-bold text-neutral-800 font-display mb-4 leading-arabic-tight">
+              <h3 className="text-3xl font-bold text-neutral-800 font-display mb-4 leading-tight">
                Wanna be the next success story?
               </h3>
-              <p className="text-neutral-600 text-lg max-w-2xl mx-auto leading-arabic-relaxed">
+              <p className="text-neutral-600 text-lg max-w-2xl mx-auto leading-relaxed">
                 Join hundreds of students who have achieved excellence with expert guidance and proven methods. Your success journey starts here!
               </p>
             </div>

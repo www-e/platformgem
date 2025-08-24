@@ -50,7 +50,7 @@ const BentoFeatureCard = ({
             <Icon className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-neutral-800 font-display leading-arabic-tight mb-1">
+            <h3 className="text-xl font-bold text-neutral-800 font-display leading-tight mb-1">
               {title}
             </h3>
             {badgeText && (
@@ -66,7 +66,7 @@ const BentoFeatureCard = ({
       </div>
 
       {/* Description */}
-      <p className="text-neutral-600 leading-arabic-relaxed mb-4 text-base">
+      <p className="text-neutral-600 leading-relaxed mb-4 text-base">
         {description}
       </p>
 

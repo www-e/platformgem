@@ -87,7 +87,7 @@ const TestimonialCard = ({
       </div>
 
       {/* Quote text */}
-      <blockquote className="text-lg text-neutral-700 leading-arabic-relaxed mb-6 font-medium">
+      <blockquote className="text-lg text-neutral-700 leading-relaxed mb-6 font-medium">
         &ldquo;{testimonial.quote}&rdquo;
       </blockquote>
 
@@ -124,7 +124,7 @@ const TestimonialCard = ({
         </div>
         
         <div className="flex-1">
-          <h4 className="font-bold text-neutral-800 text-lg font-display leading-arabic-tight">
+          <h4 className="font-bold text-neutral-800 text-lg font-display leading-tight">
             {testimonial.name}
           </h4>
           <p className="text-sm text-neutral-600 mb-1">

@@ -188,7 +188,7 @@ export default function Footer() {
                   <li key={link.name}>
                     <InstantLink
                       href={link.href}
-                      className="text-neutral-600 hover:text-primary-600 transition-colors text-sm font-primary leading-arabic-normal"
+                      className="text-neutral-600 hover:text-primary-600 transition-colors text-sm font-primary leading-normal"
                       preloadOnHover
                     >
                       {link.name}
@@ -208,7 +208,7 @@ export default function Footer() {
                   <li key={link.name}>
                     <InstantLink
                       href={link.href}
-                      className="text-neutral-600 hover:text-primary-600 transition-colors text-sm font-primary leading-arabic-normal"
+                      className="text-neutral-600 hover:text-primary-600 transition-colors text-sm font-primary leading-normal"
                       preloadOnHover
                     >
                       {link.name}

@@ -99,7 +99,7 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
           <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-6 text-black">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-2xl font-bold font-display leading-arabic-tight">
+                <h2 className="text-2xl font-bold font-display leading-tight">
                   {course.title}
                 </h2>
                 <p className="text-black/80 font-primary">
@@ -241,7 +241,7 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className="font-medium text-sm leading-arabic-tight truncate font-primary">
+                              <h4 className="font-medium text-sm leading-tight truncate font-primary">
                                 {lesson.title}
                               </h4>
                               <div className="flex items-center gap-2 text-xs text-neutral-500 mt-1">
@@ -281,7 +281,7 @@ export function CourseContent({ course, lessons }: CourseContentProps) {
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-4">
                         <div>
-                          <h2 className="text-xl font-bold font-display leading-arabic-tight">
+                          <h2 className="text-xl font-bold font-display leading-tight">
                             {selectedLesson.title}
                           </h2>
                           <p className="text-neutral-600 font-primary mt-1">

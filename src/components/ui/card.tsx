@@ -121,7 +121,7 @@ const CardTitle = React.forwardRef<
     ref={ref}
     data-slot="card-title"
     className={cn(
-      "text-xl font-semibold leading-arabic-tight tracking-tight text-neutral-900 dark:text-black font-display", 
+      "text-xl font-semibold leading-tight tracking-tight text-neutral-900 dark:text-black font-display", 
       className
     )}
     {...props}
@@ -137,7 +137,7 @@ const CardDescription = React.forwardRef<
     ref={ref}
     data-slot="card-description"
     className={cn(
-      "text-sm text-neutral-600 dark:text-neutral-400 leading-arabic-relaxed font-primary", 
+      "text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed font-primary", 
       className
     )}
     {...props}
@@ -153,7 +153,7 @@ const CardContent = React.forwardRef<
     ref={ref}
     data-slot="card-content"
     className={cn(
-      "p-6 pt-0 font-primary leading-arabic-normal", 
+      "p-6 pt-0 font-primary leading-normal", 
       className
     )} 
     {...props} 

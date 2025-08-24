@@ -9,6 +9,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Sport School | Modern Learning",
   description: "A modern, advanced educational platform.",
+  other: {
+    "google": "notranslate",
+  },
 };
 
 export default function RootLayout({
@@ -18,7 +21,11 @@ export default function RootLayout({
 }>) {
   return (
     <SessionProvider>
-      <html lang="en" className="h-full">
+      <html lang="en" dir="ltr" className="h-full">
+        <head>
+          <meta name="google" content="notranslate" />
+          <meta httpEquiv="Content-Language" content="en" />
+        </head>
         <body className="font-primary bg-background antialiased flex flex-col h-full">
           <Navbar />
           <main className="flex-grow">

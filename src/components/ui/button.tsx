@@ -168,7 +168,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               )}
 
               {children && (
-                <span className="leading-arabic-normal">{children}</span>
+                <span className="leading-normal">{children}</span>
               )}
 
               {icon && iconPosition === "right" && (

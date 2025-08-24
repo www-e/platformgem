@@ -97,7 +97,7 @@ export default function FeaturedCoursesSection({ className = '' }: FeaturedCours
       <CardContent className="p-6 space-y-4 relative z-10">
         {/* Course title and instructor */}
         <div className="space-y-2">
-          <h3 className="font-bold text-xl leading-arabic-tight line-clamp-2 group-hover:text-primary-700 transition-colors font-display">
+          <h3 className="font-bold text-xl leading-tight line-clamp-2 group-hover:text-primary-700 transition-colors font-display">
             {course.title}
           </h3>
           <div className="flex items-center gap-2">

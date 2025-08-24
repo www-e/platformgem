@@ -223,7 +223,7 @@ export function CourseProgress({
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold mb-2 font-display leading-arabic-tight">{courseName}</h2>
+                  <h2 className="text-2xl font-bold mb-2 font-display leading-tight">{courseName}</h2>
                   <p className="text-black/90 font-primary">المستوى {level} • {currentXP.toLocaleString()} XP</p>
                 </div>
                 
@@ -313,7 +313,7 @@ export function CourseProgress({
                             <ms.icon className="w-5 h-5" />
                           </div>
                           <div className="flex-1">
-                            <h4 className="font-semibold font-display leading-arabic-tight">{ms.title}</h4>
+                            <h4 className="font-semibold font-display leading-tight">{ms.title}</h4>
                             <p className="text-sm text-neutral-600 font-primary">{ms.description}</p>
                           </div>
                           {ms.progress >= ms.target && <CheckCircle className="w-5 h-5 text-success" />}
@@ -388,7 +388,7 @@ export function CourseProgress({
                             <ach.icon className={cn("w-6 h-6", ach.earned ? "text-current" : "text-neutral-400")} />
                           </div>
                           <div className="flex-1">
-                            <h4 className="font-semibold font-display leading-arabic-tight">{ach.title}</h4>
+                            <h4 className="font-semibold font-display leading-tight">{ach.title}</h4>
                             <p className="text-sm opacity-80 font-primary">{ach.description}</p>
                           </div>
                         </div>
@@ -451,7 +451,7 @@ export function CourseProgress({
                               {goal.completed ? <CheckCircle className="w-5 h-5" /> : <Target className="w-5 h-5 text-neutral-600" />}
                             </div>
                             <div>
-                              <h4 className="font-semibold font-display leading-arabic-tight">{goal.title}</h4>
+                              <h4 className="font-semibold font-display leading-tight">{goal.title}</h4>
                               <p className="text-sm text-neutral-600 font-primary">{goal.description}</p>
                             </div>
                           </div>
@@ -517,7 +517,7 @@ export function CourseProgress({
                       
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold font-display leading-arabic-tight">{node.title}</h4>
+                          <h4 className="font-semibold font-display leading-tight">{node.title}</h4>
                           <div className="flex items-center gap-2">
                             <Badge variant="secondary" className="text-xs">
                               {node.type === 'lesson' ? 'درس' : node.type === 'quiz' ? 'اختبار' : node.type === 'project' ? 'مشروع' : 'معلم'}

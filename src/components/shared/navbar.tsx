@@ -88,7 +88,7 @@ export function Navbar() {
               isMobile ? "h-5 w-5" : "h-4 w-4"
             )}
           />
-          <span className="leading-arabic-tight">{label}</span>
+          <span className="leading-tight">{label}</span>
         </InstantLink>
       </motion.div>
     );

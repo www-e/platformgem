@@ -212,7 +212,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "text-xl font-semibold leading-arabic-tight tracking-tight text-neutral-900 dark:text-black font-display",
+      "text-xl font-semibold leading-tight tracking-tight text-neutral-900 dark:text-black font-display",
       className
     )}
     {...props}
@@ -227,7 +227,7 @@ const DialogDescription = React.forwardRef<
   <DialogPrimitive.Description
     ref={ref}
     className={cn(
-      "text-sm text-neutral-600 dark:text-neutral-400 leading-arabic-relaxed font-primary",
+      "text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed font-primary",
       className
     )}
     {...props}
@@ -243,7 +243,7 @@ const DialogBody = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex-1 overflow-y-auto font-primary leading-arabic-normal",
+      "flex-1 overflow-y-auto font-primary leading-normal",
       className
     )}
     {...props}

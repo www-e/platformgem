@@ -245,7 +245,7 @@ export function StudyScheduler({
           <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-black">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold mb-2 font-display leading-arabic-tight">
+                <h2 className="text-2xl font-bold mb-2 font-display leading-tight">
                   مخطط الدراسة الذكي
                 </h2>
                 <p className="text-black/90 font-primary">
@@ -581,7 +581,7 @@ export function StudyScheduler({
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-2">
-                              <h4 className="font-semibold font-display leading-arabic-tight">
+                              <h4 className="font-semibold font-display leading-tight">
                                 {reminder.title}
                               </h4>
                               <div className="flex items-center gap-2">
@@ -600,7 +600,7 @@ export function StudyScheduler({
                                 )}
                               </div>
                             </div>
-                            <p className="text-sm text-neutral-700 leading-arabic-relaxed font-primary mb-3">
+                            <p className="text-sm text-neutral-700 leading-relaxed font-primary mb-3">
                               {reminder.message}
                             </p>
                             <div className="flex items-center gap-2">

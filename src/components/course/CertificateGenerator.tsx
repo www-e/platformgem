@@ -203,7 +203,7 @@ export function CertificateGenerator({
             <div className="relative z-10">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold mb-2 font-display leading-arabic-tight">
+                  <h2 className="text-3xl font-bold mb-2 font-display leading-tight">
                     🎉 تهانينا!
                   </h2>
                   <p className="text-black/90 text-lg font-primary">

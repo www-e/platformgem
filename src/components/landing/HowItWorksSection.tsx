@@ -125,14 +125,14 @@ const StepCard = ({
             )}>
               Step {step.number}
             </Badge>
-            <h3 className="text-2xl font-bold font-display leading-arabic-tight text-neutral-800">
+            <h3 className="text-2xl font-bold font-display leading-tight text-neutral-800">
               {step.title}
             </h3>
           </div>
         </div>
 
         {/* Description */}
-        <p className="text-neutral-600 leading-arabic-relaxed mb-6 text-lg">
+        <p className="text-neutral-600 leading-relaxed mb-6 text-lg">
           {step.description}
         </p>
 
@@ -150,7 +150,7 @@ const StepCard = ({
                 "w-5 h-5 mt-0.5 transition-colors",
                 isActive ? "text-primary-500" : "text-neutral-400 group-hover:text-primary-500"
               )} />
-              <span className="text-neutral-700 text-sm leading-arabic-normal">
+              <span className="text-neutral-700 text-sm leading-normal">
                 {detail}
               </span>
             </div>

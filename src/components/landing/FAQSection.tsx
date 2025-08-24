@@ -184,7 +184,7 @@ export default function FAQSection() {
                 >
                   <AccordionTrigger className={cn(
                     "px-8 py-6 text-right hover:no-underline group transition-all duration-300",
-                    "text-lg font-bold text-neutral-800 font-display leading-arabic-tight",
+                    "text-lg font-bold text-neutral-800 font-display leading-tight",
                     isOpen && "bg-primary/5"
                   )}>
                     <div className="flex items-start justify-between w-full">
@@ -208,7 +208,7 @@ export default function FAQSection() {
                   
                   <AccordionContent className="px-8 pb-8 pt-4">
                     <div className={cn(
-                      "text-neutral-700 leading-arabic-relaxed text-lg",
+                      "text-neutral-700 leading-relaxed text-lg",
                       "bg-neutral-50/50 rounded-xl p-6 border border-neutral-200/30"
                     )}>
                       {faq.answer}

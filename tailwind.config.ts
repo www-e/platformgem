@@ -149,13 +149,7 @@ const config: Config = {
         "3xl": "calc(var(--radius) + 12px)",
       },
       
-      /* Arabic Line Heights */
-      lineHeight: {
-        'arabic-tight': 'var(--leading-arabic-tight)',
-        'arabic-normal': 'var(--leading-arabic-normal)',
-        'arabic-relaxed': 'var(--leading-arabic-relaxed)',
-      },
-      /* Basic Animations */
+      /* Enhanced Border Radius */
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

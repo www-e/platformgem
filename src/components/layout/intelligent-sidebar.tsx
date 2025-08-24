@@ -249,7 +249,7 @@ export const IntelligentSidebar: React.FC<SidebarProps> = ({
             <>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium leading-arabic-tight truncate">
+                  <span className="text-sm font-medium leading-tight truncate">
                     {item.name}
                   </span>
                   {item.isNew && (
@@ -259,7 +259,7 @@ export const IntelligentSidebar: React.FC<SidebarProps> = ({
                   )}
                 </div>
                 {item.description && (
-                  <p className="text-xs text-neutral-500 leading-arabic-normal truncate">
+                  <p className="text-xs text-neutral-500 leading-normal truncate">
                     {item.description}
                   </p>
                 )}
@@ -306,10 +306,10 @@ export const IntelligentSidebar: React.FC<SidebarProps> = ({
         <div className="flex items-start gap-2">
           <Icon className="h-4 w-4 text-primary-600 flex-shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-medium text-neutral-900 font-display leading-arabic-tight">
+            <h4 className="text-sm font-medium text-neutral-900 font-display leading-tight">
               {insight.title}
             </h4>
-            <p className="text-xs text-neutral-600 mt-1 font-primary leading-arabic-normal">
+            <p className="text-xs text-neutral-600 mt-1 font-primary leading-normal">
               {insight.description}
             </p>
             {insight.action && (
