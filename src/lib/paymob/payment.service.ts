@@ -36,8 +36,7 @@ export interface PaymentInitiationResult {
 export async function initiatePayment(
   orderData: PayMobOrderRequest,
   courseId?: string,
-  paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card',
-  userId?: string
+  paymentMethod: 'credit-card' | 'e-wallet' = 'credit-card'
 ): Promise<PaymentInitiationResult> {
   try {
     console.log(`Initiating ${paymentMethod} payment for course ${courseId}`);

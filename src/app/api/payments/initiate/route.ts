@@ -240,8 +240,7 @@ export async function POST(request: NextRequest) {
     const paymentResult = await initiatePayment(
       orderData,
       courseId,
-      paymentMethod,
-      session.user.id
+      paymentMethod
     );
 
     // Update payment record with PayMob data
