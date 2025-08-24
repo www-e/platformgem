@@ -110,8 +110,9 @@ export function parsePayMobTimestamp(timestamp: string): Date {
 
 /**
  * Generate PayMob return URL with course context
+ * Updated to ensure course context is preserved for all payment methods
  */
-export function buildReturnUrl(baseUrl: string, courseId: string, success: boolean = true): string {
+export function buildReturnUrl(baseUrl: string, courseId: string, success?: boolean): string {
   // Ensure baseUrl doesn't end with slash
   const cleanBaseUrl = baseUrl.replace(/\/$/, '');
   
@@ -119,9 +120,13 @@ export function buildReturnUrl(baseUrl: string, courseId: string, success: boole
   const fullReturnUrl = `${cleanBaseUrl}/payments/return`;
   const params = new URLSearchParams({
     course: courseId,
-    status: success ? 'success' : 'failed',
     timestamp: Date.now().toString(),
   });
+
+  // Only add status if explicitly provided
+  if (success !== undefined) {
+    params.set('status', success ? 'success' : 'failed');
+  }
 
   const finalUrl = `${fullReturnUrl}?${params.toString()}`;
   
@@ -133,4 +138,12 @@ export function buildReturnUrl(baseUrl: string, courseId: string, success: boole
   });
 
   return finalUrl;
+}
+
+/**
+ * Build return URL for iframe configuration
+ * Ensures course context is embedded in the URL for payment provider callbacks
+ */
+export function buildIframeReturnUrl(baseUrl: string, courseId: string): string {
+  return buildReturnUrl(baseUrl, courseId);
 }

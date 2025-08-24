@@ -7,7 +7,7 @@ import {
   initiateMobileWalletPayment, 
   getMobileWalletProvider 
 } from './mobile-wallet.service';
-import { buildReturnUrl } from './utils';
+import { buildIframeReturnUrl } from './utils';
 
 /**
  * The response structure for a successful payment initiation.
@@ -132,13 +132,13 @@ export async function initiatePayment(
 /**
  * Constructs the PayMob iframe URL for credit card payments.
  * @param paymentKey - The payment token from PayMob.
- * @param courseId - The optional course ID to embed in the return URL.
+ * @param courseId - The course ID to embed in the return URL.
  * @returns The fully constructed iframe URL.
  */
 function buildIframeUrl(paymentKey: string, courseId?: string): string {
   let iframeUrl = `https://accept.paymob.com/api/acceptance/iframes/${paymobConfig.iframeId}?payment_token=${paymentKey}`;
 
-  // Add return URL if it's configured and a course ID is provided
+  // Always add return URL with course context for proper payment completion handling
   if (courseId) {
     // Use proper base URL for production deployment
     // Priority: NEXTAUTH_URL > NEXT_PUBLIC_APP_URL > window.location.origin > localhost fallback
@@ -155,7 +155,7 @@ function buildIframeUrl(paymentKey: string, courseId?: string): string {
     // Ensure baseUrl doesn't end with slash
     baseUrl = baseUrl.replace(/\/$/, '');
     
-    const returnUrl = buildReturnUrl(baseUrl, courseId);
+    const returnUrl = buildIframeReturnUrl(baseUrl, courseId);
     
     console.log('🔗 PayMob iframe return URL configured:', {
       baseUrl,
@@ -166,6 +166,12 @@ function buildIframeUrl(paymentKey: string, courseId?: string): string {
     iframeUrl += `&return_url=${encodeURIComponent(returnUrl)}`;
   } else {
     console.warn('⚠️ PayMob iframe created without return URL (no courseId provided)');
+    
+    // Fallback: Add a generic return URL without course context
+    let baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    baseUrl = baseUrl.replace(/\/$/, '');
+    const genericReturnUrl = `${baseUrl}/payments/return`;
+    iframeUrl += `&return_url=${encodeURIComponent(genericReturnUrl)}`;
   }
 
   return iframeUrl;

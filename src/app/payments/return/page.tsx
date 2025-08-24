@@ -25,32 +25,92 @@ function PaymentReturnContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'failed' | 'pending'>('loading');
   const [paymentData, setPaymentData] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [courseId, setCourseId] = useState<string | null>(null);
 
-  const courseId = searchParams.get('course');
-  const paymentStatus = searchParams.get('status');
-  const transactionId = searchParams.get('transactionId');
+  // Extract PayMob parameters
+  const paymobSuccess = searchParams.get('success') === 'true';
+  const paymobTransactionId = searchParams.get('id');
+  const paymobOrderId = searchParams.get('order');
+  const merchantOrderId = searchParams.get('merchant_order_id');
+  const amountCents = searchParams.get('amount_cents');
+  const currency = searchParams.get('currency');
+  const errorOccurred = searchParams.get('error_occured') === 'true';
+  
+  // Legacy parameters (for backward compatibility)
+  const legacyCourseId = searchParams.get('course');
+  const legacyStatus = searchParams.get('status');
+  const legacyTransactionId = searchParams.get('transactionId');
 
   useEffect(() => {
     const handlePaymentReturn = async () => {
       try {
-        // Validate required parameters
-        if (!courseId) {
-          setStatus('failed');
-          setError('معلومات الدورة غير متوفرة');
+        console.log('🔍 Payment return processing:', {
+          paymobSuccess,
+          paymobTransactionId,
+          paymobOrderId,
+          merchantOrderId,
+          legacyCourseId,
+          legacyStatus,
+          errorOccurred
+        });
+
+        // Extract course ID from merchant_order_id if available
+        let extractedCourseId = legacyCourseId;
+        if (!extractedCourseId && merchantOrderId) {
+          // merchant_order_id format: course_{courseId}_{userId}_{timestamp}_{random}
+          const parts = merchantOrderId.split('_');
+          if (parts.length >= 2 && parts[0] === 'course') {
+            extractedCourseId = parts[1];
+            console.log('📋 Course ID extracted from merchant_order_id:', extractedCourseId);
+          }
+        }
+
+        setCourseId(extractedCourseId);
+
+        // Handle direct PayMob parameters (highest priority)
+        if (paymobTransactionId && paymobSuccess !== undefined) {
+          if (paymobSuccess && !errorOccurred) {
+            console.log('✅ PayMob indicates successful payment');
+            await verifyPaymentWithMultipleMethods({
+              transactionId: paymobTransactionId,
+              orderId: paymobOrderId || undefined,
+              merchantOrderId: merchantOrderId || undefined,
+              courseId: extractedCourseId
+            });
+          } else {
+            console.log('❌ PayMob indicates failed payment');
+            setStatus('failed');
+            setError('فشلت عملية الدفع في بوابة الدفع');
+            toast.error('فشلت عملية الدفع.');
+          }
           return;
         }
 
-        // Set status based on URL parameter
-        if (paymentStatus === 'success') {
+        // Handle legacy parameters
+        if (legacyStatus === 'success') {
           setStatus('success');
-          toast.success('تم الدفع بنجاح! تم تسجيلك في الدورة.');
-        } else if (paymentStatus === 'failed') {
+          toast.success('Payment successful! You have been enrolled in the course.');
+          return;
+        } else if (legacyStatus === 'failed') {
           setStatus('failed');
+          setError('فشلت عملية الدفع');
           toast.error('فشلت عملية الدفع.');
-        } else {
-          // If no status parameter, check payment status
-          await checkPaymentStatus();
+          return;
         }
+
+        // Fallback: Try to check payment status if we have any identifier
+        if (extractedCourseId || paymobTransactionId || legacyTransactionId) {
+          await checkPaymentStatusWithFallback({
+            courseId: extractedCourseId,
+            transactionId: paymobTransactionId || legacyTransactionId,
+            orderId: paymobOrderId,
+            merchantOrderId
+          });
+        } else {
+          setStatus('failed');
+          setError('لا توجد معلومات كافية للتحقق من حالة الدفع');
+        }
+
       } catch (err) {
         console.error('Payment return error:', err);
         setStatus('failed');
@@ -59,54 +119,207 @@ function PaymentReturnContent() {
     };
 
     handlePaymentReturn();
-  }, [courseId, paymentStatus]);
+  }, [paymobSuccess, paymobTransactionId, paymobOrderId, merchantOrderId, legacyCourseId, legacyStatus]);
 
-  const checkPaymentStatus = async () => {
+  const verifyPaymentWithMultipleMethods = async (params: {
+    transactionId: string;
+    orderId?: string;
+    merchantOrderId?: string;
+    courseId?: string | null;
+  }) => {
+    console.log('🔍 Verifying payment with multiple methods:', params);
+    
     try {
-      if (!courseId) {
-        setStatus('failed');
-        setError('معلومات الدورة غير متوفرة');
-        return;
-      }
-
-      // Check payment status via API
-      const response = await fetch(`/api/payments/check-status?courseId=${courseId}`);
-      const result = await response.json();
-
-      if (result.success) {
-        const { status: paymentStatus, paymentId } = result.data;
-        
-        if (paymentStatus === 'COMPLETED') {
-          setStatus('success');
-          setPaymentData(result.data);
-          toast.success('تم الدفع بنجاح! تم تسجيلك في الدورة.');
-        } else if (paymentStatus === 'FAILED') {
-          setStatus('failed');
-          setError(result.data.failureReason || 'فشلت عملية الدفع');
-        } else {
-          // Still pending, check again in a few seconds
-          setTimeout(checkPaymentStatus, 3000);
+      // Method 1: Check by course ID (legacy method)
+      if (params.courseId) {
+        const response = await fetch(`/api/payments/check-status?courseId=${params.courseId}`);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data.status === 'COMPLETED') {
+            console.log('✅ Payment verified via course ID');
+            setStatus('success');
+            setPaymentData(result.data);
+            toast.success('تم الدفع بنجاح! تم تسجيلك في الدورة.');
+            return;
+          }
         }
-      } else {
-        setStatus('failed');
-        setError(result.error?.message || 'فشل في التحقق من حالة الدفع');
       }
+
+      // Method 2: Check by merchant order ID
+      if (params.merchantOrderId) {
+        const response = await fetch(`/api/payments/check-status?merchantOrderId=${params.merchantOrderId}`);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data.status === 'COMPLETED') {
+            console.log('✅ Payment verified via merchant order ID');
+            setStatus('success');
+            setPaymentData(result.data);
+            setCourseId(result.data.courseId);
+            toast.success('تم الدفع بنجاح! تم تسجيلك في الدورة.');
+            return;
+          }
+        }
+      }
+
+      // Method 3: Check by transaction ID
+      if (params.transactionId) {
+        const response = await fetch(`/api/payments/check-status?transactionId=${params.transactionId}`);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data.status === 'COMPLETED') {
+            console.log('✅ Payment verified via transaction ID');
+            setStatus('success');
+            setPaymentData(result.data);
+            setCourseId(result.data.courseId);
+            toast.success('تم الدفع بنجاح! تم تسجيلك في الدورة.');
+            return;
+          }
+        }
+      }
+
+      // If we reach here, payment verification failed
+      console.log('❌ Payment verification failed with all methods');
+      setStatus('pending');
+      
+      // Start polling for delayed webhook processing
+      setTimeout(() => {
+        pollPaymentStatus(params, 0);
+      }, 2000);
+
     } catch (err) {
-      console.error('Failed to check payment status:', err);
+      console.error('❌ Payment verification error:', err);
       setStatus('failed');
       setError('فشل في التحقق من حالة الدفع');
     }
   };
 
+  const pollPaymentStatus = async (params: {
+    transactionId: string;
+    orderId?: string;
+    merchantOrderId?: string;
+    courseId?: string | null;
+  }, attempt: number) => {
+    const maxAttempts = 10; // Poll for up to 30 seconds (3s intervals)
+    
+    if (attempt >= maxAttempts) {
+      console.log('⏰ Polling timeout reached');
+      setStatus('failed');
+      setError('انتهت مهلة الانتظار. يرجى التحقق من حالة الدفع لاحقاً');
+      return;
+    }
+
+    console.log(`🔁 Polling attempt ${attempt + 1}/${maxAttempts}`);
+    
+    try {
+      // Try all verification methods again
+      const verificationMethods = [];
+      
+      if (params.courseId) {
+        verificationMethods.push(fetch(`/api/payments/check-status?courseId=${params.courseId}`));
+      }
+      if (params.merchantOrderId) {
+        verificationMethods.push(fetch(`/api/payments/check-status?merchantOrderId=${params.merchantOrderId}`));
+      }
+      if (params.transactionId) {
+        verificationMethods.push(fetch(`/api/payments/check-status?transactionId=${params.transactionId}`));
+      }
+
+      const responses = await Promise.allSettled(verificationMethods);
+      
+      for (const response of responses) {
+        if (response.status === 'fulfilled' && response.value.ok) {
+          const result = await response.value.json();
+          if (result.success && result.data.status === 'COMPLETED') {
+            console.log('✅ Payment verified via polling');
+            setStatus('success');
+            setPaymentData(result.data);
+            if (result.data.courseId) {
+              setCourseId(result.data.courseId);
+            }
+            toast.success('تم الدفع بنجاح! تم تسجيلك في الدورة.');
+            return;
+          }
+        }
+      }
+
+      // Continue polling
+      setTimeout(() => {
+        pollPaymentStatus(params, attempt + 1);
+      }, 3000);
+
+    } catch (err) {
+      console.error(`❌ Polling attempt ${attempt + 1} failed:`, err);
+      // Continue polling even on errors
+      setTimeout(() => {
+        pollPaymentStatus(params, attempt + 1);
+      }, 3000);
+    }
+  };
+
+  const checkPaymentStatusWithFallback = async (params: {
+    courseId?: string | null;
+    transactionId?: string | null;
+    orderId?: string | null;
+    merchantOrderId?: string | null;
+  }) => {
+    console.log('🔍 Fallback payment status check:', params);
+    
+    // Try course ID first (most reliable)
+    if (params.courseId) {
+      try {
+        const response = await fetch(`/api/payments/check-status?courseId=${params.courseId}`);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            const { status: paymentStatus } = result.data;
+            
+            if (paymentStatus === 'COMPLETED') {
+              setStatus('success');
+              setPaymentData(result.data);
+              toast.success('تم الدفع بنجاح! تم تسجيلك في الدورة.');
+              return;
+            } else if (paymentStatus === 'FAILED') {
+              setStatus('failed');
+              setError(result.data.failureReason || 'فشلت عملية الدفع');
+              return;
+            } else {
+              // Still pending, start polling
+              setStatus('pending');
+              setTimeout(() => pollPaymentStatus({
+                transactionId: params.transactionId || '',
+                orderId: params.orderId || undefined,
+                merchantOrderId: params.merchantOrderId || undefined,
+                courseId: params.courseId
+              }, 0), 2000);
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Course ID check failed:', err);
+      }
+    }
+
+    // Fallback to other methods
+    setStatus('failed');
+    setError('لم يتم العثور على بيانات الدفع');
+  };
+
   const handleGoToCourse = () => {
     if (courseId) {
       router.push(`/courses/${courseId}`);
+    } else {
+      // Fallback: go to courses catalog
+      router.push('/courses');
     }
   };
 
   const handleRetryPayment = () => {
     if (courseId) {
       router.push(`/courses/${courseId}/payment`);
+    } else {
+      // Fallback: go to courses catalog
+      router.push('/courses');
     }
   };
 
@@ -242,9 +455,9 @@ function PaymentReturnContent() {
           </CardContent>
         </Card>
 
-        {transactionId && (
+        {(paymobTransactionId || legacyTransactionId) && (
           <div className="mt-6 text-center text-sm text-gray-500">
-            رقم المعاملة: {transactionId}
+            رقم المعاملة: {paymobTransactionId || legacyTransactionId}
           </div>
         )}
       </div>

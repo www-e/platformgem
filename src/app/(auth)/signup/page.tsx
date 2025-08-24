@@ -81,7 +81,7 @@ export default function SignupPage() {
                     <Input id="studentId" name="studentId" placeholder="123456" className="h-11 bg-input/80 border-border/60" dir="ltr" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="parentPhone">رقم هاتف ولي الأمر (اختياري)</Label>
+                    <Label htmlFor="parentPhone">رقم هاتف أخر  (اختياري)</Label>
                     <Input id="parentPhone" name="parentPhone" type="tel" placeholder="01123456789" className="h-11 bg-input/80 border-border/60" dir="ltr" />
                   </div>
                 </div>
